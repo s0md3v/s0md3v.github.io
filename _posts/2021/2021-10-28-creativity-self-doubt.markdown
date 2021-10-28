@@ -32,10 +32,10 @@ Since everyone's life experiences are different, everyone has a uniquely wired b
 If you went back in time and told a caveman that it is possible to fly to the moon, they won't believe you. To them, it is something fascinating to think about but impossible to achieve.
 This tells us that when a person is presented with an idea and they don't have the knowledge to comprehend its feasibility - they are likely to reject it.
 
-So, does that mean knowledgeable people are more likely to create something good? They have better chances, yes. But with knowledge, come cognitive biases.
-Just how an illiterate caveman can't comprehend the concept of spaceships, a knowledgeable scientist may deny an idea that contradicts previously confirmed theories. With knowledge, some ideas start to look stupid. Ironically, innovation often requires exploration of something that is not obvious, something stupid.
+So, does that mean knowledgeable people are more likely to create something good? They have better chances, yes. But with knowledge, comes a trap - [additional cognitive biases](https://en.wikipedia.org/wiki/List_of_cognitive_biases).
+Just how an illiterate caveman can't comprehend the concept of spaceships, a knowledgeable scientist may deny an idea that contradicts previously confirmed theories. With knowledge, some ideas start to look stupid. Ironically, innovation often requires exploration of something that is not obvious, something stupid. If a creative person fails to recognize this, they miss on a lot.
 
-I would say if creativity was a box, a novice's box is small but has fuzzy boundaries. A knowledgeable person definitely has a way bigger box but with more defined boundaries created by knowledge.
+> I would say if creativity was a box, a novice's box is small but has fuzzy boundaries. A knowledgeable person definitely has a way bigger box but with more defined but fragile boundaries created by knowledge. The ones who break the boundaries have limitless thoughts, others simply get trapped in themseleves.
 
 ## The harsh truth
 It's true, some people try their best but never create anything remarkable. You might spend years creating mediocre music while your brain is better wired for creating visual art.
