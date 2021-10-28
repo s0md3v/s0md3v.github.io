@@ -1,0 +1,36 @@
+<footer class="site-footer">
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-2">
+        <ul class="contact-list">
+          <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+          <li><a href="{{ site.url }}">{{ site.url }}</a></li>
+        </ul>
+        <ul class="social-media-list">
+          <li>
+            {% include icon-github.html username=site.usernames.github %}
+          </li>
+          <li>
+            {% include icon-twitter.html username=site.usernames.twitter %}
+          </li>
+          <li>
+            <a href="https://linkedin.com/in/{{ site.usernames.linkedin }}">
+              <span class="fa fa-linkedin-square" style="color:#828282"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Somdev Sangwan - Security & Automation Researcher</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+</footer>

@@ -1,0 +1,29 @@
+- title:  Arjun
+  desc:   "HTTP parameter discovery suite"
+  href:   https://github.com/s0md3v/Arjun
+  status: mature
+
+- title:  Silver
+  desc:   "Scan IPs for open ports+vulnerabilites in bulk"
+  href:   https://github.com/s0md3v/Silver
+  status: complete
+
+- title:  Photon
+  desc:   "Crawler designed for hackers/investigators"
+  href:   https://github.com/s0md3v/Photon
+  status: needs a revisit
+
+- title:  XSStrike
+  desc:   "Complete XSS detection suite"
+  href:   https://github.com/s0md3v/XSStrike
+  status: abandoned
+
+- title:  be-a-hacker
+  desc:   "Roadmap for beginners in hacking"
+  href:   https://github.com/s0md3v/be-a-hacker
+  status: close to my heart
+
+- title:  be-a-hacker
+  desc:   "Small hacky programs"
+  href:   https://github.com/s0md3v/dump/
+  status: growing

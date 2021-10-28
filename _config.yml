@@ -1,0 +1,36 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title: Somdev Sangwan - blog
+email: s0md3v@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  Somdev Sangwan - Security & Automatation Researcher
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://s0md3v.github.io" # the base hostname & protocol for your site
+usernames:
+  twitter: s0md3v
+  github:  s0md3v
+  linkedin: s0md3v
+  instagram: s0md3v
+
+permalink: pretty
+
+# Build settings
+markdown: kramdown
+timezone: "+0530"
+
+# Defaults
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      comments: false
+      mathjax:  false
+      social:   true
