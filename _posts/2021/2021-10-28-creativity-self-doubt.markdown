@@ -10,7 +10,7 @@ description: "How to eliminate self-doubt in creative careers and do remarkable 
 ---
 
 If you work in a creative field such as fine art, programming or music - you likely got into it after seeing something interesting from that field.
-You start your journey with flaming passion and the desire to create something remarkable one day. You eagerly learn the basics, you get better.
+Such journies start with flaming passion and the desire to create something amazing one day. You eagerly learn the basics, you get better.
 
 Time flies and there you have it, your first creation. You are not impressed with it and you know that it is okay to mess up in the beginning. Then you get on a streak, creating one thing after another but nothing even comes close to what you would like to create. Surrounded by self-doubt, you ask yourself,
 
