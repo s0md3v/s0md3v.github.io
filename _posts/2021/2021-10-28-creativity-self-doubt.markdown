@@ -5,6 +5,7 @@ date:   2021-10-28 21:32:00 +0530
 author: Somdev Sangwan
 tags:   [meta, philosophy]
 image: /imgs/thumbs/creativity-self-doubt.png
+permalink: /blog/creativity-and-self-doubt
 description: "How to eliminate self-doubt in creative careers and do remarkable work."  
 ---
 
