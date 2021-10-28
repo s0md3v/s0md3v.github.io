@@ -62,7 +62,7 @@ These three points brings us to three wholesome conclusions:
 * If you work in a field long enough, you are almost guaranteed to contribute something to it. A person with a "gift" for drawing might become a mathematics teacher in an elementary school. They might not be able to create new formulas but hey, they are good at drawing! A great visual explanation might be just what one "gifted" kid needed to get interested in maths and later become a great mathematician. Would you still say they did nothing for mathematics?
 
 ## Just work.
-There's no one shot way to figure what career would be the best for you. You will need to explore before you can find the one for you. It's better to start with something that you like, can make you money and you can do it for hours without getting tired.
+There's no one shot way to figure out what you are good at. You will need to explore a lot before you can find the best line of work for you. It's better to start with something that you like, can make you money and you can do it for hours without getting tired.
 
 About creativity, geniuses aren't different. They simply take their thoughts more seriously than a average person does. Tell yourself that nothing is too stupid, every idea should be explored before rejecting.
 
