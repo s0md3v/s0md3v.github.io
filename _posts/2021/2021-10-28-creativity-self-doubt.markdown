@@ -61,4 +61,14 @@ These three points brings us to three wholesome conclusions:
 * Innovation is tricky. A musician's first melody might become a classic. A technological marvel may only come to life after a century of contributions by various people. Thus, the question - "When will I do something great?" is pointless. Also, you are not the one to decide if your work is great.
 * If you work in a field long enough, you are almost guaranteed to contribute something to it. A person with a "gift" for drawing might become a mathematics teacher in an elementary school. They might not be able to create new formulas but they might be able to teach maths better with visual aid. A great visual explanation might be just what one "gifted" kid needed to get interested in maths and later become a great mathematician. Would you still say you did nothing for mathematics?
 
-I raise a glass of ~~wine~~ cold coffee to digital artists with 257 followers waiting to get popular, people stuck in "wrong careers", geniuses that think they are not good enough and people that are just "average". Your brain is unique and beautiful, you think in a way **no one** can.
+## Just work.
+There's no one shot way to figure what career would be the best for you. You will need to explore before you can find the one for you. It's better to start with something that you like, can make you money and you can do it for hours without getting tired.
+
+About creativity, geniuses aren't different. They simply take their thoughts more seriously than a average person does. Tell yourself that nothing is too stupid, every idea should be explored before rejecting.
+
+
+> It's supposed to be hard. If it were easy, everyone would do it.
+
+The greatest people I know in cyber security spend months studying a program before they find ways to exploit it. It's hard, as simple as that.
+
+With that - I raise a glass of ~~wine~~ cold coffee to digital artists with 257 followers waiting to get popular, people stuck in "wrong careers", geniuses that think they are not good enough and people that are just "average". Your brain is unique and beautiful, you think in a way **no one** can.
