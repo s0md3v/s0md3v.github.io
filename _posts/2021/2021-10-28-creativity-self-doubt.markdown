@@ -9,8 +9,8 @@ permalink: /blog/creativity-and-self-doubt
 description: "How to eliminate self-doubt in creative careers and do remarkable work."  
 ---
 
-If you work in a creative field such as fine art, programming or music, you likely got into it after seeing something interesting from that field.
-You start your journey with flaming passion and the desire to create something remarkable one day. With sheer will and sparks in your eyes, you gradually improve.
+If you work in a creative field such as fine art, programming or music - you likely got into it after seeing something interesting from that field.
+You start your journey with flaming passion and the desire to create something remarkable one day. You eagerly learn the basics, you get better.
 
 Time flies and there you have it, your first creation. You are not impressed with it and you know that it is okay to mess up in the beginning. Then you get on a streak, creating one thing after another but nothing even comes close to what you would like to create. Surrounded by self-doubt, you ask yourself,
 
@@ -59,7 +59,7 @@ These three points brings us to three wholesome conclusions:
 
 * Since your brain is unique, it is unfair to compare it to someone else's. You are the result of billions of years of evolution, celebrate it.
 * Innovation is tricky. A musician's first melody might become a classic. A technological marvel may only come to life after a century of contributions by various people. Thus, the question - "When will I do something great?" is pointless. Also, you are not the one to decide if your work is great.
-* If you work in a field long enough, you are almost guaranteed to contribute something to it. A person with a "gift" for drawing might become a mathematics teacher in an elementary school. They might not be able to create new formulas but they might be able to teach maths better with visual aid. A great visual explanation might be just what one "gifted" kid needed to get interested in maths and later become a great mathematician. Would you still say you did nothing for mathematics?
+* If you work in a field long enough, you are almost guaranteed to contribute something to it. A person with a "gift" for drawing might become a mathematics teacher in an elementary school. They might not be able to create new formulas but hey, they are good at drawing! A great visual explanation might be just what one "gifted" kid needed to get interested in maths and later become a great mathematician. Would you still say they did nothing for mathematics?
 
 ## Just work.
 There's no one shot way to figure what career would be the best for you. You will need to explore before you can find the one for you. It's better to start with something that you like, can make you money and you can do it for hours without getting tired.
