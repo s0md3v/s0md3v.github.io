@@ -8,7 +8,6 @@ layout: default
 
   <ul class="post-list">
     {% for post in site.posts %}
-    {% unless post.unlisted %}
     <li>
       <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
       <span class="post-meta">
