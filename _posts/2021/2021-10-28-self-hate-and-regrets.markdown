@@ -67,7 +67,7 @@ Sometimes, everything you need to know is there but you still make a bad decisio
 
 Been in a toxic relationship? I have. Everything was happening in front of me but I still chose to stay. What was I thinking? A lot, I was thinking a lot - but with my biased thinking process.
 
-- I was afraid of the void that would have been left by cutting that person off. I had no 'replacement for their role in my life.
+- I was afraid of the void that would have been left by cutting that person off. I had no 'replacement' for their role in my life.
 - I invested too much into that relationship which made me afraid of losing it so I wanted to try my best to save it.
 - As I mentioned at the start, I avoid conflicts. I let it happen as long as I could, I didn't bring it up.
 
@@ -86,3 +86,5 @@ The title of this article is a lie, there's nothing to overcome. We just discuss
 Do you have an issue? Start by knowing that you received it, you didn't ask for it - no need to hate yourself. Second, try to fix it if you can otherwise talk to a therapist.
 
 Do you have a regret, think you made a mistake? Start by knowing that you did the best thing your mind could come up with. That's it, if you think you would have made a better choice if you could go back in past - it is only because you are in a different mental state now and you have already witnessed what happens if you choose what you did.
+
+
