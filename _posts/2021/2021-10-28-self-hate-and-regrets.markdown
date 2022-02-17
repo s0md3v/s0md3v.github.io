@@ -22,7 +22,6 @@ If you ask me why I do a certain thing, I can point out exactly how I picked it 
 - Perfectionism? Everyone appreciated my results but never the failed efforts. I was made to believe that the end result is the only thing that matters and it must be "perfect".
 - Working hard? I saw my sisters pull us out of poverty with sheer hard work. I know the extent of human potential and what one can do with it.
 - Creativity? I spent most of my childhood playing alone which pushed me to design my own games. It wired my brain in a certain way, a creative way.
-- Not drinking? I have seen it sabotaging relationships, finances, and respect all around me.
 
 I can go on but the point is, everything about me or anyone else is a result of life experiences.
 
@@ -41,7 +40,7 @@ If we got to choose our traits, no one would pick bad things. This is not a choi
 This is where things get spicy. I just said none of your bad traits is your fault. But before we talk about "faults", let me say it firmly again:
 
 - If you got to choose, you would never pick things you hate about yourself. You didn't get to choose.
-- And if you didn't have a choice. You are just a victim. It makes zero sense to blame yourself for something that **happened TO YOU**.
+- And if you didn't have a choice, you are just a victim. It makes zero sense to blame yourself for something that **happened TO YOU**.
 
 ### Why regrets make zero sense
 
@@ -59,7 +58,7 @@ I want to talk about these in detail.
 
 You wouldn't buy a product if you knew a better alternative is available in the market for a similar or lower price. You wouldn't trust a person if you knew they are going to betray.
 
-The point is, it is not possible to know everything. Don't beat yourself up for making a decision where the important information was hidden from you. You made the best decision based on what information had. I give you a gentle pat on your head for that, good job! *\~pat, pat\~*
+The point is, it is not possible to know everything. Don't beat yourself up for making a decision where the important information was hidden from you. You made the best decision based on what information you had and that's what any sane person does. I give you a gentle pat on your head for that, good job! *\~pat, pat\~*
 
 #### Our brains are flawed
 
@@ -81,10 +80,8 @@ I will just wrap this entire section with this,
 
 ### Note this down somewhere
 
-The title of this article is a lie, there's nothing to overcome. We just discussed how both of these feelings are baseless.
+The title of this article is a lie, there's nothing to overcome. We just discussed how both of these feelings are baseless, they are made up by your mind.
 
 Do you have an issue? Start by knowing that you received it, you didn't ask for it - no need to hate yourself. Second, try to fix it if you can otherwise talk to a therapist.
 
 Do you have a regret, think you made a mistake? Start by knowing that you did the best thing your mind could come up with. That's it, if you think you would have made a better choice if you could go back in past - it is only because you are in a different mental state now and you have already witnessed what happens if you choose what you did.
-
-
