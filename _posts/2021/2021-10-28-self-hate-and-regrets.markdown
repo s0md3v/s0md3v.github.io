@@ -70,9 +70,7 @@ Been in a toxic relationship? I have. Everything was happening in front of me bu
 - I invested too much into that relationship which made me afraid of losing it so I wanted to try my best to save it.
 - As I mentioned at the start, I avoid conflicts. I let it happen as long as I could, I didn't bring it up.
 
-I could have made a rational decision of parting ways with them. But, it is very difficult if not impossible to think completely rationally. For every reason that the rational part of my brain came up with, the emotional part had a 'but' for it.
-
-Sometimes, being too angry, too excited, or too afraid influences your reasoning. Other times, it is just the way your brain is programmed.
+I could have made a rational decision of parting ways with them. But, it is very difficult if not impossible to think completely rationally. Each of our decisions are affected by our mental state and internal biases. "Why couldn't I think straight?", it's biology - you don't control it.
 
 I will just wrap this entire section with this,
 
