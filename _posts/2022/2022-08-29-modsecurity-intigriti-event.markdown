@@ -18,7 +18,7 @@ Firewalls stop attacks. They can recognize them with their database of various r
 A web application firewall is a firewall, for websites.
 
 ### Blacklists are hard
-`ping` is a tool commonly used to troubleshoot networks. As a WAF designer, you might want to block attempts to run it. But what if user A sends a text message to user B through your WAF,
+`ping` is a tool commonly used to troubleshoot networks. As a WAF programmer, you might want to block attempts to run it. But what if user A sends a text message to user B through your WAF,
 > your router looks fine, try to ping google.com
 
 That's it. The WAF blocked the message, the user filed a complaint to the website owner. The owner debugged the issue and found out that the WAF was at fault.  
