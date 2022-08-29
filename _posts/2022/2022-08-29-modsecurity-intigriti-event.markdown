@@ -126,7 +126,7 @@ return"system"(ls).s;
 Don't ask me to explain how this one works, I don't know much about PHP. I just tried things that made sense after looking at known bypasses and this one worked in a PHP webpage I created for testing.
 
 ### Credits
-ModSecurity is an open-source WAF and if you ask me, it's as good as WAFs get. It is almost impossible to bypass it for XSS, the rules are that good.
+ModSecurity with the OWASP Core Rule Set on top is an open-source WAF and if you ask me, it's as good as WAFs get. It is almost impossible to bypass it for XSS, the rules are that good.
 
 Shoutouts to them for maintaining such an important and free project responsibly and thanks to intigriti for hosting this hacking event and inviting me.
 
