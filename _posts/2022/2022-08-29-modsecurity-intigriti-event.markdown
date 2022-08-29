@@ -51,7 +51,7 @@ Every command in linux is ultimately an executable binary file stored in `/usr/b
 Building on my previous exploit that could only interact with files, I turned that file-access technique into a juicy RCE with  
 
 ```
-/usr/bin/who[a]mi -a
+/usr/bin/who[a]mi
 ```
 
 ## Utilising the linux utilities
