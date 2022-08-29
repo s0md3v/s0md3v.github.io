@@ -4,7 +4,7 @@ title:  "Bypassing ModSecurity for RCEs"
 date:   2022-08-29 18:32:00 +0530
 author: Somdev Sangwan
 tags:   [event, bypass, security]
-image: /imgs/thumbs/modsecurity-event.png
+image: /imgs/thumbs/modsecurity-event.jpg
 permalink: /blog/modsecurity-rce-bypass
 description: "A tale of multiple RCE bypasses for ModSecurity WAF."  
 ---
