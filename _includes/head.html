@@ -12,14 +12,13 @@
   <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ " /feed.xml" | prepend:
     site.baseurl | prepend: site.url }}">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <meta name="twitter:card"  content="summary_large_image">
   <meta name="twitter:title"   content="{{ page.title }}">
-
   {% if page.summary %}
   <meta name="twitter:description" content="{{ page.description }}">
   {% else %}
   <meta name="twitter:description" content="{{ site.description }}">
   {% endif %}
-  <meta name="twitter:card"  content="summary_large_image">
   <meta name="twitter:image" content="{{ site.url }}{{ page.image }}">
 
   <meta content="{{ site.title }}" property="og:site_name">
