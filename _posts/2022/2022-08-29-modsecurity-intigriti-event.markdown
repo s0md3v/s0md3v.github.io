@@ -44,7 +44,7 @@ cat /etc/pass[!x]d
 
 ## Everything is a file in Unix
 > "Everything is a file" describes one of the defining features of Unix, and its derivatives—that a wide range of input/output resources such as documents, directories, hard-drives, modems, keyboards, printers and even some inter-process and network communications are simple streams of bytes exposed through the filesystem name space.
-> - [WikiPedia](en.wikipedia.org/wiki/Everything_is_a_file)
+> - [WikiPedia](https://en.wikipedia.org/wiki/Everything_is_a_file)
 
 Every command in linux is ultimately an executable binary file stored in `/usr/bin`. Thus instead of executing `ping`, you can write `/usr/bin/ping` and it will work.
 
