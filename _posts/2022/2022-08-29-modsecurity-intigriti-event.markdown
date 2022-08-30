@@ -130,4 +130,4 @@ ModSecurity with the OWASP Core Rule Set on top is an open-source WAF and if you
 
 Shoutouts to them for maintaining such an important and free project responsibly and thanks to intigriti for hosting this hacking event and inviting me.
 
-Until next time, fellas.
+That's all folks.
