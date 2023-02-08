@@ -3,15 +3,15 @@
   href:   https://github.com/s0md3v/Arjun
   status: mature
 
-- title:  Silver
-  desc:   "Scan IPs for open ports+vulnerabilites in bulk"
-  href:   https://github.com/s0md3v/Silver
+- title:  uro
+  desc:   "Saviour of scanners. Removes 'boring' URLs from URL lists"
+  href:   https://github.com/s0md3v/uro
   status: complete
 
-- title:  Photon
-  desc:   "Crawler designed for hackers/investigators"
-  href:   https://github.com/s0md3v/Photon
-  status: needs a revisit
+- title:  Smap
+  desc:   "Nmap replica with shodan.io"
+  href:   https://github.com/s0md3v/Smap
+  status: mature
 
 - title:  XSStrike
   desc:   "Complete XSS detection suite"
@@ -21,7 +21,7 @@
 - title:  Be-a-hacker
   desc:   "Roadmap for beginners in hacking"
   href:   https://github.com/s0md3v/be-a-hacker
-  status: close to my heart
+  status: complete
 
 - title:  Dump
   desc:   "Small hacky programs"
