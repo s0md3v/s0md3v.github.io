@@ -43,7 +43,7 @@ Did someone/something ruin a nice photo you took? You can just draw around it wi
 
 Congrats! You just learned something that will help you countless times in life :)
 
-This technique may not work in cases where the background has too many details complex. If you want to learn how to handle those cases, you will need to put in a bit more effort. Instead of reading a small tip on the internet, you will need to watch a couple of tutorials about content-aware fill and healing brush tool. That shouldn't take more than 30 minutes though.
+This technique may not work in cases where the background has too many details. If you want to learn how to handle those cases, you will need to put in a bit more effort. Instead of reading a small tip on the internet, you will need to watch a couple of tutorials about content-aware fill and healing brush tool. That shouldn't take more than 30 minutes though.
 
 To handle even more complex cases, you will need to learn how to use another background to replace parts of your background, blend modes, curves, levels and what not.
 
