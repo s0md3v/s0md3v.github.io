@@ -28,7 +28,7 @@ It was a very important breakthrough but why do you think such things take centu
 
 Being good at more than one thing has its perks though. A psychology researcher who is also a gamer may want to study the effects of video games on the brain. If they are interested in fashion, they might want to look into what effects wearing good clothes has on one's mental state and so on...
 
-The point is that your brain creates ideas by linking together pieces of information you have acquired. The more things you know about, the bigger picture you can see. You can have tons of ideas.
+The point is that your brain creates ideas by linking together pieces of information you have acquired. The more things you know about, the bigger picture you can see. You can have tons of ideas. I am not a machine learning expert but I know how it works. Just the familiarity with the concepts has given me the ability to see which problems I can solve with traditional programming and which require ML. This perspective alone is the reason why you should know a little bit about everything.
 
 Taking a break from the creativity discourse, lets quickly go over other factors. Specialists are paid more and have better career security because there aren't a lot of them for a given field. Generalists are replaceable but they have plethoras of options to grow and can connect to various types of people.
 
