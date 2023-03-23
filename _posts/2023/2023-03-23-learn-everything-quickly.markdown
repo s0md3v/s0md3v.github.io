@@ -88,7 +88,7 @@ As Calvin Coolidge says, nothing is more common than unsuccessful men with talen
 
 ### In the end
 
-Going to back to the initial part of the blog where I shared how I know about so many things. The reason is the kind of content I consume online. It is undeniable that the internet has become a second reality for most young people. You should carefully choose what you look at the internet because your experiences shape you. My YouTube feed is full of humour, video games, hip-hop and knowledge. I am not following any brain-dead influencers, vlogs or anything like that.
+Going to back to the initial part of the blog where I shared how I know about so many things. The reason is the kind of content I consume online. It is undeniable that the internet has become a second reality for most young people. You should carefully choose what you look at on the internet because your experiences shape you. My YouTube feed is full of humour, video games, hip-hop and knowledge - they are the things that **actually** matter to me. I am not following any brain-dead influencers, vlogs or anything like that.
 
 In my earlier articles, I have made it clear that I do not preach the "productive" lifestyle some people do. The reason why I have written this blog is to help people understand that minimal effort can improve their lives in so many ways.
 
