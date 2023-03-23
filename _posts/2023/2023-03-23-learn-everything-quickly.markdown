@@ -55,7 +55,7 @@ In this article, being "good" will be used as a synonym for being just good enou
 
 ![its better to try](/imgs/inline/better-to-try.png)
 
-Develop a habit of taking action. Look around, do you think these people have a device in their pockets that contains the totality of human knowledge? Can you fathom how crazy this is? You can google everything, from how tie your shoelaces like a flower to how motion detectors work.
+Develop a habit of taking action. Look around, do you think these people have a device in their pockets that contains the totality of human knowledge? Can you fathom how crazy this is? You can google everything, from how to tie your shoelaces in shape of a flower to how motion detectors work.
 
 It's crazy that there's information about everything but a lot of people still can't cook, sit through ads on YouTube without an adblocker and believe not washing your face is the reason behind acne.
 
