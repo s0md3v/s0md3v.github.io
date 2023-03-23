@@ -9,8 +9,8 @@ permalink: /blog/get-good-quickly
 description: "How to be good at multiple things and why?"  
 ---
 
-2008, I was in 6th grade when my English teacher asked the class if anyone knew what a "duece" is. I answered, "*When a match ties in tennis.*"\
-We were in a small Indian village. Even in 2023, almost no graduate here knows what the word means let alone 6th graders in 2008. The teacher was rightfully surprised as she wanted to make a point about vocabulary and didn't expect an answer. She asked me, "*How do you know that?*" I told her, "*I saw the word in the tennis video game I play.*"
+I was in 6th grade when my English teacher asked the class if anyone knew what a "duece" is. I answered, "*When a match ties in tennis.*"\
+We were in a small Indian village in 2008, the teacher wasn't expecting an answer because she purposefully chose that word to make a point about developing vocublary. She asked me with amusement, "*How do you know that?*" I told her, "*I saw the word in the tennis video game I played.*"
 
 Ever since then, these questions have never stopped.
 
@@ -18,7 +18,7 @@ Ever since then, these questions have never stopped.
 - *"**HOW** do you know the way to only match odd occurrences of a letter with regex? That's so obscure but genius..."*
 - \**insert various comments about me doing everything from teaching physics to writing code and knowing how to "properly" get rid of bloodstains*\*
 
-That's all the boasting I'll do for now, I promise. Before you proceed with this article, I would like you to read my thoughts on [Creativity, Self-Doubt & Doing Remarkable Work](https://s0md3v.github.io/blog/creativity-and-self-doubt). It will provide you with context and clarity on many things being discussed here.
+That's all the boasting I'll do for now and I promise its relevant to the topic. Before you proceed with this article, I would like you to read my thoughts on [Creativity, Self-Doubt & Doing Remarkable Work](https://s0md3v.github.io/blog/creativity-and-self-doubt). It will provide you with context and clarity on many things being discussed here.
 
 ### Why bother getting good at multiple things?
 
@@ -88,6 +88,8 @@ As Calvin Coolidge says, nothing is more common than unsuccessful men with talen
 
 ### In the end
 
-I do not preach the "productive" lifestyle some people do. The reason why I have written this blog is to help people understand that minimal effort can improve their lives in so many ways.
+Going to back to the initial part of the blog where I shared how I know about so many in things is the kind of content I consume online. It is undeniable that the internet has become a second reality for most young people. You should carefully choose what you look at the internet because your experiences shape you. My YouTube feed is full of humour, video games, hip-hop and knowledge. I am not following any brain-dead influencers, vlogs or anything like that.
+
+In my earlier articles, I have made it clear that I do not preach the "productive" lifestyle some people do. The reason why I have written this blog is to help people understand that minimal effort can improve their lives in so many ways.
 
 Regardless of whether you manage to do any of this or not, [be kind to yourself](https://s0md3v.github.io/blog/self-hate-and-regrets).
