@@ -63,7 +63,7 @@ Why? Because they don't act, they don't question and they don't care enough. In 
 
 ![just get started](/imgs/inline/just-get-started.jpg)
 
-This is rule to live by in general - you miss all the shots you don't take. If you try there's a chance of success - however small. If you don't try, you have failed by default.
+This is a rule to live by in general - you miss all the shots you don't take. If you try there's a chance of success - however small. If you don't try, you have failed by default.
 
 It applies to everything from asking out someone to applying for a job you quite not qualify for.
 
