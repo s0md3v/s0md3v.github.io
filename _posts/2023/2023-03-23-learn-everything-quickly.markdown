@@ -24,9 +24,9 @@ That's all the boasting I'll do for now and I promise its relevant to the topic.
 
 > In 2002, 3 indian mathematicians created an [algorithm](https://en.wikipedia.org/wiki/AKS_primality_test) to determine whether a number is prime in polynomial time. AKS primality test is the first primality-proving algorithm to be simultaneously general, polynomial-time, deterministic, and unconditionally correct. Previous algorithms had been developed for centuries and achieved three of these properties at most, but not all four.
 
-It was a very important breakthrough but why do you think such things take centuries to find? Because they require expertise in the subject and immense effort. These breakthroughs are more than just "ideas"; they require much more than just creativity and imagination. Specialists are crucial for constantly pushing the boundaries of a field, doing the impossible.
+It was a very important breakthrough but why do you think such things take centuries to find? Because they require expertise in the subject and immense effort. These breakthroughs are more than just "ideas"; they require much more than just creativity and imagination. Specialists like the mathematicians here are crucial for constantly pushing the boundaries of a field, doing the impossible.
 
-Being good at more than one thing has its perks. A psychology researcher who is also a gamer may want to study the effects of video games on the brain. If they are interested in fashion, they might want to look into what effects wearing good clothes has on one's mental state and so on...
+Being good at more than one thing has its perks though. A psychology researcher who is also a gamer may want to study the effects of video games on the brain. If they are interested in fashion, they might want to look into what effects wearing good clothes has on one's mental state and so on...
 
 The point is that your brain creates ideas by linking together pieces of information you have acquired. The more things you know about, the bigger picture you can see. You can have tons of ideas.
 
