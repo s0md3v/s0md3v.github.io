@@ -57,7 +57,7 @@ In this article, being "good" will be used as a synonym for being just good enou
 
 Develop a habit of taking action. Look around, do you think these people have a device in their pockets that contains the totality of human knowledge? Can you fathom how crazy this is? You can google everything, from how to tie your shoelaces in shape of a flower to how motion detectors work.
 
-It's crazy that there's information about everything but a lot of people still can't cook, sit through ads on YouTube without an adblocker and believe not washing your face is the reason behind acne.
+It's crazy that there's information about everything but a lot of people still can't cook, they sit through ads on YouTube without an adblocker and believe not washing your face is [the reason](https://simple.wikipedia.org/wiki/List_of_common_misconceptions) behind acne.
 
 Why? Because they don't act, they don't question and they don't care enough. In learning, the hardest part is over once you start.
 
