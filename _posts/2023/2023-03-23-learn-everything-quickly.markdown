@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Get good at everything, quickly."
-date:   2021-10-28 21:32:00 +0530
+date:   2023-03-23 22:19:00 +0530
 author: Somdev Sangwan
 tags:   [meta, philosophy]
 image: /imgs/thumbs/git-gud.png
