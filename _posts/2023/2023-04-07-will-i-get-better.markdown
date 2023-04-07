@@ -50,7 +50,7 @@ Hang in there and keep trying until you find a fit. You might also want to consu
 
 ## What's the treatment for?
 
-We learned in school how vitamin and minerals are essentials for our body to function properly. Just like our body, our brain relys on a variety of chemicals and will not function correctly if their quantity is not a healthy range.  
+We learned in school how vitamin and minerals are essentials for our body to function properly. Just like our body, our brain relys on a variety of chemicals and will not function correctly if their quantity is not in a healthy range.  
   
 For example, the process to build chemicals called serotonin (responsible for a stable mood and sleep) and dopamine (gives you motivation to do things) requires vitamin B6 and other things. Do you understand how important these chemicals are?
 
