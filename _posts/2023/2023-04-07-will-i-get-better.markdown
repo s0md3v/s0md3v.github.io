@@ -35,7 +35,7 @@ If you are a dancer, learning a few new moves will not change your brain as much
 
 Living in a new enviornment, learning a new language or a skill, even having new types of conversations or thoughts - they will all form tons of new neural connections in your brain.
 
-This suggests that we must break our daily loop, get out of our comfort zone and do something drastically different. Unfortunately, almost every mental illness comes free with the inability to function correctly. Some feel exhausted, some afraid and others fighting their own demons.  
+This suggests that we must break our daily loop, get out of our comfort zone and do something drastically different. Unfortunately, almost with every mental illness comes free the inability to function correctly. Some feel exhausted, some afraid and others fighting their own demons.  
 
 If we need to get out of our comfort zone but our mental illness won't let us, how will our brain change? How will our situation ever get better?
 
