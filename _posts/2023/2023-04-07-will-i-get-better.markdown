@@ -52,7 +52,7 @@ Hang in there and keep trying until you find a fit. You might also want to consu
 
 We learned in school how vitamin and minerals are essentials for our body to function properly. Just like our body, our brain relys on a variety of chemicals and will not function correctly if their quantity is not in a healthy range.  
   
-For example, the process to build chemicals called serotonin (responsible for a stable mood and sleep) and dopamine (gives you motivation to do things) requires vitamin B6 and other things. Do you understand how important these chemicals are?
+For example, the process to build chemicals called serotonin (responsible for a stable mood and sleep) and dopamine (gives you motivation to do things) requires vitamin B6 and other things. With lack of vitamin B6, no matter what you do, your mood won't improve and you won't have the motivation to work. See how important these chemicals are?
 
 Apart from these chemicals, there's also a psychological factor that affects your mental - your thoughts. Differnt types of therapies such as Cognitive Behavioral Therapy or Trauma-focused Therapy can gradually help you understand your psyche and change how you think.
 
