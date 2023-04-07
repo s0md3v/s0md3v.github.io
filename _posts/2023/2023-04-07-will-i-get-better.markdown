@@ -58,7 +58,7 @@ Apart from these chemicals, there's also a psychological aspect to your mental h
 
 Both of these things combined or individually will you may fix your issues completely, leave a few crumbs or just take you halfway there. I do not have the statistics to make any claims but what I do know is that you should see treatment as way to become more funtional not as a guarnteed cure.
 
-From there, use whatever amount of functionality you have restored to do the things you need to do to improve your brain further.
+From there, use whatever amount of functionality you have restored to do the things you need to do to improve your brain further. Neuroplasticity, remember? You can change your brain by accquiring new types of information? Yes, do that.
 
 I will end this article with a tldr-style list of things to help you but the entire point of this article is to answer "will it ever get better?". And we have a answer, it can.
 
