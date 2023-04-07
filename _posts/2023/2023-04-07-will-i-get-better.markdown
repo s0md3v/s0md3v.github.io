@@ -13,13 +13,14 @@ If you have or had mental health issues for multiple years; you must be tired of
 
 When is it going to get better? So much time has passed, why hasn't it gotten better already? Will it **ever** get better?
 
-I will try to answer this with well-established scientfic research but before that, I highly suggest you to read my blog about [Self-Hate](https://s0md3v.github.io/blog/self-hate-and-regrets); it touches on how one's personality is formed.
+I will try to answer this with well-established scientfic research but before that, I highly suggest you to read my blog about [self-hate](https://s0md3v.github.io/blog/self-hate-and-regrets); it should help you understand how your personality takes shape.
 
 What you are going to read next applies to conditions such as depression, anxiety, ADHD etc. and is not entirely helpful for severe diorders such as schizophrenia. With that out of the way, let's talk about neuroplasticity.
 
 ## Neuroplasticity
 
-> "No man ever steps in the same river twice, for it's not the same river and he's not the same man." ― Heraclitus
+> "No man ever steps in the same river twice, for it's not the same river and he's not the same man."
+> ― Heraclitus
 
 It is fairly obvious that a person can change as they accquire new experiences but did you know that your brain physically changes when it has new type of information?
 
