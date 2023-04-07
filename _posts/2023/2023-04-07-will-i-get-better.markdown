@@ -56,7 +56,7 @@ For example, the process to build chemicals called serotonin (responsible for a 
 
 Apart from these chemicals, there's also a psychological aspect to your mental health - your thoughts. If the way you think is flawed, no amount of nutrition can help you live well. Luckily, different types of therapies such as Cognitive Behavioral Therapy or Trauma-focused Therapy can gradually help you understand your psyche and change how you think.
 
-Both of these things combined or individually will you may fix your issues completely, leave a few crumbs or just take you halfway there. I do not have the statistics to make any claims but what I do know is that you should see treatment as way to become more funtional.
+Both of these things combined or individually will you may fix your issues completely, leave a few crumbs or just take you halfway there. I do not have the statistics to make any claims but what I do know is that you should see treatment as way to become more funtional not as a guarnteed cure.
 
 From there, use whatever amount of functionality you have restored to do the things you need to do to improve your brain further.
 
