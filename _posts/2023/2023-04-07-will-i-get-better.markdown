@@ -20,6 +20,7 @@ What you are going to read next applies to conditions such as depression, anxiet
 ## Neuroplasticity
 
 > "No man ever steps in the same river twice, for it's not the same river and he's not the same man."
+>
 > ― Heraclitus
 
 It is fairly obvious that a person can change as they accquire new experiences but did you know that your brain physically changes when it has new type of information?
