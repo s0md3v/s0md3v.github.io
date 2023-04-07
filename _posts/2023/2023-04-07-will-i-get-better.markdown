@@ -44,7 +44,7 @@ Things such as proper nutrition[^nutrition], sleep[^sleep] and exercise[^exercis
 
 This is why, the journey to fix it all starts with a visit to a psychatrist. They will analyse your state and recommend an appropriate treatment.
 
-The treatment may include medication, therapy or both. If your condition doesn't get better, they will keep trying with different medications. You should remember that if a medicine doesn't work it doesn't mean that there's something wrong with you. It's just that our brains are complex and different things work for different people.  
+The treatment may include medication, therapy or both. If your condition doesn't get better, they will keep trying with different medications. You should remember that if a medicine doesn't work, it doesn't mean that there's something wrong with you. It's just that our brains are complex and different things work for different people.  
   
 Hang in there and keep trying until you find a fit. You might also want to consult multiple psychatrists and therapists to decrease the chances of human error.
 
