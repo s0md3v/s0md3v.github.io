@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Will it ever get better?"
-date:   2023-04-27 23:00:00 +0530
+date:   2023-04-27 22:30:00 +0530
 author: Somdev Sangwan
 tags:   [meta, philosophy]
 image: /imgs/thumbs/git-gud.png
