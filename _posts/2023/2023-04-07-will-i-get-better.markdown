@@ -15,7 +15,7 @@ When is it going to get better? So much time has passed, why hasn't it gotten be
 
 I will try to answer this with well-established scientfic research but before that, I highly suggest you to read my blog about [Self-Hate](https://s0md3v.github.io/blog/self-hate-and-regrets); it touches on how one's personality is formed.
 
-What you are going to read next applies to conditions such as depression, anxiety, ADHD etc. and not may not be entirely helpful for severe diorders such as schizophrenia. With that out of the way, let's talk about neuroplasticity.
+What you are going to read next applies to conditions such as depression, anxiety, ADHD etc. and is not entirely helpful for severe diorders such as schizophrenia. With that out of the way, let's talk about neuroplasticity.
 
 ## Neuroplasticity
 
@@ -61,7 +61,7 @@ From there, use whatever amount of functionality you have restored to do the thi
 
 I will end this article with a tldr-style list of things to help you but the entire point of this article is to answer "will it ever get better?". And we have a answer, it can.
 
-> learning new things, proper sleep, exercise, nutrition, self-compassion, mindfulness, interacting with better people, medication, cleaning up your room, having a pet, taking cold showers
+> less internet scrolling, learning new things, proper sleep, exercise, nutrition, self-compassion, mindfulness, interacting with better people, medication, cleaning up your room, having a pet, taking cold showers
 
 Good luck!
 
