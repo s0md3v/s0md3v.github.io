@@ -4,9 +4,9 @@ title:  "Will I ever get better?"
 date:   2023-04-07 22:30:00 +0530
 author: Somdev Sangwan
 tags:   [meta, philosophy]
-image: /imgs/thumbs/git-gud.png
-permalink: /blog/will-it-get-better
-description: "Yes, you will."
+image: /imgs/thumbs/will-i-get-better.jpg
+permalink: /blog/will-i-get-better
+description: "Let's talk about mental health in a realistic way."
 ---
 
 If you have or had mental health issues for multiple years; you must be tired of the phrase - "everything will be okay". Out of all the boilerplate phrases such as "take rest, do something you enjoy, go on a trip, pick a new hobby" etc.; the promise of everything being okay soon feels the most empty.  
