@@ -6,7 +6,7 @@ author: Somdev Sangwan
 tags:   [meta, philosophy]
 image: /imgs/thumbs/will-i-get-better.jpg
 permalink: /blog/will-i-get-better
-description: "Let's talk about mental health in a realistic way."
+description: "Let's talk about mental health."
 ---
 
 If you have or had mental health issues for multiple years; you must be tired of the phrase - "everything will be okay". Out of all the boilerplate phrases such as "take rest, do something you enjoy, go on a trip, pick a new hobby" etc.; the promise of everything being okay soon feels the most empty.  
@@ -27,21 +27,17 @@ It is fairly obvious that a person can change as they accquire new experiences b
 
 In 2008, a research paper was published about "neuroanatomic plasticity" or neuroplasticity. The term neuroplasticity refers to the brain's ability to reorganize itself by forming new neural connections. This means that the state of a brain is not fixed or hardwired. It changes in response to experiences and it does not have a choice, it has to.[^neuroplasticity]
 
-## Changing your brain
-
-> Don't worry, I won't tell you to do xyz and say it will help. My goal is to establish and ressure you that your brain can in fact, change. I have struggled with depression and anxiety for more than 5 years, I will not say anything unrealistic. Just read along.
-
 If you are a dancer, learning a few new moves will not change your brain as much as learning to swim would. It's not about new information - it's about new type of information. 
 
 Living in a new enviornment, learning a new language or a skill, even having new types of conversations or thoughts - they will all form tons of new neural connections in your brain.
 
 This suggests that we must break our daily loop, get out of our comfort zone and do something drastically different. Unfortunately, almost with every mental illness comes free the inability to function correctly. Some feel exhausted, some afraid and others fighting their own demons.  
 
-If we need to get out of our comfort zone but our mental illness won't let us, how will our brain change? How will our situation ever get better?
+If we need to get out of our comfort zone but our mental illness won't let us, how will our brain change? How will our situation ever get better? That's where the crutch of a treatment comes in.
 
 ## The treatment
 
-Things such as proper nutrition[^nutrition], sleep[^sleep] and exercise[^exercise] are known to improve mental health but if the condition is severe, it won't let you do any of that.
+Things such as proper nutrition[^nutrition], sleep[^sleep] and exercise[^exercise] are known to improve mental health but as pointed out ealier, severly dysnfuntional individuals may not able to do anyt of that.
 
 This is why, the journey to fix it all starts with a visit to a psychatrist. They will analyse your state and recommend an appropriate treatment.
 
