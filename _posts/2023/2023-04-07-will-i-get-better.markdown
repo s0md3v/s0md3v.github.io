@@ -33,11 +33,11 @@ Living in a new enviornment, learning a new language or a skill, even having new
 
 This suggests that we must break our daily loop, get out of our comfort zone and do something drastically different. Unfortunately, almost with every mental illness comes free the inability to function correctly. Some feel exhausted, some afraid and others fighting their own demons.  
 
-If we need to get out of our comfort zone but our mental illness won't let us, how will our brain change? How will our situation ever get better? That's where the crutch of a treatment comes in.
+If we need to get out of our comfort zone but our mental illness won't let us, how will our brain change? How will our situation ever get better?
 
 ## The treatment
 
-Things such as proper nutrition[^nutrition], sleep[^sleep] and exercise[^exercise] are known to improve mental health but as pointed out ealier, severly dysnfuntional individuals may not able to do anyt of that.
+Things such as proper nutrition[^nutrition], sleep[^sleep] and exercise[^exercise] are known to improve mental health but as pointed out ealier, severly dysnfuntional individuals may not able to do any of that.
 
 This is why, the journey to fix it all starts with a visit to a psychatrist. They will analyse your state and recommend an appropriate treatment.
 
