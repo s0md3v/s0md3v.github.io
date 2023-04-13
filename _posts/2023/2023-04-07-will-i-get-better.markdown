@@ -66,4 +66,4 @@ Good luck!
 [^neuroplasticity]: [Source: Draganski, B., & May, A. (2008). Training-induced structural changes in the adult human brain. Behavioural Brain Research](https://pubmed.ncbi.nlm.nih.gov/18378330/)
 [^nutrition]: [Source: Freeman, M. P. (2009). Omega-3 fatty acids and depression: Scientific evidence and biological mechanisms. Oxidative Medicine and Cellular Longevity](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3976923/)
 [^sleep]: [Source: Sleep and mental disorders: A meta-analysis of polysomnographic research](https://pubmed.ncbi.nlm.nih.gov/21300408/)
-[^exercise]: [Source: Source: Blumenthal, J. A., Babyak, M. A., Doraiswamy, P. M., Watkins, L., Hoffman, B. M., Barbour, K. A., … & Sherwood, A. (2007). Exercise and pharmacotherapy in the treatment of major depressive disorder. Psychosomatic Medicine](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2702700/)
+[^exercise]: [Source: Blumenthal, J. A., Babyak, M. A., Doraiswamy, P. M., Watkins, L., Hoffman, B. M., Barbour, K. A., … & Sherwood, A. (2007). Exercise and pharmacotherapy in the treatment of major depressive disorder. Psychosomatic Medicine](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2702700/)
