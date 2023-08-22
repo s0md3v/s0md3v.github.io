@@ -106,11 +106,13 @@ It is a common trope in superhero fiction that a superhero willingly decides to 
 
 In 1959, a woman got seriously injured by falling from a mountain. She could not receive treatment because the nearest hospital was on the other side of the mountain and the only way to it was going around the mountain. Due to a lack of medical attention in time, she passed away.
 Her husband, Dashrath Manjhi[^dashrath] was so affected by her death that he decided to carve a path through the mountain. He had nothing but a hammer and chisel and it took him 22 years to do so. The path he carved reduced the distance between *Atri* and *Wazirganj* blocks from 55 km to 15 km.
-Was he stupid for purposefully spending 22 years in misery instead of doing a fresh start in life or something?
+Was he a moron for purposefully spending 22 years in misery instead of doing a fresh start in life or something?
 
 I wonder why millions of Indians sacrificed themselves to protest against the atrocities the British were committing against them. Why would they willingly go to a protest knowing the British may tie them to a cannon and blast them off, were they stupid?[^cannon]
 
 I have a friend who is a transgender woman. She must have had all reasonable thoughts before she came out. "What if my parents abandoned me? How will my friends, classmates and neighbors take it? What if I get killed as a hate crime?[^hatecrime] What about the harassment I will face in everyday life and on the internet? What about the bias in dating?..." Despite all this, she declared that she is a woman, is she stupid?
+
+If the famous "genius" scientist were so smart, why did almost all of them work obsessively? Do they not know it's bad for their health? Are they idiots?
 
 Enough examples. Let's talk about Socrates, was he stupid?
 
