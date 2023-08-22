@@ -31,7 +31,7 @@ In a video game, two teams of people shoot with guns at each other to eliminate 
 
 You see, there is value in *winning* because it is possible to *lose*. You could have lost, but you didn't - there's relief. You contributed to your team's success - there's a sense of achievement. The pleasure of winning does not come from reading "you won" on your screen, it comes from overcoming adversity and not losing.
 
-The world is full of such painful experiences that will not help you in any way and may even give you mental illnesses such as PTSD. The analogy was not an attempt to make suffering look acceptable but to show that negative states of happiness can have value in certain contexts.
+The world is full of painful experiences that will not help you in any way and may even give you mental illnesses such as PTSD. The analogy was not an attempt to make suffering look acceptable but to show that negative states of happiness can have value in certain contexts.
 
 Another thing about suffering is that it is inevitable, it is only a matter of when and how much. Painful experiences are not accidents, they are not unexpected, and they are bound to happen. Suffering is so universal and true that you may even call it a property of existence.
 
