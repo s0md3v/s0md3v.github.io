@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Suffering, Self-Care and Superheroes"
-date:   2023-22-08 8:48:00 +0530
+date:   2023-08-22 8:48:00 +0530
 author: Somdev Sangwan
 tags:   [meta, philosophy]
 image: /imgs/thumbs/superheroes.png
