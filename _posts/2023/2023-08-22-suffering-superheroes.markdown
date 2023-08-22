@@ -44,8 +44,6 @@ Finally, we do not want to be in pain or discomfort or pain so we attempt to tak
 - Suffering is inevitable, it is expected.
 - Suffering is bad but without it, pleasure would not have the same effect.
 - Suffering calls for action.
-- We do not have much control over what happens but we can choose our response to them.
-- We should be kind to ourselves when our fundamentally flawed brain can't respond rationally to a situation.
 
 ### Self-Care
 In [this](https://www.youtube.com/watch?v=AomPemsgjmg) documentary about the trend of height-enhancing surgery in India, a 155cm (5 feet) tall man shares his experience. He talks about how his peers would make fun of his height when he was in school. He was a bright student and thought that he if studies hard and does well in life - maybe it will overshadow his short height. He went on to become an engineer, learn 9 languages and acquire 5 academic degrees including a master's in arts and business. The comments and ridicule on his height however, did not stop. Thus, he decided to go through a dangerous surgery and 6 months of painful recovery to alter his body in his 40s.
@@ -76,6 +74,8 @@ I can not prevent unwanted outcomes but I can choose how I will respond when the
 #### Takeaways
 - Self-care is taking care of yourself so neither your brain nor your body are weighing you down on the quest to live a good life.
 - Delusional coping mechanisms aren't good. Intellectualization isn't good either.
+- We do not have much control over what happens but we can choose our response to them.
+- We should be kind to ourselves when our fundamentally flawed brain can't respond rationally to a situation.
 
 ### Satisfaction
 > The philosopher Diogenes was eating bread and lentils for supper. He was seen by the philosopher Aristippus, who lived comfortably by flattering the king. Said Aristippus, "If you would learn to be subservient to the king you would not have to live on lentils."\
