@@ -102,7 +102,7 @@ and then do what you have to do.
 >
 > ― Epictetus
 
-It is a common trope in superhero fiction that a superhero willingly decides to fight a threat even if the possibility of the threat being defeated is negligible. Their friends rightfully tell the hero that they will die but the hero doesn't back down. Are the writers trying to make these superheroes look stupid?
+It is a common trope in superhero fiction that a superhero willingly decides to fight a threat even if the possibility of the threat being defeated is negligible. Their friends rightfully tell the hero that the hero will die but the hero doesn't back down. Are the writers trying to make these superheroes look stupid?
 
 In 1959, a woman got seriously injured by falling from a mountain. She could not receive treatment because the nearest hospital was on the other side of the mountain and the only way to it was going around the mountain. Due to a lack of medical attention in time, she passed away.
 Her husband, Dashrath Manjhi[^dashrath] was so affected by her death that he decided to carve a path through the mountain. He had nothing but a hammer and chisel and it took him 22 years to do so. The path he carved reduced the distance between *Atri* and *Wazirganj* blocks from 55 km to 15 km.
