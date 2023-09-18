@@ -121,7 +121,7 @@ For an in-depth analysis of Socrates and his motivations behind accepting the de
 In the context of this discussion, we can say that he realized that a life in hiding forever after betraying what he has been fighting for all this time was not worth living.
 
 Whether you call all these people superheroes or stupid, one thought that ties them together is:
-> When your life starts to deviate from who you want it to be, there comes a point where it's not worth living.
+> When your life starts to deviate from what you want it to be, there comes a point where it's not worth living.
 
 ### Closing words
 In pop culture, a man who stays in his room all day playing video games, eating junk food and watching pornography - is called a "loser". If life is about having fun, how is he a loser?
