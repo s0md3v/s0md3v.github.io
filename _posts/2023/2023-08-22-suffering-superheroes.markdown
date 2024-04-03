@@ -31,14 +31,14 @@ In a video game, two teams of people shoot with guns at each other to eliminate 
 
 You see, there is value in *winning* because it is possible to *lose*. You could have lost, but you didn't - there's relief. You contributed to your team's success - there's a sense of achievement. The pleasure of winning does not come from reading "you won" on your screen, it comes from overcoming adversity and not losing.
 
-The world is full of painful experiences that will not help you in any way and may even give you mental illnesses such as PTSD. The analogy was not an attempt to make suffering look acceptable but to show that negative states of happiness can have value in certain contexts.
+The world is full of painful experiences that will not help you in any way and may even give you mental disorders such as PTSD. The analogy was not an attempt to make suffering look acceptable but to show that negative states of happiness can have value in certain contexts.
 
-Another thing about suffering is that it is inevitable, it is only a matter of when and how much. Painful experiences are not accidents, they are not unexpected, and they are bound to happen. Suffering is so universal and true that you may even call it a property of existence.
+Another thing about suffering is that it is inevitable, it is only a matter of when and how much. Painful experiences are not accidents, they are not unexpected ― they are bound to happen. Suffering is so universal and true that you may even call it a property of existence.
 
 > I judge you unfortunate because you have never lived through misfortune. You have passed through life without an opponent - no one can ever know what you are capable of, not even you."
 > ― Seneca
 
-Finally, we do not want to be in pain or discomfort or pain so we attempt to take action to get out of it. This urge to reduce discomfort is what has led to so many creations in the fields of science, engineering, arts etc. It is not the sole reason for the growth of a person or a species as a whole but it certainly promotes change.
+Finally, we do not want to be in pain or discomfort therefore we attempt to get out of it. This urge to reduce discomfort is what has led to so many creations in the fields of science, engineering, arts etc. It is not the sole reason for the growth of a person or a species as a whole but it certainly pushes us to take action.
 
 #### Takeaways
 - Suffering is inevitable, it is expected.
@@ -46,11 +46,11 @@ Finally, we do not want to be in pain or discomfort or pain so we attempt to tak
 - Suffering calls for action.
 
 ### Self-Care
-In [this](https://www.youtube.com/watch?v=AomPemsgjmg) documentary about the trend of height-enhancing surgery in India, a 155cm (5 feet) tall man shares his experience. He talks about how his peers would make fun of his height when he was in school. He was a bright student and thought that he if studies hard and does well in life - maybe it will overshadow his short height. He went on to become an engineer, learn 9 languages and acquire 5 academic degrees including a master's in arts and business. The comments and ridicule on his height however, did not stop. Thus, he decided to go through a dangerous surgery and 6 months of painful recovery to alter his body in his 40s.
+In [this](https://www.youtube.com/watch?v=AomPemsgjmg) documentary about the trend of height-enhancing surgery in India, a 155cm (5 feet) tall man shares his experience. He talks about how his peers would make fun of his height when he was in school. He was a bright student and thought that if he studies hard and does well in life - maybe it will overshadow his short height. He went on to become an engineer, learn 9 languages and acquire 5 academic degrees including a master's in arts and business. The comments and ridicule on his height however, did not stop. Thus, he decided to go through a dangerous surgery and 6 months of painful recovery to alter his body in his 40s.
 
 While the sentiment behind ✨all bodies are beautiful✨ message is kind, that statement itself is not true. It has been concluded through countless studies that certain physical traits are conventionally more attractive than others. Believing otherwise would be delusional and for this man, the illusion of all bodies being beautiful would break as soon as he stepped outside.
 
-A stoic might tell this man that "It is true that you are shorter than average and that being short is a conventionally unattractive trait. Your height is not something you can control so why worry about it? Worrying will change nothing but make you suffer." This statement is rational and grounded in reality but is there a switch this man can turn off to stop thinking about it? Such an attempt at avoiding emotions instead of dealing with them is called [intellectualization](https://en.wikipedia.org/wiki/Intellectualization). It is not good for your mental health.
+A rational person might tell this man that "It is true that you are shorter than average and that being short is a conventionally unattractive trait. Your height is not something you can control so why worry about it? Worrying will change nothing but make you suffer." This statement is rational and grounded in reality but is there a switch this man can turn off to stop thinking about it? Such an attempt at avoiding emotions instead of dealing with them is called [intellectualization](https://en.wikipedia.org/wiki/Intellectualization). It is not good for your mental health.
 
 So what should the man have done? What should we tell people who feel bad about their bodies? How to deal with misery?
 
@@ -71,6 +71,9 @@ To minimize the effect of suffering on our well-being that life constantly throw
 
 I can not prevent unwanted outcomes but I can choose how I will respond when they come. When I'm reminded of my partner's mortality, instead of getting sad, I will kiss and hug her tightly to celebrate her existence. When she dies, I will cry, a lot. My friends will hold me and say nothing. That's how I choose to respond to the thought and fact of her dying.
 
+> When a dog is tied to a cart, if it wants to follow, it is pulled and follows, making its spontaneous act coincide with necessity. But if the dog does not follow, it will be compelled in any case. So it is with men too: even if they don't want to, they will be compelled to follow what is destined.
+> ― Zeno of Citium
+
 #### Takeaways
 - Self-care is taking care of yourself so neither your brain nor your body are weighing you down on the quest to live a good life.
 - Delusional coping mechanisms aren't good. Intellectualization isn't good either.
@@ -87,9 +90,9 @@ This is why many philosophers especially Buddha considered desires to be a major
 
 So, I have a considerable amount of followers on the internet. Every once in a while, I get offers from companies to promote their product to my followers in exchange for money or some other reward. These products are not scams/bad but they are not good enough to be genuinely recommended either so I decline. What do I *gain* from protecting my followers in silence? Nothing. If I accept the offer, however, I *gain* money that I can later spend on whatever for pleasure.
 
-This has nothing to do with ethics or morals, it is about doing what I want to do. I desire to act with integrity and that may make me miss out on immediate pleasure but doing so gives me satisfaction. Moreover, it saves me from the guilt (and other painful emotions) I would receive if I betrayed myself and took the money.
+This has nothing to do with ethics or morals, it is about doing what I want to do. I desire to act with integrity and that may deprive me of immediate pleasure but doing so gives me satisfaction. Moreover, it saves me from the guilt (and other painful emotions) I would receive if I betrayed myself and took the money. My actions are in harmony with my thoughts, isn't that what one craves, to do as they see fit?
 
-I have observed that not doing what you think you should be doing is what causes the most amount of dissatisfaction.
+I have observed that not saying/doing what you think you should be saying/doing is what causes the most amount of dissatisfaction. It is suffocating.
 
 #### Takeaways
 - Desires give pleasure and satisfaction when fulfilled.
