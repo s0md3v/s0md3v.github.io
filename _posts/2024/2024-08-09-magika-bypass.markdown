@@ -3,7 +3,7 @@ layout: post
 title:  "Bypassing Google's Magika & Bullying AI"
 date:   2024-08-09 17:19:00 +0530
 author: Somdev Sangwan
-tags:   [research, osint]
+tags:   [research]
 image: /imgs/thumbs/magika-bypass.jpg
 permalink: /blog/magika-bypass
 description: "So, you want to bypass AI-powered detection?"  
@@ -19,7 +19,7 @@ Unless the scope is extremely narrow and well-defined, successfully detecting so
 Developers at Google published a research paper introducing a tool called Magika, designed to detect file types using deep learning.
 
 I must admit, I didn't read the research paper to learn how it works before forming the opinion, "*This is a terrible idea and there's no way it works better than the current solutions.*"\
-I was right, let me walk through how I did it.
+I was right, let me walk through how I bypassed did it.
 
 Imagine you’re shown a paused TV screen with a subtitled movie scene. The subtitle reads: `She said, 'ワンピースは本物です.'`
 
@@ -40,12 +40,12 @@ Despite the `.ps1` extension, Magika detected this script as Python with 100% ce
 
 ![google magika bypass](/imgs/inline/magika-bypass.png)
 
-Related: https://github.com/google/magika/issues/61
+Related: [https://github.com/google/magika/issues/61](https://github.com/google/magika/issues/61)
 
 ## What is a photo?
 By the end of 2023, I had seen quite a bit of "AI generated content" detectors and knew they don't work well. Then, one day, I noticed an AI-generated image platform being discussed in fact-checking circles. Since journalism and fighting misinformation are critical fields, I decided to demonstrate how flawed these detectors can be.
 
-The platform in question was: https://app.illuminarty.ai
+The platform in question was: [app.illuminarty.ai](https://app.illuminarty.ai)
 
 Given enough AI-generated photos, any detector of this kind would inevitably produce false negatives but the goal was to a method that does it consistently.
 
@@ -59,7 +59,7 @@ To transfer this pattern to an AI generated photo, I used a [LoRA](https://civit
 
 ![ai detector bypass](/imgs/inline/lora-bypass.jpg)
 
-Related: https://x.com/s0md3v/status/1731651150926254321
+Related: [https://x.com/s0md3v/status/1731651150926254321](https://x.com/s0md3v/status/1731651150926254321)
 
 ### What is bad?
 > At the time of publishing this article, 9 months have passed since I bypassed Google Magika. I am throwing in a llama3.2 9B bypass to celebrate this article finally coming out. This LLM bypass's variations have been done before but I am including it anyway as it goes with the "what is ___" point I am trying to make.
