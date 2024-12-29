@@ -4,7 +4,7 @@ title:  "Bypassing Google's Magika & Bullying AI"
 date:   2024-08-09 17:19:00 +0530
 author: Somdev Sangwan
 tags:   [research, osint]
-image: /imgs/thumbs/magika-bypass.png
+image: /imgs/thumbs/magika-bypass.jpg
 permalink: /blog/magika-bypass
 description: "So, you want to bypass AI-powered detection?"  
 ---
