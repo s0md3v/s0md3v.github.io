@@ -47,7 +47,7 @@ By the end of 2023, I had seen quite a bit of "AI generated content" detectors a
 
 The platform in question was: [app.illuminarty.ai](https://app.illuminarty.ai)
 
-Given enough AI-generated photos, any detector of this kind would inevitably produce false negatives but the goal was to a method that does it consistently.
+If given enough AI-generated photos, any detector of this kind would inevitably produce false negatives but the goal was to develop a method that does it consistently.
 
 This leads to the question, if I were to build this detection software from scratch - what would I do?  
 
