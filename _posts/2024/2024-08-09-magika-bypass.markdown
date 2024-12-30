@@ -11,7 +11,7 @@ description: "So, you want to bypass AI-powered detection?"
 
 To develop a software that can detect chairs in a photograph, you will need to define what a [chair](https://www.youtube.com/watch?v=fXW-QjBsruE) is first. Is a chair still a chair if one of its legs is removed, or does it become something else? Does a chair even need legs? At what point does a chair transition into a couch?  
 
-Unless the scope is extremely narrow and well-defined, successfully detecting something without any failure is impossible. This challenge excites me when it comes to bypassing antiviruses, firewalls, and now "AI."
+Unless the scope is extremely narrow and well-defined, successfully detecting something without any failure is impossible. This excites me when it comes to bypassing antiviruses, firewalls, and now "AI."
 
 > Note: AI has become an umbrella term to describe software using machine learning, neural networks etc. It is being used in the same manner throughout this blog.
 
@@ -25,7 +25,7 @@ Imagine you’re shown a paused TV screen with a subtitled movie scene. The subt
 
 Now, is the movie in English or Japanese? It’s obvious that it’s in English, with Japanese being quoted. We infer this because we understand how language works. If a software was  designed to simply count words, it would classify it as Japanese as there are more japanese words in it.
 
-I could have applied the same principle to create a [polyglot](https://en.wikipedia.org/wiki/Polyglot_(computing)) but it was more challenging to create a program in one language that gets detected as some other programming languages.
+I could have tried to apply the same principle to create a [polyglot](https://en.wikipedia.org/wiki/Polyglot_(computing)) but it was more challenging to create a program in one language that gets detected as some other programming language.
 
 To do this, I started by checking which programming languages use the same syntax for declaring single-line comments - I got python and powershell. With bit of a trial and error, I created the follwing powershell script:
   
