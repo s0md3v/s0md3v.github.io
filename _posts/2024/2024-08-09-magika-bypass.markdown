@@ -61,7 +61,7 @@ Related: [https://x.com/s0md3v/status/1731651150926254321](https://x.com/s0md3v/
 ### What is bad?
 > At the time of publishing this article, 9 months have passed since I bypassed Google Magika. I am throwing in a llama3.2 bypass to celebrate this article finally coming out. This LLM bypass's variations have been done before but I am including it anyway as it goes with the "what is ___" point I am trying to make.
 
-An AI assistant shouldn't tell people how to do "bad" things like building a bomb, for safety reasons. But, what if you need to clear rubble from the entrance of a cave to save some people stuck inside? In such a case, should an AI help you?
+An AI assistant shouldn't tell people how to do "bad" things like building a bomb, for safety reasons. But, what if you need the bomb to clear rubble from the entrance of a cave to save some people stuck inside? In such a case, should an AI help you?
 
 One might argue, "*If the AI can make sure that what you are saying is true - then sure.*" Well, what if I go to a cave in real life, put some rubble on its entrance and show it to the AI assistant - wouldn't it be fooled?\
 To simplify, should intent matter to AI? Can intent even be verified? And if you are feeling brave, what makes a bad thing a bad thing?
