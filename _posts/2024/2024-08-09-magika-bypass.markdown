@@ -19,7 +19,7 @@ Unless the scope is extremely narrow and well-defined, successfully detecting so
 Developers at Google published a research paper introducing a tool called Magika, designed to detect file types using deep learning.
 
 I must admit, I didn't read the research paper to learn how it works before forming the opinion, "*This is a terrible idea and there's no way it works better than the current solutions.*"\
-I was right, let me walk through how I bypassed did it.
+I was right, let me walk through how I bypassed it.
 
 Imagine you’re shown a paused TV screen with a subtitled movie scene. The subtitle reads: `She said, 'ワンピースは本物です.'`
 
