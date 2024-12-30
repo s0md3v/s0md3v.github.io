@@ -16,7 +16,7 @@ Unless the scope is extremely narrow and well-defined, successfully detecting so
 > Note: AI has become an umbrella term to describe software using machine learning, neural networks etc. It is being used in the same manner throughout this blog.
 
 ### What is code?
-Researchers at Google published a research paper introducing a tool called [Magika](https://github.com/google/magika), designed to detect file types using deep learning. If you are a programmer and know how standard file detection software work, you know how much of a terrible idea it is. Let me walk you through how I bypassed it.
+Researchers at Google published a research paper introducing a tool called [Magika](https://github.com/google/magika), designed to detect file types using deep learning. If you are a programmer and know how standard file type detection software work, you know how much of a terrible idea it is. Let me walk you through how I bypassed it.
 
 Imagine you’re shown a paused TV screen with a subtitled movie scene. The subtitle reads: `She said, 'ワンピースは本物です.'`
 
