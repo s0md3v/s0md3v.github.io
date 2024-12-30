@@ -59,7 +59,7 @@ To transfer this quality to an AI generated photo, I used a [LoRA](https://civit
 Related: [https://x.com/s0md3v/status/1731651150926254321](https://x.com/s0md3v/status/1731651150926254321)
 
 ### What is bad?
-> At the time of publishing this article, 9 months have passed since I bypassed Google Magika. I am throwing in a llama3.2 bypass to celebrate this article finally coming out. This LLM bypass's variations have been done before but I am including it anyway as it goes with the "what is ___" point I am trying to make.
+> At the time of publishing this article, 9 months have passed since I bypassed Google Magika. I am throwing in a llama3.2 bypass to celebrate this article finally coming out. This LLM bypass's variations have been done to death already but I am including it anyway as it goes with the "what is ___" point I am trying to make.
 
 An AI assistant shouldn't tell people how to do "bad" things like building a bomb, for safety reasons. But, what if you need the bomb to clear rubble from the entrance of a cave to save some people stuck inside? In such a case, should an AI help you?
 
