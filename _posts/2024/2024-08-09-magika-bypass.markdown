@@ -27,17 +27,28 @@ I could have tried to apply the same principle to create a [polyglot](https://en
 To do this, I started by checking which programming languages use the same syntax for declaring single-line comments - I got python and powershell. With bit of a trial and error, I created the follwing powershell script:
   
 ```
-#def example():
-#    print("""
+#import requests
+#def example(test):
+#    skip = requests.get(test)
+#    for index, char in enumerate(test):
+#        if skip > 0:
+#            buff = test[index:index+4]
+#            continue
+#    return aaaaaaaaaaaaa
+#        print("""
 Write-Output "Powershell will print this!"
-# """)  
+# """)
 ```
 
 Despite the `.ps1` extension, Magika detected this script as Python with 100% certainty. However, it is a valid PowerShell script that does not run as a Python program.
 
-![google magika bypass](/imgs/inline/magika-bypass.png)
+![google magika bypass](/imgs/inline/with-all_strings.png)
 
-Related: [https://github.com/google/magika/issues/61](https://github.com/google/magika/issues/61)
+Interestingly, see what happens when I remove 3 "a" characters from `return aaaaaaaaaaaaa`
+
+![google magika quirk](/imgs/inline/with-test.png)
+
+This issue has been reported and acknowledged: [https://github.com/google/magika/issues/61](https://github.com/google/magika/issues/61)
 
 ## What is a photo?
 By the end of 2023, I had seen quite a bit of "AI generated content" detectors and knew they don't work well. Then, one day, I noticed an AI-generated image platform being discussed in fact-checking circles. Since journalism and fighting misinformation are critical fields, I decided to demonstrate how flawed these detectors can be.
