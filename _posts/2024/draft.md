@@ -1,3 +1,5 @@
+> **Disclaimer:** Neuroscience and psychology are rapidly evolving fields and scientific understanding of the brain keeps changing as new discoveries are made. In writing this article, I've tried to balance accuracy with accessibility while staying true to current scientific understanding. Since I'm self-taught in these subjects (and not qualified in any way), I've been careful to stick to well-established findings from credible sources.
+
 We often do things that we know are not good for us such not following through with "I will start working out" plans or buying an expensive product we don't really need.
 The former is called procrastination (i.e. delaying an action that you want to take), the latter is Akrasia or lack of self-control (i.e. taking an action that you know is bad for you).
 
@@ -10,6 +12,31 @@ As a result, what ends up happening is that people get partial understanding of 
 The aim of this article is to first help you eliminate self-blame by explaining the science behind it and then provide proven ways to overcome it, especially procrastination.
 
 > **Note:** Mental disorders such as depression, ADHD and anxiety can lead to poor self-control and procrastination in ways that require medical intervention. Regardless, the information here should prove useful but it can not replace a therapist/psychatrist's help.
+
+## How we decide what to do
+The brain is not a single entity, it is made up of many complex interconnected parts and they work together to sense, feel, think, decide and do. For example, if you just finished watching a great episode of a show late at night, the interaction of these parts may go something like this:  
+1. **Part #1:** *"If we sleep now, we can get enough sleep to work efficiently tomorrow. We are going to wake up in a terrible state if stay up any longer."*
+2. **Part #2:** *"But that cliffhanger! We need to know what happens next!"*
+3. **Part #3:** *"Speaking of work, I wonder how the presentation is gonna go. I am a bit worried."*
+4. **Part #4:** *"Why are we even discussing this? We always discuss this and we almost always end up watching more."*
+
+In this case, sleeping right away would ensure our well-being the next but that doesn't always happen. To understand why, lets name the hypothetical parts in the list above first:
+1. **Prefrontal cortex (PFC):** Does reasoning and planning.
+2. **Limbic system:** Involved in emotional, instinctive and reward-seeking behaviour.
+3. **Amygdala:** Drives "fight-or-flight" responses and emotional reactions.
+4. **Basal ganglia:** Responsible for habitual and automatic behaviour.
+
+If you were a purely rational person, you might ask your date if they have any infections before kissing and never eat ice-cream. Moreover, reasoning takes time which can't help with split-seconds decision and not doing some things on "autopilot" would cause immense mental fatigue. We can make a long list of problems such a person would face.
+Thus, each part is important but it appears that sometimes the *wrong* part ends up making us performn an action.
+
+To improve self-control (use reasoning over impulse), we should first learn how to identify which part of the brain is making us irrational. Some of the influencing factors are:
+
+1. **Energy State:** Self-control requires significant mental energy. When you're tired, hungry, or have made too many decisions (decision fatigue), the PFC's influence weakens dramatically. This is why you might make poorer food choices after a long day.
+2. **Habit Strength:** The basal ganglia automates frequently repeated behaviors to save mental energy. Research shows that about 40% of our daily actions are habits rather than conscious decisions. Once a behavior becomes habitual, it requires substantial effort from the PFC to override it.
+3. **Stress Level:** When you're stressed, cortisol levels rise and the emotional and survival-focused parts of your brain tend to override the PFC. This evolutionary response prioritizes quick reactions over careful deliberation, making it harder to resist impulses/habits when you're anxious or overwhelmed.
+4. **Environmental Cues:** Your surroundings can trigger automatic responses before your PFC has a chance to intervene. These cues are particularly powerful because they can activate impulsive brain regions before conscious awareness. For instance, simply seeing a smartphone notification can impair cognitive performance, even when trying to ignore it.
+5. **Emotional State:** Strong emotions can bypass rational thinking. When you're excited, angry, or sad, the limbic system's voice grows louder while the PFC's voice becomes harder to hear.
+6. **Time Pressure:** When you feel rushed, your brain shifts towards quick, emotion-based decisions rather than careful reasoning. This is why "sleeping on it" often leads to better choices. While significant, time pressure typically has less impact than the above factors unless it's extreme, as demonstrated by research showing that time pressure mainly affects decision quality when combined with other stressors.
 
 ## Why do anything at all?
 Be it watching a movie, insulting someone, eating unhealthy food or taking a bath — all of our actions have reason(s) behind them; even if we can't identify them.
@@ -116,3 +143,11 @@ The closing eyes and breathing technique we discussed earlier does two major thi
 2. Since your eyes are closed and you are trying to shift the focus to breathing, the PFC is encouraged to take over and really think about what you are going to do next.
 
 This obviously cures the symptoms, not the root cause. What is even the root cause behind poor self-control? THere are several. Here's a list:
+
+#### References
+[^reward]: [Reward system - Wikipedia](https://en.wikipedia.org/wiki/Reward_system)
+[^time]: [Time preference - Wikipedia](https://en.wikipedia.org/wiki/Time_preference)
+[^delayed]: [Delayed gratification - Wikipedia](https://en.wikipedia.org/wiki/Delayed_gratification)
+[^dopamine]: [Dopamine - Wikipedia](https://en.wikipedia.org/wiki/Dopamine)
+[^pfc]: Fuster JM. The Prefrontal Cortex. Academic Press; 2008
+[^resource]: [Muraven, M., & Baumeister, R. F. (2000). Self-regulation and depletion of limited resources: Does self-control resemble a muscle?](https://psycnet.apa.org/doi/10.1037/0033-2909.126.2.247)
