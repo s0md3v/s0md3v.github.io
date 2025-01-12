@@ -1,3 +1,16 @@
+---
+layout: post
+title:  "How to get your life together"
+date:   2024-01-12 01:19:00 +0530
+author: Somdev Sangwan
+tags:   [philosophy]
+image: /imgs/thumbs/fix-life.png
+permalink: /blog/get-life-together
+description: "Want to beat procrastination and impulsive decisions?"  
+---
+
+tl;dr: this is for you if you know what should be doing but you can't do it, you feel you are stuck in life or you make terrible decisions often.
+
 > **Disclaimer:** Neuroscience and psychology are rapidly evolving fields and scientific understanding of the brain keeps changing as new discoveries are made. In writing this article, I've tried to balance accuracy with accessibility while staying true to current scientific understanding. Since I'm self-taught in these subjects (and not qualified in any way), I've been careful to stick to well-established findings from credible sources.
 
 We often do things that we know are not good for us such not following through with "I will start working out" plans or buying an expensive product we don't really need.
@@ -20,11 +33,15 @@ The brain is not a single entity, it is made up of many complex interconnected p
 3. **Part #3:** *"Speaking of work, I wonder how the presentation is gonna go. I am a bit worried."*
 4. **Part #4:** *"Why are we even discussing this? We always discuss this and we almost always end up watching more."*
 
-In this case, sleeping right away would ensure our well-being the next but that doesn't always happen. To understand why, lets name the hypothetical parts in the list above first:
-1. **Prefrontal cortex (PFC):** Does reasoning and planning.
-2. **Limbic system:** Involved in emotional, instinctive and reward-seeking behaviour.
-3. **Amygdala:** Drives "fight-or-flight" responses and emotional reactions.
-4. **Basal ganglia:** Responsible for habitual and automatic behaviour.
+In this case, sleeping right away would ensure our well-being the next but that doesn't always happen. To understand why, lets first name some of the major systems that influence our decisions:
+
+1. **Prefrontal Cortex (PFC):** Governs reasoning, planning, and impulse control.
+2. **Limbic System:** Drives emotional, instinctive, and reward-seeking behavior.
+3. **Reward System:** Reinforces behaviors through dopamine-driven rewards.
+4. **Basal Ganglia:** Automates habitual and goal-directed behaviors.
+5. **Anterior Cingulate Cortex (ACC):** Monitors conflicts and signals the need for control.
+
+> **Note:** This is neither precise nor a complete list for the sake of casual readers.
 
 If you were a purely rational person, you might ask your date if they have any infections before kissing and never eat ice-cream. Moreover, reasoning takes time which can't help with split-seconds decision and not doing some things on "autopilot" would cause immense mental fatigue. We can make a long list of problems such a person would face.
 Thus, each part is important but it appears that sometimes the *wrong* part ends up making us performn an action.
@@ -34,14 +51,35 @@ To improve self-control (use reasoning over impulse), we should first learn how 
 1. **Energy State:** Self-control requires significant mental energy. When you're tired, hungry, or have made too many decisions (decision fatigue), the PFC's influence weakens dramatically. This is why you might make poorer food choices after a long day.
 2. **Habit Strength:** The basal ganglia automates frequently repeated behaviors to save mental energy. Research shows that about 40% of our daily actions are habits rather than conscious decisions. Once a behavior becomes habitual, it requires substantial effort from the PFC to override it.
 3. **Stress Level:** When you're stressed, cortisol levels rise and the emotional and survival-focused parts of your brain tend to override the PFC. This evolutionary response prioritizes quick reactions over careful deliberation, making it harder to resist impulses/habits when you're anxious or overwhelmed.
-4. **Environmental Cues:** Your surroundings can trigger automatic responses before your PFC has a chance to intervene. These cues are particularly powerful because they can activate impulsive brain regions before conscious awareness. For instance, simply seeing a smartphone notification can impair cognitive performance, even when trying to ignore it.
+4. **Environmental Cues:** Your surroundings can trigger automatic responses before your PFC has a chance to intervene. These cues are particularly powerful because they can activate impulsive brain regions before conscious awareness. For example, research hints that the mere presence of your smartphone hinders your attention[^phone], let alone a notification.
 5. **Emotional State:** Strong emotions can bypass rational thinking. When you're excited, angry, or sad, the limbic system's voice grows louder while the PFC's voice becomes harder to hear.
 6. **Time Pressure:** When you feel rushed, your brain shifts towards quick, emotion-based decisions rather than careful reasoning. This is why "sleeping on it" often leads to better choices. While significant, time pressure typically has less impact than the above factors unless it's extreme, as demonstrated by research showing that time pressure mainly affects decision quality when combined with other stressors.
 
-## Why do anything at all?
-Be it watching a movie, insulting someone, eating unhealthy food or taking a bath — all of our actions have reason(s) behind them; even if we can't identify them.
+To sum it up, if we are not tired, under stress, emotional turbulence or following a habit in a given moment — we are likely to make more rational decisions. It is not possible to become immune to these conditions but it is possible to pause them long enough to regain control. This can be done with something as simple as closing your eyes and taking 10-20 deep breaths. No, this isn't meditation, some spriritual bullshit or a even a solution. It is just a way for you to get enough calmness, focus and time to actually *think* instead of taking whatever action/decision your non-rational parts are leading you towards.
 
-The "reward system" is one of the many systems in the brain that influence what we choose do. It is a group of brain components that helps us evaluate the pros and cons of actions, reinforce the actions that are rewarding and make decisions.[^reward] For example, if an action leads to pleasure or helps us avoid discomfort/pain — the brain says "this is a good thing to do" and the reward system generates motivation to do it again. It is an execellent evolutionary behaviour to help us improve our well-being by motivating us to do what works in our favour.
+Let me explain why it works:
+1. It momentarily disengages both your vision and attention from the external stimuli that might be triggering impulsive or emotional reactions.
+2. Deep breathing activates your parasympathetic nervous system which controls stress/anxiety levels. In simply words, It tells the brain that you are not in a stressful situation (even when you are) and there's enough time to think.
+3. It gives the brain enough time to let the reaction/impuslve/urge pass.
+4. Due to the effects above, the PFC gets enough time and clarity to do its job.
+
+This can help you with the urge to check your phone, order a pizza, send an angry text, avoid a task or going back to sleep after your alarm rings.
+
+To add structure to this technique, you can inhale for 4 seconds, hold it for another 4 seconds and then exhale for 4 seconds.
+
+Not only that it works, the need to do this should decrease because research (and common sense) shows that self-control can be trained and made stronger like a muscle.[^executive]
+There's no need to make this complicated. Even waiting for a one minute before watching your favourite piece of media, meditating, exercising and just using self-control more often will do wonders.
+
+You should also know that, self-control is a resource that gets depleted over the day as you use it and restores during sleep.[^ego] The more emotions/impulses you control, the easier it becomes to lose control. It's not always possible but try to keep your environment distraction and stress free.
+
+Now that you have learned to identify why and when your brain stops *thinking straight* as well as what to do about it, you have two options:
+
+[[Skip to "How to get things done"](https://s0md3v.github.io/blog/get-life-together#how-to-get-things-done)]
+
+Or, read about the "reward system" of our brain that drives motivation and our urge to choose a fun task (e.g. scrolling) over a boring one (e.g. studying).
+
+### Reward System
+The "reward system" (mentioned as l) is one of the many systems in the brain that influence what we choose do. It is a group of brain components that helps us evaluate the pros and cons of actions, reinforce the actions that are rewarding and make decisions.[^reward] For example, if an action leads to pleasure or helps us avoid discomfort/pain — the brain says "this is a good thing to do" and the reward system generates motivation to do it again. It is an execellent evolutionary behaviour to help us improve our well-being by motivating us to do what works in our favour.
 
 > **Note:** Most of us won't snatch a sandwich from a child to satisfy our hunger even if we can get away with it. Self-control exists in our brain among many other processes, we are not just reward-seeking machines. The reward system is being discussed because it is at the heart of the problem.
 
@@ -54,16 +92,12 @@ For example, if you like cakes and were given the choice to recieve a cake now o
 This is a fair evaluation but when faced by more complex choices, the reward system may lead us to an action that isn't neccessarily good for us.
 Deciding to watch your favourite show (immediate reward) over studying for exam (delayed reward) is a choice that may harm us in the long run.
 
-Delayed gratification, or deferred gratification, is the ability to resist the temptation of a smaller immediate reward in favor of a more valuable and long-lasting reward later. It differs from person to person and action to action.[^delayed]
+Delayed gratification, or deferred gratification, is the ability to resist the temptation of a smaller immediate reward in favor of a more valuable and long-lasting reward later. It differs from person to person and action to action.[^delayed]\
+Thankfully, delayed gratification is a form* of self-control and can similarly be improved through practice.
 
-Thankfully, both common sense and growing studies suggest that self-control (and thus delay gratification) is something that can be trained and improved — just like a muscle.
+I wish I could end this section about the system here here but I must discuss Dopamine as its a commonly misunderstood concept.
 
-Before we discuss that, let me give you a primer to a topic frequently surrounded by misinformation — dopamine.
-
-## Dopamine
-Our brain sends messages to our body (including parts of the brain itself) through chemicals called neurotransmitters, dopamine is one of them.[^dopamine]
-
-> **Note:** Dopamine and reward system isn't everything, there's more to decision-making. Moreover, the workings of dopamine are complex and still under heavy research. The information in this article is based on credible sources and should be mostly correct, but it may need updating as new discoveries are made or errors arise during simplification for casual readers.
+So, our brain sends messages to our body (including parts of the brain itself) through chemicals called neurotransmitters, dopamine is one of them.[^dopamine]
 
 Dopamine performs many functions, but this article focuses on one of its major roles—causing "wanting." When the brain's reward system decides we should "want" to perform a certain action, it signals this through dopamine release. Once the action is performed, dopamine is released again, contributing to feelings of pleasure.
 
@@ -88,7 +122,7 @@ By carefully choosing what we want to feel motivated about doing and to what ext
 
 Now that we have a better understanding of the reward system and dopamine, lets talk about how to use this information to our advantage.
 
-## How to get things done?
+## How to get things done
 First of all, procrastination is not limited to "getting distracted by immediate rewards". See if anything applies to you from the following list:
 
 1. **Circadian Rhythm:** Your biological clock influences alertness and motivation. *Night owls* for instance, may procrastinate in the morning due to low energy levels.
@@ -106,7 +140,7 @@ Staying away from "quick and easy" rewarding activities is the easiest way to ge
 
 The mistake a lot of people make when trying to change their lifestyle for the better is that they change too many things too quick. By starting small, you will see results without too much effort and stress which should make it easier to stay motivated. Remember, when we do something rewarding, the brain motivates us to do it again. Keeping that in mind, below is what I suggest you to do:
 
-1. It is hard to go from rest/fun to a task because reward system finds it less rewarding. To get around this, close your eyes and do 10 cycles of deep breaths. Additionally, every time you open your eyes, you can make the task seem less stressful by saying: "Once I am done with this small task — I am free to spend my day however I like." What this does is, it tells your brain that "We are okay, we have plenty of time to make a decision so don't be impulsive, lets think this through" (more on this in the self-control section). You can repeat this process multiple times if required.
+1. It is hard to go from rest/fun to a task because reward system finds it less rewarding. To get around this, use the breathing technique mentioned ealier. Additionally, you can make the task seem less stressful by saying out loud: "Once I am done with this small task — I am free to spend my day however I like." You can repeat the breathing and self-assuration multiple times if required.
 2. When you are about to start doing something you want to, keep your phone out of your room to minimize habitual checking. If your task takes place on the computer, use a website blocking browser extension or software.
 3. If your goal is to read a book for example, do not say to yourself "I will try reading this book, I will try my best". Make it your goal to read just one page, do just 10 push-ups or write just one paragraph. Because if you push yourself too much, starting the task may become harder next time because your brain may associate it with high-effort and stressful.
 4. Everytime you feel the urge to quit before finishing this small task, do the deep breathing mentioned earlier. 
@@ -132,22 +166,18 @@ When you reach a point where you can say "Wow, I am finally getting some things 
 
 This should be enough to get your life back on track. I will say it again, if you have an underlying medical condition please seek treatment.
 
-#### Self-control
-Prefrontal cortex (PFC) is the brain region which keeps track of the *current situation* (called working memory) and uses its connections with other parts for reasoning, planning and decision-making (and much more). [^pfc] 
+## Conclusion
+If nothing changes, nothing changes. The change in this case starts with replacing "what's wrong with me" with "i know exactly what's wrong with me" and then being patient with yourself as you make gradual progress that eventually pulls you from rock bottom.
 
-Why doesn't PFC always keep us on track then? Because not every action needs rational thinking and planning. There are other parts of the brain that help with emotional or impulsive response, split-second decisions, stress response, habitual behaviour etc.
-Which one of these systems takes over depends on the context and our mental state.
-
-The closing eyes and breathing technique we discussed earlier does two major things:
-1. It activates the parasympathetic nervous system (PNS) which is your body's way to reduce stress and alertness once it is no longer needed. Simply, you are insisting that there's no need to be hasteful and stressed; everything is fine.
-2. Since your eyes are closed and you are trying to shift the focus to breathing, the PFC is encouraged to take over and really think about what you are going to do next.
-
-This obviously cures the symptoms, not the root cause. What is even the root cause behind poor self-control? THere are several. Here's a list:
+If this article benefits you in future (or already has), [support me with some money](https://buymeacoffee.com/s0md3v).
 
 #### References
 [^reward]: [Reward system - Wikipedia](https://en.wikipedia.org/wiki/Reward_system)
 [^time]: [Time preference - Wikipedia](https://en.wikipedia.org/wiki/Time_preference)
 [^delayed]: [Delayed gratification - Wikipedia](https://en.wikipedia.org/wiki/Delayed_gratification)
 [^dopamine]: [Dopamine - Wikipedia](https://en.wikipedia.org/wiki/Dopamine)
-[^pfc]: Fuster JM. The Prefrontal Cortex. Academic Press; 2008
+[^pfc]: [Fuster JM. The Prefrontal Cortex. Academic Press; 2008]()
 [^resource]: [Muraven, M., & Baumeister, R. F. (2000). Self-regulation and depletion of limited resources: Does self-control resemble a muscle?](https://psycnet.apa.org/doi/10.1037/0033-2909.126.2.247)
+[^ego]: [Prolonged exertion of self-control causes increased sleep-like frontal brain activity and changes in aggressivity and punishment](https://www.pnas.org/doi/10.1073/pnas.2404213121)
+[^phone]: [Brain Drain: The Mere Presence of One’s Own Smartphone Reduces Available Cognitive Capacity](https://www.journals.uchicago.edu/doi/10.1086/691462)
+[^executive]: [Diamond A. Executive functions](https://pmc.ncbi.nlm.nih.gov/articles/PMC4084861/)
