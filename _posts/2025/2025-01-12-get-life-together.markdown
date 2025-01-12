@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "How to get your life together"
-date:   2024-01-12 01:19:00 +0530
+date:   2025-01-12 01:19:00 +0530
 author: Somdev Sangwan
 tags:   [philosophy]
 image: /imgs/thumbs/fix-life.png
