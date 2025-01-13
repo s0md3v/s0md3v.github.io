@@ -11,7 +11,7 @@ description: "Want to beat procrastination and impulsive decisions?"
 
 TL;DR: this is for you if you procrastinate or often make decisions that you regret later
 
-> **Disclaimer:** Neuroscience and psychology are rapidly evolving fields and scientific understanding of the brain keeps changing as new discoveries are made. In writing this article, I've tried to balance accuracy with accessibility while staying true to current scientific understanding. Since I'm self-taught in these subjects (and not qualified in any way), I've been careful to stick to well-established findings from credible sources.
+> **Disclaimer:** Neuroscience and psychology are rapidly evolving fields and scientific understanding of the brain keeps changing as new discoveries are made. In writing this article, I've tried to balance accuracy with accessibility while staying true to current scientific understanding. Since I'm self-taught in these subjects (and not qualified in any way), this article is mostly a compilation of already established information from credible sources. I have been careful not to make any claims of my own but this article shouldn't be confused with a subject matter expert's opinion in any way.
 
 We often do things that we know are not good for us such as not following through on plans like 'I will start working out' or buying an expensive product we don't really need.
 The former is called procrastination (i.e. delaying an action that you want to take), the latter is Akrasia or lack of self-control (i.e. taking an action that you know is harmful for you).
