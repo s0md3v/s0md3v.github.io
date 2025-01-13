@@ -70,7 +70,7 @@ To add structure to this technique, you can inhale for 4 seconds, hold it for an
 Not only that it works, the need to do this should decrease because research (and common sense) shows that self-control can be trained and made stronger like a muscle.[^executive]
 There's no need to make this complicated. Even waiting for a one minute before watching your favourite piece of media, meditating, exercising and just using self-control more often will do wonders.
 
-You should also know that, self-control is a resource that gets depleted over the day as you use it and restores during sleep.[^ego] The more emotions/impulses you try supress, the easier it becomes to lose control. Try your best to keep your environment distraction and stress free.
+The breathing technique mentioned here or being self-aware only deals with symptoms. If possible, try to fix the root cause thats trigger your brain to be irrational. Research shows that self-control is a resource that gets depleted over the day as you use it and restores during sleep.[^ego] The more emotions/impulses you try to supress, the easier it becomes to lose control. For this reason, you should try your best to keep your environment distraction and stress free, and avoid bottling up emotions.
 
 Now that you have learned to identify why and when you may take an irritional decision as well as what to do about it, you have two options:
 
