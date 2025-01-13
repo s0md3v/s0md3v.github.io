@@ -9,12 +9,12 @@ permalink: /blog/get-life-together
 description: "Want to beat procrastination and impulsive decisions?"
 ---
 
-TL;DR: this is for you if you know what should be doing but you can't do it, you feel you are stuck in life or you make terrible decisions often.
+TL;DR: this is for you if you procrastinate or often make decisions that you regret later
 
 > **Disclaimer:** Neuroscience and psychology are rapidly evolving fields and scientific understanding of the brain keeps changing as new discoveries are made. In writing this article, I've tried to balance accuracy with accessibility while staying true to current scientific understanding. Since I'm self-taught in these subjects (and not qualified in any way), I've been careful to stick to well-established findings from credible sources.
 
-We often do things that we know are not good for us such as not following through with "I will start working out" plans or buying an expensive product we don't really need.
-The former is called procrastination (i.e. delaying an action that you want to take), the latter is Akrasia or lack of self-control (i.e. taking an action that you know is bad for you).
+We often do things that we know are not good for us such as not following through on plans like 'I will start working out' or buying an expensive product we don't really need.
+The former is called procrastination (i.e. delaying an action that you want to take), the latter is Akrasia or lack of self-control (i.e. taking an action that you know is harmful for you).
 
 If you usually fail to do what you think you should do, you are not alone. There are millions of youtube videos about procrastination, thousands of self-help books and seemingly infinite web-pages.
 
@@ -24,16 +24,16 @@ As a result, what ends up happening is that people get partial understanding of 
 
 The aim of this article is to first help you eliminate self-blame by explaining the science behind it and then provide proven ways to overcome it, especially procrastination.
 
-> **Note:** Mental disorders such as depression, ADHD and anxiety can lead to poor self-control and procrastination in ways that require medical intervention. Regardless, the information here should prove useful but it can not replace a therapist/psychatrist's help.
+> **Note:** Mental disorders such as depression, ADHD and anxiety can lead to poor self-control and procrastination in ways that require medical intervention. Nonetheless, the information here should still prove useful, though it cannot replace professional help from a therapist or psychiatrist.
 
 ## How we decide what to do
 The brain is not a single entity, it is made up of many complex interconnected parts and they work together to sense, feel, think, decide and do. For example, if you just finished watching a great episode of a show late at night, the interaction of these parts may go something like this:
-1. **Part #1:** *"If we sleep now, we can get enough sleep to work efficiently tomorrow. We are going to wake up in a terrible state if we stay up any longer."*
-2. **Part #2:** *"But that cliffhanger! We need to know what happens next!"*
-3. **Part #3:** *"Speaking of work, I wonder how the presentation is gonna go. I am a bit worried."*
-4. **Part #4:** *"Why are we even discussing this? We always discuss this and we almost always end up watching more."*
+- *"If we sleep now, we can get enough sleep to work efficiently tomorrow. We are going to wake up in a terrible state if we stay up any longer."*
+- *"But that cliffhanger! We need to know what happens next!"*
+- *"Speaking of work, I wonder how the presentation is gonna go. I am a bit worried."*
+- *"Why are we even discussing this? We always discuss this and we almost always end up watching more."*
 
-In this case, sleeping right away would ensure our well-being the next but that doesn't always happen. To understand why, let's first name some of the major systems that influence our decisions:
+These internal debates stem from distinct systems within the brain, each influencing our behavior in different ways. Below are some of such major systems:
 
 1. **Prefrontal Cortex (PFC):** Governs reasoning, planning, and impulse control.
 2. **Limbic System:** Drives emotional, instinctive, and reward-seeking behavior.
@@ -55,11 +55,11 @@ To improve self-control (use reasoning over impulse), we should first learn how 
 5. **Emotional State:** Strong emotions can bypass rational thinking. When you're excited, angry, or sad, the limbic system's voice grows louder while the PFC's voice becomes harder to hear.
 6. **Time Pressure:** When you feel rushed, your brain shifts towards quick, emotion-based decisions rather than careful reasoning. This is why "sleeping on it" often leads to better choices. While significant, time pressure typically has less impact than the above factors unless it's extreme, as demonstrated by research showing that time pressure mainly affects decision quality when combined with other stressors.
 
-To sum it up, if we are not tired, under stress, emotional turbulence or following a habit in a given moment — we are likely to make more rational decisions. It is not possible to become immune to these conditions but it is possible to pause them long enough to regain control. This can be done with something as simple as closing your eyes and taking 10-20 deep breaths. No, this isn't meditation, some spiritual bullshit or a even a solution. It is just a way for you to get enough calmness, focus and time to actually *think* instead of taking whatever action/decision your non-rational parts are leading you towards.
+To sum it up, if we are not tired, under stress, emotional turbulence or following a habit in a given moment — we are likely to make more rational decisions. It is not possible to become immune to these conditions but it is possible to pause and regain control. This can be done with something as simple as closing your eyes and taking 10-20 deep breaths. No, this isn't meditation, some spiritual bullshit or a even a solution. It is just a way for you to get enough calmness, focus and time to actually *think* instead of taking whatever action/decision your non-rational parts are leading you towards.
 
 Let me explain why it works:
 1. It momentarily disengages both your vision and attention from the external stimuli that might be triggering impulsive or emotional reactions.
-2. Deep breathing activates your parasympathetic nervous system which controls stress/anxiety levels. In simply words, It tells the brain that you are not in a stressful situation (even when you are) and there's enough time to think.
+2. Deep breathing activates your parasympathetic nervous system which controls stress/anxiety levels. In simple words, It tells the brain that you are not in a stressful situation (even when you are) and there's enough time to think.
 3. It gives the brain enough time to let the reaction/impuslve/urge pass.
 4. Due to the effects above, the PFC gets enough time and clarity to do its job.
 
@@ -104,7 +104,7 @@ Dopamine performs many functions, but this article focuses on one of its major r
 It is released in three key phases:
 1. Anticipation: When you expect a reward and work towards it (i.e. when ordering a cake)
 2. During: While performing the rewarding activity (i.e. eating the cake)
-3. Completion: After task completion (i.e. after eating the cake and thus satisying your "want")
+3. Completion: After task completion (i.e. after eating the cake and thus satisfying your "want")
 
 The highest dopamine release occurs during the anticipation phase, which motivates us to complete the task. Dopamine levels during and after the task depend on prediction error — the difference between expectation and reality:
 
