@@ -70,7 +70,7 @@ To add structure to this technique, you can inhale for 4 seconds, hold it for an
 Not only that it works, the need to do this should decrease because research (and common sense) shows that self-control can be trained and made stronger like a muscle.[^executive]
 There's no need to make this complicated. Even waiting for a one minute before watching your favourite piece of media, meditating, exercising and just using self-control more often will do wonders.
 
-You should also know that, self-control is a resource that gets depleted over the day as you use it and restores during sleep.[^ego] The more emotions/impulses you control, the easier it becomes to lose control. It's not always possible but try to keep your environment distraction and stress free.
+You should also know that, self-control is a resource that gets depleted over the day as you use it and restores during sleep.[^ego] The more emotions/impulses you try supress, the easier it becomes to lose control. Try your best to keep your environment distraction and stress free.
 
 Now that you have learned to identify why and when you may take an irritional decision as well as what to do about it, you have two options:
 
@@ -168,6 +168,8 @@ This should be enough to get your life back on track. I will say it again, if yo
 
 ## Conclusion
 If nothing changes, nothing changes. The change in this case starts with replacing "what's wrong with me" with "i know exactly what's wrong with me" and then being patient with yourself as you make gradual progress that eventually pulls you from rock bottom.
+
+If you can learn just one thing from this article, it should be ability to be aware about what you are doing (or about to  do) and then give your brain a chance to think it over. Things will get better as your brain adapts to whatever you do, good or bad.
 
 If this article benefits you in future (or already has), [support me with some money](https://buymeacoffee.com/s0md3v).
 
