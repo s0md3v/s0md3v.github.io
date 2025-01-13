@@ -6,14 +6,14 @@ author: Somdev Sangwan
 tags:   [philosophy]
 image: /imgs/thumbs/fix-life.png
 permalink: /blog/get-life-together
-description: "Want to beat procrastination and impulsive decisions?"  
+description: "Want to beat procrastination and impulsive decisions?"
 ---
 
-tl;dr: this is for you if you know what should be doing but you can't do it, you feel you are stuck in life or you make terrible decisions often.
+TL;DR: this is for you if you know what should be doing but you can't do it, you feel you are stuck in life or you make terrible decisions often.
 
 > **Disclaimer:** Neuroscience and psychology are rapidly evolving fields and scientific understanding of the brain keeps changing as new discoveries are made. In writing this article, I've tried to balance accuracy with accessibility while staying true to current scientific understanding. Since I'm self-taught in these subjects (and not qualified in any way), I've been careful to stick to well-established findings from credible sources.
 
-We often do things that we know are not good for us such not following through with "I will start working out" plans or buying an expensive product we don't really need.
+We often do things that we know are not good for us such as not following through with "I will start working out" plans or buying an expensive product we don't really need.
 The former is called procrastination (i.e. delaying an action that you want to take), the latter is Akrasia or lack of self-control (i.e. taking an action that you know is bad for you).
 
 If you usually fail to do what you think you should do, you are not alone. There are millions of youtube videos about procrastination, thousands of self-help books and seemingly infinite web-pages.
@@ -27,13 +27,13 @@ The aim of this article is to first help you eliminate self-blame by explaining 
 > **Note:** Mental disorders such as depression, ADHD and anxiety can lead to poor self-control and procrastination in ways that require medical intervention. Regardless, the information here should prove useful but it can not replace a therapist/psychatrist's help.
 
 ## How we decide what to do
-The brain is not a single entity, it is made up of many complex interconnected parts and they work together to sense, feel, think, decide and do. For example, if you just finished watching a great episode of a show late at night, the interaction of these parts may go something like this:  
-1. **Part #1:** *"If we sleep now, we can get enough sleep to work efficiently tomorrow. We are going to wake up in a terrible state if stay up any longer."*
+The brain is not a single entity, it is made up of many complex interconnected parts and they work together to sense, feel, think, decide and do. For example, if you just finished watching a great episode of a show late at night, the interaction of these parts may go something like this:
+1. **Part #1:** *"If we sleep now, we can get enough sleep to work efficiently tomorrow. We are going to wake up in a terrible state if we stay up any longer."*
 2. **Part #2:** *"But that cliffhanger! We need to know what happens next!"*
 3. **Part #3:** *"Speaking of work, I wonder how the presentation is gonna go. I am a bit worried."*
 4. **Part #4:** *"Why are we even discussing this? We always discuss this and we almost always end up watching more."*
 
-In this case, sleeping right away would ensure our well-being the next but that doesn't always happen. To understand why, lets first name some of the major systems that influence our decisions:
+In this case, sleeping right away would ensure our well-being the next but that doesn't always happen. To understand why, let's first name some of the major systems that influence our decisions:
 
 1. **Prefrontal Cortex (PFC):** Governs reasoning, planning, and impulse control.
 2. **Limbic System:** Drives emotional, instinctive, and reward-seeking behavior.
@@ -44,7 +44,7 @@ In this case, sleeping right away would ensure our well-being the next but that 
 > **Note:** This is neither precise nor a complete list for the sake of casual readers.
 
 If you were a purely rational person, you might ask your date if they have any infections before kissing and never eat ice-cream. Moreover, reasoning takes time which can't help with split-seconds decision and not doing some things on "autopilot" would cause immense mental fatigue. We can make a long list of problems such a person would face.
-Thus, each part is important but it appears that sometimes the *wrong* part ends up making us performn an action.
+Thus, each part is important but it appears that sometimes the *unwanted* part ends up making us perform an action.
 
 To improve self-control (use reasoning over impulse), we should first learn how to identify which part of the brain is making us irrational. Some of the influencing factors are:
 
@@ -55,7 +55,7 @@ To improve self-control (use reasoning over impulse), we should first learn how 
 5. **Emotional State:** Strong emotions can bypass rational thinking. When you're excited, angry, or sad, the limbic system's voice grows louder while the PFC's voice becomes harder to hear.
 6. **Time Pressure:** When you feel rushed, your brain shifts towards quick, emotion-based decisions rather than careful reasoning. This is why "sleeping on it" often leads to better choices. While significant, time pressure typically has less impact than the above factors unless it's extreme, as demonstrated by research showing that time pressure mainly affects decision quality when combined with other stressors.
 
-To sum it up, if we are not tired, under stress, emotional turbulence or following a habit in a given moment — we are likely to make more rational decisions. It is not possible to become immune to these conditions but it is possible to pause them long enough to regain control. This can be done with something as simple as closing your eyes and taking 10-20 deep breaths. No, this isn't meditation, some spriritual bullshit or a even a solution. It is just a way for you to get enough calmness, focus and time to actually *think* instead of taking whatever action/decision your non-rational parts are leading you towards.
+To sum it up, if we are not tired, under stress, emotional turbulence or following a habit in a given moment — we are likely to make more rational decisions. It is not possible to become immune to these conditions but it is possible to pause them long enough to regain control. This can be done with something as simple as closing your eyes and taking 10-20 deep breaths. No, this isn't meditation, some spiritual bullshit or a even a solution. It is just a way for you to get enough calmness, focus and time to actually *think* instead of taking whatever action/decision your non-rational parts are leading you towards.
 
 Let me explain why it works:
 1. It momentarily disengages both your vision and attention from the external stimuli that might be triggering impulsive or emotional reactions.
@@ -72,24 +72,24 @@ There's no need to make this complicated. Even waiting for a one minute before w
 
 You should also know that, self-control is a resource that gets depleted over the day as you use it and restores during sleep.[^ego] The more emotions/impulses you control, the easier it becomes to lose control. It's not always possible but try to keep your environment distraction and stress free.
 
-Now that you have learned to identify why and when your brain stops *thinking straight* as well as what to do about it, you have two options:
+Now that you have learned to identify why and when you may take an irritional decision as well as what to do about it, you have two options:
 
 [[Skip to "How to get things done"](https://s0md3v.github.io/blog/get-life-together#how-to-get-things-done)]
 
 Or, read about the "reward system" of our brain that drives motivation and our urge to choose a fun task (e.g. scrolling) over a boring one (e.g. studying).
 
 ### Reward System
-The "reward system" (mentioned as l) is one of the many systems in the brain that influence what we choose do. It is a group of brain components that helps us evaluate the pros and cons of actions, reinforce the actions that are rewarding and make decisions.[^reward] For example, if an action leads to pleasure or helps us avoid discomfort/pain — the brain says "this is a good thing to do" and the reward system generates motivation to do it again. It is an execellent evolutionary behaviour to help us improve our well-being by motivating us to do what works in our favour.
+The "reward system" is one of the many systems in the brain that influence what we choose do. It is a group of brain components that helps us evaluate the pros and cons of actions, reinforce the actions that are rewarding and make decisions.[^reward] For example, if an action leads to pleasure or helps us avoid discomfort/pain — the brain says "this is a good thing to do" and the reward system generates motivation to do it again. It is an excellent evolutionary behaviour to help us improve our well-being by motivating us to do what works in our favour.
 
 > **Note:** Most of us won't snatch a sandwich from a child to satisfy our hunger even if we can get away with it. Self-control exists in our brain among many other processes, we are not just reward-seeking machines. The reward system is being discussed because it is at the heart of the problem.
 
-While making decisions especially choosing among multiple rewarding actions, factors such as effort required to perform the action, level of familiarty with each action, social influences, emotional state etc. are taken into account.
+While making decisions especially choosing among multiple rewarding actions, factors such as effort required to perform the action, level of familiarity with each action, social influences, emotional state etc. are taken into account.
 
 The factor most closely related to the subject at hand is time preference i.e. factoring in how long it takes to recieve the reward from an action.[^time]
 
 For example, if you like cakes and were given the choice to recieve a cake now or wait for an year to recieve two cakes — you are likely to take the one cake. Your brain evaluates the situation and comes to the conclusion that one more cake isn't worth waiting for an year.
 
-This is a fair evaluation but when faced by more complex choices, the reward system may lead us to an action that isn't neccessarily good for us.
+This is a fair evaluation but when faced by more complex choices, the reward system may lead us to an action that isn't necessarily good for us.
 Deciding to watch your favourite show (immediate reward) over studying for exam (delayed reward) is a choice that may harm us in the long run.
 
 Delayed gratification, or deferred gratification, is the ability to resist the temptation of a smaller immediate reward in favor of a more valuable and long-lasting reward later. It differs from person to person and action to action.[^delayed]\
@@ -101,12 +101,12 @@ So, our brain sends messages to our body (including parts of the brain itself) t
 
 Dopamine performs many functions, but this article focuses on one of its major roles—causing "wanting." When the brain's reward system decides we should "want" to perform a certain action, it signals this through dopamine release. Once the action is performed, dopamine is released again, contributing to feelings of pleasure.
 
-It is released in three key phases:  
+It is released in three key phases:
 1. Anticipation: When you expect a reward and work towards it (i.e. when ordering a cake)
 2. During: While performing the rewarding activity (i.e. eating the cake)
 3. Completion: After task completion (i.e. after eating the cake and thus satisying your "want")
 
-The highest dopamine release occurs during the anticipation phase, which motivates us to complete the task.  Dopamine levels during and after the task depend on prediction error — the difference between expectation and reality:
+The highest dopamine release occurs during the anticipation phase, which motivates us to complete the task. Dopamine levels during and after the task depend on prediction error — the difference between expectation and reality:
 
 1. Positive error: Reality better than predicted → dopamine spike
 2. Negative error: Reality worse than predicted → dopamine drop
@@ -120,7 +120,7 @@ By carefully choosing what we want to feel motivated about doing and to what ext
 
 > **Note:** Dopamine production is significantly influenced by factors like poor sleep and inadequate nutrition. If you are experiencing apathy and lack of motivation without an underlying medical condition such as depression or ADHD, it may be worth considering whether lifestyle factors are contributing to low dopamine levels.
 
-Now that we have a better understanding of the reward system and dopamine, lets talk about how to use this information to our advantage.
+Now that we have a better understanding of the reward system and dopamine, let's talk about how to use this information to our advantage.
 
 ## How to get things done
 First of all, procrastination is not limited to "getting distracted by immediate rewards". See if anything applies to you from the following list:
@@ -140,7 +140,7 @@ Staying away from "quick and easy" rewarding activities is the easiest way to ge
 
 The mistake a lot of people make when trying to change their lifestyle for the better is that they change too many things too quick. By starting small, you will see results without too much effort and stress which should make it easier to stay motivated. Remember, when we do something rewarding, the brain motivates us to do it again. Keeping that in mind, below is what I suggest you to do:
 
-1. It is hard to go from rest/fun to a task because reward system finds it less rewarding. To get around this, use the breathing technique mentioned ealier. Additionally, you can make the task seem less stressful by saying out loud: "Once I am done with this small task — I am free to spend my day however I like." You can repeat the breathing and self-assuration multiple times if required.
+1. It is hard to go from rest/fun to a task because reward system finds it less rewarding. To get around this, use the breathing technique mentioned earlier. Additionally, you can make the task seem less stressful by saying out loud: "Once I am done with this small task — I am free to spend my day however I like." You can repeat the breathing and self-assurance multiple times if required.
 2. When you are about to start doing something you want to, keep your phone out of your room to minimize habitual checking. If your task takes place on the computer, use a website blocking browser extension or software.
 3. If your goal is to read a book for example, do not say to yourself "I will try reading this book, I will try my best". Make it your goal to read just one page, do just 10 push-ups or write just one paragraph. Because if you push yourself too much, starting the task may become harder next time because your brain may associate it with high-effort and stressful.
 4. Everytime you feel the urge to quit before finishing this small task, do the deep breathing mentioned earlier. 
