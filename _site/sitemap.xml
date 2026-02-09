@@ -69,6 +69,9 @@
 <loc>http://localhost:4000/</loc>
 </url>
 <url>
+<loc>http://localhost:4000/papers</loc>
+</url>
+<url>
 <loc>http://localhost:4000/philosophy/</loc>
 </url>
 <url>
@@ -76,5 +79,13 @@
 </url>
 <url>
 <loc>http://localhost:4000/work</loc>
+</url>
+<url>
+<loc>http://localhost:4000/assets/papers/bypassing-xss-detection.pdf</loc>
+<lastmod>2026-02-10T00:42:01+05:30</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/assets/papers/linguistic-entropy.pdf</loc>
+<lastmod>2026-02-10T00:40:57+05:30</lastmod>
 </url>
 </urlset>

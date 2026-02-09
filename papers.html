@@ -1,0 +1,52 @@
+---
+layout: default
+title: Papers
+description: "Research papers by Somdev Sangwan on security and linguistics."
+permalink: /papers
+---
+
+<div class="wrapper">
+    <h1>papers</h1>
+
+    <div class="paper-item" style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+            <a href="/assets/papers/bypassing-xss-detection.pdf" target="_blank"
+                style="text-decoration: none; border-bottom: 1px solid var(--accent-color);">Bypassing XSS Detection
+                Mechanisms</a>
+        </h2>
+        <p style="line-height: 1.6;">
+            Most WAFs and XSS filters rely on regex to catch malicious input. Instead of blindly firing payloads until
+            something sticks, this paper proposes a methodology to reverse-engineer those regex rules by probing. Once
+            you know the rules (e.g., "it blocks <code>&lt;script</code> but allows <code>&lt;object</code>"), you can
+            craft a payload that specifically fits the gaps. It covers bypassing filters in HTML contexts, event
+            handlers, and JavaScript execution sinks.
+        </p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/assets/papers/bypassing-xss-detection.pdf" target="_blank" style="font-size: 0.9rem;">[Read
+                PDF]</a>
+        </p>
+    </div>
+
+    <div class="paper-item" style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+            <a href="/assets/papers/linguistic-entropy.pdf" target="_blank"
+                style="text-decoration: none; border-bottom: 1px solid var(--accent-color);">A Phonetic Approach to
+                Calculate Linguistic Information</a>
+        </h2>
+        <p style="line-height: 1.6;">
+            Mathematical entropy (Shannon entropy) is often used to detect random gibberish, but it sucks at successfuly
+            identifying things like <code>frontendElementAsyncInit</code> (low entropy, but meaningful) vs
+            <code>9033e0e305f2</code> (limited char set, but random).
+        </p>
+        <p style="line-height: 1.6; margin-top: 1rem;">
+            This paper introduces an approach based on <strong>pronounceability</strong>. By analyzing bigrams (pairs of
+            characters), we can determine if a string "sounds" like a word in a given language. If it's pronounceable,
+            it's likely not random junk. This is much faster than dictionary lookups and more accurate than standard
+            entropy checks for detecting machine-generated strings.
+        </p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/assets/papers/linguistic-entropy.pdf" target="_blank" style="font-size: 0.9rem;">[Read PDF]</a>
+        </p>
+    </div>
+
+</div>
