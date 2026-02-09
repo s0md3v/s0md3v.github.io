@@ -1,8 +1,4 @@
-// Theme initialization moved to theme_init.html for performance
-// themes, getPreferredTheme, and applyTheme are now globals defined there
-
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Fonts ---
     const DEFAULT_FONT_SIZE = 1.0;
 
     function getFontFamily(font) {
@@ -111,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
     setupFontSizeButtons();
     loadFontSettings();
 
-    // --- Header & Navigation ---
     const menuToggle = document.querySelector(".menu-toggle");
     const navLinks = document.querySelector(".nav-links");
     const header = document.getElementById("site-header");
@@ -152,7 +147,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Accessibility ---
     function setupAccessibility() {
         const mainContent = document.querySelector('main') ||
             document.querySelector('article') ||
@@ -165,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     setupAccessibility();
 
-    // --- Polymorphic Brackets ---
     const menuHeaders = document.querySelectorAll('.menuheader');
     if (menuHeaders.length > 0) {
         const brackets = [
@@ -189,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Developer's Console Welcome ---
     const consoleStyles = [
         'color: #e17800',
         'font-size: 24px',
@@ -209,6 +201,4 @@ document.addEventListener('DOMContentLoaded', function () {
         '%cWant to see how this works?\nhttps://github.com/s0md3v/s0md3v.github.io',
         infoStyles
     );
-
-    // --- Homepage Interactions (Moved to index.html for performance) ---
 });

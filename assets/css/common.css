@@ -1,7 +1,3 @@
-/* CSS Variables moved to theme_init.html for performance */
-
-/* Critical styles *, html, body, a moved to theme_init.html */
-
 div {
   display: block;
 }
@@ -54,8 +50,6 @@ div {
 .menuline a:hover svg path {
   stroke: var(--accent-color);
 }
-
-/* Body font/settings moved to theme_init.html */
 
 body,
 h1,
@@ -295,7 +289,6 @@ pre>code {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Header & Navigation Styles (Moved from header.html) */
 .header {
   position: fixed;
   top: 0;
@@ -559,9 +552,6 @@ pre>code {
   }
 }
 
-/* Sketch Layer (New Anchored Approach) - Removed to index.html for performance */
-
-/* Styles moved from head.html */
 p,
 li {
   font-family: sans-serif;
@@ -740,13 +730,6 @@ li {
   }
 }
 
-/* 
-   ----------------------------------------
-   Page-Specific Styles (Moved for Cohesion) 
-   ----------------------------------------
-*/
-
-/* Wrapper Modifier */
 .wrapper.wide {
   max-width: 900px;
 }
