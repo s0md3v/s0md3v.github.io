@@ -3,8 +3,8 @@ layout: post
 title:  "Suffering, Self-Care and Superheroes"
 date:   2023-08-22 8:48:00 +0530
 author: Somdev Sangwan
-tags:   [meta, philosophy]
-image: /imgs/thumbs/superheroes.png
+type:   philosophy
+image: /assets/thumbs/superheroes.png
 permalink: /blog/suffering-superheroes
 description: "Various aspects of well-being and what does it mean to be well anyway?"
 ---

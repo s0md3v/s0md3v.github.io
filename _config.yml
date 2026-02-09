@@ -1,35 +1,42 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
+baseurl: ""
+url: "https://somdev.in"
+title: "Somdev Sangwan"
+permalink: pretty
 
-# Site settings
-title: Somdev Sangwan - blog
-email: s0md3v@gmail.com
-description: Somdev Sangwan - Security & Automatation Researcher
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://s0md3v.github.io" # the base hostname & protocol for your site
-usernames:
+description: "Personal website of Somdev Sangwan (s0md3v) - Security Researcher & Developer."
+author:
+  name: Somdev Sangwan
   twitter: s0md3v
-  github:  s0md3v
+# Social handles
+social:
+  twitter: s0md3v
+  github: s0md3v
   linkedin: s0md3v
   instagram: s0md3v
 
-permalink: pretty
+# Required for jekyll-seo-tag
+twitter:
+  username: s0md3v
 
-# Build settings
-markdown: kramdown
-timezone: "+0530"
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-minifier
 
-# Defaults
-defaults:
-  -
-    scope:
-      path: ""
-      type: "posts"
-    values:
-      comments: false
-      mathjax:  false
-      social:   true
+sass:
+  style: compressed
+
+# Default social image
+image:
+  path: /assets/images/profile.jpg
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - README.md
+  - LICENSE
+  - mockups
+  - keys.txt
+  - .git

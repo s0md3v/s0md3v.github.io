@@ -1,28 +1,18 @@
 ---
 layout: page
 title: Projects
-permalink: /projects/
+description: "A comprehensive list of open source security tools and projects by Somdev Sangwan."
+permalink: /projects
 order: 1
 ---
 
-<div class="home">
-
-  <p>My public projects, mostly related to security.
-
-  <ul class="event-list">
-    {% for project in site.data.projects %}
-    <li>
-      <a href="{{ project.href }}">{{ project.title }}</a>
-      <span class="post-meta">
-        {{ project.status}}
-        {% if project.hn %}
-        • see <a href="{{ project.hn }}">HN discussion</a>
-        {% endif %}
-      </span>
-      </br>
-      {{ project.desc }}
-    </li>
-    {% endfor %}
-  </ul>
-
+<div class="projects-container">
+  {% for project in site.data.projects %}
+  <div class="project-item">
+    <a href="{{ project.href }}" class="project-link">
+      <h2 class="project-title">{{ project.title }}</h2>
+      <p class="project-desc">{{ project.desc }}</p>
+    </a>
+  </div>
+  {% endfor %}
 </div>

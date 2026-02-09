@@ -1,0 +1,22 @@
+---
+layout: default
+---
+
+<div class="wrapper">
+  <br>
+  <ul class="post-list">
+    {% for post in site.posts %}
+    {% unless post.unlisted %}
+    {% if post.type == "philosophy" %}
+    <li>
+      <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      <span class="post-meta">
+        •
+        {{ post.date | date: "%-d %b %Y" }}
+      </span>
+    </li>
+    {% endif %}
+    {% endunless %}
+    {% endfor %}
+  </ul>
+</div>

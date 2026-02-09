@@ -3,8 +3,8 @@ layout: post
 title:  "ReDOS in ModSecurity"
 date:   2019-04-22 11:32:00 +0530
 author: Somdev Sangwan
-tags:   [security]
-image: /imgs/thumbs/modsecurity-redos.png
+type:   tech
+image: /assets/thumbs/modsecurity-redos.png
 permalink: /blog/modsecurity-redos
 description: "A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS."  
 ---

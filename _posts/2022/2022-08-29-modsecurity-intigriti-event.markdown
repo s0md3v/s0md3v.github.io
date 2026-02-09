@@ -3,8 +3,8 @@ layout: post
 title:  "Bypassing ModSecurity for RCEs"
 date:   2022-08-29 18:32:00 +0530
 author: Somdev Sangwan
-tags:   [event, security]
-image: /imgs/thumbs/modsecurity-event.png
+type:   tech
+image: /assets/thumbs/modsecurity-event.png
 permalink: /blog/modsecurity-rce-bypass
 description: "A tale of multiple RCE bypasses for ModSecurity WAF."  
 ---
@@ -21,9 +21,10 @@ A web application firewall is a firewall, for websites.
 `ping` is a tool commonly used to troubleshoot networks. As a WAF programmer, you might want to block attempts to run it. But what if user A sends a text message to user B through your WAF,
 > your router looks fine, try to ping google.com
 
-That's it. The WAF blocked the message, the user filed a complaint to the website owner. The owner debugged the issue and found out that the WAF was at fault.
+That's it. The WAF blocked the message, the user filed a complaint to the website owner. The owner debugged the issue and found out that the WAF was at fault.  
+Now prepare for an angry twitter thread to be shoved down your throat, your wife Karen leaving you and taking the kids with her. You are done.
 
-As you can see, writing anti-attack rules for unknown contexts is tough. You need to prioritize false negatives over false positives over multiple levels of security while still protecting against the most common attacks.
+Jokes apart and credit where it's due, writing anti-attack rules for unknown contexts is tough. You need to prioritize false negatives over false positives over multiple levels of security while still protecting against the most common attacks.
 
 With that being said, let me tell you a tale of why I am so cool and such a genius for trying random things until some of them worked.
 

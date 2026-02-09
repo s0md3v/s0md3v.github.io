@@ -1,0 +1,20 @@
+---
+layout: default
+title: Blog
+description: "Research notes, tutorials, and thoughts on security engineering."
+---
+
+<div class="wrapper">
+  <h1 class="page-heading">Blog</h1>
+  <ul class="post-list">
+    {% for post in site.posts %}
+    {% unless post.unlisted %}
+    {% if post.type == "tech" %}
+    <li>
+      <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+    </li>
+    {% endif %}
+    {% endunless %}
+    {% endfor %}
+  </ul>
+</div>

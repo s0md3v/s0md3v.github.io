@@ -3,8 +3,8 @@ layout: post
 title:  "Bypassing Google's Magika & Bullying AI"
 date:   2024-12-30 05:19:00 +0530
 author: Somdev Sangwan
-tags:   [research]
-image: /imgs/thumbs/magika-bypass.jpg
+type:   tech
+image: /assets/thumbs/magika-bypass.jpg
 permalink: /blog/magika-bypass
 description: "So, you want to bypass AI-powered detection?"  
 ---
@@ -42,11 +42,11 @@ Write-Output "Powershell will print this!"
 
 Despite the `.ps1` extension, Magika detected this script as Python with 100% certainty. However, it is a valid PowerShell script that does not run as a Python program.
 
-![google magika bypass](/imgs/inline/with-all_strings.png)
+![google magika bypass](/assets/inline/with-all_strings.png)
 
 Interestingly, see what happens when I remove 3 "a" characters from `return aaaaaaaaaaaaa`
 
-![google magika quirk](/imgs/inline/with-test.png)
+![google magika quirk](/assets/inline/with-test.png)
 
 This issue has been reported and acknowledged: [https://github.com/google/magika/issues/61](https://github.com/google/magika/issues/61)
 
@@ -65,7 +65,7 @@ Then to bypass such a model, all we need to is to pick a disguishable quality (i
 
 To transfer this quality to an AI generated photo, I used a [LoRA](https://civitai.com/models/74429/old-siemens-photos) trained on old mobile phone photos. What a LoRA does is to tell the image generator to incorporate a particular style; blurry and washed out colors in this case. With this trick, I bypassed the mentioned software and more.
 
-![ai detector bypass](/imgs/inline/lora-bypass.jpg)
+![ai detector bypass](/assets/inline/lora-bypass.jpg)
 
 Related: [https://x.com/s0md3v/status/1731651150926254321](https://x.com/s0md3v/status/1731651150926254321)
 

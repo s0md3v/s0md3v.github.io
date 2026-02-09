@@ -3,8 +3,8 @@ layout: post
 title:  "Get good at everything, quickly."
 date:   2023-03-23 22:19:00 +0530
 author: Somdev Sangwan
-tags:   [meta, philosophy]
-image: /imgs/thumbs/git-gud.png
+type:   tech
+image: /assets/thumbs/git-gud.png
 permalink: /blog/get-good-quickly
 description: "How to be good at multiple things and why?"  
 ---
@@ -39,7 +39,7 @@ Taking a break from the creativity discourse, lets quickly go over other factors
 
 Did someone/something ruin a nice photo you took? You can just draw around it with the lasso tool in photoshop and press shift+backspace to magically remove it.
 
-![photoshop example](/imgs/inline/photoshop-example.jpg)
+![photoshop example](/assets/inline/photoshop-example.jpg)
 
 Congrats! You just learned something that will help you countless times in life :)
 
@@ -53,7 +53,7 @@ In this article, being "good" will be used as a synonym for being just good enou
 
 ### Start
 
-![its better to try](/imgs/inline/better-to-try.png)
+![its better to try](/assets/inline/better-to-try.png)
 
 Develop a habit of taking action. Look around, do you think these people have a device in their pockets that contains the totality of human knowledge? Can you fathom how crazy this is? You can google everything, from how to tie your shoelaces in shape of a flower to how motion detectors work.
 
@@ -61,7 +61,7 @@ It's crazy that there's information about everything but a lot of people still c
 
 Why? Because they don't act, they don't question and they don't care enough. In learning, the hardest part is over once you start.
 
-![just get started](/imgs/inline/just-get-started.jpg)
+![just get started](/assets/inline/just-get-started.jpg)
 
 This is a rule to live by in general - you miss all the shots you don't take. If you try there's a chance of success - however small. If you don't try, you have failed by default.
 

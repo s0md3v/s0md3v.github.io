@@ -3,8 +3,8 @@ layout: post
 title:  "Geolocating Satellite Dishes"
 date:   2024-08-09 17:19:00 +0530
 author: Somdev Sangwan
-tags:   [research, osint]
-image: /imgs/thumbs/dishtance.png
+type:   tech
+image: /assets/thumbs/dishtance.png
 permalink: /blog/geolocating-satellite-dishes
 description: "How to be good at multiple things and why?"  
 ---
@@ -31,7 +31,7 @@ Based on this, I wrote code that takes elevation angle, north angle, and satelli
 Realistically, it is unlikely to get accurate angles from a photo. Thus, in addition to, let's say, 30 degrees - the program must accept a range as input e.g., 35-45 degrees.\
 To get around this limitation, we use a different approach.
 
-![calculation](https://raw.githubusercontent.com/s0md3v/s0md3v.github.io/main/imgs/inline/calculation.png)
+![calculation](/assets/inline/calculation.png)
 
 **Step 1.** Use the upper limit of elevation angle range as elevation angle to find a set of coordinates with findLocation function. Then, measure the distance between this location and location right under satellite on earth (let's call it center). Finally, create a circle around the center using the said distance as radius.\
 **Step 2.** Do the same process but using the lower limit this time.\

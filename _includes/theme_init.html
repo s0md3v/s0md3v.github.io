@@ -1,0 +1,143 @@
+<style>
+    /* Critical Theme Variables - Inlined for Performance */
+    :root {
+        /* Font Variables */
+        --base-font-size: 1rem;
+        --blog-font-size: 1rem;
+        --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --blog-font-family: var(--base-font-family);
+
+        /* Light Point (Default) */
+        --background-color: #fafafa;
+        --foreground-color: #1a1a1a;
+        --midground-color: #666666;
+        /* Dark Gray */
+        --accent-color: #1976d2;
+        /* Monochromatic Blue (Hover/Active) */
+        --link-hover-bg: #e5e5e5;
+        --muted-color: #666666;
+        --border-color: #e5e5e5;
+        --code-bg: #f0f0f0;
+        --link-color: #0b5394;
+        /* Strong Blue */
+        --link-visited: #0d47a1;
+        /* Deep Ink Blue */
+        --icon-filter: none;
+    }
+
+    .dark-mode {
+        --background-color: #1e1e1e;
+        /* Soft Dark */
+        --foreground-color: #e0e0e0;
+        /* Soft White */
+        --midground-color: #a0a0a0;
+        --accent-color: #42a5f5;
+        /* Soft Blue (Hover/Active) */
+        --link-hover-bg: #333333;
+        --muted-color: #888888;
+        --border-color: #333333;
+        --code-bg: #2d2d2d;
+        --link-color: #64b5f6;
+        /* Light Blue */
+        --link-visited: #a6d6ff;
+        /* Chalk Blue */
+        --icon-filter: invert(1);
+    }
+
+    .cream-mode {
+        --background-color: #f3f0e6;
+        /* Warmer Cream */
+        --foreground-color: #2d2a26;
+        /* Warm Charcoal */
+        --midground-color: #5d564f;
+        --accent-color: #1565c0;
+        /* Deep Blue (Hover/Active) */
+        --link-hover-bg: #e6e2d6;
+        --muted-color: #5d564f;
+        --border-color: #dcd6c6;
+        --code-bg: #e8e2d2;
+        --link-color: #0d47a1;
+        /* Deep Blue */
+        --link-visited: #0d47a1;
+        /* Ink Blue */
+        --icon-filter: none;
+    }
+
+    /* Critical Layout - Inlined for Performance */
+    * {
+        font-feature-settings: "kern" 1, "liga" 1, "onum" 0;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-variant-numeric: normal;
+    }
+
+    html {
+        -webkit-hyphens: auto;
+        background: var(--background-color);
+        color: var(--foreground-color);
+        font-size: 1rem;
+        height: 100%;
+        hyphens: auto;
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+        overflow-y: scroll;
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    a {
+        background: none;
+        color: var(--foreground-color);
+        text-decoration: none;
+    }
+
+    a:hover {
+        background: var(--link-hover-bg);
+    }
+</style>
+
+<script>
+    // Critical Theme Initialization - Inlined for Performance
+    // This must remain in the head to prevent Flash of Unstyled Content (FOUC)
+    const themes = ["light", "dark", "cream"];
+
+    function getPreferredTheme() {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme && themes.includes(savedTheme)) return savedTheme;
+
+        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        return systemPrefersDark ? "dark" : "light";
+    }
+
+    function applyTheme(theme) {
+        // Apply to documentElement to ensure variables are globally available
+        document.documentElement.classList.remove("light-mode", "dark-mode", "cream-mode");
+        document.documentElement.classList.add(`${theme}-mode`);
+        localStorage.setItem("theme", theme);
+    }
+
+    // Initialize Theme Immediately
+    try {
+        const currentTheme = getPreferredTheme();
+        applyTheme(currentTheme);
+    } catch (e) {
+        console.error("Theme initialization failed:", e);
+    }
+
+    // Handle System Theme Change
+    try {
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+            if (!localStorage.getItem("theme")) {
+                applyTheme(e.matches ? "dark" : "light");
+            }
+        });
+    } catch (e) { }
+</script>
