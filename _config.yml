@@ -1,4 +1,5 @@
 baseurl: ""
+safe: false
 url: "https://somdev.in"
 title: "Somdev Sangwan"
 permalink: pretty
@@ -22,6 +23,10 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-minifier
+
+jekyll-minifier:
+  uglifier_args:
+    harmony: true
 
 sass:
   style: compressed

@@ -248,11 +248,7 @@ pre>code {
   top: -0.1rem;
 }
 
-.projects-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
+
 
 .project-item {
   transition: all 0.3s ease;
@@ -578,166 +574,342 @@ li {
 
 .blog-content {
   margin-top: 60px;
-}      /* Sketch Layer (New Anchored Approach) */
+}
 
-      /* 1. Global Corner Annotations */
-      .corner-layer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-        /* Above background, below interactive elements if needed */
-      }
+/* Sketch Layer (New Anchored Approach) */
 
-      .corner-annotation {
-        position: absolute;
-        font-family: "Biro Script US Plus", monospace;
-        color: var(--link-visited);
-        opacity: 0.8;
-        font-size: 1.35rem;
-      }
+/* 1. Global Corner Annotations */
+.corner-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  /* Above background, below interactive elements if needed */
+}
 
-      .top-left {
-        top: 3vw;
-        left: 3vw;
-        line-height: 1.4;
-      }
+.corner-annotation {
+  position: absolute;
+  font-family: "Biro Script US Plus", monospace;
+  color: var(--link-visited);
+  opacity: 0.8;
+  font-size: 1.35rem;
+}
 
-      .top-right {
-        top: 3vw;
-        right: 3vw;
-      }
+.top-left {
+  top: 3vw;
+  left: 3vw;
+  line-height: 1.4;
+}
 
-      .bottom-right {
-        bottom: 2vw;
-        right: 2vw;
-      }
+.top-right {
+  top: 3vw;
+  right: 3vw;
+}
 
-      .bottom-left {
-        bottom: 2vw;
-        left: 3vw;
-      }
+.bottom-right {
+  bottom: 2vw;
+  right: 2vw;
+}
 
-      /* 2. Anchored Notes */
-      .sketch-anchor {
-        position: relative;
-        display: inline-block;
-      }
+.bottom-left {
+  bottom: 2vw;
+  left: 3vw;
+}
 
-      .sketch-note {
-        position: absolute;
-        pointer-events: none;
-        font-family: "Biro Script US Plus", monospace;
-        color: var(--link-visited);
-        opacity: 0.8;
-        font-size: 1.3rem;
-        white-space: nowrap;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: max-content;
-      }
+/* 2. Anchored Notes */
+.sketch-anchor {
+  position: relative;
+  display: inline-block;
+}
 
-      .sketch-text {
-        display: block;
-        margin-bottom: -5px;
-        /* Pull text closer to arrow */
-      }
+.sketch-note {
+  position: absolute;
+  pointer-events: none;
+  font-family: "Biro Script US Plus", monospace;
+  color: var(--link-visited);
+  opacity: 0.8;
+  font-size: 1.3rem;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+}
 
-      .sketch-arrow {
-        display: block;
-        overflow: visible;
-        color: var(--link-visited);
-      }
+.sketch-text {
+  display: block;
+  margin-bottom: -5px;
+  /* Pull text closer to arrow */
+}
 
-      /* Specific Positions */
-      .note-right {
-        top: -1rem;
-        left: 100%;
-        margin-left: 0.8rem;
-        transform: rotate(-3deg);
-        align-items: flex-start;
-      }
+.sketch-arrow {
+  display: block;
+  overflow: visible;
+  color: var(--link-visited);
+}
 
-      .note-right .sketch-arrow {
-        margin-left: -10px;
-      }
+/* Specific Positions */
+.note-right {
+  top: -1rem;
+  left: 100%;
+  margin-left: 0.8rem;
+  transform: rotate(-3deg);
+  align-items: flex-start;
+}
 
-      .note-left {
-        top: 100%;
-        left: 0;
-        margin-top: 0.2rem;
-        transform: rotate(2deg);
-        align-items: flex-start;
-      }
+.note-right .sketch-arrow {
+  margin-left: -10px;
+}
 
-      .note-left .sketch-arrow {
-        margin-right: -10px;
-      }
+.note-left {
+  top: 100%;
+  left: 0;
+  margin-top: 0.2rem;
+  transform: rotate(2deg);
+  align-items: flex-start;
+}
 
-      /* Reinforce colors for sketched elements */
-      #hand-tooltip path,
-      .corner-annotation svg path {
-        stroke: var(--link-visited) !important;
-      }
+.note-left .sketch-arrow {
+  margin-right: -10px;
+}
 
-      #hand-tooltip {
-        color: var(--link-visited) !important;
-      }
+/* Reinforce colors for sketched elements */
+#hand-tooltip path,
+.corner-annotation svg path {
+  stroke: var(--link-visited) !important;
+}
 
-      .note-right-far {
-        top: 0.8rem;
-        left: 100%;
-        margin-left: 0.5rem;
-        transform: rotate(4deg);
-      }
+#hand-tooltip {
+  color: var(--link-visited) !important;
+}
 
-      .note-bottom {
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%) translateY(0.5rem) rotate(-2deg);
-        align-items: center;
-      }
+.note-right-far {
+  top: 0.8rem;
+  left: 100%;
+  margin-left: 0.5rem;
+  transform: rotate(4deg);
+}
 
-      .note-bottom .sketch-text {
-        order: 2;
-        margin-top: -5px;
-      }
+.note-bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(0.5rem) rotate(-2deg);
+  align-items: center;
+}
 
-      .note-bottom .sketch-arrow {
-        order: 1;
-      }
+.note-bottom .sketch-text {
+  order: 2;
+  margin-top: -5px;
+}
 
-      @media (max-width: 1100px) {
-        .sketch-note {
-          display: none;
-        }
+.note-bottom .sketch-arrow {
+  order: 1;
+}
 
-        /* Show corner layer but manage space on mobile */
-        .corner-layer {
-          display: block;
-        }
+@media (max-width: 1100px) {
+  .sketch-note {
+    display: none;
+  }
 
-        /* Hide text-heavy annotations to prevent clutter */
-        .corner-annotation.top-left,
-        .corner-annotation.bottom-left {
-          display: none;
-        }
+  /* Show corner layer but manage space on mobile */
+  .corner-layer {
+    display: block;
+  }
 
-        /* Adjust Mode Switch for mobile */
-        .corner-annotation.top-right {
-          top: 1.5rem;
-          right: 1.5rem;
-          transform: scale(0.9);
-        }
+  /* Hide text-heavy annotations to prevent clutter */
+  .corner-annotation.top-left,
+  .corner-annotation.bottom-left {
+    display: none;
+  }
 
-        /* Adjust Cat for mobile */
-        .corner-annotation.bottom-right {
-          bottom: 1.5rem;
-          right: 1.5rem;
-          transform: scale(0.8) rotate(2deg);
-        }
-      }
+  /* Adjust Mode Switch for mobile */
+  .corner-annotation.top-right {
+    top: 1.5rem;
+    right: 1.5rem;
+    transform: scale(0.9);
+  }
+
+  /* Adjust Cat for mobile */
+  .corner-annotation.bottom-right {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    transform: scale(0.8) rotate(2deg);
+  }
+}
+
+/* 
+   ----------------------------------------
+   Page-Specific Styles (Moved for Cohesion) 
+   ----------------------------------------
+*/
+
+/* Wrapper Modifier */
+.wrapper.wide {
+  max-width: 900px;
+}
+
+/* About Page Styles */
+.about-grid {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.about-text {
+  flex: 1;
+}
+
+.about-image {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+
+.about-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.location-overlay {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Biro Script US Plus', monospace;
+  color: var(--link-visited);
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: auto;
+  transform: rotate(-1.5deg);
+  text-shadow: 0 0 10px var(--background-color);
+  z-index: 5;
+}
+
+.profile-container:hover .location-overlay {
+  opacity: 1;
+}
+
+.profile-container:hover img {
+  transform: scale(1.02);
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--code-bg);
+  color: var(--foreground-color);
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.social-btn:hover {
+  background-color: var(--background-color);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1);
+}
+
+.social-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.dark-mode .about-image img {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 768px) {
+  .about-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    align-items: start;
+    gap: 50px;
+  }
+
+  .about-image {
+    width: auto;
+    justify-self: end;
+  }
+
+  .profile-container {
+    max-width: 100%;
+  }
+
+  .about-image img {
+    max-width: 100%;
+  }
+}
+
+/* Work Page - Arrow List */
+.arrow-list {
+  list-style: none;
+  margin-left: 0;
+  margin-bottom: 2.5rem;
+}
+
+.arrow-list li {
+  margin-bottom: 0.8rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.arrow-list li::before {
+  content: "➜";
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+}
+
+/* Papers Page */
+.paper-item {
+  margin-bottom: 4rem;
+}
+
+.paper-item h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.paper-item h2 a {
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-color);
+}
+
+.paper-item p {
+  line-height: 1.6;
+}
+
+.paper-link {
+  font-size: 0.9rem;
+}
