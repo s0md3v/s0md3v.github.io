@@ -1,0 +1,17 @@
+# Jekyll and Build Artifacts
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.bundle/
+vendor/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+
+# Local configuration
+.env
+.env.local
