@@ -1,11 +1,175 @@
-<!DOCTYPE html> <html lang=" en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1"> <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/> <link rel="icon" type="image/x-icon" href="/favicon.ico"> <title>ReDOS in ModSecurity | Somdev Sangwan</title> <meta name="generator" content="Jekyll v3.10.0"/> <meta property="og:title" content="ReDOS in ModSecurity"/> <meta name="author" content="Somdev Sangwan"/> <meta property="og:locale" content="en_US"/> <meta name="description" content="A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS."/> <meta property="og:description" content="A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS."/> <link rel="canonical" href="https://somdev.in/blog/modsecurity-redos"/> <meta property="og:url" content="https://somdev.in/blog/modsecurity-redos"/> <meta property="og:site_name" content="Somdev Sangwan"/> <meta property="og:image" content="https://somdev.in/assets/thumbs/modsecurity-redos.png"/> <meta property="og:type" content="article"/> <meta property="article:published_time" content="2019-04-22T11:32:00+05:30"/> <meta name="twitter:card" content="summary_large_image"/> <meta property="twitter:image" content="https://somdev.in/assets/thumbs/modsecurity-redos.png"/> <meta property="twitter:title" content="ReDOS in ModSecurity"/> <meta name="twitter:site" content="@s0md3v"/> <meta name="twitter:creator" content="@Somdev Sangwan"/> <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2019-04-22T11:32:00+05:30","datePublished":"2019-04-22T11:32:00+05:30","description":"A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS.","headline":"ReDOS in ModSecurity","image":"https://somdev.in/assets/thumbs/modsecurity-redos.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://somdev.in/blog/modsecurity-redos"},"url":"https://somdev.in/blog/modsecurity-redos"}</script> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <style>:root{--base-font-size:1rem;--blog-font-size:1rem;--base-font-family:"Lexend","Helvetica Neue",Helvetica,Arial,sans-serif;--blog-font-family:var(--base-font-family);--background-color:#fafafa;--foreground-color:#1a1a1a;--midground-color:#666;--accent-color:#1976d2;--link-hover-bg:#e5e5e5;--muted-color:#666;--border-color:#e5e5e5;--code-bg:#f0f0f0;--link-color:#0b5394;--link-visited:#0d47a1;--icon-filter:none}.dark-mode{--background-color:#1e1e1e;--foreground-color:#e0e0e0;--midground-color:#a0a0a0;--accent-color:#42a5f5;--link-hover-bg:#333;--muted-color:#888;--border-color:#333;--code-bg:#2d2d2d;--link-color:#64b5f6;--link-visited:#a6d6ff;--icon-filter:invert(1)}.cream-mode{--background-color:#f3f0e6;--foreground-color:#2d2a26;--midground-color:#5d564f;--accent-color:#1565c0;--link-hover-bg:#e6e2d6;--muted-color:#5d564f;--border-color:#dcd6c6;--code-bg:#e8e2d2;--link-color:#0d47a1;--link-visited:#0d47a1;--icon-filter:none}*{font-feature-settings:"kern" 1,"liga" 1,"onum" 0;margin:0;padding:0;box-sizing:border-box;font-variant-numeric:normal}html{-webkit-hyphens:auto;background:var(--background-color);color:var(--foreground-color);font-size:1rem;height:100%;hyphens:auto;margin:0;padding:0;scroll-behavior:smooth;overflow-y:scroll;text-rendering:optimizeLegibility}body{display:flex;flex-direction:column;height:100%;font:400 16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif}a{background:0;color:var(--foreground-color);text-decoration:none}a:hover{background:var(--link-hover-bg)}</style> <script>function getPreferredTheme(){const e=localStorage.getItem("theme");return e&&themes.includes(e)?e:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function applyTheme(e){document.documentElement.classList.remove("light-mode","dark-mode","cream-mode"),document.documentElement.classList.add(`${e}-mode`),localStorage.setItem("theme",e)}const themes=["light","dark","cream"];try{applyTheme(getPreferredTheme())}catch(e){console.error("Theme initialization failed:",e)}try{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{localStorage.getItem("theme")||applyTheme(e.matches?"dark":"light")})}catch(e){}</script> <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"> <link rel="stylesheet" href="/assets/css/fonts.css"> <link rel="stylesheet" href="/assets/css/common.css"> <script src="/assets/js/common.js" defer></script> <script type="application/ld+json">
+<!DOCTYPE html>
+<html lang=" en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>ReDOS in ModSecurity | Somdev Sangwan</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="ReDOS in ModSecurity" />
+<meta name="author" content="Somdev Sangwan" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS." />
+<meta property="og:description" content="A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS." />
+<link rel="canonical" href="http://localhost:4000/blog/modsecurity-redos" />
+<meta property="og:url" content="http://localhost:4000/blog/modsecurity-redos" />
+<meta property="og:site_name" content="Somdev Sangwan" />
+<meta property="og:image" content="http://localhost:4000/assets/thumbs/modsecurity-redos.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-04-22T11:32:00+05:30" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://localhost:4000/assets/thumbs/modsecurity-redos.png" />
+<meta property="twitter:title" content="ReDOS in ModSecurity" />
+<meta name="twitter:site" content="@s0md3v" />
+<meta name="twitter:creator" content="@Somdev Sangwan" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2019-04-22T11:32:00+05:30","datePublished":"2019-04-22T11:32:00+05:30","description":"A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS.","headline":"ReDOS in ModSecurity","image":"http://localhost:4000/assets/thumbs/modsecurity-redos.png","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/modsecurity-redos"},"url":"http://localhost:4000/blog/modsecurity-redos"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root {
+        --base-font-size: 1rem;
+        --blog-font-size: 1rem;
+        --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --blog-font-family: var(--base-font-family);
+
+        --background-color: #fafafa;
+        --foreground-color: #1a1a1a;
+        --midground-color: #666666;
+        --accent-color: #1976d2;
+        --link-hover-bg: #e5e5e5;
+        --muted-color: #666666;
+        --border-color: #e5e5e5;
+        --code-bg: #f0f0f0;
+        --link-color: #0b5394;
+        --link-visited: #0d47a1;
+        --icon-filter: none;
+    }
+
+    .dark-mode {
+        --background-color: #1e1e1e;
+        --foreground-color: #e0e0e0;
+        --midground-color: #a0a0a0;
+        --accent-color: #42a5f5;
+        --link-hover-bg: #333333;
+        --muted-color: #888888;
+        --border-color: #333333;
+        --code-bg: #2d2d2d;
+        --link-color: #64b5f6;
+        --link-visited: #a6d6ff;
+        --icon-filter: invert(1);
+    }
+
+    .cream-mode {
+        --background-color: #f3f0e6;
+        --foreground-color: #2d2a26;
+        --midground-color: #5d564f;
+        --accent-color: #1565c0;
+        --link-hover-bg: #e6e2d6;
+        --muted-color: #5d564f;
+        --border-color: #dcd6c6;
+        --code-bg: #e8e2d2;
+        --link-color: #0d47a1;
+        --link-visited: #0d47a1;
+        --icon-filter: none;
+    }
+
+    * {
+        font-feature-settings: "kern" 1, "liga" 1, "onum" 0;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-variant-numeric: normal;
+    }
+
+    html {
+        -webkit-hyphens: auto;
+        background: var(--background-color);
+        color: var(--foreground-color);
+        font-size: 1rem;
+        height: 100%;
+        hyphens: auto;
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+        overflow-y: scroll;
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    a {
+        background: none;
+        color: var(--foreground-color);
+        text-decoration: none;
+    }
+
+    a:hover {
+        background: var(--link-hover-bg);
+    }
+</style>
+
+<script>
+    const themes = ["light", "dark", "cream"];
+
+    function getPreferredTheme() {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme && themes.includes(savedTheme)) return savedTheme;
+
+        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        return systemPrefersDark ? "dark" : "light";
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.classList.remove("light-mode", "dark-mode", "cream-mode");
+        document.documentElement.classList.add(`${theme}-mode`);
+        localStorage.setItem("theme", theme);
+    }
+
+    try {
+        const currentTheme = getPreferredTheme();
+        applyTheme(currentTheme);
+    } catch (e) {
+        console.error("Theme initialization failed:", e);
+    }
+
+    try {
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+            if (!localStorage.getItem("theme")) {
+                applyTheme(e.matches ? "dark" : "light");
+            }
+        });
+    } catch (e) { }
+</script>
+
+  
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+  
+
+  <link rel="stylesheet" href="/assets/css/fonts.css">
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <script src="/assets/js/common.js" defer></script>
+
+
+  <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Somdev Sangwan",
-  "url": "https://somdev.in",
-  "image": "https://somdev.in/assets/images/profile.jpg",
+  "url": "http://localhost:4000",
+  "image": "http://localhost:4000/assets/images/profile.jpg",
   "jobTitle": "Security Researcher & Developer",
   "alternateName": "s0md3v",
   "description": "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics.",
@@ -43,11 +207,161 @@
     }
   ]
 }
-</script> </head> <body> <a href="#main-content" class="skip-link">Skip to main content</a> <header id="site-header" class="header"> <nav class="nav-container"> <div class="site-home"> <a href="/">home</a> <div class="settings-wrapper"> <button class="settings-icon" id="settings-toggle" aria-label="Settings"> <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20"> </button> <div class="settings-dropdown" id="settings-menu"> <div class="settings-section"> <div class="settings-subtitle">Theme</div> <div class="settings-options theme-options"> <button data-theme="light">Light</button> <button data-theme="dark">Dark</button> <button data-theme="cream">Cream</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font</div> <div class="settings-options font-options"> <button data-font="system">System</button> <button data-font="lexend">Lexend</button> <button data-font="opendyslexic">Dyslexic</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font Size</div> <div class="settings-options size-options"> <button id="decrease-font">−</button> <button id="reset-font">Reset</button> <button id="increase-font">+</button> </div> </div> </div> </div> </div> <button class="menu-toggle" aria-label="Toggle navigation"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg> </button> <ul class="nav-links"> <li><a href="/projects">projects</a></li> <li><a href="/blog">blog</a></li> <li><a href="/philosophy">philosophy</a></li> <li><a href="/about">about</a></li> </ul> </nav> </header> <div class="blog-content"> <div class="wrapper"> <h1 class="post-title" itemprop="name headline">ReDOS in ModSecurity</h1> <p class="post-meta"> </p> <div class="post-content"> <p>I have been spending a good amount of time writing ReDOS exploits and studying WAFs lately. To practice my skills in the real world, I chose Mod Security Core Rule Set because it has tons of regular expressions. On top of that, these regular expressions are being used by WAFs in the wild to detect attacks. Two birds with one stone!</p> <p>Well, CRS has 29 configuration files which contain tons of regular expression so it wasn’t possible for me to go through all of them so I decided to automate some part of it. The program I wrote for this purpose isn’t public at the moment so please use this “<a href="https://twitter.com/s0md3v/status/1119645565845823489">hack</a>” instead.</p> <p>Anyways, after extracting potentially vulnerable patterns, I used <a href="https://regex101.com/">regex101.com</a> to identify and remove alternate sub-patterns e.g. removing <code class="language-plaintext highlighter-rouge">(fine)</code> from <code class="language-plaintext highlighter-rouge">((fine)|(vulnerable))</code>.</p> <p>I then used <a href="https://www.regexbuddy.com/">RegexBuddy</a> to analyze the impact of different exploit approaches and then confirmed the exploits with Python interpreter.</p> <p>Now, let’s talk about the different exploitable sub-patterns I found and how I wrote exploits for them.</p> <h3 id="case-1">Case #1</h3> <p><strong>Pattern:</strong> <code class="language-plaintext highlighter-rouge">(?:(?:^[\"'`\\]*?[^\"'\`]+[\"'\`])+|(?:^[\"'\`\\]*?[\d\"'`]+)+)\s</code><br/> <strong>Exploit:</strong> <code class="language-plaintext highlighter-rouge">""""""""""""""</code> (about 1000 “s)</p> <h4 id="why-this-exploit-works">Why this exploit works?</h4> <p><strong>1. Intersecting alternate patterns</strong> This pattern consists of two alternate sub-patterns. Both alternate patterns start with <code class="language-plaintext highlighter-rouge">^["'`\\]*?</code> which causes the regex engine to keep looking for both patterns and hence increasing the permutations. In the second alternate pattern, the tokens <code class="language-plaintext highlighter-rouge">["'`\\]*?</code> and <code class="language-plaintext highlighter-rouge">[\d"'`]+</code> intersect and both of them match <code class="language-plaintext highlighter-rouge">"</code>, ‘'‘and `.</p> <p><strong>2. Nested repetition operators</strong> The structure of this subpattern is <code class="language-plaintext highlighter-rouge">((pattern 1)+|(pattern 2)+)+</code> and it’s clear that it’s using nested repetition operators which dramatically increases the complexity.</p> <h3 id="case-2">Case #2</h3> <p><strong>Pattern:</strong> <code class="language-plaintext highlighter-rouge">for(?:/[dflr].*)* %+[^ ]+ in\(.*\)\s?do</code><br/> <strong>Vulnerable part:</strong> <code class="language-plaintext highlighter-rouge">for(?:/[dflr].*)* %</code><br/> <strong>Exploit:</strong> <code class="language-plaintext highlighter-rouge">for/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r</code></p> <h4 id="why-this-exploit-works-1">Why this exploit works?</h4> <p>Let’s take a look at how the string is matched, step by step</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f
+</script>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header id="site-header" class="header">
+    <nav class="nav-container">
+        <div class="site-home">
+            <a href="/">home</a>
+            <div class="settings-wrapper">
+                <button class="settings-icon" id="settings-toggle" aria-label="Settings">
+                    <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20">
+                </button>
+                <div class="settings-dropdown" id="settings-menu">
+                    <div class="settings-section">
+                        <div class="settings-subtitle">Theme</div>
+                        <div class="settings-options theme-options">
+                            <button data-theme="light">Light</button>
+                            <button data-theme="dark">Dark</button>
+                            <button data-theme="cream">Cream</button>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <div class="settings-subtitle">Font</div>
+                        <div class="settings-options font-options">
+                            <button data-font="system">System</button>
+                            <button data-font="lexend">Lexend</button>
+                            <button data-font="opendyslexic">Dyslexic</button>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <div class="settings-subtitle">Font Size</div>
+                        <div class="settings-options size-options">
+                            <button id="decrease-font">−</button>
+                            <button id="reset-font">Reset</button>
+                            <button id="increase-font">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="menu-toggle" aria-label="Toggle navigation">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+
+        <ul class="nav-links">
+            <li><a href="/projects">projects</a></li>
+            <li><a href="/blog">blog</a></li>
+            <li><a href="/philosophy">philosophy</a></li>
+            <li><a href="/about">about</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="blog-content">
+  <div class="wrapper">
+    <h1 class="post-title" itemprop="name headline">ReDOS in ModSecurity</h1>
+    <p class="post-meta">
+      
+      
+      
+      
+    </p>
+    <div class="post-content">
+      <p>I have been spending a good amount of time writing ReDOS exploits and studying WAFs lately.
+To practice my skills in the real world, I chose Mod Security Core Rule Set because it has tons of regular expressions.
+On top of that, these regular expressions are being used by WAFs in the wild to detect attacks.
+Two birds with one stone!</p>
+
+<p>Well, CRS has 29 configuration files which contain tons of regular expression so it wasn’t possible for me to go through all of them so I decided to automate some part of it.
+The program I wrote for this purpose isn’t public at the moment so please use this “<a href="https://twitter.com/s0md3v/status/1119645565845823489">hack</a>” instead.</p>
+
+<p>Anyways, after extracting potentially vulnerable patterns, I used <a href="https://regex101.com/">regex101.com</a> to identify and remove alternate sub-patterns e.g. removing <code class="language-plaintext highlighter-rouge">(fine)</code> from <code class="language-plaintext highlighter-rouge">((fine)|(vulnerable))</code>.</p>
+
+<p>I then used <a href="https://www.regexbuddy.com/">RegexBuddy</a> to analyze the impact of different exploit approaches and then confirmed the exploits with Python interpreter.</p>
+
+<p>Now, let’s talk about the different exploitable sub-patterns I found and how I wrote exploits for them.</p>
+
+<h3 id="case-1">Case #1</h3>
+
+<p><strong>Pattern:</strong> <code class="language-plaintext highlighter-rouge">(?:(?:^[\"'`\\]*?[^\"'\`]+[\"'\`])+|(?:^[\"'\`\\]*?[\d\"'`]+)+)\s</code><br />
+<strong>Exploit:</strong> <code class="language-plaintext highlighter-rouge">""""""""""""""</code> (about 1000 “s)</p>
+
+<h4 id="why-this-exploit-works">Why this exploit works?</h4>
+
+<p><strong>1. Intersecting alternate patterns</strong>
+This pattern consists of two alternate sub-patterns. Both alternate patterns start with <code class="language-plaintext highlighter-rouge">^["'`\\]*?</code> which causes the regex engine to keep looking for both patterns and hence increasing the permutations.
+In the second alternate pattern, the tokens <code class="language-plaintext highlighter-rouge">["'`\\]*?</code> and <code class="language-plaintext highlighter-rouge">[\d"'`]+</code> intersect and both of them match <code class="language-plaintext highlighter-rouge">"</code>, ‘'‘and `.</p>
+
+<p><strong>2. Nested repetition operators</strong>
+The structure of this subpattern is <code class="language-plaintext highlighter-rouge">((pattern 1)+|(pattern 2)+)+</code> and it’s clear that it’s using nested repetition operators which dramatically increases the complexity.</p>
+
+<h3 id="case-2">Case #2</h3>
+
+<p><strong>Pattern:</strong> <code class="language-plaintext highlighter-rouge">for(?:/[dflr].*)* %+[^ ]+ in\(.*\)\s?do</code><br />
+<strong>Vulnerable part:</strong> <code class="language-plaintext highlighter-rouge">for(?:/[dflr].*)* %</code><br />
+<strong>Exploit:</strong> <code class="language-plaintext highlighter-rouge">for/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r</code></p>
+
+<h4 id="why-this-exploit-works-1">Why this exploit works?</h4>
+
+<p>Let’s take a look at how the string is matched, step by step</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f
 fo
 for
 for/
 for/r
 for/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r
-</code></pre></div></div> <p>The last match is matched by <code class="language-plaintext highlighter-rouge">.*</code> but the the pattern fails to match our exploit string completely because our string doesn’t have <code class="language-plaintext highlighter-rouge">%</code> in the end but that’s what the pattern wants to match. In the hopes of matching, it goes one step backward</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/
-</code></pre></div></div> <p>But it still doesn’t match. You must be thinking that it would go one more step backwards and keep doing that until it reaches the end and realizes it doesn’t match. Well, you are not wrong but a repetition operator applied over another repetition operator makes things more complex. The fact that <code class="language-plaintext highlighter-rouge">/r</code> can be matched by both <code class="language-plaintext highlighter-rouge">.*</code> and <code class="language-plaintext highlighter-rouge">/[dflr]</code> makes things even worse. I am not sure how much steps it goes through before failing but RegexBuddy4 has a limit of 10,00,000 steps so we don’t really know.</p> <h3 id="case-3">Case #3</h3> <p><strong>Pattern:</strong> <code class="language-plaintext highlighter-rouge">(?:\s|/\*.*\*/|//.*|#.*)*\(.*\)</code><br/> <strong>Exploit</strong>: <code class="language-plaintext highlighter-rouge">################################################</code></p> <h4 id="why-this-exploit-works-2">Why this exploit works?</h4> <p><code class="language-plaintext highlighter-rouge">(?:\s|/\*.*\*/|//.*|#.*)*</code> this part of the pattern consists of 4 alternate patterns and 3 of them have the good old <code class="language-plaintext highlighter-rouge">.*</code> which can match anything. When the regex engine compares the pattern against the string, the only part which matches is the last one but because there’s no <code class="language-plaintext highlighter-rouge">()</code> as required by the pattern, it fails to match and the regex engine goes nuts because there are nested repetition operators placed in such a way that adding a <code class="language-plaintext highlighter-rouge">#</code> to the string makes the number of steps to be tried grow exponentially.</p> <p>The last case was found in 3 different rules so that explains why I discussed only 3 cases.</p> <p>Following CVE IDs were assigned to the vulnerabilities:</p> <ul> <li>CVE-2019–11387</li> <li>CVE-2019–11388</li> <li>CVE-2019–11389</li> <li>CVE-2019–11390</li> <li>CVE-2019–11391</li> </ul> </div> </div> </div> </body> </html>
+</code></pre></div></div>
+
+<p>The last match is matched by <code class="language-plaintext highlighter-rouge">.*</code> but the the pattern fails to match our exploit string completely because our string doesn’t have <code class="language-plaintext highlighter-rouge">%</code> in the end but that’s what the pattern wants to match.
+In the hopes of matching, it goes one step backward</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/
+</code></pre></div></div>
+
+<p>But it still doesn’t match. You must be thinking that it would go one more step backwards and keep doing that until it reaches the end and realizes it doesn’t match.
+Well, you are not wrong but a repetition operator applied over another repetition operator makes things more complex.
+The fact that <code class="language-plaintext highlighter-rouge">/r</code> can be matched by both <code class="language-plaintext highlighter-rouge">.*</code> and <code class="language-plaintext highlighter-rouge">/[dflr]</code> makes things even worse.
+I am not sure how much steps it goes through before failing but RegexBuddy4 has a limit of 10,00,000 steps so we don’t really know.</p>
+
+<h3 id="case-3">Case #3</h3>
+
+<p><strong>Pattern:</strong> <code class="language-plaintext highlighter-rouge">(?:\s|/\*.*\*/|//.*|#.*)*\(.*\)</code><br />
+<strong>Exploit</strong>: <code class="language-plaintext highlighter-rouge">################################################</code></p>
+
+<h4 id="why-this-exploit-works-2">Why this exploit works?</h4>
+
+<p><code class="language-plaintext highlighter-rouge">(?:\s|/\*.*\*/|//.*|#.*)*</code> this part of the pattern consists of 4 alternate patterns and 3 of them have the good old <code class="language-plaintext highlighter-rouge">.*</code> which can match anything.
+When the regex engine compares the pattern against the string, the only part which matches is the last one but because there’s no <code class="language-plaintext highlighter-rouge">()</code> as required by the pattern, it fails to match and the regex engine goes nuts because there are nested repetition operators placed in such a way that adding a <code class="language-plaintext highlighter-rouge">#</code> to the string makes the number of steps to be tried grow exponentially.</p>
+
+<p>The last case was found in 3 different rules so that explains why I discussed only 3 cases.</p>
+
+<p>Following CVE IDs were assigned to the vulnerabilities:</p>
+
+<ul>
+  <li>CVE-2019–11387</li>
+  <li>CVE-2019–11388</li>
+  <li>CVE-2019–11389</li>
+  <li>CVE-2019–11390</li>
+  <li>CVE-2019–11391</li>
+</ul>
+
+    </div>
+  </div>
+</div>
+</body>
+
+</html>

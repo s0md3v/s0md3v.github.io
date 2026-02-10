@@ -21,8 +21,61 @@
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
   {% endif %}
 
-  <link rel="stylesheet" href="{{ '/assets/css/fonts.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/common.css' | relative_url }}">
+  <link rel="preload" href="{{ '/assets/fonts/biro.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ '/assets/fonts/comfortaa-latin-variable.woff2' | relative_url }}" as="font"
+    type="font/woff2" crossorigin>
+
+  <style>
+    @font-face {
+      font-family: 'Comfortaa';
+      font-style: normal;
+      font-weight: 300 700;
+      font-display: swap;
+      src: url('{{ "/assets/fonts/comfortaa-latin-variable.woff2" | relative_url }}') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+      font-family: 'Biro Script US Plus';
+      src: url('{{ "/assets/fonts/biro.woff2" | relative_url }}') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'OpenDyslexic';
+      src: url('{{ "/assets/fonts/OpenDyslexic-Regular.woff2" | relative_url }}') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'OpenDyslexic';
+      src: url('{{ "/assets/fonts/OpenDyslexic-Bold.woff2" | relative_url }}') format('woff2');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'OpenDyslexic';
+      src: url('{{ "/assets/fonts/OpenDyslexic-Italic.woff2" | relative_url }}') format('woff2');
+      font-weight: normal;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'OpenDyslexic';
+      src: url('{{ "/assets/fonts/OpenDyslexic-BoldItalic.woff2" | relative_url }}') format('woff2');
+      font-weight: bold;
+      font-style: italic;
+      font-display: swap;
+    }
+  </style>
   <script src="{{ '/assets/js/common.js' | relative_url }}" defer></script>
 
 
