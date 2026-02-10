@@ -121,12 +121,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (header) {
         window.addEventListener("scroll", function () {
             let scrollTop = window.scrollY;
-            if (scrollTop > lastScrollTop) {
+            if (scrollTop > lastScrollTop && scrollTop > 50) {
                 header.classList.add("hidden");
             } else {
                 header.classList.remove("hidden");
             }
-            lastScrollTop = scrollTop;
+            lastScrollTop = Math.max(0, scrollTop);
         });
     }
 
