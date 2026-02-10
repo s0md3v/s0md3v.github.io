@@ -1,327 +1,50 @@
-<!DOCTYPE html>
-<html lang=" en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-  <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Creating an XSS Polyglot | Somdev Sangwan</title>
-<meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="Creating an XSS Polyglot" />
-<meta name="author" content="Somdev Sangwan" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="I participated in the XSS Polyglot Challenge and created a polyglot that works across multiple contexts." />
-<meta property="og:description" content="I participated in the XSS Polyglot Challenge and created a polyglot that works across multiple contexts." />
-<link rel="canonical" href="http://localhost:4000/blog/xss-polyglot-challenge" />
-<meta property="og:url" content="http://localhost:4000/blog/xss-polyglot-challenge" />
-<meta property="og:site_name" content="Somdev Sangwan" />
-<meta property="og:image" content="http://localhost:4000/assets/thumbs/xss-polyglot-challenge.png" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2018-09-16T08:26:00+05:30" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:image" content="http://localhost:4000/assets/thumbs/xss-polyglot-challenge.png" />
-<meta property="twitter:title" content="Creating an XSS Polyglot" />
-<meta name="twitter:site" content="@s0md3v" />
-<meta name="twitter:creator" content="@Somdev Sangwan" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2018-09-16T08:26:00+05:30","datePublished":"2018-09-16T08:26:00+05:30","description":"I participated in the XSS Polyglot Challenge and created a polyglot that works across multiple contexts.","headline":"Creating an XSS Polyglot","image":"http://localhost:4000/assets/thumbs/xss-polyglot-challenge.png","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/xss-polyglot-challenge"},"url":"http://localhost:4000/blog/xss-polyglot-challenge"}</script>
-<!-- End Jekyll SEO tag -->
-
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <style>
-    :root {
-        --base-font-size: 1rem;
-        --blog-font-size: 1rem;
-        --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        --blog-font-family: var(--base-font-family);
-
-        --background-color: #fafafa;
-        --foreground-color: #1a1a1a;
-        --midground-color: #666666;
-        --accent-color: #1976d2;
-        --link-hover-bg: #e5e5e5;
-        --muted-color: #666666;
-        --border-color: #e5e5e5;
-        --code-bg: #f0f0f0;
-        --link-color: #0b5394;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    .dark-mode {
-        --background-color: #1e1e1e;
-        --foreground-color: #e0e0e0;
-        --midground-color: #a0a0a0;
-        --accent-color: #42a5f5;
-        --link-hover-bg: #333333;
-        --muted-color: #888888;
-        --border-color: #333333;
-        --code-bg: #2d2d2d;
-        --link-color: #64b5f6;
-        --link-visited: #a6d6ff;
-        --icon-filter: invert(1);
-    }
-
-    .cream-mode {
-        --background-color: #f3f0e6;
-        --foreground-color: #2d2a26;
-        --midground-color: #5d564f;
-        --accent-color: #1565c0;
-        --link-hover-bg: #e6e2d6;
-        --muted-color: #5d564f;
-        --border-color: #dcd6c6;
-        --code-bg: #e8e2d2;
-        --link-color: #0d47a1;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    * {
-        font-feature-settings: "kern" 1, "liga" 1, "onum" 0;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-variant-numeric: normal;
-    }
-
-    html {
-        -webkit-hyphens: auto;
-        background: var(--background-color);
-        color: var(--foreground-color);
-        font-size: 1rem;
-        height: 100%;
-        hyphens: auto;
-        margin: 0;
-        padding: 0;
-        scroll-behavior: smooth;
-        overflow-y: scroll;
-        text-rendering: optimizeLegibility;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    a {
-        background: none;
-        color: var(--foreground-color);
-        text-decoration: none;
-    }
-
-    a:hover {
-        background: var(--link-hover-bg);
-    }
-</style>
-
-<script>
-    const themes = ["light", "dark", "cream"];
-
-    function getPreferredTheme() {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme && themes.includes(savedTheme)) return savedTheme;
-
-        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        return systemPrefersDark ? "dark" : "light";
-    }
-
-    function applyTheme(theme) {
-        document.documentElement.classList.remove("light-mode", "dark-mode", "cream-mode");
-        document.documentElement.classList.add(`${theme}-mode`);
-        localStorage.setItem("theme", theme);
-    }
-
-    try {
-        const currentTheme = getPreferredTheme();
-        applyTheme(currentTheme);
-    } catch (e) {
-        console.error("Theme initialization failed:", e);
-    }
-
-    try {
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-            if (!localStorage.getItem("theme")) {
-                applyTheme(e.matches ? "dark" : "light");
-            }
-        });
-    } catch (e) { }
-</script>
-
-  
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-  
-
-  <link rel="stylesheet" href="/assets/css/fonts.css">
-  <link rel="stylesheet" href="/assets/css/common.css">
-  <script src="/assets/js/common.js" defer></script>
-
-
-  <script type="application/ld+json">
+<!DOCTYPE html> <html lang=" en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1"> <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/> <link rel="icon" type="image/x-icon" href="/favicon.ico"> <title>Creating an XSS Polyglot | Somdev Sangwan</title> <meta name="generator" content="Jekyll v3.10.0"/> <meta property="og:title" content="Creating an XSS Polyglot"/> <meta name="author" content="Somdev Sangwan"/> <meta property="og:locale" content="en_US"/> <meta name="description" content="I participated in the XSS Polyglot Challenge and created a polyglot that works across multiple contexts."/> <meta property="og:description" content="I participated in the XSS Polyglot Challenge and created a polyglot that works across multiple contexts."/> <link rel="canonical" href="https://somdev.in/blog/xss-polyglot-challenge"/> <meta property="og:url" content="https://somdev.in/blog/xss-polyglot-challenge"/> <meta property="og:site_name" content="Somdev Sangwan"/> <meta property="og:image" content="https://somdev.in/assets/thumbs/xss-polyglot-challenge.png"/> <meta property="og:type" content="article"/> <meta property="article:published_time" content="2018-09-16T08:26:00+05:30"/> <meta name="twitter:card" content="summary_large_image"/> <meta property="twitter:image" content="https://somdev.in/assets/thumbs/xss-polyglot-challenge.png"/> <meta property="twitter:title" content="Creating an XSS Polyglot"/> <meta name="twitter:site" content="@s0md3v"/> <meta name="twitter:creator" content="@Somdev Sangwan"/> <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2018-09-16T08:26:00+05:30","datePublished":"2018-09-16T08:26:00+05:30","description":"I participated in the XSS Polyglot Challenge and created a polyglot that works across multiple contexts.","headline":"Creating an XSS Polyglot","image":"https://somdev.in/assets/thumbs/xss-polyglot-challenge.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://somdev.in/blog/xss-polyglot-challenge"},"url":"https://somdev.in/blog/xss-polyglot-challenge"}</script> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <style>:root{--base-font-size:1rem;--blog-font-size:1rem;--base-font-family:"Lexend","Helvetica Neue",Helvetica,Arial,sans-serif;--blog-font-family:var(--base-font-family);--background-color:#fafafa;--foreground-color:#1a1a1a;--midground-color:#666;--accent-color:#1976d2;--link-hover-bg:#e5e5e5;--muted-color:#666;--border-color:#e5e5e5;--code-bg:#f0f0f0;--link-color:#0b5394;--link-visited:#0d47a1;--icon-filter:none}.dark-mode{--background-color:#1e1e1e;--foreground-color:#e0e0e0;--midground-color:#a0a0a0;--accent-color:#42a5f5;--link-hover-bg:#333;--muted-color:#888;--border-color:#333;--code-bg:#2d2d2d;--link-color:#64b5f6;--link-visited:#a6d6ff;--icon-filter:invert(1)}.cream-mode{--background-color:#f3f0e6;--foreground-color:#2d2a26;--midground-color:#5d564f;--accent-color:#1565c0;--link-hover-bg:#e6e2d6;--muted-color:#5d564f;--border-color:#dcd6c6;--code-bg:#e8e2d2;--link-color:#0d47a1;--link-visited:#0d47a1;--icon-filter:none}*{font-feature-settings:"kern" 1,"liga" 1,"onum" 0;margin:0;padding:0;box-sizing:border-box;font-variant-numeric:normal}html{-webkit-hyphens:auto;background:var(--background-color);color:var(--foreground-color);font-size:1rem;height:100%;hyphens:auto;margin:0;padding:0;scroll-behavior:smooth;overflow-y:scroll;text-rendering:optimizeLegibility}body{display:flex;flex-direction:column;height:100%;font:400 16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif}a{background:0;color:var(--foreground-color);text-decoration:none}a:hover{background:var(--link-hover-bg)}</style> <script>function getPreferredTheme(){const e=localStorage.getItem("theme");return e&&themes.includes(e)?e:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function applyTheme(e){document.documentElement.classList.remove("light-mode","dark-mode","cream-mode"),document.documentElement.classList.add(`${e}-mode`),localStorage.setItem("theme",e)}const themes=["light","dark","cream"];try{applyTheme(getPreferredTheme())}catch(e){console.error("Theme initialization failed:",e)}try{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{localStorage.getItem("theme")||applyTheme(e.matches?"dark":"light")})}catch(e){}</script> <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"> <link rel="stylesheet" href="/assets/css/fonts.css"> <link rel="stylesheet" href="/assets/css/common.css"> <script src="/assets/js/common.js" defer></script> <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Somdev Sangwan",
-  "url": "http://localhost:4000",
-  "image": "http://localhost:4000/assets/images/profile.jpg",
+  "url": "https://somdev.in",
+  "image": "https://somdev.in/assets/images/profile.jpg",
   "jobTitle": "Security Researcher & Developer",
   "alternateName": "s0md3v",
-  "description": "Security Researcher & Developer specializing in automation and vulnerability detection.",
+  "description": "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics.",
   "knowsAbout": [
     "Computer Security",
-    "Penetration Testing",
-    "Security Automation",
-    "Python (Programming Language)",
-    "Web Application Security"
+    "Programming"
   ],
   "sameAs": [
     "https://twitter.com/s0md3v",
     "https://github.com/s0md3v",
     "https://linkedin.com/in/s0md3v",
-    "https://instagram.com/s0md3v"
+    "https://instagram.com/s0md3v",
+    "https://linuxsecurity.expert/p/somdev-sangwan"
+  ],
+  "subjectOf": [
+    {
+      "@type": "CreativeWork",
+      "name": "BleepingComputer: Hacker says hijacking libraries, stealing AWS keys was ethical research",
+      "url": "https://www.bleepingcomputer.com/news/security/hacker-says-hijacking-libraries-stealing-aws-keys-was-ethical-research/"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "The Hacker News: PyPi Package 'ctx' and PHP Library 'phpass' Compromised",
+      "url": "https://thehackernews.com/2022/05/pypi-package-ctx-and-php-library-phpass.html"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "India Today: Hacker Claims He Can Crack Aadhaar Password in 3 Seconds",
+      "url": "https://www.indiatoday.in/technology/news/story/hacker-claims-he-can-crack-aadhaar-password-in-3-seconds-1306400-2018-08-06"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "Deccan Herald: I've seen all your data without hacking",
+      "url": "https://www.deccanherald.com/opinion/i-ve-seen-all-your-data-without-hacking-812289.html"
+    }
   ]
 }
-</script>
-</head>
-
-<body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
-<header id="site-header" class="header">
-    <nav class="nav-container">
-        <div class="site-home">
-            <a href="/">home</a>
-            <div class="settings-wrapper">
-                <button class="settings-icon" id="settings-toggle" aria-label="Settings">
-                    <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20">
-                </button>
-                <div class="settings-dropdown" id="settings-menu">
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Theme</div>
-                        <div class="settings-options theme-options">
-                            <button data-theme="light">Light</button>
-                            <button data-theme="dark">Dark</button>
-                            <button data-theme="cream">Cream</button>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Font</div>
-                        <div class="settings-options font-options">
-                            <button data-font="system">System</button>
-                            <button data-font="lexend">Lexend</button>
-                            <button data-font="opendyslexic">Dyslexic</button>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Font Size</div>
-                        <div class="settings-options size-options">
-                            <button id="decrease-font">−</button>
-                            <button id="reset-font">Reset</button>
-                            <button id="increase-font">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button class="menu-toggle" aria-label="Toggle navigation">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </button>
-
-        <ul class="nav-links">
-            <li><a href="/projects">projects</a></li>
-            <li><a href="/blog">blog</a></li>
-            <li><a href="/philosophy">philosophy</a></li>
-            <li><a href="/about">about</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="blog-content">
-  <div class="wrapper">
-    <h1 class="post-title" itemprop="name headline">Creating an XSS Polyglot</h1>
-    <p class="post-meta">
-      
-      
-      
-      
-    </p>
-    <div class="post-content">
-      <p>I recently participated in the XSS Polyglot Challenge, where the goal was to create the shortest polyglot that works across multiple contexts. An XSS polyglot is a single string of code that can execute as JavaScript regardless of where it’s injected on an HTML page.</p>
-
-<p>After a lot of trial and error, here’s the payload I came up with:</p>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:`/*\"/*--&gt;<span class="ni">&amp;lt;</span>svg onload='/*<span class="nt">&lt;/template&gt;&lt;/noembed&gt;&lt;/noscript&gt;&lt;/style&gt;&lt;/title&gt;&lt;/textarea&gt;&lt;/script&gt;&lt;html</span> <span class="na">onmouseover=</span><span class="s">"/**/ alert()//'"</span><span class="nt">&gt;</span>`
-</code></pre></div></div>
-
-<p>Let’s break down how it works.</p>
-
-<h3 id="the-many-faces-of-injection">The Many Faces of Injection</h3>
-
-<p>The core challenge is that an XSS payload can land in many different places (or “contexts”) within the HTML. For example:</p>
-
-<ul>
-  <li>Inside an HTML tag: <code class="language-plaintext highlighter-rouge">&lt;div name="[payload]"&gt;</code></li>
-  <li>Inside a script tag: <code class="language-plaintext highlighter-rouge">&lt;script&gt;var x = "[payload]";&lt;/script&gt;</code></li>
-  <li>Inside an HTML comment: <code class="language-plaintext highlighter-rouge">&lt;!-- [payload] --&gt;</code></li>
-  <li>Inside a specific tag like <code class="language-plaintext highlighter-rouge">&lt;textarea&gt;</code>: <code class="language-plaintext highlighter-rouge">&lt;textarea&gt;[payload]&lt;/textarea&gt;</code></li>
-  <li>As a URL: <code class="language-plaintext highlighter-rouge">&lt;a href="[payload]"&gt;</code></li>
-</ul>
-
-<p>A true polyglot needs to escape its current context and then execute, no matter which one it’s in.</p>
-
-<h3 id="deconstructing-the-payload">Deconstructing the Payload</h3>
-
-<p>My payload is essentially a chain of escape sequences and context breakers, designed to handle multiple scenarios.</p>
-
-<p><strong>Part 1: The Openers</strong></p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:`/*\"/*--&gt;
-</code></pre></div></div>
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">javascript:</code>: This handles the case where the payload is used in a URL context, like an <code class="language-plaintext highlighter-rouge">href</code> attribute. The browser will execute the code that follows.</li>
-  <li><code class="language-plaintext highlighter-rouge">/*</code>: This starts a JavaScript multi-line comment. If we are inside a script, this helps to comment out any code that comes after our injection point.</li>
-  <li><code class="language-plaintext highlighter-rouge">\"</code>: This is an escaped quote. If our payload is inside a JavaScript string literal (e.g., <code class="language-plaintext highlighter-rouge">var a = "[payload]"</code>), this will terminate the string.</li>
-  <li><code class="language-plaintext highlighter-rouge">--&gt;</code>: This closes an HTML comment, for the scenario where we are injected inside <code class="language-plaintext highlighter-rouge">&lt;!-- ... --&gt;</code>.</li>
-</ul>
-
-<p><strong>Part 2: The Great Escape</strong></p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&amp;lt;svg onload='/*&lt;/template&gt;&lt;/noembed&gt;&lt;/noscript&gt;&lt;/style&gt;&lt;/title&gt;&lt;/textarea&gt;&lt;/script&gt;
-</code></pre></div></div>
-<p>This is the real workhorse. It’s a “tag soup” designed to break out of whatever HTML tag we might be in.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">&amp;lt;svg onload='...'&gt;</code>: This is a classic trick. It attempts to create an <code class="language-plaintext highlighter-rouge">&lt;svg&gt;</code> element. The <code class="language-plaintext highlighter-rouge">onload</code> event is a common vector for executing JavaScript. However, the real payload isn’t in the <code class="language-plaintext highlighter-rouge">onload</code> here. Instead, this part is designed to be a valid-looking tag that can be easily broken out of.</li>
-  <li><code class="language-plaintext highlighter-rouge">&lt;/template&gt;&lt;/noembed&gt;&lt;/noscript&gt;&lt;/style&gt;&lt;/title&gt;&lt;/textarea&gt;&lt;/script&gt;</code>: This is a sequence of closing tags. The idea is that no matter what tag we were injected into (<code class="language-plaintext highlighter-rouge">&lt;textarea&gt;</code>, <code class="language-plaintext highlighter-rouge">&lt;title&gt;</code>, etc.), one of these closing tags will match and terminate it. This frees our payload from its prison, allowing the final part to be parsed as regular HTML.</li>
-</ul>
-
-<p><strong>Part 3: The Grand Finale</strong></p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;html onmouseover="/**/ alert()//'"&gt;
-</code></pre></div></div>
-<p>After the previous section has closed out any containing tags, this is what’s left. It’s a standalone HTML element.</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">&lt;html onmouseover="..."&gt;</code>: It creates a new <code class="language-plaintext highlighter-rouge">&lt;html&gt;</code> element.</li>
-  <li><code class="language-plaintext highlighter-rouge">onmouseover="/**/ alert()//'"</code>: This is the actual execution. When the user’s mouse moves over the element this payload creates (which can be the whole page if it breaks out effectively), the <code class="language-plaintext highlighter-rouge">alert()</code> function is called. The <code class="language-plaintext highlighter-rouge">/**/</code> and <code class="language-plaintext highlighter-rouge">//</code> are just JavaScript comments to ensure the code remains valid in slightly different parsing contexts.</li>
-</ul>
-
-<p>By chaining these context-breaking and escaping techniques together, this short string becomes a versatile key that can unlock an XSS vulnerability in a surprising number of places.</p>
-
-    </div>
-  </div>
-</div>
-</body>
-
-</html>
+</script> </head> <body> <a href="#main-content" class="skip-link">Skip to main content</a> <header id="site-header" class="header"> <nav class="nav-container"> <div class="site-home"> <a href="/">home</a> <div class="settings-wrapper"> <button class="settings-icon" id="settings-toggle" aria-label="Settings"> <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20"> </button> <div class="settings-dropdown" id="settings-menu"> <div class="settings-section"> <div class="settings-subtitle">Theme</div> <div class="settings-options theme-options"> <button data-theme="light">Light</button> <button data-theme="dark">Dark</button> <button data-theme="cream">Cream</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font</div> <div class="settings-options font-options"> <button data-font="system">System</button> <button data-font="lexend">Lexend</button> <button data-font="opendyslexic">Dyslexic</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font Size</div> <div class="settings-options size-options"> <button id="decrease-font">−</button> <button id="reset-font">Reset</button> <button id="increase-font">+</button> </div> </div> </div> </div> </div> <button class="menu-toggle" aria-label="Toggle navigation"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg> </button> <ul class="nav-links"> <li><a href="/projects">projects</a></li> <li><a href="/blog">blog</a></li> <li><a href="/philosophy">philosophy</a></li> <li><a href="/about">about</a></li> </ul> </nav> </header> <div class="blog-content"> <div class="wrapper"> <h1 class="post-title" itemprop="name headline">Creating an XSS Polyglot</h1> <p class="post-meta"> </p> <div class="post-content"> <p>I recently participated in the XSS Polyglot Challenge, where the goal was to create the shortest polyglot that works across multiple contexts. An XSS polyglot is a single string of code that can execute as JavaScript regardless of where it’s injected on an HTML page.</p> <p>After a lot of trial and error, here’s the payload I came up with:</p> <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:`/*\"/*--&gt;<span class="ni">&amp;lt;</span>svg onload='/*<span class="nt">&lt;/template&gt;&lt;/noembed&gt;&lt;/noscript&gt;&lt;/style&gt;&lt;/title&gt;&lt;/textarea&gt;&lt;/script&gt;&lt;html</span> <span class="na">onmouseover=</span><span class="s">"/**/ alert()//'"</span><span class="nt">&gt;</span>`
+</code></pre></div></div> <p>Let’s break down how it works.</p> <h3 id="the-many-faces-of-injection">The Many Faces of Injection</h3> <p>The core challenge is that an XSS payload can land in many different places (or “contexts”) within the HTML. For example:</p> <ul> <li>Inside an HTML tag: <code class="language-plaintext highlighter-rouge">&lt;div name="[payload]"&gt;</code></li> <li>Inside a script tag: <code class="language-plaintext highlighter-rouge">&lt;script&gt;var x = "[payload]";&lt;/script&gt;</code></li> <li>Inside an HTML comment: <code class="language-plaintext highlighter-rouge">&lt;!-- [payload] --&gt;</code></li> <li>Inside a specific tag like <code class="language-plaintext highlighter-rouge">&lt;textarea&gt;</code>: <code class="language-plaintext highlighter-rouge">&lt;textarea&gt;[payload]&lt;/textarea&gt;</code></li> <li>As a URL: <code class="language-plaintext highlighter-rouge">&lt;a href="[payload]"&gt;</code></li> </ul> <p>A true polyglot needs to escape its current context and then execute, no matter which one it’s in.</p> <h3 id="deconstructing-the-payload">Deconstructing the Payload</h3> <p>My payload is essentially a chain of escape sequences and context breakers, designed to handle multiple scenarios.</p> <p><strong>Part 1: The Openers</strong></p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:`/*\"/*--&gt;
+</code></pre></div></div> <ul> <li><code class="language-plaintext highlighter-rouge">javascript:</code>: This handles the case where the payload is used in a URL context, like an <code class="language-plaintext highlighter-rouge">href</code> attribute. The browser will execute the code that follows.</li> <li><code class="language-plaintext highlighter-rouge">/*</code>: This starts a JavaScript multi-line comment. If we are inside a script, this helps to comment out any code that comes after our injection point.</li> <li><code class="language-plaintext highlighter-rouge">\"</code>: This is an escaped quote. If our payload is inside a JavaScript string literal (e.g., <code class="language-plaintext highlighter-rouge">var a = "[payload]"</code>), this will terminate the string.</li> <li><code class="language-plaintext highlighter-rouge">--&gt;</code>: This closes an HTML comment, for the scenario where we are injected inside <code class="language-plaintext highlighter-rouge">&lt;!-- ... --&gt;</code>.</li> </ul> <p><strong>Part 2: The Great Escape</strong></p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&amp;lt;svg onload='/*&lt;/template&gt;&lt;/noembed&gt;&lt;/noscript&gt;&lt;/style&gt;&lt;/title&gt;&lt;/textarea&gt;&lt;/script&gt;
+</code></pre></div></div> <p>This is the real workhorse. It’s a “tag soup” designed to break out of whatever HTML tag we might be in.</p> <ul> <li><code class="language-plaintext highlighter-rouge">&amp;lt;svg onload='...'&gt;</code>: This is a classic trick. It attempts to create an <code class="language-plaintext highlighter-rouge">&lt;svg&gt;</code> element. The <code class="language-plaintext highlighter-rouge">onload</code> event is a common vector for executing JavaScript. However, the real payload isn’t in the <code class="language-plaintext highlighter-rouge">onload</code> here. Instead, this part is designed to be a valid-looking tag that can be easily broken out of.</li> <li><code class="language-plaintext highlighter-rouge">&lt;/template&gt;&lt;/noembed&gt;&lt;/noscript&gt;&lt;/style&gt;&lt;/title&gt;&lt;/textarea&gt;&lt;/script&gt;</code>: This is a sequence of closing tags. The idea is that no matter what tag we were injected into (<code class="language-plaintext highlighter-rouge">&lt;textarea&gt;</code>, <code class="language-plaintext highlighter-rouge">&lt;title&gt;</code>, etc.), one of these closing tags will match and terminate it. This frees our payload from its prison, allowing the final part to be parsed as regular HTML.</li> </ul> <p><strong>Part 3: The Grand Finale</strong></p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;html onmouseover="/**/ alert()//'"&gt;
+</code></pre></div></div> <p>After the previous section has closed out any containing tags, this is what’s left. It’s a standalone HTML element.</p> <ul> <li><code class="language-plaintext highlighter-rouge">&lt;html onmouseover="..."&gt;</code>: It creates a new <code class="language-plaintext highlighter-rouge">&lt;html&gt;</code> element.</li> <li><code class="language-plaintext highlighter-rouge">onmouseover="/**/ alert()//'"</code>: This is the actual execution. When the user’s mouse moves over the element this payload creates (which can be the whole page if it breaks out effectively), the <code class="language-plaintext highlighter-rouge">alert()</code> function is called. The <code class="language-plaintext highlighter-rouge">/**/</code> and <code class="language-plaintext highlighter-rouge">//</code> are just JavaScript comments to ensure the code remains valid in slightly different parsing contexts.</li> </ul> <p>By chaining these context-breaking and escaping techniques together, this short string becomes a versatile key that can unlock an XSS vulnerability in a surprising number of places.</p> </div> </div> </div> </body> </html>

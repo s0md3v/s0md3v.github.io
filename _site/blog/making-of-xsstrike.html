@@ -1,307 +1,46 @@
-<!DOCTYPE html>
-<html lang=" en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-  <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>XSStrike: Solving XSS Scanning | Somdev Sangwan</title>
-<meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="XSStrike: Solving XSS Scanning" />
-<meta name="author" content="Somdev Sangwan" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="Making of s0md3v/xsstrike repository" />
-<meta property="og:description" content="Making of s0md3v/xsstrike repository" />
-<link rel="canonical" href="http://localhost:4000/blog/making-of-xsstrike" />
-<meta property="og:url" content="http://localhost:4000/blog/making-of-xsstrike" />
-<meta property="og:site_name" content="Somdev Sangwan" />
-<meta property="og:image" content="http://localhost:4000/assets/thumbs/xsstrike.png" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2017-06-15T12:46:00+05:30" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:image" content="http://localhost:4000/assets/thumbs/xsstrike.png" />
-<meta property="twitter:title" content="XSStrike: Solving XSS Scanning" />
-<meta name="twitter:site" content="@s0md3v" />
-<meta name="twitter:creator" content="@Somdev Sangwan" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2017-06-15T12:46:00+05:30","datePublished":"2017-06-15T12:46:00+05:30","description":"Making of s0md3v/xsstrike repository","headline":"XSStrike: Solving XSS Scanning","image":"http://localhost:4000/assets/thumbs/xsstrike.png","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/making-of-xsstrike"},"url":"http://localhost:4000/blog/making-of-xsstrike"}</script>
-<!-- End Jekyll SEO tag -->
-
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <style>
-    :root {
-        --base-font-size: 1rem;
-        --blog-font-size: 1rem;
-        --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        --blog-font-family: var(--base-font-family);
-
-        --background-color: #fafafa;
-        --foreground-color: #1a1a1a;
-        --midground-color: #666666;
-        --accent-color: #1976d2;
-        --link-hover-bg: #e5e5e5;
-        --muted-color: #666666;
-        --border-color: #e5e5e5;
-        --code-bg: #f0f0f0;
-        --link-color: #0b5394;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    .dark-mode {
-        --background-color: #1e1e1e;
-        --foreground-color: #e0e0e0;
-        --midground-color: #a0a0a0;
-        --accent-color: #42a5f5;
-        --link-hover-bg: #333333;
-        --muted-color: #888888;
-        --border-color: #333333;
-        --code-bg: #2d2d2d;
-        --link-color: #64b5f6;
-        --link-visited: #a6d6ff;
-        --icon-filter: invert(1);
-    }
-
-    .cream-mode {
-        --background-color: #f3f0e6;
-        --foreground-color: #2d2a26;
-        --midground-color: #5d564f;
-        --accent-color: #1565c0;
-        --link-hover-bg: #e6e2d6;
-        --muted-color: #5d564f;
-        --border-color: #dcd6c6;
-        --code-bg: #e8e2d2;
-        --link-color: #0d47a1;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    * {
-        font-feature-settings: "kern" 1, "liga" 1, "onum" 0;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-variant-numeric: normal;
-    }
-
-    html {
-        -webkit-hyphens: auto;
-        background: var(--background-color);
-        color: var(--foreground-color);
-        font-size: 1rem;
-        height: 100%;
-        hyphens: auto;
-        margin: 0;
-        padding: 0;
-        scroll-behavior: smooth;
-        overflow-y: scroll;
-        text-rendering: optimizeLegibility;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    a {
-        background: none;
-        color: var(--foreground-color);
-        text-decoration: none;
-    }
-
-    a:hover {
-        background: var(--link-hover-bg);
-    }
-</style>
-
-<script>
-    const themes = ["light", "dark", "cream"];
-
-    function getPreferredTheme() {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme && themes.includes(savedTheme)) return savedTheme;
-
-        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        return systemPrefersDark ? "dark" : "light";
-    }
-
-    function applyTheme(theme) {
-        document.documentElement.classList.remove("light-mode", "dark-mode", "cream-mode");
-        document.documentElement.classList.add(`${theme}-mode`);
-        localStorage.setItem("theme", theme);
-    }
-
-    try {
-        const currentTheme = getPreferredTheme();
-        applyTheme(currentTheme);
-    } catch (e) {
-        console.error("Theme initialization failed:", e);
-    }
-
-    try {
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-            if (!localStorage.getItem("theme")) {
-                applyTheme(e.matches ? "dark" : "light");
-            }
-        });
-    } catch (e) { }
-</script>
-
-  
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-  
-
-  <link rel="stylesheet" href="/assets/css/fonts.css">
-  <link rel="stylesheet" href="/assets/css/common.css">
-  <script src="/assets/js/common.js" defer></script>
-
-
-  <script type="application/ld+json">
+<!DOCTYPE html> <html lang=" en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1"> <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/> <link rel="icon" type="image/x-icon" href="/favicon.ico"> <title>XSStrike: Solving XSS Scanning | Somdev Sangwan</title> <meta name="generator" content="Jekyll v3.10.0"/> <meta property="og:title" content="XSStrike: Solving XSS Scanning"/> <meta name="author" content="Somdev Sangwan"/> <meta property="og:locale" content="en_US"/> <meta name="description" content="Making of s0md3v/xsstrike repository"/> <meta property="og:description" content="Making of s0md3v/xsstrike repository"/> <link rel="canonical" href="https://somdev.in/blog/making-of-xsstrike"/> <meta property="og:url" content="https://somdev.in/blog/making-of-xsstrike"/> <meta property="og:site_name" content="Somdev Sangwan"/> <meta property="og:image" content="https://somdev.in/assets/thumbs/xsstrike.png"/> <meta property="og:type" content="article"/> <meta property="article:published_time" content="2017-06-15T12:46:00+05:30"/> <meta name="twitter:card" content="summary_large_image"/> <meta property="twitter:image" content="https://somdev.in/assets/thumbs/xsstrike.png"/> <meta property="twitter:title" content="XSStrike: Solving XSS Scanning"/> <meta name="twitter:site" content="@s0md3v"/> <meta name="twitter:creator" content="@Somdev Sangwan"/> <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2017-06-15T12:46:00+05:30","datePublished":"2017-06-15T12:46:00+05:30","description":"Making of s0md3v/xsstrike repository","headline":"XSStrike: Solving XSS Scanning","image":"https://somdev.in/assets/thumbs/xsstrike.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://somdev.in/blog/making-of-xsstrike"},"url":"https://somdev.in/blog/making-of-xsstrike"}</script> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <style>:root{--base-font-size:1rem;--blog-font-size:1rem;--base-font-family:"Lexend","Helvetica Neue",Helvetica,Arial,sans-serif;--blog-font-family:var(--base-font-family);--background-color:#fafafa;--foreground-color:#1a1a1a;--midground-color:#666;--accent-color:#1976d2;--link-hover-bg:#e5e5e5;--muted-color:#666;--border-color:#e5e5e5;--code-bg:#f0f0f0;--link-color:#0b5394;--link-visited:#0d47a1;--icon-filter:none}.dark-mode{--background-color:#1e1e1e;--foreground-color:#e0e0e0;--midground-color:#a0a0a0;--accent-color:#42a5f5;--link-hover-bg:#333;--muted-color:#888;--border-color:#333;--code-bg:#2d2d2d;--link-color:#64b5f6;--link-visited:#a6d6ff;--icon-filter:invert(1)}.cream-mode{--background-color:#f3f0e6;--foreground-color:#2d2a26;--midground-color:#5d564f;--accent-color:#1565c0;--link-hover-bg:#e6e2d6;--muted-color:#5d564f;--border-color:#dcd6c6;--code-bg:#e8e2d2;--link-color:#0d47a1;--link-visited:#0d47a1;--icon-filter:none}*{font-feature-settings:"kern" 1,"liga" 1,"onum" 0;margin:0;padding:0;box-sizing:border-box;font-variant-numeric:normal}html{-webkit-hyphens:auto;background:var(--background-color);color:var(--foreground-color);font-size:1rem;height:100%;hyphens:auto;margin:0;padding:0;scroll-behavior:smooth;overflow-y:scroll;text-rendering:optimizeLegibility}body{display:flex;flex-direction:column;height:100%;font:400 16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif}a{background:0;color:var(--foreground-color);text-decoration:none}a:hover{background:var(--link-hover-bg)}</style> <script>function getPreferredTheme(){const e=localStorage.getItem("theme");return e&&themes.includes(e)?e:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function applyTheme(e){document.documentElement.classList.remove("light-mode","dark-mode","cream-mode"),document.documentElement.classList.add(`${e}-mode`),localStorage.setItem("theme",e)}const themes=["light","dark","cream"];try{applyTheme(getPreferredTheme())}catch(e){console.error("Theme initialization failed:",e)}try{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{localStorage.getItem("theme")||applyTheme(e.matches?"dark":"light")})}catch(e){}</script> <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"> <link rel="stylesheet" href="/assets/css/fonts.css"> <link rel="stylesheet" href="/assets/css/common.css"> <script src="/assets/js/common.js" defer></script> <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Somdev Sangwan",
-  "url": "http://localhost:4000",
-  "image": "http://localhost:4000/assets/images/profile.jpg",
+  "url": "https://somdev.in",
+  "image": "https://somdev.in/assets/images/profile.jpg",
   "jobTitle": "Security Researcher & Developer",
   "alternateName": "s0md3v",
-  "description": "Security Researcher & Developer specializing in automation and vulnerability detection.",
+  "description": "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics.",
   "knowsAbout": [
     "Computer Security",
-    "Penetration Testing",
-    "Security Automation",
-    "Python (Programming Language)",
-    "Web Application Security"
+    "Programming"
   ],
   "sameAs": [
     "https://twitter.com/s0md3v",
     "https://github.com/s0md3v",
     "https://linkedin.com/in/s0md3v",
-    "https://instagram.com/s0md3v"
+    "https://instagram.com/s0md3v",
+    "https://linuxsecurity.expert/p/somdev-sangwan"
+  ],
+  "subjectOf": [
+    {
+      "@type": "CreativeWork",
+      "name": "BleepingComputer: Hacker says hijacking libraries, stealing AWS keys was ethical research",
+      "url": "https://www.bleepingcomputer.com/news/security/hacker-says-hijacking-libraries-stealing-aws-keys-was-ethical-research/"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "The Hacker News: PyPi Package 'ctx' and PHP Library 'phpass' Compromised",
+      "url": "https://thehackernews.com/2022/05/pypi-package-ctx-and-php-library-phpass.html"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "India Today: Hacker Claims He Can Crack Aadhaar Password in 3 Seconds",
+      "url": "https://www.indiatoday.in/technology/news/story/hacker-claims-he-can-crack-aadhaar-password-in-3-seconds-1306400-2018-08-06"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "Deccan Herald: I've seen all your data without hacking",
+      "url": "https://www.deccanherald.com/opinion/i-ve-seen-all-your-data-without-hacking-812289.html"
+    }
   ]
 }
-</script>
-</head>
-
-<body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
-<header id="site-header" class="header">
-    <nav class="nav-container">
-        <div class="site-home">
-            <a href="/">home</a>
-            <div class="settings-wrapper">
-                <button class="settings-icon" id="settings-toggle" aria-label="Settings">
-                    <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20">
-                </button>
-                <div class="settings-dropdown" id="settings-menu">
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Theme</div>
-                        <div class="settings-options theme-options">
-                            <button data-theme="light">Light</button>
-                            <button data-theme="dark">Dark</button>
-                            <button data-theme="cream">Cream</button>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Font</div>
-                        <div class="settings-options font-options">
-                            <button data-font="system">System</button>
-                            <button data-font="lexend">Lexend</button>
-                            <button data-font="opendyslexic">Dyslexic</button>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Font Size</div>
-                        <div class="settings-options size-options">
-                            <button id="decrease-font">−</button>
-                            <button id="reset-font">Reset</button>
-                            <button id="increase-font">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button class="menu-toggle" aria-label="Toggle navigation">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </button>
-
-        <ul class="nav-links">
-            <li><a href="/projects">projects</a></li>
-            <li><a href="/blog">blog</a></li>
-            <li><a href="/philosophy">philosophy</a></li>
-            <li><a href="/about">about</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="blog-content">
-  <div class="wrapper">
-    <h1 class="post-title" itemprop="name headline">XSStrike: Solving XSS Scanning</h1>
-    <p class="post-meta">
-      
-      
-      
-      
-    </p>
-    <div class="post-content">
-      <p>Before XSStrike, existing XSS scanners followed a primitive approach: inject payloads blindly and hope something sticks. This brute-force methodology resulted in countless false positives and missed vulnerabilities that required more nuanced detection.</p>
-
-<p>The fundamental issue I identified was that traditional XSS scanners were context-blind. They would inject the same generic payloads regardless of where user input was reflected in the HTML response. A payload that works in an HTML context might be completely useless in a JavaScript string context, and vice versa.</p>
-
-<p>I realized that effective XSS detection required understanding the precise context where user input appears in the response. This led me to develop XSStrike’s core innovation: context-aware payload generation.</p>
-
-<h3 id="novel-technique-1-intelligent-html-parsing">Novel Technique #1: Intelligent HTML Parsing</h3>
-
-<p>The first breakthrough was creating a sophisticated HTML parser that could identify not just where user input was reflected, but how it was reflected. My parser analyzes multiple contexts:</p>
-
-<ol>
-  <li>HTML context (between tags)</li>
-  <li>Attribute context (within tag attributes)</li>
-  <li>Script context (inside JavaScript code)</li>
-  <li>Comment context (within HTML comments)</li>
-</ol>
-
-<p>It also collects surrounding text to understand how the input is used, which helps in crafting more effective payloads.</p>
-
-<h3 id="novel-technique-2-context-aware-payload-generation">Novel Technique #2: Context-Aware Payload Generation</h3>
-
-<p>Once I could accurately identify reflection contexts, I developed an payload generator that crafts XSS vectors specifically tailored to each context.</p>
-
-<p>For HTML contexts, the generator creates payloads using event handlers and HTML tags. For JavaScript contexts, it analyzes the surrounding code structure using my JavaScript context analyzer to determine what characters are needed to break out of the current context.</p>
-
-<p>The generator assigns confidence scores to payloads based on their likelihood of success, prioritizing the most promising vectors.</p>
-
-<h3 id="novel-technique-3-efficiency-based-filtering">Novel Technique #3: Efficiency-Based Filtering</h3>
-
-<p>Rather than just checking if a payload executes, I implemented an efficiency scoring system that measures how well a payload survives filtering mechanisms.</p>
-
-<p>The checker wraps test payloads with marker strings (st4r7s and 3nd) and uses fuzzy string matching to determine what percentage of the payload survived any filtering. This allows XSStrike to identify partial filtering and adjust its approach accordingly.</p>
-
-<h3 id="novel-technique-4-waf-detection-and-evasion">Novel Technique #4: WAF Detection and Evasion</h3>
-
-<p>I recognized that Web Application Firewalls (WAFs) were becoming increasingly common, so I built comprehensive WAF detection capabilities. XSStrike can identify over 60 different WAF products by analyzing response headers, status codes, and page content.</p>
-
-<p>More importantly, I developed evasion techniques using character encoding, case randomization, and alternative syntax. The tool includes a fuzzing engine that tests various bypass techniques against detected filtering mechanisms.</p>
-
-    </div>
-  </div>
-</div>
-</body>
-
-</html>
+</script> </head> <body> <a href="#main-content" class="skip-link">Skip to main content</a> <header id="site-header" class="header"> <nav class="nav-container"> <div class="site-home"> <a href="/">home</a> <div class="settings-wrapper"> <button class="settings-icon" id="settings-toggle" aria-label="Settings"> <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20"> </button> <div class="settings-dropdown" id="settings-menu"> <div class="settings-section"> <div class="settings-subtitle">Theme</div> <div class="settings-options theme-options"> <button data-theme="light">Light</button> <button data-theme="dark">Dark</button> <button data-theme="cream">Cream</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font</div> <div class="settings-options font-options"> <button data-font="system">System</button> <button data-font="lexend">Lexend</button> <button data-font="opendyslexic">Dyslexic</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font Size</div> <div class="settings-options size-options"> <button id="decrease-font">−</button> <button id="reset-font">Reset</button> <button id="increase-font">+</button> </div> </div> </div> </div> </div> <button class="menu-toggle" aria-label="Toggle navigation"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg> </button> <ul class="nav-links"> <li><a href="/projects">projects</a></li> <li><a href="/blog">blog</a></li> <li><a href="/philosophy">philosophy</a></li> <li><a href="/about">about</a></li> </ul> </nav> </header> <div class="blog-content"> <div class="wrapper"> <h1 class="post-title" itemprop="name headline">XSStrike: Solving XSS Scanning</h1> <p class="post-meta"> </p> <div class="post-content"> <p>Before XSStrike, existing XSS scanners followed a primitive approach: inject payloads blindly and hope something sticks. This brute-force methodology resulted in countless false positives and missed vulnerabilities that required more nuanced detection.</p> <p>The fundamental issue I identified was that traditional XSS scanners were context-blind. They would inject the same generic payloads regardless of where user input was reflected in the HTML response. A payload that works in an HTML context might be completely useless in a JavaScript string context, and vice versa.</p> <p>I realized that effective XSS detection required understanding the precise context where user input appears in the response. This led me to develop XSStrike’s core innovation: context-aware payload generation.</p> <h3 id="novel-technique-1-intelligent-html-parsing">Novel Technique #1: Intelligent HTML Parsing</h3> <p>The first breakthrough was creating a sophisticated HTML parser that could identify not just where user input was reflected, but how it was reflected. My parser analyzes multiple contexts:</p> <ol> <li>HTML context (between tags)</li> <li>Attribute context (within tag attributes)</li> <li>Script context (inside JavaScript code)</li> <li>Comment context (within HTML comments)</li> </ol> <p>It also collects surrounding text to understand how the input is used, which helps in crafting more effective payloads.</p> <h3 id="novel-technique-2-context-aware-payload-generation">Novel Technique #2: Context-Aware Payload Generation</h3> <p>Once I could accurately identify reflection contexts, I developed an payload generator that crafts XSS vectors specifically tailored to each context.</p> <p>For HTML contexts, the generator creates payloads using event handlers and HTML tags. For JavaScript contexts, it analyzes the surrounding code structure using my JavaScript context analyzer to determine what characters are needed to break out of the current context.</p> <p>The generator assigns confidence scores to payloads based on their likelihood of success, prioritizing the most promising vectors.</p> <h3 id="novel-technique-3-efficiency-based-filtering">Novel Technique #3: Efficiency-Based Filtering</h3> <p>Rather than just checking if a payload executes, I implemented an efficiency scoring system that measures how well a payload survives filtering mechanisms.</p> <p>The checker wraps test payloads with marker strings (st4r7s and 3nd) and uses fuzzy string matching to determine what percentage of the payload survived any filtering. This allows XSStrike to identify partial filtering and adjust its approach accordingly.</p> <h3 id="novel-technique-4-waf-detection-and-evasion">Novel Technique #4: WAF Detection and Evasion</h3> <p>I recognized that Web Application Firewalls (WAFs) were becoming increasingly common, so I built comprehensive WAF detection capabilities. XSStrike can identify over 60 different WAF products by analyzing response headers, status codes, and page content.</p> <p>More importantly, I developed evasion techniques using character encoding, case randomization, and alternative syntax. The tool includes a fuzzing engine that tests various bypass techniques against detected filtering mechanisms.</p> </div> </div> </div> </body> </html>

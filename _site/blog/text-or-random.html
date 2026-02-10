@@ -1,319 +1,49 @@
-<!DOCTYPE html>
-<html lang=" en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-  <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Detecting Linguistic Information in Text | Somdev Sangwan</title>
-<meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="Detecting Linguistic Information in Text" />
-<meta name="author" content="Somdev Sangwan" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="A phonetic approach to differentiating human-readable text from random data." />
-<meta property="og:description" content="A phonetic approach to differentiating human-readable text from random data." />
-<link rel="canonical" href="http://localhost:4000/blog/text-or-random" />
-<meta property="og:url" content="http://localhost:4000/blog/text-or-random" />
-<meta property="og:site_name" content="Somdev Sangwan" />
-<meta property="og:image" content="http://localhost:4000/assets/thumbs/text-or-random.png" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2019-04-22T00:00:00+05:30" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:image" content="http://localhost:4000/assets/thumbs/text-or-random.png" />
-<meta property="twitter:title" content="Detecting Linguistic Information in Text" />
-<meta name="twitter:site" content="@s0md3v" />
-<meta name="twitter:creator" content="@Somdev Sangwan" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2019-04-22T00:00:00+05:30","datePublished":"2019-04-22T00:00:00+05:30","description":"A phonetic approach to differentiating human-readable text from random data.","headline":"Detecting Linguistic Information in Text","image":"http://localhost:4000/assets/thumbs/text-or-random.png","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/text-or-random"},"url":"http://localhost:4000/blog/text-or-random"}</script>
-<!-- End Jekyll SEO tag -->
-
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <style>
-    :root {
-        --base-font-size: 1rem;
-        --blog-font-size: 1rem;
-        --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        --blog-font-family: var(--base-font-family);
-
-        --background-color: #fafafa;
-        --foreground-color: #1a1a1a;
-        --midground-color: #666666;
-        --accent-color: #1976d2;
-        --link-hover-bg: #e5e5e5;
-        --muted-color: #666666;
-        --border-color: #e5e5e5;
-        --code-bg: #f0f0f0;
-        --link-color: #0b5394;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    .dark-mode {
-        --background-color: #1e1e1e;
-        --foreground-color: #e0e0e0;
-        --midground-color: #a0a0a0;
-        --accent-color: #42a5f5;
-        --link-hover-bg: #333333;
-        --muted-color: #888888;
-        --border-color: #333333;
-        --code-bg: #2d2d2d;
-        --link-color: #64b5f6;
-        --link-visited: #a6d6ff;
-        --icon-filter: invert(1);
-    }
-
-    .cream-mode {
-        --background-color: #f3f0e6;
-        --foreground-color: #2d2a26;
-        --midground-color: #5d564f;
-        --accent-color: #1565c0;
-        --link-hover-bg: #e6e2d6;
-        --muted-color: #5d564f;
-        --border-color: #dcd6c6;
-        --code-bg: #e8e2d2;
-        --link-color: #0d47a1;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    * {
-        font-feature-settings: "kern" 1, "liga" 1, "onum" 0;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-variant-numeric: normal;
-    }
-
-    html {
-        -webkit-hyphens: auto;
-        background: var(--background-color);
-        color: var(--foreground-color);
-        font-size: 1rem;
-        height: 100%;
-        hyphens: auto;
-        margin: 0;
-        padding: 0;
-        scroll-behavior: smooth;
-        overflow-y: scroll;
-        text-rendering: optimizeLegibility;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    a {
-        background: none;
-        color: var(--foreground-color);
-        text-decoration: none;
-    }
-
-    a:hover {
-        background: var(--link-hover-bg);
-    }
-</style>
-
-<script>
-    const themes = ["light", "dark", "cream"];
-
-    function getPreferredTheme() {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme && themes.includes(savedTheme)) return savedTheme;
-
-        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        return systemPrefersDark ? "dark" : "light";
-    }
-
-    function applyTheme(theme) {
-        document.documentElement.classList.remove("light-mode", "dark-mode", "cream-mode");
-        document.documentElement.classList.add(`${theme}-mode`);
-        localStorage.setItem("theme", theme);
-    }
-
-    try {
-        const currentTheme = getPreferredTheme();
-        applyTheme(currentTheme);
-    } catch (e) {
-        console.error("Theme initialization failed:", e);
-    }
-
-    try {
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-            if (!localStorage.getItem("theme")) {
-                applyTheme(e.matches ? "dark" : "light");
-            }
-        });
-    } catch (e) { }
-</script>
-
-  
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-  
-
-  <link rel="stylesheet" href="/assets/css/fonts.css">
-  <link rel="stylesheet" href="/assets/css/common.css">
-  <script src="/assets/js/common.js" defer></script>
-
-
-  <script type="application/ld+json">
+<!DOCTYPE html> <html lang=" en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1"> <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/> <link rel="icon" type="image/x-icon" href="/favicon.ico"> <title>Detecting Linguistic Information in Text | Somdev Sangwan</title> <meta name="generator" content="Jekyll v3.10.0"/> <meta property="og:title" content="Detecting Linguistic Information in Text"/> <meta name="author" content="Somdev Sangwan"/> <meta property="og:locale" content="en_US"/> <meta name="description" content="A phonetic approach to differentiating human-readable text from random data."/> <meta property="og:description" content="A phonetic approach to differentiating human-readable text from random data."/> <link rel="canonical" href="https://somdev.in/blog/text-or-random"/> <meta property="og:url" content="https://somdev.in/blog/text-or-random"/> <meta property="og:site_name" content="Somdev Sangwan"/> <meta property="og:image" content="https://somdev.in/assets/thumbs/text-or-random.png"/> <meta property="og:type" content="article"/> <meta property="article:published_time" content="2019-04-22T00:00:00+05:30"/> <meta name="twitter:card" content="summary_large_image"/> <meta property="twitter:image" content="https://somdev.in/assets/thumbs/text-or-random.png"/> <meta property="twitter:title" content="Detecting Linguistic Information in Text"/> <meta name="twitter:site" content="@s0md3v"/> <meta name="twitter:creator" content="@Somdev Sangwan"/> <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Somdev Sangwan"},"dateModified":"2019-04-22T00:00:00+05:30","datePublished":"2019-04-22T00:00:00+05:30","description":"A phonetic approach to differentiating human-readable text from random data.","headline":"Detecting Linguistic Information in Text","image":"https://somdev.in/assets/thumbs/text-or-random.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://somdev.in/blog/text-or-random"},"url":"https://somdev.in/blog/text-or-random"}</script> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <style>:root{--base-font-size:1rem;--blog-font-size:1rem;--base-font-family:"Lexend","Helvetica Neue",Helvetica,Arial,sans-serif;--blog-font-family:var(--base-font-family);--background-color:#fafafa;--foreground-color:#1a1a1a;--midground-color:#666;--accent-color:#1976d2;--link-hover-bg:#e5e5e5;--muted-color:#666;--border-color:#e5e5e5;--code-bg:#f0f0f0;--link-color:#0b5394;--link-visited:#0d47a1;--icon-filter:none}.dark-mode{--background-color:#1e1e1e;--foreground-color:#e0e0e0;--midground-color:#a0a0a0;--accent-color:#42a5f5;--link-hover-bg:#333;--muted-color:#888;--border-color:#333;--code-bg:#2d2d2d;--link-color:#64b5f6;--link-visited:#a6d6ff;--icon-filter:invert(1)}.cream-mode{--background-color:#f3f0e6;--foreground-color:#2d2a26;--midground-color:#5d564f;--accent-color:#1565c0;--link-hover-bg:#e6e2d6;--muted-color:#5d564f;--border-color:#dcd6c6;--code-bg:#e8e2d2;--link-color:#0d47a1;--link-visited:#0d47a1;--icon-filter:none}*{font-feature-settings:"kern" 1,"liga" 1,"onum" 0;margin:0;padding:0;box-sizing:border-box;font-variant-numeric:normal}html{-webkit-hyphens:auto;background:var(--background-color);color:var(--foreground-color);font-size:1rem;height:100%;hyphens:auto;margin:0;padding:0;scroll-behavior:smooth;overflow-y:scroll;text-rendering:optimizeLegibility}body{display:flex;flex-direction:column;height:100%;font:400 16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif}a{background:0;color:var(--foreground-color);text-decoration:none}a:hover{background:var(--link-hover-bg)}</style> <script>function getPreferredTheme(){const e=localStorage.getItem("theme");return e&&themes.includes(e)?e:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function applyTheme(e){document.documentElement.classList.remove("light-mode","dark-mode","cream-mode"),document.documentElement.classList.add(`${e}-mode`),localStorage.setItem("theme",e)}const themes=["light","dark","cream"];try{applyTheme(getPreferredTheme())}catch(e){console.error("Theme initialization failed:",e)}try{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{localStorage.getItem("theme")||applyTheme(e.matches?"dark":"light")})}catch(e){}</script> <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"> <link rel="stylesheet" href="/assets/css/fonts.css"> <link rel="stylesheet" href="/assets/css/common.css"> <script src="/assets/js/common.js" defer></script> <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Somdev Sangwan",
-  "url": "http://localhost:4000",
-  "image": "http://localhost:4000/assets/images/profile.jpg",
+  "url": "https://somdev.in",
+  "image": "https://somdev.in/assets/images/profile.jpg",
   "jobTitle": "Security Researcher & Developer",
   "alternateName": "s0md3v",
-  "description": "Security Researcher & Developer specializing in automation and vulnerability detection.",
+  "description": "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics.",
   "knowsAbout": [
     "Computer Security",
-    "Penetration Testing",
-    "Security Automation",
-    "Python (Programming Language)",
-    "Web Application Security"
+    "Programming"
   ],
   "sameAs": [
     "https://twitter.com/s0md3v",
     "https://github.com/s0md3v",
     "https://linkedin.com/in/s0md3v",
-    "https://instagram.com/s0md3v"
+    "https://instagram.com/s0md3v",
+    "https://linuxsecurity.expert/p/somdev-sangwan"
+  ],
+  "subjectOf": [
+    {
+      "@type": "CreativeWork",
+      "name": "BleepingComputer: Hacker says hijacking libraries, stealing AWS keys was ethical research",
+      "url": "https://www.bleepingcomputer.com/news/security/hacker-says-hijacking-libraries-stealing-aws-keys-was-ethical-research/"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "The Hacker News: PyPi Package 'ctx' and PHP Library 'phpass' Compromised",
+      "url": "https://thehackernews.com/2022/05/pypi-package-ctx-and-php-library-phpass.html"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "India Today: Hacker Claims He Can Crack Aadhaar Password in 3 Seconds",
+      "url": "https://www.indiatoday.in/technology/news/story/hacker-claims-he-can-crack-aadhaar-password-in-3-seconds-1306400-2018-08-06"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "Deccan Herald: I've seen all your data without hacking",
+      "url": "https://www.deccanherald.com/opinion/i-ve-seen-all-your-data-without-hacking-812289.html"
+    }
   ]
 }
-</script>
-</head>
-
-<body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
-<header id="site-header" class="header">
-    <nav class="nav-container">
-        <div class="site-home">
-            <a href="/">home</a>
-            <div class="settings-wrapper">
-                <button class="settings-icon" id="settings-toggle" aria-label="Settings">
-                    <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20">
-                </button>
-                <div class="settings-dropdown" id="settings-menu">
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Theme</div>
-                        <div class="settings-options theme-options">
-                            <button data-theme="light">Light</button>
-                            <button data-theme="dark">Dark</button>
-                            <button data-theme="cream">Cream</button>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Font</div>
-                        <div class="settings-options font-options">
-                            <button data-font="system">System</button>
-                            <button data-font="lexend">Lexend</button>
-                            <button data-font="opendyslexic">Dyslexic</button>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle">Font Size</div>
-                        <div class="settings-options size-options">
-                            <button id="decrease-font">−</button>
-                            <button id="reset-font">Reset</button>
-                            <button id="increase-font">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button class="menu-toggle" aria-label="Toggle navigation">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </button>
-
-        <ul class="nav-links">
-            <li><a href="/projects">projects</a></li>
-            <li><a href="/blog">blog</a></li>
-            <li><a href="/philosophy">philosophy</a></li>
-            <li><a href="/about">about</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="blog-content">
-  <div class="wrapper">
-    <h1 class="post-title" itemprop="name headline">Detecting Linguistic Information in Text</h1>
-    <p class="post-meta">
-      
-      
-      
-      
-    </p>
-    <div class="post-content">
-      <p>How can a computer tell the difference between meaningful text and a random string of characters? This question seems simple, but the obvious answers are often wrong. It’s a problem that pops up everywhere, from analyzing data streams and detecting obfuscated code to simple input validation.</p>
-
-<h3 id="the-obvious-and-flawed-solutions">The Obvious (and Flawed) Solutions</h3>
-
-<p>Your first instinct might be to check for valid words using a dictionary. But what about made-up but meaningful words like <code class="language-plaintext highlighter-rouge">reddit</code>? Or what about strings common in programming like <code class="language-plaintext highlighter-rouge">frontendElementAsyncInit</code>? A dictionary-based approach would flag these as gibberish.</p>
-
-<p>Okay, so what about a more mathematical approach? Let’s use entropy. In simple terms, entropy measures the randomness of data. The more varied the characters, the higher the entropy. A string like <code class="language-plaintext highlighter-rouge">abcdefg</code> has higher entropy than <code class="language-plaintext highlighter-rouge">aaaaaaa</code>. Many programs use an entropy threshold to classify data as random.</p>
-
-<p>But this is also flawed. Consider these two strings:</p>
-
-<ol>
-  <li><code class="language-plaintext highlighter-rouge">frontendElementAsyncInit</code></li>
-  <li><code class="language-plaintext highlighter-rouge">9033e0e305f247c0c3c80d0c7848c8b3</code> (a random MD5 hash)</li>
-</ol>
-
-<p>Ironically, the entropy of <code class="language-plaintext highlighter-rouge">frontendElementAsyncInit</code> is <strong>3.70</strong>, while the hash’s entropy is only <strong>3.35</strong>. According to a typical entropy-based check, the human-readable string is more “random” than the actual random data! This happens because the hash is limited to a smaller set of hexadecimal characters, which lowers its entropy score, while the other string uses a wider variety of letters.</p>
-
-<h3 id="a-linguistic-approach-can-you-say-it">A Linguistic Approach: Can You Say It?</h3>
-
-<p>The most noticeable difference between text and random junk is that one follows the rules of a language, and the other doesn’t. But instead of trying to teach a computer complex grammar, we can use a simpler proxy: <strong>pronounceability</strong>.</p>
-
-<p>Meaningful text, even if it contains made-up words, tends to be pronounceable. Gibberish usually isn’t. Consider these words:</p>
-
-<ul>
-  <li><strong>Pulp</strong>: A real, pronounceable word.</li>
-  <li><strong>Pelp</strong>: Not a real word, but you can say it. It could become a word.</li>
-  <li><strong>Pqlp</strong>: Gibberish. Your mouth can’t form this combination of letters.</li>
-</ul>
-
-<p>This is the core idea. We can determine if a string is meaningful by checking if it’s pronounceable in a given language.</p>
-
-<h3 id="the-how-to">The How-To</h3>
-
-<p>To do this, I broke text down into <strong>bigrams</strong>—pairs of adjacent characters. For example, <code class="language-plaintext highlighter-rouge">resin</code> becomes <code class="language-plaintext highlighter-rouge">re</code>, <code class="language-plaintext highlighter-rouge">es</code>, <code class="language-plaintext highlighter-rouge">si</code>, <code class="language-plaintext highlighter-rouge">in</code>.</p>
-
-<p>The algorithm works like this:</p>
-
-<ol>
-  <li>
-    <p><strong>Build a Database:</strong> I first created a database of all possible two-letter bigrams in English (<code class="language-plaintext highlighter-rouge">aa</code>, <code class="language-plaintext highlighter-rouge">ab</code>, <code class="language-plaintext highlighter-rouge">ac</code>… <code class="language-plaintext highlighter-rouge">zz</code>). I then scanned a massive dictionary and recorded which bigrams are common, which are rare, and which never appear. For example, <code class="language-plaintext highlighter-rouge">th</code> is very common, while a bigram like <code class="language-plaintext highlighter-rouge">zq</code> is impossible in English.</p>
-  </li>
-  <li>
-    <p><strong>Scan the String:</strong> The program iterates through the input string, bigram by bigram.</p>
-  </li>
-  <li>
-    <p><strong>Score It:</strong> Each bigram is checked against the database. If it’s a common and pronounceable pair (like <code class="language-plaintext highlighter-rouge">re</code>), it adds to the “good” score. If it’s an unpronounceable pair (like <code class="language-plaintext highlighter-rouge">pqlp</code>’s <code class="language-plaintext highlighter-rouge">pq</code>), it adds to the “bad” score.</p>
-  </li>
-</ol>
-
-<p>After scanning the whole string, we get a simple percentage of how “meaningful” the text is based on the ratio of good to bad bigrams.</p>
-
-<p>Here’s a snippet of the implementation in Python:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">phonetic</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">bigrams</span><span class="p">):</span>
+</script> </head> <body> <a href="#main-content" class="skip-link">Skip to main content</a> <header id="site-header" class="header"> <nav class="nav-container"> <div class="site-home"> <a href="/">home</a> <div class="settings-wrapper"> <button class="settings-icon" id="settings-toggle" aria-label="Settings"> <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20"> </button> <div class="settings-dropdown" id="settings-menu"> <div class="settings-section"> <div class="settings-subtitle">Theme</div> <div class="settings-options theme-options"> <button data-theme="light">Light</button> <button data-theme="dark">Dark</button> <button data-theme="cream">Cream</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font</div> <div class="settings-options font-options"> <button data-font="system">System</button> <button data-font="lexend">Lexend</button> <button data-font="opendyslexic">Dyslexic</button> </div> </div> <div class="settings-section"> <div class="settings-subtitle">Font Size</div> <div class="settings-options size-options"> <button id="decrease-font">−</button> <button id="reset-font">Reset</button> <button id="increase-font">+</button> </div> </div> </div> </div> </div> <button class="menu-toggle" aria-label="Toggle navigation"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg> </button> <ul class="nav-links"> <li><a href="/projects">projects</a></li> <li><a href="/blog">blog</a></li> <li><a href="/philosophy">philosophy</a></li> <li><a href="/about">about</a></li> </ul> </nav> </header> <div class="blog-content"> <div class="wrapper"> <h1 class="post-title" itemprop="name headline">Detecting Linguistic Information in Text</h1> <p class="post-meta"> </p> <div class="post-content"> <p>How can a computer tell the difference between meaningful text and a random string of characters? This question seems simple, but the obvious answers are often wrong. It’s a problem that pops up everywhere, from analyzing data streams and detecting obfuscated code to simple input validation.</p> <h3 id="the-obvious-and-flawed-solutions">The Obvious (and Flawed) Solutions</h3> <p>Your first instinct might be to check for valid words using a dictionary. But what about made-up but meaningful words like <code class="language-plaintext highlighter-rouge">reddit</code>? Or what about strings common in programming like <code class="language-plaintext highlighter-rouge">frontendElementAsyncInit</code>? A dictionary-based approach would flag these as gibberish.</p> <p>Okay, so what about a more mathematical approach? Let’s use entropy. In simple terms, entropy measures the randomness of data. The more varied the characters, the higher the entropy. A string like <code class="language-plaintext highlighter-rouge">abcdefg</code> has higher entropy than <code class="language-plaintext highlighter-rouge">aaaaaaa</code>. Many programs use an entropy threshold to classify data as random.</p> <p>But this is also flawed. Consider these two strings:</p> <ol> <li><code class="language-plaintext highlighter-rouge">frontendElementAsyncInit</code></li> <li><code class="language-plaintext highlighter-rouge">9033e0e305f247c0c3c80d0c7848c8b3</code> (a random MD5 hash)</li> </ol> <p>Ironically, the entropy of <code class="language-plaintext highlighter-rouge">frontendElementAsyncInit</code> is <strong>3.70</strong>, while the hash’s entropy is only <strong>3.35</strong>. According to a typical entropy-based check, the human-readable string is more “random” than the actual random data! This happens because the hash is limited to a smaller set of hexadecimal characters, which lowers its entropy score, while the other string uses a wider variety of letters.</p> <h3 id="a-linguistic-approach-can-you-say-it">A Linguistic Approach: Can You Say It?</h3> <p>The most noticeable difference between text and random junk is that one follows the rules of a language, and the other doesn’t. But instead of trying to teach a computer complex grammar, we can use a simpler proxy: <strong>pronounceability</strong>.</p> <p>Meaningful text, even if it contains made-up words, tends to be pronounceable. Gibberish usually isn’t. Consider these words:</p> <ul> <li><strong>Pulp</strong>: A real, pronounceable word.</li> <li><strong>Pelp</strong>: Not a real word, but you can say it. It could become a word.</li> <li><strong>Pqlp</strong>: Gibberish. Your mouth can’t form this combination of letters.</li> </ul> <p>This is the core idea. We can determine if a string is meaningful by checking if it’s pronounceable in a given language.</p> <h3 id="the-how-to">The How-To</h3> <p>To do this, I broke text down into <strong>bigrams</strong>—pairs of adjacent characters. For example, <code class="language-plaintext highlighter-rouge">resin</code> becomes <code class="language-plaintext highlighter-rouge">re</code>, <code class="language-plaintext highlighter-rouge">es</code>, <code class="language-plaintext highlighter-rouge">si</code>, <code class="language-plaintext highlighter-rouge">in</code>.</p> <p>The algorithm works like this:</p> <ol> <li> <p><strong>Build a Database:</strong> I first created a database of all possible two-letter bigrams in English (<code class="language-plaintext highlighter-rouge">aa</code>, <code class="language-plaintext highlighter-rouge">ab</code>, <code class="language-plaintext highlighter-rouge">ac</code>… <code class="language-plaintext highlighter-rouge">zz</code>). I then scanned a massive dictionary and recorded which bigrams are common, which are rare, and which never appear. For example, <code class="language-plaintext highlighter-rouge">th</code> is very common, while a bigram like <code class="language-plaintext highlighter-rouge">zq</code> is impossible in English.</p> </li> <li> <p><strong>Scan the String:</strong> The program iterates through the input string, bigram by bigram.</p> </li> <li> <p><strong>Score It:</strong> Each bigram is checked against the database. If it’s a common and pronounceable pair (like <code class="language-plaintext highlighter-rouge">re</code>), it adds to the “good” score. If it’s an unpronounceable pair (like <code class="language-plaintext highlighter-rouge">pqlp</code>’s <code class="language-plaintext highlighter-rouge">pq</code>), it adds to the “bad” score.</p> </li> </ol> <p>After scanning the whole string, we get a simple percentage of how “meaningful” the text is based on the ratio of good to bad bigrams.</p> <p>Here’s a snippet of the implementation in Python:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">phonetic</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">bigrams</span><span class="p">):</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">bad</span> <span class="o">=</span> <span class="n">good</span> <span class="o">=</span> <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">previous_char</span> <span class="o">=</span> <span class="s">'*'</span>
@@ -345,19 +75,4 @@
         <span class="n">previous_char</span> <span class="o">=</span> <span class="n">current_char</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">total</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">bad</span>
-</code></pre></div></div>
-
-<h3 id="does-it-work">Does It Work?</h3>
-
-<p>When I ran the entire Oxford English Dictionary (a 4.3 MB file) through the script, it finished in <strong>2 seconds</strong> and classified the text as <strong>98% meaningful</strong>. The 2% error came from abbreviations and foreign words.</p>
-
-<p>When I tested it against 200,000 truly random characters, it correctly identified the text as only <strong>44% meaningful</strong>, successfully classifying it as gibberish.</p>
-
-<p>This phonetic approach provides a fast and surprisingly accurate way to distinguish between information and noise, without the pitfalls of dictionary or entropy-based methods.</p>
-
-    </div>
-  </div>
-</div>
-</body>
-
-</html>
+</code></pre></div></div> <h3 id="does-it-work">Does It Work?</h3> <p>When I ran the entire Oxford English Dictionary (a 4.3 MB file) through the script, it finished in <strong>2 seconds</strong> and classified the text as <strong>98% meaningful</strong>. The 2% error came from abbreviations and foreign words.</p> <p>When I tested it against 200,000 truly random characters, it correctly identified the text as only <strong>44% meaningful</strong>, successfully classifying it as gibberish.</p> <p>This phonetic approach provides a fast and surprisingly accurate way to distinguish between information and noise, without the pitfalls of dictionary or entropy-based methods.</p> </div> </div> </div> </body> </html>
