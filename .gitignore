@@ -15,8 +15,3 @@ node_modules/
 # Local configuration
 .env
 .env.local
-
-# Misc
-assets/photos/gallery_mapping.json
-assets/photos/reorder_gallery.py
-gallery-sorter.html

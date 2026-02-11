@@ -1,0 +1,285 @@
+---
+layout: default
+title: Gallery Builder
+permalink: /gallery-builder
+---
+
+<div class="builder-container">
+    <div class="builder-header">
+        <h1>Gallery Builder</h1>
+        <p>Drag images to reorder. Toggle "Wide" to span 2 columns. Click "Export Layout" to get the JSON for
+            `_data/gallery.json`.</p>
+        <button id="export-json" class="btn-primary">Export JSON</button>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid">
+        <!-- JS will populate this -->
+    </div>
+</div>
+
+<style>
+    .builder-container {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .builder-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .btn-primary {
+        background-color: var(--accent-color, #007bff);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        /* 6 columns as requested */
+        gap: 15px;
+        grid-auto-flow: dense;
+        background: #f8f9fa;
+        border: 2px dashed #ccc;
+        padding: 20px;
+        min-height: 500px;
+    }
+
+    .grid-item {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        cursor: grab;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+        /* Default span 1x1 roughly */
+        grid-column: span 1;
+    }
+
+    .grid-item.wide {
+        grid-column: span 2;
+        border: 2px solid var(--accent-color, #007bff);
+    }
+
+    .grid-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+        pointer-events: none;
+    }
+
+    .item-controls {
+        padding: 5px;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    /* Dragging styles */
+    .grid-item.dragging {
+        opacity: 0.5;
+        border: 2px dashed #999;
+    }
+
+    .grid-item.over {
+        border: 2px dashed var(--accent-color, #007bff);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('gallery-grid');
+        const exportBtn = document.getElementById('export-json');
+
+        // Load images (0..100)
+        // We will try to load existing metadata if possible, but mainly we iterate 0-100
+        const images = [];
+        for (let i = 0; i <= 100; i++) {
+            images.push({
+                filename: `${i}.webp`,
+                path: `/assets/photos/${i}.webp`,
+                is_wide: false,
+                row_span: 16 // Default approximation
+            });
+        }
+
+        // Initialize Grid
+        images.forEach(img => {
+            const item = createGridItem(img);
+            // We need to check if image exists (since we iterate 0-100 blindly)
+            // A simple way is to use onerror to remove it, or just let it fail visually.
+            // Better: use the existing list from Jekyll if passed, but this is a static page.
+            // For now, let's create them and remove if they fail to load.
+            grid.appendChild(item);
+        });
+
+        // -----------------------
+        // Drag and Drop Logic
+        // -----------------------
+        let draggedItem = null;
+
+        function createGridItem(imgData) {
+            const el = document.createElement('div');
+            el.className = 'grid-item';
+            el.draggable = true;
+            el.dataset.path = imgData.path;
+            el.dataset.filename = imgData.filename;
+
+            // Structure
+            el.innerHTML = `
+            <img src="${imgData.path}" alt="${imgData.filename}" onerror="this.closest('.grid-item').remove()">
+            <div class="item-controls">
+                <span>${imgData.filename}</span>
+            </div>
+        `;
+
+            // DnD Handlers
+            el.addEventListener('dragstart', function (e) {
+                draggedItem = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            el.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            });
+
+            el.addEventListener('dragenter', function () {
+                if (this !== draggedItem) this.classList.add('over');
+            });
+
+            el.addEventListener('dragleave', function () {
+                this.classList.remove('over');
+            });
+
+            el.addEventListener('drop', function (e) {
+                e.stopPropagation();
+                if (draggedItem !== this) {
+                    // Reorder in DOM
+                    const allItems = Array.from(grid.querySelectorAll('.grid-item'));
+                    const fromIndex = allItems.indexOf(draggedItem);
+                    const toIndex = allItems.indexOf(this);
+
+                    if (fromIndex < toIndex) {
+                        this.after(draggedItem);
+                    } else {
+                        this.before(draggedItem);
+                    }
+                    // Trigger pack recalculation if needed
+                }
+                return false;
+            });
+
+            el.addEventListener('dragend', function () {
+                this.classList.remove('dragging');
+                grid.querySelectorAll('.grid-item').forEach(i => i.classList.remove('over'));
+            });
+
+            // Calculate span on load for visual accuracy & AUTO WIDE
+            imgData.imgElement = el.querySelector('img');
+            imgData.imgElement.onload = () => {
+                const img = el.querySelector('img');
+                const ratio = img.naturalWidth / img.naturalHeight;
+                // Auto-detect wide if landscape (ratio > 1.2 used as threshold)
+                const autoWide = ratio > 1.2;
+                updateItemSpan(el, autoWide);
+            };
+
+            return el;
+        }
+
+        function updateItemSpan(item, isWide) {
+            const img = item.querySelector('img');
+            const ratio = img.naturalWidth / img.naturalHeight;
+
+            // Simulation constants matching production CSS
+            // Column width ~ 300px (desktop)
+            let renderWidth = 300;
+            if (isWide) renderWidth = 600;
+
+            const targetHeightPx = renderWidth / ratio;
+            const rowHeight = 10;
+            const gap = 15;
+            const rowSpan = Math.ceil((targetHeightPx + gap) / (rowHeight + gap));
+
+            item.style.gridRowEnd = `span ${rowSpan}`;
+            if (isWide) {
+                item.classList.add('wide');
+            } else {
+                item.classList.remove('wide');
+            }
+        }
+
+        // Update spans on wide toggle and load
+        // Already handled by click listener calling updateItemSpan via classList check? 
+        // We need to update the resize logic in the click handler:
+        // (See createGridItem modification below)
+
+        // -----------------------
+        // Export Logic
+        // -----------------------
+        exportBtn.addEventListener('click', () => {
+            const items = grid.querySelectorAll('.grid-item');
+            const galleryData = [];
+
+            items.forEach(item => {
+                const img = item.querySelector('img');
+                const isWide = item.classList.contains('wide');
+
+                // Calculate dimensions/ratio on the fly from the loaded image natural dimensions
+                const width = img.naturalWidth;
+                const height = img.naturalHeight;
+                const ratio = width && height ? width / height : 1;
+
+                // Span Calculation Logic (Python equivalent)
+                let renderWidth = 300;
+                if (isWide) renderWidth = 600;
+
+                const targetHeightPx = renderWidth / ratio;
+                const rowHeight = 10;
+                const gap = 15;
+                const rowSpan = Math.ceil((targetHeightPx + gap) / (rowHeight + gap));
+
+                galleryData.push({
+                    path: item.dataset.path,
+                    width: width,
+                    height: height,
+                    aspect_ratio: parseFloat(ratio.toFixed(4)),
+                    is_wide: isWide,
+                    row_span: rowSpan,
+                    filename: item.dataset.filename
+                });
+            });
+
+            const jsonStr = JSON.stringify(galleryData, null, 4);
+            downloadJSON(jsonStr, 'gallery.json');
+        });
+
+        function downloadJSON(content, fileName) {
+            const a = document.createElement("a");
+            const file = new Blob([content], { type: 'text/json' });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+    });
+</script>

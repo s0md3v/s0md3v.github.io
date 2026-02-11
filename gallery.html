@@ -5,20 +5,16 @@ permalink: /gallery
 ---
 
 <div class="gallery" id="gallery">
-    {% for i in (0..100) %}
-    {% capture target_path %}/assets/photos/{{ i }}.webp{% endcapture %}
-    {% assign found_image = site.static_files | where: "path", target_path | first %}
-
-    {% if found_image %}
-    <div class="gallery-item-wrapper">
-        <div class="gallery-item" onclick="openModal('{{ site.baseurl }}{{ found_image.path }}')"
-            onkeyup="if(event.key === 'Enter') openModal('{{ site.baseurl }}{{ found_image.path }}')" tabindex="0"
-            role="button" aria-label="View photo {{ i }}">
-            <img loading="lazy" src="{{ site.baseurl }}{{ found_image.path }}" alt="Photo {{ i }}"
-                onload="assignGridClass(this)">
+    {% for image in site.data.gallery %}
+    <div class="gallery-item-wrapper {% if image.is_wide %}wide{% endif %}"
+        style="grid-row-end: span {{ image.row_span }};">
+        <div class="gallery-item" onclick="openModal('{{ site.baseurl }}{{ image.path }}')"
+            onkeyup="if(event.key === 'Enter') openModal('{{ site.baseurl }}{{ image.path }}')" tabindex="0"
+            role="button" aria-label="View photo {{ image.filename }}">
+            <img loading="lazy" src="{{ site.baseurl }}{{ image.path }}" alt="Photo {{ image.filename }}"
+                onload="this.parentElement.classList.add('img-loaded')">
         </div>
     </div>
-    {% endif %}
     {% endfor %}
 </div>
 
@@ -46,27 +42,49 @@ permalink: /gallery
     .gallery-item-wrapper {
         width: 100%;
         height: 100%;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-        /* Span logic sets height dynamically */
-    }
-
-    .gallery-item-wrapper.loaded {
-        opacity: 1;
-        transform: translateY(0);
+        /* No initial opacity 0 needed as layout is static */
     }
 
     .gallery-item {
         width: 100%;
         height: 100%;
-        background: #f0f0f0;
+        background: #e0e0e0;
+        /* Lighter grey for skeleton base */
         border-radius: 8px;
         overflow: hidden;
         cursor: pointer;
         position: relative;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Skeleton Shimmer Effect */
+    .gallery-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0) 100%);
+        transform: translateX(-100%);
+        animation: shimmer 1.5s infinite;
+        z-index: 1;
+        /* Above background, below image */
+    }
+
+    /* Hide shimmer when image is loaded (handled by JS class or just overlay) */
+    .gallery-item.img-loaded::before {
+        display: none;
+    }
+
+    @keyframes shimmer {
+        100% {
+            transform: translateX(100%);
+        }
     }
 
     .gallery-item:hover {
@@ -80,7 +98,16 @@ permalink: /gallery
         height: 100%;
         object-fit: cover;
         display: block;
-        transition: transform 0.5s ease;
+        transition: transform 0.5s ease, opacity 0.5s ease;
+        opacity: 0;
+        /* Start hidden to show skeleton */
+        position: relative;
+        z-index: 2;
+        /* Above skeleton shimmer */
+    }
+
+    .gallery-item.img-loaded img {
+        opacity: 1;
     }
 
     .gallery-item:hover img {
@@ -163,53 +190,7 @@ permalink: /gallery
 </style>
 
 <script>
-    function assignGridClass(img) {
-        const wrapper = img.closest('.gallery-item-wrapper');
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
-        const ratio = width / height;
 
-        // Reset classes
-        wrapper.classList.remove('wide');
-        wrapper.style.gridRowEnd = '';
-
-        // Determine if wide
-        // (Ratio > 1.6 usually good for span 2)
-        let isWide = ratio > 1.6;
-        if (window.innerWidth > 600 && isWide) {
-            wrapper.classList.add('wide');
-        }
-
-        requestAnimationFrame(() => {
-            // Calculate required height based on CURRENT render width
-            const renderWidth = wrapper.getBoundingClientRect().width;
-            const targetHeight = renderWidth / ratio;
-
-            // Grid Row Height = 10px, Gap = 15px
-            // height = (rows * 10) + ((rows - 1) * 15)
-            // height = rows * 25 - 15
-            // rows = (height + 15) / 25
-
-            const rowHeight = 10;
-            // Get gap from CSS variable or computed style, fallback to 15
-            const gap = parseFloat(getComputedStyle(wrapper.parentElement).getPropertyValue('gap')) || 15;
-            const rowSpan = Math.ceil((targetHeight + gap) / (rowHeight + gap));
-
-            wrapper.style.gridRowEnd = `span ${rowSpan}`;
-            wrapper.classList.add('loaded');
-        });
-    }
-
-    // Debounce resize to recalculate
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            document.querySelectorAll('.gallery-item img').forEach(img => {
-                if (img.complete) assignGridClass(img);
-            });
-        }, 100);
-    });
 
     // Modal Logic
     const modal = document.getElementById('modal');
