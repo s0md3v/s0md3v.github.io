@@ -3,7 +3,7 @@ layout: default
 title: Now
 ---
 <style>
-    /* Consistent Clean Layout - Similar to Favorites */
+    /* Now Layout - Responsive Grid */
     .now-container {
         display: grid;
         grid-template-columns: 1fr;
@@ -16,6 +16,19 @@ title: Now
             grid-template-columns: 1.3fr 1fr;
             gap: 3rem;
         }
+
+        .note-column {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 15vh;
+            height: 40vh;
+        }
+
+        .mobile-note {
+            display: none !important;
+        }
     }
 
     .list-column {
@@ -27,7 +40,13 @@ title: Now
     .list-section {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
+        gap: 0.5rem;
+    }
+
+    @media (min-width: 900px) {
+        .list-section {
+            gap: 0.2rem;
+        }
     }
 
     .section-label {
@@ -65,22 +84,7 @@ title: Now
         font-weight: 500;
     }
 
-    /* Note Column (Sticky) */
-    .note-column {
-        display: none;
-    }
-
-    @media (min-width: 900px) {
-        .note-column {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: sticky;
-            top: 15vh;
-            height: 40vh;
-        }
-    }
-
+    /* Note Styles */
     .sticky-note {
         font-family: 'Biro Script US Plus', cursive;
         color: var(--accent-color);
@@ -97,6 +101,23 @@ title: Now
         opacity: 1;
         transform: rotate(-1deg);
     }
+
+    .mobile-note {
+        display: block;
+        font-family: 'Biro Script US Plus', cursive;
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        line-height: 1.4;
+        margin-left: 0.2rem;
+        margin-top: -0.2rem;
+        margin-bottom: 0.8rem;
+        opacity: 0.9;
+        max-width: 90%;
+    }
+
+    .note-column {
+        display: none;
+    }
 </style>
 
 <div class="wrapper wide now-container">
@@ -107,29 +128,29 @@ title: Now
         <!-- Working -->
         <div class="list-section">
             <div class="section-label">working</div>
-            <div class="list-item" data-note="Building something that matters.">
-                Project X (Security Tool)
-            </div>
+
+            <div class="list-item" data-note="Building something that matters.">Project X (Security Tool)</div>
+            <div class="mobile-note">Building something that matters.</div>
         </div>
 
         <!-- Learning -->
         <div class="list-section">
             <div class="section-label">learning</div>
-            <div class="list-item"
-                data-note="Last year I studied psychology, now I'm learning sociology. Then, I will learn political theory.">
-                Sociology
+
+            <div class="list-item" data-note="Studied Psychology, now Sociology. Next: Political Theory.">Sociology
             </div>
-            <div class="list-item" data-note="this is not related to sociology at all :p">
-                Marketing
-            </div>
+            <div class="mobile-note">Studied Psychology, now Sociology. Next: Political Theory.</div>
+
+            <div class="list-item" data-note="Admittedly unrelated to Sociology.">Marketing</div>
+            <div class="mobile-note">Admittedly unrelated to Sociology.</div>
         </div>
 
         <!-- Waiting -->
         <div class="list-section">
             <div class="section-label">waiting for</div>
-            <div class="list-item" data-note="oi">
-                The Boys (Final Season)
-            </div>
+
+            <div class="list-item" data-note="Oi.">The Boys (Final Season)</div>
+            <div class="mobile-note">Oi.</div>
         </div>
 
     </div>
@@ -143,34 +164,33 @@ title: Now
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const items = document.querySelectorAll('.list-item');
-        const noteDisplay = document.getElementById('note-display');
-        let activeItem = null;
+        if (window.matchMedia("(min-width: 900px)").matches) {
+            const items = document.querySelectorAll('.list-item');
+            const noteDisplay = document.getElementById('note-display');
+            let activeItem = null;
 
-        // Restore default note when leaving list area
-        const defaultNote = "Updated: {{ site.time | date: '%B %Y' }}";
+            const updateNote = (text) => {
+                noteDisplay.classList.remove('visible');
+                setTimeout(() => {
+                    noteDisplay.textContent = text;
+                    noteDisplay.classList.add('visible');
+                }, 100);
+            };
 
-        const updateNote = (text) => {
-            noteDisplay.classList.remove('visible');
-            setTimeout(() => {
-                noteDisplay.textContent = text;
-                noteDisplay.classList.add('visible');
-            }, 100);
-        };
-
-        items.forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                if (activeItem !== item) {
-                    if (activeItem) activeItem.classList.remove('active');
-                    item.classList.add('active');
-                    activeItem = item;
-                    const noteText = item.getAttribute('data-note');
-                    if (noteText) updateNote(noteText);
-                }
+            items.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    if (activeItem !== item) {
+                        if (activeItem) activeItem.classList.remove('active');
+                        item.classList.add('active');
+                        activeItem = item;
+                        const noteText = item.getAttribute('data-note');
+                        if (noteText) updateNote(noteText);
+                    }
+                });
             });
-        });
 
-        // Show default on load
-        setTimeout(() => noteDisplay.classList.add('visible'), 500);
+            // Show default on load
+            setTimeout(() => noteDisplay.classList.add('visible'), 500);
+        }
     });
 </script>

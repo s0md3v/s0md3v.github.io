@@ -3,7 +3,7 @@ layout: default
 title: Favorites
 ---
 <style>
-    /* Favorites Layout - Refined & Tightened */
+    /* Favorites Layout - Responsive Grid */
     .favorites-container {
         display: grid;
         grid-template-columns: 1fr;
@@ -11,10 +11,24 @@ title: Favorites
         min-height: 60vh;
     }
 
+    /* Desktop Pattern (Split View) */
     @media (min-width: 900px) {
         .favorites-container {
             grid-template-columns: 1.3fr 1fr;
             gap: 3rem;
+        }
+
+        .note-column {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 15vh;
+            height: 40vh;
+        }
+
+        .mobile-note {
+            display: none !important;
         }
     }
 
@@ -28,10 +42,16 @@ title: Favorites
     .list-section {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
+        gap: 0.5rem; /* Slightly more gap on mobile for readability */
     }
 
-    /* Typography & Hierarchy */
+    @media (min-width: 900px) {
+        .list-section {
+            gap: 0.2rem; /* Tight on desktop */
+        }
+    }
+
+    /* Typography */
     .section-label {
         font-family: 'Comfortaa', sans-serif;
         font-size: 0.85rem;
@@ -62,17 +82,6 @@ title: Favorites
         color: inherit;
     }
 
-    .list-item:hover {
-        color: var(--accent-color);
-        background: rgba(0, 0, 0, 0.03);
-    }
-
-    .list-item.active {
-        color: var(--accent-color);
-        font-weight: 500;
-    }
-
-    /* Meta / Author styling */
     .meta-tag {
         font-size: 0.85em;
         color: var(--muted-color);
@@ -80,20 +89,22 @@ title: Favorites
         opacity: 0.6;
     }
 
-    /* Note Column (Sticky) */
+    /* Desktop Hover Effects */
+    @media (hover: hover) {
+        .list-item:hover {
+            color: var(--accent-color);
+            background: rgba(0,0,0,0.03);
+        }
+        
+        .list-item.active {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+    }
+    
+    /* Sticky Note (Desktop) */
     .note-column {
         display: none;
-    }
-
-    @media (min-width: 900px) {
-        .note-column {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: sticky;
-            top: 15vh;
-            height: 40vh;
-        }
     }
 
     .sticky-note {
@@ -112,7 +123,21 @@ title: Favorites
         opacity: 1;
         transform: rotate(-1deg);
     }
-
+    
+    /* Mobile Note (Inline) */
+    .mobile-note {
+        display: block;
+        font-family: 'Biro Script US Plus', cursive;
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        line-height: 1.4;
+        margin-left: 0.2rem;
+        margin-top: -0.2rem;
+        margin-bottom: 0.8rem;
+        opacity: 0.9;
+        max-width: 90%;
+    }
+    
     .sup-note {
         font-family: 'Biro Script US Plus', cursive;
         font-size: 0.6em;
@@ -123,83 +148,81 @@ title: Favorites
 </style>
 
 <div class="wrapper wide favorites-container">
-
+    
     <div class="list-column">
         <h1 style="margin-bottom: 1.5rem; font-family: 'Comfortaa', sans-serif;">Favorites</h1>
 
         <!-- Watch -->
         <div class="list-section">
             <div class="section-label">watch</div>
+            
+            {% assign watch_items = "About Time|Poor Things|Mard Ko Dard Nahi Hota|Past Lives|La La Land|Fleabag|Portrait of a Lady on Fire|Parasite|True Detective" | split: "|" %}
+            {% assign watch_notes = "if you are going to watch one movie from this list, watch this one.|my fav movie, go in blind|they made this one for me, you probably won't like it|i cried. amor fati.|'past lives' but make it cheesy|it'll pass.|yearning caught in 4k|we both know who the real parasite is :p|wake up babe, new literally me character just dropped" | split: "|" %}
+            
+            <div class="list-item" data-note="if you are going to watch one movie from this list, watch this one.">About Time</div>
+            <div class="mobile-note">if you are going to watch one movie from this list, watch this one.</div>
 
-            <div class="list-item" data-note="if you are going to watch one movie from this list, watch this one.">
-                About Time
-            </div>
-            <div class="list-item" data-note="my fav movie, go in blind">
-                Poor Things
-            </div>
-            <div class="list-item" data-note="they made this one for me, you probably won't like it">
-                Mard Ko Dard Nahi Hota
-            </div>
-            <div class="list-item" data-note="i cried. amor fati.">
-                Past Lives
-            </div>
-            <div class="list-item" data-note="'past lives' but make it cheesy">
-                La La Land
-            </div>
-            <div class="list-item" data-note="it'll pass.">
-                Fleabag
-            </div>
-            <div class="list-item" data-note="yearning caught in 4k">
-                Portrait of a Lady on Fire
-            </div>
-            <div class="list-item" data-note="we both know who the real parasite is :p">
-                Parasite
-            </div>
-            <div class="list-item" data-note="wake up babe, new literally me character just dropped">
-                True Detective <span class="sup-note">s1 only!</span>
-            </div>
+            <div class="list-item" data-note="my fav movie, go in blind">Poor Things</div>
+            <div class="mobile-note">my fav movie, go in blind</div>
+
+            <div class="list-item" data-note="they made this one for me, you probably won't like it">Mard Ko Dard Nahi Hota</div>
+            <div class="mobile-note">they made this one for me, you probably won't like it</div>
+
+            <div class="list-item" data-note="i cried. amor fati.">Past Lives</div>
+            <div class="mobile-note">i cried. amor fati.</div>
+
+            <div class="list-item" data-note="'past lives' but make it cheesy">La La Land</div>
+            <div class="mobile-note">'past lives' but make it cheesy</div>
+
+            <div class="list-item" data-note="it'll pass.">Fleabag</div>
+            <div class="mobile-note">it'll pass.</div>
+
+            <div class="list-item" data-note="yearning caught in 4k">Portrait of a Lady on Fire</div>
+            <div class="mobile-note">yearning caught in 4k</div>
+
+            <div class="list-item" data-note="we both know who the real parasite is :p">Parasite</div>
+            <div class="mobile-note">we both know who the real parasite is :p</div>
+
+            <div class="list-item" data-note="wake up babe, new literally me character just dropped">True Detective <span class="sup-note">s1 only!</span></div>
+            <div class="mobile-note">wake up babe, new literally me character just dropped</div>
         </div>
 
         <!-- Read -->
         <div class="list-section">
             <div class="section-label">read</div>
+            
+            <div class="list-item" data-note="if you are going to read one book in your life, it should be this one.">Nicomachean Ethics <span class="meta-tag">(Aristotle)</span></div>
+            <div class="mobile-note">if you are going to read one book in your life, it should be this one.</div>
 
-            <div class="list-item" data-note="if you are going to read one book in your life, it should be this one.">
-                Nicomachean Ethics <span class="meta-tag">(Aristotle)</span>
-            </div>
-            <div class="list-item" data-note="*mocking voice* 'why me do good when world bad.' shut up">
-                <a href="https://www.utilitarian.net/singer/by/1972----.htm" target="_blank">Famine, Affluence &
-                    Morality</a> <span class="meta-tag">(Singer)</span>
-            </div>
-            <div class="list-item" data-note="read it after the essay above, should help with the gut punch">
-                <a href="https://www.philosophy.rutgers.edu/joomlatools-files/docman-files/MoralSaints.pdf"
-                    target="_blank">Moral Saints</a> <span class="meta-tag">(Wolf)</span>
-            </div>
+            <div class="list-item" data-note="*mocking voice* 'why me do good when world bad.' shut up"><a href="https://www.utilitarian.net/singer/by/1972----.htm" target="_blank">Famine, Affluence & Morality</a> <span class="meta-tag">(Singer)</span></div>
+            <div class="mobile-note">*mocking voice* 'why me do good when world bad.' shut up</div>
+
+            <div class="list-item" data-note="read it after the essay above, should help with the gut punch"><a href="https://www.philosophy.rutgers.edu/joomlatools-files/docman-files/MoralSaints.pdf" target="_blank">Moral Saints</a> <span class="meta-tag">(Wolf)</span></div>
+            <div class="mobile-note">read it after the essay above, should help with the gut punch</div>
         </div>
 
         <!-- Play -->
         <div class="list-section">
             <div class="section-label">play</div>
+            
+            <div class="list-item" data-note="this is a life changing game">Disco Elysium</div>
+            <div class="mobile-note">this is a life changing game</div>
 
-            <div class="list-item" data-note="this is a life changing game">
-                Disco Elysium
-            </div>
-            <div class="list-item" data-note="i created a mod for this game, google 'BG3 Mutant Class mod'">
-                Baldur's Gate 3
-            </div>
-            <div class="list-item" data-note="i would like to think that i'm majima but i'm just kiryu">
-                Yakuza <span class="sup-note">series</span>
-            </div>
-            <div class="list-item" data-note="top-tier worldbuilding and level design">
-                Dishonored
-            </div>
-            <div class="list-item" data-note="i like the gameplay, especially with the mods">
-                Cyberpunk 2077
-            </div>
+            <div class="list-item" data-note="i created a mod for this game, google 'BG3 Mutant Class mod'">Baldur's Gate 3</div>
+            <div class="mobile-note">i created a mod for this game, google 'BG3 Mutant Class mod'</div>
+
+            <div class="list-item" data-note="i would like to think that i'm majima but i'm just kiryu">Yakuza <span class="sup-note">series</span></div>
+            <div class="mobile-note">i would like to think that i'm majima but i'm just kiryu</div>
+
+            <div class="list-item" data-note="top-tier worldbuilding and level design">Dishonored</div>
+            <div class="mobile-note">top-tier worldbuilding and level design</div>
+
+            <div class="list-item" data-note="i like the gameplay, especially with the mods">Cyberpunk 2077</div>
+            <div class="mobile-note">i like the gameplay, especially with the mods</div>
         </div>
     </div>
 
-    <!-- Sticky Note Area -->
+    <!-- Sticky Note Area (Desktop Only) -->
     <div class="note-column">
         <div class="sticky-note" id="note-display">Hover an item...</div>
     </div>
@@ -208,28 +231,31 @@ title: Favorites
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const items = document.querySelectorAll('.list-item');
-        const noteDisplay = document.getElementById('note-display');
-        let activeItem = null;
+        // Only run hover logic on desktop to save resources/avoid conflicts
+        if (window.matchMedia("(min-width: 900px)").matches) {
+            const items = document.querySelectorAll('.list-item');
+            const noteDisplay = document.getElementById('note-display');
+            let activeItem = null;
 
-        const updateNote = (text) => {
-            noteDisplay.classList.remove('visible');
-            setTimeout(() => {
-                noteDisplay.textContent = text;
-                noteDisplay.classList.add('visible');
-            }, 100);
-        };
+            const updateNote = (text) => {
+                noteDisplay.classList.remove('visible');
+                setTimeout(() => {
+                    noteDisplay.textContent = text;
+                    noteDisplay.classList.add('visible');
+                }, 100); 
+            };
 
-        items.forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                if (activeItem !== item) {
-                    if (activeItem) activeItem.classList.remove('active');
-                    item.classList.add('active');
-                    activeItem = item;
-                    const noteText = item.getAttribute('data-note');
-                    if (noteText) updateNote(noteText);
-                }
+            items.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    if (activeItem !== item) {
+                        if (activeItem) activeItem.classList.remove('active');
+                        item.classList.add('active');
+                        activeItem = item;
+                        const noteText = item.getAttribute('data-note');
+                        if (noteText) updateNote(noteText);
+                    }
+                });
             });
-        });
+        }
     });
 </script>

@@ -3,7 +3,7 @@ layout: default
 title: Uses
 ---
 <style>
-    /* Consistent Clean Layout */
+    /* Uses Layout - Responsive Grid */
     .uses-container {
         display: grid;
         grid-template-columns: 1fr;
@@ -16,6 +16,19 @@ title: Uses
             grid-template-columns: 1.3fr 1fr;
             gap: 3rem;
         }
+
+        .note-column {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 15vh;
+            height: 40vh;
+        }
+
+        .mobile-note {
+            display: none !important;
+        }
     }
 
     .list-column {
@@ -27,7 +40,13 @@ title: Uses
     .list-section {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
+        gap: 0.5rem;
+    }
+
+    @media (min-width: 900px) {
+        .list-section {
+            gap: 0.2rem;
+        }
     }
 
     .section-label {
@@ -65,21 +84,7 @@ title: Uses
         font-weight: 500;
     }
 
-    .note-column {
-        display: none;
-    }
-
-    @media (min-width: 900px) {
-        .note-column {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: sticky;
-            top: 15vh;
-            height: 40vh;
-        }
-    }
-
+    /* Note Styles */
     .sticky-note {
         font-family: 'Biro Script US Plus', cursive;
         color: var(--accent-color);
@@ -87,14 +92,31 @@ title: Uses
         line-height: 1.4;
         text-align: center;
         transform: rotate(-2deg);
+        opacity: 0;
         transition: opacity 0.2s ease, transform 0.3s ease;
         max-width: 280px;
-        opacity: 0;
     }
 
     .sticky-note.visible {
         opacity: 1;
         transform: rotate(-1deg);
+    }
+
+    .mobile-note {
+        display: block;
+        font-family: 'Biro Script US Plus', cursive;
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        line-height: 1.4;
+        margin-left: 0.2rem;
+        margin-top: -0.2rem;
+        margin-bottom: 0.8rem;
+        opacity: 0.9;
+        max-width: 90%;
+    }
+
+    .note-column {
+        display: none;
     }
 </style>
 
@@ -106,53 +128,49 @@ title: Uses
         <!-- Software -->
         <div class="list-section">
             <div class="section-label">software</div>
-            <div class="list-item"
-                data-note="90% of my time is spent in a browser, terminal and a code editor. This has them and I have dual boot for games.">
-                Arch Linux
-            </div>
-            <div class="list-item" data-note="no google + ublock origin">
-                Firefox
-            </div>
-            <div class="list-item" data-note="free claude opus :3">
-                Antigravity
-            </div>
+            <div class="list-item" data-note="Perfect for my workflow. Dual-boot for games.">Arch Linux</div>
+            <div class="mobile-note">Perfect for my workflow. Dual-boot for games.</div>
+
+            <div class="list-item" data-note="No Google + uBlock Origin = Bliss.">Firefox</div>
+            <div class="mobile-note">No Google + uBlock Origin = Bliss.</div>
+
+            <div class="list-item" data-note="Access to Claude Opus for free :3">Antigravity</div>
+            <div class="mobile-note">Access to Claude Opus for free :3</div>
         </div>
 
         <!-- Hardware -->
         <div class="list-section">
             <div class="section-label">hardware</div>
-            <div class="list-item" data-note="bought it in 2020, best at the time">
-                i7-12700K
-            </div>
-            <div class="list-item" data-note="bought it in 2020, best at the time">
-                AMD Radeon 6900 XT
-            </div>
-            <div class="list-item" data-note="best keyboard">
-                MX Keys
-            </div>
-            <div class="list-item" data-note="best mouse">
-                MX Master 3S
-            </div>
-            <div class="list-item" data-note="1 inch camera sensor">
-                Vivo X100 Pro
-            </div>
-            <div class="list-item" data-note="spacious, white, smooth, wooden">
-                6ft Custom Desk
-            </div>
+            <div class="list-item" data-note="Best in class (circa 2020).">i7-12700K</div>
+            <div class="mobile-note">Best in class (circa 2020).</div>
+
+            <div class="list-item" data-note="The power to render anything.">AMD Radeon 6900 XT</div>
+            <div class="mobile-note">The power to render anything.</div>
+
+            <div class="list-item" data-note="Unbeatable typing experience.">MX Keys</div>
+            <div class="mobile-note">Unbeatable typing experience.</div>
+
+            <div class="list-item" data-note="The definitive productivity mouse.">MX Master 3S</div>
+            <div class="mobile-note">The definitive productivity mouse.</div>
+
+            <div class="list-item" data-note="That 1-inch sensor is magic.">Vivo X100 Pro</div>
+            <div class="mobile-note">That 1-inch sensor is magic.</div>
+
+            <div class="list-item" data-note="Spacious, smooth, custom-built.">6ft Custom Desk</div>
+            <div class="mobile-note">Spacious, smooth, custom-built.</div>
         </div>
 
         <!-- Audio/Gaming -->
         <div class="list-section">
             <div class="section-label">audio & gaming</div>
-            <div class="list-item" data-note="end game">
-                Sony WH-1000XM5
-            </div>
-            <div class="list-item" data-note="i love wired earphones, this is a bargain.">
-                Tangzu Wan'er S.G
-            </div>
-            <div class="list-item" data-note="best controller for what it is">
-                Machenike G5 Pro
-            </div>
+            <div class="list-item" data-note="Endgame noise cancellation.">Sony WH-1000XM5</div>
+            <div class="mobile-note">Endgame noise cancellation.</div>
+
+            <div class="list-item" data-note="Wired audio perfection for cheap.">Tangzu Wan'er S.G</div>
+            <div class="mobile-note">Wired audio perfection for cheap.</div>
+
+            <div class="list-item" data-note="Ideally responsive.">Machenike G5 Pro</div>
+            <div class="mobile-note">Ideally responsive.</div>
         </div>
     </div>
 
@@ -165,28 +183,30 @@ title: Uses
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const items = document.querySelectorAll('.list-item');
-        const noteDisplay = document.getElementById('note-display');
-        let activeItem = null;
+        if (window.matchMedia("(min-width: 900px)").matches) {
+            const items = document.querySelectorAll('.list-item');
+            const noteDisplay = document.getElementById('note-display');
+            let activeItem = null;
 
-        const updateNote = (text) => {
-            noteDisplay.classList.remove('visible');
-            setTimeout(() => {
-                noteDisplay.textContent = text;
-                noteDisplay.classList.add('visible');
-            }, 100);
-        };
+            const updateNote = (text) => {
+                noteDisplay.classList.remove('visible');
+                setTimeout(() => {
+                    noteDisplay.textContent = text;
+                    noteDisplay.classList.add('visible');
+                }, 100);
+            };
 
-        items.forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                if (activeItem !== item) {
-                    if (activeItem) activeItem.classList.remove('active');
-                    item.classList.add('active');
-                    activeItem = item;
-                    const noteText = item.getAttribute('data-note');
-                    if (noteText) updateNote(noteText);
-                }
+            items.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    if (activeItem !== item) {
+                        if (activeItem) activeItem.classList.remove('active');
+                        item.classList.add('active');
+                        activeItem = item;
+                        const noteText = item.getAttribute('data-note');
+                        if (noteText) updateNote(noteText);
+                    }
+                });
             });
-        });
+        }
     });
 </script>

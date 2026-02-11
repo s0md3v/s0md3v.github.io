@@ -178,7 +178,14 @@ description: "Somdev Sangwan is a security researcher & developer. He also write
             stroke-linejoin="round"></path>
         </svg>
       </a>
-      <div class="mobile-footer">it looks better on computer!</div>
+      <div class="mobile-footer">
+        <div style="margin-bottom: 0.8rem;"><a href="/now" style="color: inherit; text-decoration: underline;">my life
+            rn</a>
+        </div>
+        <div style="margin-bottom: 0.8rem;"><a href="/favorites"
+            style="color: inherit; text-decoration: underline;">recommendations</a></div>
+        <div><a href="/uses" style="color: inherit; text-decoration: underline;">what i use</a></div>
+      </div>
     </div>
     <style>
       .mobile-footer {
@@ -290,6 +297,12 @@ description: "Somdev Sangwan is a security researcher & developer. He also write
           color: var(--link-visited);
           font-family: "Biro Script US Plus", monospace;
           opacity: 0.8;
+          pointer-events: auto;
+        }
+
+        .mobile-footer a {
+          text-decoration: underline;
+          text-decoration-thickness: 1px;
         }
       }
 
