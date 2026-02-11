@@ -896,3 +896,75 @@ li {
 .paper-link {
   font-size: 0.9rem;
 }
+
+/* Work Page Enhancements */
+.work-title {
+  font-family: "Comfortaa", sans-serif;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  font-size: 3rem;
+  letter-spacing: -1px;
+}
+
+.work-section-title {
+  font-family: "Comfortaa", sans-serif;
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.work-cta {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 12px 24px;
+  background-color: transparent;
+  color: var(--foreground-color);
+  font-family: "Comfortaa", sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.work-cta:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+  /* or contrast color */
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.work-note {
+  margin-top: 4rem;
+  padding: 1.5rem;
+  border-left: 4px solid var(--accent-color);
+  background: var(--code-bg);
+  /* subtle background */
+  font-family: var(--blog-font-family);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border-radius: 0 8px 8px 0;
+}
+
+.note-label {
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-right: 0.5rem;
+}
+
+/* Refined Arrow List */
+.arrow-list li {
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+}
+
+.arrow-list li b {
+  color: var(--foreground-color);
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
