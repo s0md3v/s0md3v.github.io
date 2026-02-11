@@ -14,6 +14,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function deobfuscateEmails() {
+        const links = document.querySelectorAll('a[href^="mailto:"]');
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            // Check for [at] in the mailto link or inner text
+            if (href.includes('[at]') || link.innerText.includes('[at]')) {
+                const newEmail = href.replace('mailto:', '').replace('[at]', '@');
+                link.setAttribute('href', 'mailto:' + newEmail);
+                if (link.innerText.includes('[at]')) {
+                    link.innerText = link.innerText.replace('[at]', '@');
+                }
+            }
+        });
+    }
+
     function setupThemeButtons() {
         const themeButtons = document.querySelectorAll('.theme-options button');
         // Set active state based on current theme
@@ -106,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupFontButtons();
     setupFontSizeButtons();
     loadFontSettings();
+    deobfuscateEmails();
 
     const menuToggle = document.querySelector(".menu-toggle");
     const navLinks = document.querySelector(".nav-links");

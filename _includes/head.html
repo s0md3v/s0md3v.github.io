@@ -20,7 +20,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
   {% endif %}
 
-  <link rel="stylesheet" href="{{ '/assets/css/common.css' | relative_url }}">
+  <style>
+    {% include common.css %}
+  </style>
   <link rel="preload" href="{{ '/assets/fonts/biro.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ '/assets/fonts/Comfortaa.woff2' | relative_url }}" as="font" type="font/woff2"
     crossorigin>
