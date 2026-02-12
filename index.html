@@ -11,10 +11,10 @@ layout_style: "homepage"
 <body>
   <main class="homepage">
     <div class="corner-layer">
-      <div class="corner-annotation top-left" style="transform: rotate(-2deg); max-width: 250px; line-height: 1.4;">
+      <div class="corner-annotation top-left">
         "There is time for work and time for love. That leaves no other time."
       </div>
-      <div class="corner-annotation top-right" style="text-align: right;">
+      <div class="corner-annotation top-right">
         <div style="transform: rotate(3deg); color: var(--link-visited); margin-bottom: 0.5rem;">#1756a9</div>
         <div id="mode-switch" role="button" tabindex="0"
           style="cursor: pointer; text-decoration: underline; transform: rotate(-1deg); pointer-events: auto;">light
@@ -22,21 +22,17 @@ layout_style: "homepage"
         </div>
       </div>
 
-      <div class="corner-annotation bottom-left"
-        style="transform: rotate(1deg); left: 3vw; bottom: 3vw; line-height: 1.6;">
+      <div class="corner-annotation bottom-left">
         <div style="margin-bottom: 0.2rem;">todo:</div>
-        <div class="todo-item done"><span class="checkbox" style="display:inline-block; width:1.2rem;">✓</span>learn
+        <div class="todo-item done"><span class="checkbox">✓</span>learn
           ui/ux</div>
-        <div class="todo-item done"><span class="checkbox" style="display:inline-block; width:1.2rem;">✓</span>build my
+        <div class="todo-item done"><span class="checkbox">✓</span>build my
           product</div>
-        <div class="todo-item pending" data-msg="i need to do this myself"><span class="checkbox"
-            style="display:inline-block; width:1.2rem;">□</span>learn marketing</div>
-        <div class="todo-item pending" data-msg="oi"><span class="checkbox"
-            style="display:inline-block; width:1.2rem;">□</span>launch my product</div>
+        <div class="todo-item pending" data-msg="i need to do this myself"><span class="checkbox">□</span>learn marketing</div>
+        <div class="todo-item pending" data-msg="oi"><span class="checkbox">□</span>launch my product</div>
       </div>
 
-      <div class="corner-annotation bottom-right"
-        style="transform: rotate(-2deg); right: 4vw; bottom: 3vw; text-align: left; line-height: 1.5; pointer-events: auto;">
+      <div class="corner-annotation bottom-right">
         <div style="margin-bottom: 0.5rem;"><a href="/now" style="text-decoration: underline; color: inherit;">my life
             rn</a></div>
         <div style="margin-bottom: 0.5rem;"><a href="/favorites"
@@ -117,66 +113,28 @@ layout_style: "homepage"
       </div>
 
       <a href="https://github.com/s0md3v" target="_blank" aria-label="GitHub Profile" class="social-link">
-        <svg width="4vw" height="4vw" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg" color="#000000"
-          style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
-          <path
-            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path
-            d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97811C12.8053 6.57488 11.1947 6.57488 9.66666 6.97811C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19"
-            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 15.7544" stroke="#000000" stroke-width="1.5"
-            stroke-linecap="round" stroke-linejoin="round"></path>
+        <svg class="social-icon" width="4vw" height="4vw" style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
+          <use href="#icon-github"></use>
         </svg>
       </a>
       <a href="https://twitter.com/s0md3v" target="_blank" aria-label="X (Twitter) Profile" class="social-link">
-        <svg width="4vw" height="4vw" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg" color="#000000"
-          style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
-          <path
-            d="M23 3.01006C23 3.01006 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 23 3.01006 23 3.01006Z"
-            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        <svg class="social-icon" width="4vw" height="4vw" style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
+          <use href="#icon-twitter"></use>
         </svg>
       </a>
       <a href="https://www.instagram.com/s0md3v" target="_blank" aria-label="Instagram Profile" class="social-link">
-        <svg width="4vw" height="4vw" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg" color="#000000"
-          style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
-          <path
-            d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"
-            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path
-            d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z"
-            stroke="#000000" stroke-width="1.5"></path>
-          <path d="M17.5 6.51L17.51 6.49889" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-            stroke-linejoin="round"></path>
+        <svg class="social-icon" width="4vw" height="4vw" style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
+          <use href="#icon-instagram"></use>
         </svg>
       </a>
       <a href="mailto:s0md3v[at]gmail.com" aria-label="Email Me" class="social-link">
-        <svg width="4vw" height="4vw" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg" color="#000000"
-          style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
-          <path d="M7 9L12 12.5L17 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-            stroke-linejoin="round"></path>
-          <path
-            d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z"
-            stroke="#000000" stroke-width="1.5"></path>
+        <svg class="social-icon" width="4vw" height="4vw" style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
+          <use href="#icon-mail"></use>
         </svg>
       </a>
       <a href="https://www.linkedin.com/in/s0md3v" target="_blank" aria-label="LinkedIn Profile" class="social-link">
-        <svg width="4vw" height="4vw" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg" color="#000000"
-          style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
-          <path
-            d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z"
-            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="M7 17V13.5V10" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          </path>
-          <path d="M11 17V13.75M11 10V13.75M11 13.75C11 10 17 10 17 13.75V17" stroke="#000000" stroke-width="1.5"
-            stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="M7 7.01L7.01 6.99889" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-            stroke-linejoin="round"></path>
+        <svg class="social-icon" width="4vw" height="4vw" style="width: 6vw; max-width: 70px; max-height: 42px; min-width: 24px;">
+          <use href="#icon-linkedin"></use>
         </svg>
       </a>
       <div class="mobile-footer">
@@ -422,6 +380,33 @@ layout_style: "homepage"
       });
     });
   </script>
+  <div style="display: none;">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-github" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+        <path d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97811C12.8053 6.57488 11.1947 6.57488 9.66666 6.97811C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19" />
+        <path d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 15.7544" />
+      </symbol>
+      <symbol id="icon-twitter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 3.01006C23 3.01006 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 23 3.01006 23 3.01006Z" />
+      </symbol>
+      <symbol id="icon-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" />
+        <path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z" stroke-width="1.5" />
+        <path d="M17.5 6.51L17.51 6.49889" />
+      </symbol>
+      <symbol id="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 9L12 12.5L17 9" />
+        <path d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z" stroke-width="1.5" />
+      </symbol>
+      <symbol id="icon-linkedin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z" />
+        <path d="M7 17V13.5V10" />
+        <path d="M11 17V13.75M11 10V13.75M11 13.75C11 10 17 10 17 13.75V17" />
+        <path d="M7 7.01L7.01 6.99889" />
+      </symbol>
+    </svg>
+  </div>
 </body>
 
 </html>

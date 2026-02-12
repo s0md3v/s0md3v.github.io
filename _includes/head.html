@@ -12,20 +12,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   {% include theme_init.html %}
 
+  {% unless page.layout_style == "homepage" %}
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" media="print"
     onload="this.media='all'">
   <noscript>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
   </noscript>
+  {% endunless %}
 
   <style>
-    {% include common.css %}
-
-      {% if page.layout_style=="homepage" %}
-
+    {% if page.layout_style=="homepage" %}
+      {% include homepage_critical.css %}
       {% include homepage.css %}
-
-      {% endif %}
+    {% else %}
+      {% include common.css %}
+    {% endif %}
   </style>
   <link rel="preload" href="{{ '/assets/fonts/Comfortaa.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ '/assets/fonts/biro.woff2' | relative_url }}" as="font" type="font/woff2"

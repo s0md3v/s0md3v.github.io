@@ -1,0 +1,201 @@
+/* Minimal Base Resets for Homepage */
+body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, dl, dd, ol, ul, figure {
+  margin: 0;
+  padding: 0;
+}
+
+/* Link Styles */
+a {
+  background: none;
+  color: var(--foreground-color);
+  text-decoration: none;
+}
+a:hover {
+  background: var(--link-hover-bg);
+}
+
+/* SVG Transitions in Menu */
+.menuline a svg {
+  transition: all 0.3s ease;
+}
+
+.menuline a svg path {
+  stroke: var(--foreground-color);
+  transition: stroke 0.3s ease;
+}
+
+.menuline a:hover svg path {
+  stroke: var(--accent-color);
+}
+
+/* Sketch Layer (Anchored Approach) */
+
+/* 1. Global Corner Annotations */
+.corner-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.corner-annotation {
+  position: absolute;
+  font-family: "Biro Script US Plus", monospace;
+  color: var(--link-visited);
+  opacity: 0.8;
+  font-size: 1.35rem;
+}
+
+.top-left {
+  top: 3vw;
+  left: 3vw;
+  line-height: 1.4;
+  transform: rotate(-2deg);
+  max-width: 250px;
+}
+
+.top-right {
+  top: 3vw;
+  right: 3vw;
+  text-align: right;
+}
+
+.bottom-right {
+  bottom: 2vw;
+  right: 2vw;
+  transform: rotate(-2deg);
+  text-align: left;
+  line-height: 1.5;
+  pointer-events: auto;
+}
+
+.bottom-left {
+  bottom: 2vw;
+  left: 3vw;
+  transform: rotate(1deg);
+  line-height: 1.6;
+}
+
+.checkbox {
+  display: inline-block;
+  width: 1.2rem;
+}
+
+/* 2. Anchored Notes */
+.sketch-anchor {
+  position: relative;
+  display: inline-block;
+}
+
+.sketch-note {
+  position: absolute;
+  pointer-events: none;
+  font-family: "Biro Script US Plus", monospace;
+  color: var(--link-visited);
+  opacity: 0.8;
+  font-size: 1.3rem;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+}
+
+.sketch-text {
+  display: block;
+  margin-bottom: -5px;
+}
+
+.sketch-arrow {
+  display: block;
+  overflow: visible;
+  color: var(--link-visited);
+}
+
+/* Specific Positions */
+.note-right {
+  top: -1rem;
+  left: 100%;
+  margin-left: 0.8rem;
+  transform: rotate(-3deg);
+  align-items: flex-start;
+}
+
+.note-right .sketch-arrow {
+  margin-left: -10px;
+}
+
+.note-left {
+  top: 100%;
+  left: 0;
+  margin-top: 0.2rem;
+  transform: rotate(2deg);
+  align-items: flex-start;
+}
+
+.note-left .sketch-arrow {
+  margin-right: -10px;
+}
+
+/* Reinforce colors for sketched elements */
+#hand-tooltip path,
+.corner-annotation svg path {
+  stroke: var(--link-visited) !important;
+}
+
+#hand-tooltip {
+  color: var(--link-visited) !important;
+}
+
+.note-right-far {
+  top: 0.8rem;
+  left: 100%;
+  margin-left: 0.5rem;
+  transform: rotate(4deg);
+}
+
+.note-bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(0.5rem) rotate(-2deg);
+  align-items: center;
+}
+
+.note-bottom .sketch-text {
+  order: 2;
+  margin-top: -5px;
+}
+
+.note-bottom .sketch-arrow {
+  order: 1;
+}
+
+@media (max-width: 1100px) {
+  .sketch-note {
+    display: none;
+  }
+
+  .corner-layer {
+    display: block;
+  }
+
+  .corner-annotation.top-left,
+  .corner-annotation.bottom-left {
+    display: none;
+  }
+
+  .corner-annotation.top-right {
+    top: 1.5rem;
+    right: 1.5rem;
+    transform: scale(0.9);
+  }
+
+  .corner-annotation.bottom-right {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    transform: scale(0.8) rotate(2deg);
+  }
+}

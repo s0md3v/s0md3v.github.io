@@ -41,7 +41,7 @@
   padding: 5px;
   margin: 5px;
   border-radius: 8px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .social-link:hover {
@@ -186,7 +186,7 @@
   margin-left: 10px;
   opacity: 0;
   pointer-events: none;
-  font-family: var(--base-font-family);
+  font-family: "Comfortaa", sans-serif;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 10;
   font-weight: normal;
