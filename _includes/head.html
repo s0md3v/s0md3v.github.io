@@ -81,18 +81,17 @@
       font-display: swap;
     }
 
-    /* Hand-written elements hidden initially */
-    .biro-hidden .corner-annotation,
-    .biro-hidden .sketch-note,
-    .biro-hidden .menuheader,
-    .biro-hidden .mobile-footer,
-    .biro-hidden .post-meta,
-    .biro-hidden .location-overlay,
-    .biro-hidden #hand-tooltip,
-    .biro-hidden .layout-guide {
-      opacity: 0 !important;
+    @media (min-width: 576px) {
+      .biro-hidden .corner-annotation,
+      .biro-hidden .sketch-note,
+      .biro-hidden .menuheader,
+      .biro-hidden .post-meta,
+      .biro-hidden .location-overlay,
+      .biro-hidden #hand-tooltip,
+      .biro-hidden .layout-guide {
+        opacity: 0 !important;
+      }
     }
-
     /* Ensure transition applies when opacity changes back */
     .corner-annotation,
     .sketch-note,
