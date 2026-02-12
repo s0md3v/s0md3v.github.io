@@ -20,7 +20,6 @@ twitter:
   username: s0md3v
 
 plugins:
-  - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-minifier
 
