@@ -90,8 +90,19 @@
     .biro-hidden .location-overlay,
     .biro-hidden #hand-tooltip,
     .biro-hidden .layout-guide {
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      opacity: 0 !important;
+    }
+
+    /* Ensure transition applies when opacity changes back */
+    .corner-annotation,
+    .sketch-note,
+    .menuheader,
+    .mobile-footer,
+    .post-meta,
+    .location-overlay,
+    #hand-tooltip,
+    .layout-guide {
+      transition: opacity 0.5s ease-out;
     }
   </style>
   <script>
