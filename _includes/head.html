@@ -3,7 +3,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
-  <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ " /feed.xml" |
+    prepend: site.baseurl | prepend: site.url }}">
 
   {% seo %}
 
@@ -19,9 +20,15 @@
 
   <style>
     {% include common.css %}
+
+      {% if page.layout_style=="homepage" %}
+
+      {% include homepage.css %}
+
+      {% endif %}
   </style>
-  <link rel="preload" href="{{ '/assets/fonts/biro.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="{{ '/assets/fonts/Comfortaa.woff2' | relative_url }}" as="font" type="font/woff2"
+  <link rel="preload" href="{{ '/assets/fonts/Comfortaa.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ '/assets/fonts/biro.woff2' | relative_url }}" as="font" type="font/woff2"
     crossorigin>
 
   <style>
@@ -73,7 +80,31 @@
       font-style: italic;
       font-display: swap;
     }
+
+    /* Hand-written elements hidden initially */
+    .biro-hidden .corner-annotation,
+    .biro-hidden .sketch-note,
+    .biro-hidden .menuheader,
+    .biro-hidden .mobile-footer,
+    .biro-hidden .post-meta,
+    .biro-hidden .location-overlay,
+    .biro-hidden #hand-tooltip,
+    .biro-hidden .layout-guide {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
   </style>
+  <script>
+    document.documentElement.classList.add('biro-hidden');
+    if ("fonts" in document) {
+      document.fonts.load("1em 'Biro Script US Plus'").then(() => {
+        document.documentElement.classList.remove('biro-hidden');
+      });
+    } else {
+      // Fallback for older browsers
+      document.documentElement.classList.remove('biro-hidden');
+    }
+  </script>
   <script src="{{ '/assets/js/common.js' | relative_url }}" defer></script>
 
 

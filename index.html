@@ -1,6 +1,7 @@
 ---
 title: "Security Researcher & Developer"
 description: "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics."
+layout_style: "homepage"
 ---
 <!DOCTYPE html>
 <html lang="en-US">
@@ -188,460 +189,239 @@ description: "Somdev Sangwan is a security researcher & developer. He also write
       </div>
     </div>
   </main>
-    <style>
-      .mobile-footer {
-        display: none;
-      }
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modeSwitch = document.getElementById('mode-switch');
+      if (modeSwitch) {
+        const themeNames = {
+          'light': 'light mode',
+          'dark': 'dark mode',
+          'cream': 'cream mode'
+        };
 
-      .homepage {
-        margin: auto 0;
-      }
-
-      .menu {
-        font-size: clamp(1.1rem, 2.5vw, 2.5vw);
-        margin: 5vh auto;
-        width: fit-content;
-        white-space: nowrap;
-      }
-
-      .menuline {
-        margin: 2ch 0;
-        padding: 0 2rem;
-        color: var(--muted-color);
-      }
-
-      .menuline a {
-        text-decoration: none;
-        color: var(--foreground-color);
-      }
-
-      .menuline a:hover {
-        color: var(--accent-color);
-        text-decoration: none;
-        text-decoration-color: var(--foreground-color);
-        background: transparent;
-      }
-
-      .social-link {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 44px;
-        min-height: 44px;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 8px;
-        transition: background-color 0.2s;
-      }
-
-      .social-link:hover {
-        background-color: var(--link-hover-bg);
-      }
-
-      .menuheader {
-        font-family: "Biro Script US Plus", monospace;
-        color: var(--link-visited);
-        font-size: 2.4rem;
-        padding-right: 5%;
-        display: inline-block;
-        width: 5.5rem;
-        text-align: right;
-        position: relative;
-        top: -0.1rem;
-        opacity: 0.8;
-      }
-
-      .layout-guides {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      .menulinks {
-        font-family: "Comfortaa", sans-serif;
-      }
-
-      @media (max-width: 575.98px) {
-        .menuline {
-          padding: 0 5vw;
-          font-size: 1.4rem;
+        function updateModeText() {
+          const current = getPreferredTheme();
+          modeSwitch.textContent = themeNames[current] || 'light mode';
         }
 
-        .menuheader {
-          font-size: 0.9rem;
-        }
+        updateModeText();
 
-        .menulinks:before {
-          display: none;
-        }
-
-        /* Hide all sketches/annotations/graphics on mobile */
-        .corner-layer,
-        .sketch-note,
-        .layout-guide,
-        #hand-tooltip {
-          display: none !important;
-        }
-
-
-
-        .mobile-footer {
-          display: block;
-          margin-top: 3rem;
-          text-align: center;
-          font-size: 1.2rem;
-          color: var(--link-visited);
-          font-family: "Biro Script US Plus", monospace;
-          opacity: 0.8;
-          pointer-events: auto;
-        }
-
-        .mobile-footer a {
-          text-decoration: underline;
-          text-decoration-thickness: 1px;
-        }
-      }
-
-      .dark-mode .homepage svg {
-        filter: invert(1);
-      }
-
-      .dark-mode .homepage .corner-annotation svg,
-      .dark-mode .homepage #hand-tooltip svg,
-      .dark-mode .homepage .layout-guide svg,
-      .dark-mode .menuline svg {
-        filter: none !important;
-      }
-
-      /* Sketch Layer styles moved to common.css */
-
-      /* Todo List Interaction */
-      .todo-item {
-        pointer-events: auto;
-        /* Enable interaction since parent is pointer-events: none */
-      }
-
-      .todo-item.pending {
-        cursor: pointer;
-        position: relative;
-        transition: color 0.2s ease;
-      }
-
-      .todo-shake {
-        animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
-        color: #ea4335 !important;
-        /* Error red */
-      }
-
-      @keyframes shake {
-
-        10%,
-        90% {
-          transform: translate3d(-1px, 0, 0);
-        }
-
-        20%,
-        80% {
-          transform: translate3d(2px, 0, 0);
-        }
-
-        30%,
-        50%,
-        70% {
-          transform: translate3d(-4px, 0, 0);
-        }
-
-        40%,
-        60% {
-          transform: translate3d(4px, 0, 0);
-        }
-      }
-
-      .todo-msg {
-        position: absolute;
-        left: 100%;
-        top: 50%;
-        transform: translateY(-50%);
-        background: var(--background-color);
-        border: 1px solid var(--accent-color);
-        color: var(--accent-color);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        margin-left: 10px;
-        opacity: 0;
-        pointer-events: none;
-        font-family: var(--base-font-family);
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        z-index: 10;
-        font-weight: normal;
-      }
-
-      .todo-msg.show {
-        animation: fadeInOut 2s forwards;
-      }
-
-      @keyframes fadeInOut {
-        0% {
-          opacity: 0;
-          transform: translateY(-50%) scale(0.9);
-        }
-
-        10% {
-          opacity: 1;
-          transform: translateY(-50%) scale(1);
-        }
-
-        80% {
-          opacity: 1;
-          opacity: 1;
-        }
-
-        /* Stay visible for a bit */
-        100% {
-          opacity: 0;
-          transform: translateY(-50%) scale(1);
-        }
-      }
-    </style>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const modeSwitch = document.getElementById('mode-switch');
-        if (modeSwitch) {
-          const themeNames = {
-            'light': 'light mode',
-            'dark': 'dark mode',
-            'cream': 'cream mode'
-          };
-
-          function updateModeText() {
-            const current = getPreferredTheme();
-            modeSwitch.textContent = themeNames[current] || 'light mode';
-          }
-
+        modeSwitch.addEventListener('click', () => {
+          const current = getPreferredTheme();
+          let nextIndex = (themes.indexOf(current) + 1) % themes.length;
+          const nextTheme = themes[nextIndex];
+          applyTheme(nextTheme);
           updateModeText();
-
-          modeSwitch.addEventListener('click', () => {
-            const current = getPreferredTheme();
-            let nextIndex = (themes.indexOf(current) + 1) % themes.length;
-            const nextTheme = themes[nextIndex];
-            applyTheme(nextTheme);
-            updateModeText();
-          });
-
-          // Keyboard accessibility for mode switch
-          modeSwitch.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              modeSwitch.click();
-            }
-          });
-        }
-
-        const handwrittenSelectors = [
-          '.corner-annotation',
-          '.sketch-text',
-          '.todo-item'
-        ];
-
-        handwrittenSelectors.forEach(selector => {
-          document.querySelectorAll(selector).forEach(el => {
-            const variation = 0.92 + Math.random() * 0.16;
-            const currentSize = parseFloat(getComputedStyle(el).fontSize);
-            el.style.fontSize = (currentSize * variation) + 'px';
-          });
         });
 
-        const tooltip = document.getElementById('hand-tooltip');
-        const tooltipText = document.getElementById('tooltip-text');
-        const tooltipSvgPath = tooltip ? tooltip.querySelector('path') : null;
-
-        if (tooltip && tooltipText && tooltipSvgPath) {
-          const linkMap = {
-            '/about': 'Somdev Sangwan aka s0md3v',
-            '/work': 'need help with your security product?',
-            '/projects': 'i picked the best 10',
-            '/blog': 'research, hacking, dev',
-            '/papers': 'high effort research',
-            '/gallery': 'good photos, i promise',
-            '/philosophy': 'i write essays',
-            'https://github.com/s0md3v': 'sponsor me ^_^',
-            'https://twitter.com/s0md3v': 'quality posting only',
-            'https://instagram.com/s0md3v': 'strictly non-professional',
-            'mailto:s0md3v[at]gmail.com': 'need a pgp key?',
-            'https://www.linkedin.com/in/s0md3v': '"lets connect" :D',
-            '/now': 'what am i doing?',
-            '/favorites': 'stuff i love',
-            '/uses': 'my gear'
-          };
-
-          function updateTooltipShape(text) {
-            tooltipText.textContent = text;
-
-            requestAnimationFrame(() => {
-              const textWidth = tooltipText.offsetWidth;
-              const textHeight = tooltipText.offsetHeight;
-
-              const paddingX = 40;
-              const paddingY = 25;
-
-              const width = textWidth + paddingX * 2;
-              const height = textHeight + paddingY * 2;
-
-              let seed = 0;
-              for (let i = 0; i < text.length; i++) seed += text.charCodeAt(i);
-              const random = () => {
-                const x = Math.sin(seed++) * 10000;
-                return x - Math.floor(x);
-              };
-
-              const r = (mag = 5) => (random() - 0.5) * mag * 2;
-
-              const completeness = 0.85 + (random() * 0.2);
-
-              const startX = 5 + r(2);
-              const midY = height / 2 + r(3);
-              const startY = midY + r(2);
-
-              const midX = width / 2 + r(5);
-              const endX = width - 5 + r(2);
-
-              const topY = 5 + r(3);
-              const bottomY = height - 5 + r(2);
-
-              const cpTopX = midX + r(10);
-              const cpTopY = topY - r(5);
-
-              const cpBottomX = midX + r(10);
-              const cpBottomY = bottomY + r(5);
-
-              let d = `M ${startX} ${startY}`;
-
-              d += ` Q ${startX - r(5)} ${topY} ${cpTopX} ${topY}`;
-              d += ` Q ${endX + r(5)} ${topY} ${endX} ${midY + r(2)}`;
-
-              if (completeness > 0.5) {
-                d += ` Q ${endX + r(5)} ${bottomY} ${cpBottomX} ${bottomY}`;
-              }
-
-              if (completeness > 0.9) {
-                const overlapX = startX + r(15);
-                const overlapY = startY + r(10) - 5;
-                d += ` Q ${startX - r(5)} ${bottomY} ${overlapX} ${overlapY}`;
-              } else {
-                const gapX = startX + 20 + r(10);
-                const gapY = bottomY - r(5);
-                d += ` Q ${startX + 50} ${bottomY} ${gapX} ${gapY}`;
-              }
-
-              tooltipSvgPath.setAttribute('d', d);
-
-              const svg = tooltip.querySelector('svg');
-              svg.setAttribute('width', width);
-              svg.setAttribute('height', height);
-              svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-
-              svg.style.width = width + 'px';
-              svg.style.height = height + 'px';
-              svg.style.top = (-paddingY) + 'px';
-              svg.style.left = (-paddingX) + 'px';
-            });
+        // Keyboard accessibility for mode switch
+        modeSwitch.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            modeSwitch.click();
           }
+        });
+      }
 
-          document.querySelectorAll('.menulinks a, .homepage a').forEach(link => {
-            const path = link.getAttribute('href');
+      const handwrittenSelectors = [
+        '.corner-annotation',
+        '.sketch-text',
+        '.todo-item'
+      ];
 
-            const showTooltip = () => {
-              if (linkMap[path]) {
-                updateTooltipShape(linkMap[path]);
-                tooltip.style.opacity = '1';
-              }
-            };
-
-            const hideTooltip = () => {
-              tooltip.style.opacity = '0';
-            };
-
-            link.addEventListener('mouseenter', showTooltip);
-            link.addEventListener('focus', showTooltip);
-
-            link.addEventListener('mouseleave', hideTooltip);
-            link.addEventListener('blur', hideTooltip);
-          });
-        }
-
-        const todoItems = document.querySelectorAll('.todo-item.pending');
-        todoItems.forEach(item => {
-          let clicks = 0;
-          const checkbox = item.querySelector('.checkbox');
-          const originalText = checkbox.textContent;
-          let isAnimating = false;
-
-          const messages = [
-            item.dataset.msg || "not yet...",
-            "i said not yet!",
-            "seriously?",
-            "...",
-            "stop it."
-          ];
-
-          item.addEventListener('click', function () {
-            if (isAnimating) return;
-            isAnimating = true;
-
-            if (clicks >= messages.length) {
-              const container = this.closest('.corner-annotation');
-              if (container) {
-                container.innerHTML = ":p";
-                container.style.fontSize = "3rem";
-                container.style.textAlign = "center";
-                container.style.display = "flex";
-                container.style.justifyContent = "center";
-                container.style.alignItems = "center";
-              }
-              return;
-            }
-
-            const checkbox = this.querySelector('.checkbox');
-
-            checkbox.textContent = '✓';
-            this.classList.add('done');
-
-            setTimeout(() => {
-              checkbox.textContent = originalText;
-              this.classList.remove('done');
-              this.classList.add('todo-shake');
-
-              let msgText = messages[clicks];
-              clicks++;
-
-              let msgEl = this.querySelector('.todo-msg');
-              if (!msgEl) {
-                msgEl = document.createElement('div');
-                msgEl.className = 'todo-msg';
-                this.appendChild(msgEl);
-              }
-
-              msgEl.textContent = msgText;
-              msgEl.classList.remove('show');
-              void msgEl.offsetWidth;
-              msgEl.classList.add('show');
-
-              setTimeout(() => {
-                this.classList.remove('todo-shake');
-                isAnimating = false;
-              }, 400);
-            }, 200);
-          });
+      handwrittenSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          const variation = 0.92 + Math.random() * 0.16;
+          const currentSize = parseFloat(getComputedStyle(el).fontSize);
+          el.style.fontSize = (currentSize * variation) + 'px';
         });
       });
-    </script>
+
+      const tooltip = document.getElementById('hand-tooltip');
+      const tooltipText = document.getElementById('tooltip-text');
+      const tooltipSvgPath = tooltip ? tooltip.querySelector('path') : null;
+
+      if (tooltip && tooltipText && tooltipSvgPath) {
+        const linkMap = {
+          '/about': 'Somdev Sangwan aka s0md3v',
+          '/work': 'need help with your security product?',
+          '/projects': 'i picked the best 10',
+          '/blog': 'research, hacking, dev',
+          '/papers': 'high effort research',
+          '/gallery': 'good photos, i promise',
+          '/philosophy': 'i write essays',
+          'https://github.com/s0md3v': 'sponsor me ^_^',
+          'https://twitter.com/s0md3v': 'quality posting only',
+          'https://instagram.com/s0md3v': 'strictly non-professional',
+          'mailto:s0md3v[at]gmail.com': 'need a pgp key?',
+          'https://www.linkedin.com/in/s0md3v': '"lets connect" :D',
+          '/now': 'what am i doing?',
+          '/favorites': 'stuff i love',
+          '/uses': 'my gear'
+        };
+
+        function updateTooltipShape(text) {
+          tooltipText.textContent = text;
+
+          requestAnimationFrame(() => {
+            const textWidth = tooltipText.offsetWidth;
+            const textHeight = tooltipText.offsetHeight;
+
+            const paddingX = 40;
+            const paddingY = 25;
+
+            const width = textWidth + paddingX * 2;
+            const height = textHeight + paddingY * 2;
+
+            let seed = 0;
+            for (let i = 0; i < text.length; i++) seed += text.charCodeAt(i);
+            const random = () => {
+              const x = Math.sin(seed++) * 10000;
+              return x - Math.floor(x);
+            };
+
+            const r = (mag = 5) => (random() - 0.5) * mag * 2;
+
+            const completeness = 0.85 + (random() * 0.2);
+
+            const startX = 5 + r(2);
+            const midY = height / 2 + r(3);
+            const startY = midY + r(2);
+
+            const midX = width / 2 + r(5);
+            const endX = width - 5 + r(2);
+
+            const topY = 5 + r(3);
+            const bottomY = height - 5 + r(2);
+
+            const cpTopX = midX + r(10);
+            const cpTopY = topY - r(5);
+
+            const cpBottomX = midX + r(10);
+            const cpBottomY = bottomY + r(5);
+
+            let d = `M ${startX} ${startY}`;
+
+            d += ` Q ${startX - r(5)} ${topY} ${cpTopX} ${topY}`;
+            d += ` Q ${endX + r(5)} ${topY} ${endX} ${midY + r(2)}`;
+
+            if (completeness > 0.5) {
+              d += ` Q ${endX + r(5)} ${bottomY} ${cpBottomX} ${bottomY}`;
+            }
+
+            if (completeness > 0.9) {
+              const overlapX = startX + r(15);
+              const overlapY = startY + r(10) - 5;
+              d += ` Q ${startX - r(5)} ${bottomY} ${overlapX} ${overlapY}`;
+            } else {
+              const gapX = startX + 20 + r(10);
+              const gapY = bottomY - r(5);
+              d += ` Q ${startX + 50} ${bottomY} ${gapX} ${gapY}`;
+            }
+
+            tooltipSvgPath.setAttribute('d', d);
+
+            const svg = tooltip.querySelector('svg');
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+            svg.style.width = width + 'px';
+            svg.style.height = height + 'px';
+            svg.style.top = (-paddingY) + 'px';
+            svg.style.left = (-paddingX) + 'px';
+          });
+        }
+
+        document.querySelectorAll('.menulinks a, .homepage a').forEach(link => {
+          const path = link.getAttribute('href');
+
+          const showTooltip = () => {
+            if (linkMap[path]) {
+              updateTooltipShape(linkMap[path]);
+              tooltip.style.opacity = '1';
+            }
+          };
+
+          const hideTooltip = () => {
+            tooltip.style.opacity = '0';
+          };
+
+          link.addEventListener('mouseenter', showTooltip);
+          link.addEventListener('focus', showTooltip);
+
+          link.addEventListener('mouseleave', hideTooltip);
+          link.addEventListener('blur', hideTooltip);
+        });
+      }
+
+      const todoItems = document.querySelectorAll('.todo-item.pending');
+      todoItems.forEach(item => {
+        let clicks = 0;
+        const checkbox = item.querySelector('.checkbox');
+        const originalText = checkbox.textContent;
+        let isAnimating = false;
+
+        const messages = [
+          item.dataset.msg || "not yet...",
+          "i said not yet!",
+          "seriously?",
+          "...",
+          "stop it."
+        ];
+
+        item.addEventListener('click', function () {
+          if (isAnimating) return;
+          isAnimating = true;
+
+          if (clicks >= messages.length) {
+            const container = this.closest('.corner-annotation');
+            if (container) {
+              container.innerHTML = ":p";
+              container.style.fontSize = "3rem";
+              container.style.textAlign = "center";
+              container.style.display = "flex";
+              container.style.justifyContent = "center";
+              container.style.alignItems = "center";
+            }
+            return;
+          }
+
+          const checkbox = this.querySelector('.checkbox');
+
+          checkbox.textContent = '✓';
+          this.classList.add('done');
+
+          setTimeout(() => {
+            checkbox.textContent = originalText;
+            this.classList.remove('done');
+            this.classList.add('todo-shake');
+
+            let msgText = messages[clicks];
+            clicks++;
+
+            let msgEl = this.querySelector('.todo-msg');
+            if (!msgEl) {
+              msgEl = document.createElement('div');
+              msgEl.className = 'todo-msg';
+              this.appendChild(msgEl);
+            }
+
+            msgEl.textContent = msgText;
+            msgEl.classList.remove('show');
+            void msgEl.offsetWidth;
+            msgEl.classList.add('show');
+
+            setTimeout(() => {
+              this.classList.remove('todo-shake');
+              isAnimating = false;
+            }, 400);
+          }, 200);
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

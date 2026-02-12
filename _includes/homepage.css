@@ -1,0 +1,220 @@
+.mobile-footer {
+  display: none;
+}
+
+
+.homepage {
+  margin: auto 0;
+}
+
+.menu {
+  font-size: clamp(1.1rem, 2.5vw, 2.5vw);
+  margin: 5vh auto;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.menuline {
+  margin: 2ch 0;
+  padding: 0 2rem;
+  color: var(--muted-color);
+}
+
+.menuline a {
+  text-decoration: none;
+  color: var(--foreground-color);
+}
+
+.menuline a:hover {
+  color: var(--accent-color);
+  text-decoration: none;
+  text-decoration-color: var(--foreground-color);
+  background: transparent;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.social-link:hover {
+  background-color: var(--link-hover-bg);
+}
+
+.menuheader {
+  font-family: "Biro Script US Plus", monospace;
+  color: var(--link-visited);
+  font-size: 2.4rem;
+  padding-right: 5%;
+  display: inline-block;
+  width: 5.5rem;
+  text-align: right;
+  position: relative;
+  top: -0.1rem;
+  opacity: 0.8;
+}
+
+.layout-guides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.menulinks {
+  font-family: "Comfortaa", sans-serif;
+}
+
+@media (max-width: 575.98px) {
+  .menuline {
+    padding: 0 5vw;
+    font-size: 1.4rem;
+  }
+
+  .menuheader {
+    font-size: 0.9rem;
+  }
+
+  .menulinks:before {
+    display: none;
+  }
+
+  /* Hide all sketches/annotations/graphics on mobile */
+  .corner-layer,
+  .sketch-note,
+  .layout-guide,
+  #hand-tooltip {
+    display: none !important;
+  }
+
+
+
+  .mobile-footer {
+    display: block;
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--link-visited);
+    font-family: "Biro Script US Plus", monospace;
+    opacity: 0.8;
+    pointer-events: auto;
+  }
+
+  .mobile-footer a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+}
+
+.dark-mode .homepage svg {
+  filter: invert(1);
+}
+
+.dark-mode .homepage .corner-annotation svg,
+.dark-mode .homepage #hand-tooltip svg,
+.dark-mode .homepage .layout-guide svg,
+.dark-mode .menuline svg {
+  filter: none !important;
+}
+
+/* Sketch Layer styles moved to common.css */
+
+/* Todo List Interaction */
+.todo-item {
+  pointer-events: auto;
+  /* Enable interaction since parent is pointer-events: none */
+}
+
+.todo-item.pending {
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.todo-shake {
+  animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+  color: #ea4335 !important;
+  /* Error red */
+}
+
+@keyframes shake {
+
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+.todo-msg {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--background-color);
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-left: 10px;
+  opacity: 0;
+  pointer-events: none;
+  font-family: var(--base-font-family);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  font-weight: normal;
+}
+
+.todo-msg.show {
+  animation: fadeInOut 2s forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+
+  80% {
+    opacity: 1;
+    opacity: 1;
+  }
+
+  /* Stay visible for a bit */
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(1);
+  }
+}
