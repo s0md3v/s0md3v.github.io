@@ -13,39 +13,39 @@ const assessmentModel = [
                 id: 'sleep_restoration',
                 type: 'foundation',
                 priority: 'critical',
-                title: "Sleep Restoration",
-                reasoning: "You're running on empty. Sleeping less than 6 hours creates a 'cognitive debt' that caffeine can't fix. It kills your focus and mood.",
+                title: "Get more sleep",
+                reasoning: "You're likely sleep-deprived. Sleeping less than 6 hours makes it hard to focus and affects your mood in ways caffeine can't fix.",
                 timeline_results: [
-                    { time: '1 Week', effect: 'Your anxiety levels will drop significantly. You will notice you are less irritable and sugar cravings will start to fade as your hunger hormones (ghrelin/leptin) re-balance.' },
-                    { time: '30 Days', effect: 'Your skin will look visibly clearer and less puffy. You will have stable energy throughout the entire day without the afternoon crash.' },
-                    { time: 'Long Term', effect: 'You are drastically reducing your risk of Alzheimer’s and heart disease. Your brain cleans itself of toxic plaques only during deep sleep.' }
+                    { time: '1 Week', effect: 'You\'ll feel less anxious and irritable. Cravings for sugary foods will start to fade.' },
+                    { time: '30 Days', effect: 'You\'ll have more stable energy throughout the day without the afternoon crash.' },
+                    { time: 'Long Term', effect: 'Your brain clears out metabolic waste and toxins while you sleep, protecting your long-term cognitive health.' }
                 ],
                 protocol: [
-                    "**Reverse Alarm**: Set an alarm 1 hour *before* bed to stop looking at screens.",
-                    "**Cool Down**: A cold room (65-68°F) helps you stay asleep.",
-                    "**Magnesium**: 400mg of Magnesium Glycinate before bed can help you relax."
+                    "**Screen curfew**: Stop looking at screens an hour before you want to sleep.",
+                    "**Cool room**: Keep your bedroom cool (around 18°C/65°F).",
+                    "**Magnesium**: Some find Magnesium Glycinate helpful for relaxing before bed."
                 ],
                 sources: [1, 5],
-                risks: "Chronic sleep deprivation is linked to a 30% higher risk of dementia and significant hormonal imbalances (low testosterone/high cortisol)."
+                risks: "Chronic sleep deprivation is linked to long-term health issues and constant brain fog."
             };
             if (val < 7) return {
                 id: 'sleep_optimization',
                 type: 'foundation',
                 priority: 'medium',
-                title: "Sleep Extension",
-                reasoning: "You are close, but that last hour of sleep is where the magic happens for your brain and memory.",
+                title: "Sleep a bit more",
+                reasoning: "You're close, but getting an extra hour of sleep can significantly improve your memory and focus.",
                 timeline_results: [
-                    { time: '1 Week', effect: 'Waking up will feel natural, often without an alarm. You will feel "sharper" and find it easier to learn new things.' },
-                    { time: '1 Month', effect: 'Your emotional resilience will skyrocket. Things that used to annoy you will roll off your back.' },
-                    { time: '1 Year', effect: 'Your immune system will be robust; you will get sick far less often than your peers.' }
+                    { time: '1 Week', effect: 'Waking up will feel easier. You\'ll feel sharper during the day.' },
+                    { time: '1 Month', effect: 'You\'ll be more resilient to stress. Little annoyances won\'t bother you as much.' },
+                    { time: '1 Year', effect: 'Your immune system will be stronger, meaning you\'ll likely get sick less often.' }
                 ],
                 protocol: [
-                    "**15-Minute Rule**: Go to bed 15 minutes earlier every few days.",
-                    "**No Coffee After 2PM**: Caffeine stays in your system longer than you think.",
-                    "**Blackout**: Make your room pitch black."
+                    "**15-minute shifts**: Try going to bed 15 minutes earlier every few days until you reach 8 hours.",
+                    "**Earlier coffee**: Try to have your last coffee before 2 PM.",
+                    "**Darkness**: Make your room as dark as possible."
                 ],
                 sources: [1],
-                risks: "You are consistently leaving cognitive performance on the table. Over years, this micro-deprivation accelerates brain aging."
+                risks: "Consistently missing just one hour of sleep adds up over time, affecting your performance and long-term health."
             };
             return null;
         }
@@ -57,9 +57,9 @@ const assessmentModel = [
         subtext: '(including weekends)',
         inputType: 'select',
         options: [
-            { value: 'consistent', label: 'Yes, pretty much' },
-            { value: 'varied', label: 'No, I sleep in on weekends' },
-            { value: 'irregular', label: 'My schedule is all over the place' }
+            { value: 'consistent', label: 'Consistent (within 30 mins)' },
+            { value: 'varied', label: 'I sleep in on weekends' },
+            { value: 'irregular', label: 'It varies by 2+ hours' }
         ],
         defaultValue: 'consistent',
         evaluate: (val) => {
@@ -67,20 +67,20 @@ const assessmentModel = [
                 id: 'circadian_anchor',
                 type: 'foundation',
                 priority: 'high',
-                title: "Fix Social Jetlag",
-                reasoning: "Waking up at different times confuses your biological clock. It's like flying across time zones every weekend ('Social Jetlag').",
+                title: "Wake up at the same time",
+                reasoning: "Waking up at different times confuses your body clock, making it harder to wake up and fall asleep.",
                 timeline_results: [
-                    { time: '3 Days', effect: 'Waking up will stop feeling like a chore. You will feel alert within minutes of opening your eyes.' },
-                    { time: '2 Weeks', effect: 'You will fall asleep faster at night because your body knows exactly when "bedtime" is.' },
-                    { time: 'Long Term', effect: 'Your metabolic health will improve, reducing the risk of diabetes and obesity typically associated with irregular rhythms.' }
+                    { time: '3 Days', effect: 'Waking up feels like less of a chore.' },
+                    { time: '2 Weeks', effect: 'You\'ll fall asleep faster at night because your body knows when bedtime is.' },
+                    { time: 'Long Term', effect: 'Better energy levels and more consistent metabolism.' }
                 ],
                 protocol: [
-                    "**Anchor the Wake**: Wake up at the same time every day, even if you're tired.",
-                    "**Morning Sunlight**: Get outside for 10 minutes right after waking up.",
-                    "**Don't Snooze**: Put your phone across the room."
+                    "**Same wake time**: Try to wake up at the same time every day, even if you stayed up late.",
+                    "**Morning light**: Get some sunlight in your eyes shortly after waking up.",
+                    "**No snooze**: Avoid the snooze button; it just makes you more groggy."
                 ],
                 sources: [1],
-                risks: "Your body never knows when to release hormones. This confuses your metabolism, leading to insulin resistance and weight gain."
+                risks: "An irregular schedule makes it harder for your body to regulate hormones and energy."
             };
             return null;
         }
@@ -88,12 +88,12 @@ const assessmentModel = [
     {
         id: 'screens_before_bed',
         category: 'Sleep',
-        prompt: 'Do you look at your phone in bed before falling asleep?',
+        prompt: 'Do you look at your phone in bed?',
         inputType: 'select',
         options: [
             { value: 'always', label: 'Every night' },
-            { value: 'sometimes', label: 'Sometimes' },
-            { value: 'no', label: 'Never' }
+            { value: 'sometimes', label: 'A few times a week' },
+            { value: 'no', label: 'Rarely / Never' }
         ],
         defaultValue: 'always',
         evaluate: (val) => {
@@ -101,20 +101,20 @@ const assessmentModel = [
                 id: 'blue_light_detox',
                 type: 'foundation',
                 priority: 'high',
-                title: "Protect Your Melatonin",
-                reasoning: "Looking at your phone in bed tricks your brain into thinking it's daytime. This stops your body from producing melatonin, the sleep hormone.",
+                title: "No screens in bed",
+                reasoning: "The light from your phone tells your brain it's daytime, which stops it from producing the hormones you need to sleep.",
                 timeline_results: [
-                    { time: 'Tonight', effect: 'You will likely fall asleep 15-20 minutes faster than usual.' },
-                    { time: '1 Week', effect: 'You will experience more vivid dreams, a sign that you are getting more REM sleep.' },
-                    { time: '1 Month', effect: 'You will feel more rested upon waking because your sleep cycles were not disrupted by blue light suppression.' }
+                    { time: 'Tonight', effect: 'You\'ll likely fall asleep faster.' },
+                    { time: '1 Week', effect: 'Better quality sleep and more vivid dreams.' },
+                    { time: '1 Month', effect: 'You\'ll feel more rested because your sleep wasn\'t disrupted by light.' }
                 ],
                 protocol: [
-                    "**Phone Foyer**: Charger your phone in the kitchen or hallway, not the bedroom.",
-                    "**Night Shift**: Turn on the 'warm' color mode on your phone after sunset.",
-                    "**Read a Book**: Physical books don't emit blue light."
+                    "**Phone station**: Charge your phone away from your bed.",
+                    "**Night mode**: Use 'warm' color settings on your devices after sunset.",
+                    "**Paper books**: Read a physical book if you need something to do before sleep."
                 ],
                 sources: [4],
-                risks: "You are essentially giving yourself mini-jetlag every night. Your sleep quality (REM/Deep) will remain permanently suboptimal."
+                risks: "Screen use in bed is one of the most common reasons for poor sleep quality."
             };
             return null;
         }
@@ -124,8 +124,8 @@ const assessmentModel = [
     {
         id: 'processed_food',
         category: 'Nutrition',
-        prompt: 'How much of your food comes from a box or wrapper?',
-        subtext: '(Like chips, fast food, frozen meals, bars)',
+        prompt: 'How much do you rely on processed food?',
+        subtext: '(Chips, fast food, frozen meals, soda)',
         inputType: 'slider',
         min: 0, max: 100, step: 10,
         unit: '%',
@@ -135,20 +135,20 @@ const assessmentModel = [
                 id: 'whole_foods_transition',
                 type: 'foundation',
                 priority: 'critical',
-                title: "Eat Real Food",
-                reasoning: "Ultra-processed foods are designed to make you overeat. They drive inflammation and drain your energy.",
+                title: "Eat less processed food",
+                reasoning: "Processed foods are designed to be overeaten and often lead to inflammation and low energy.",
                 timeline_results: [
-                    { time: '3 Days', effect: 'Less bloating and water retention. You might feel "lighter".' },
-                    { time: '2 Weeks', effect: 'Your taste buds will change. Fruit will taste sweeter, and you will stop craving hyper-processed sugar.' },
-                    { time: '3 Months', effect: 'You will likely see significant improvements in body composition and skin clarity as systemic inflammation drops.' }
+                    { time: '3 Days', effect: 'You\'ll feel less bloated and have more consistent energy.' },
+                    { time: '2 Weeks', effect: 'Your taste buds will adjust, and real food will start to taste better.' },
+                    { time: '3 Months', effect: 'Better weight management and clearer skin.' }
                 ],
                 protocol: [
-                    "**The Perimeter Rule**: Shop the outside edges of the grocery store (produce, meat, dairy).",
-                    "**3-Ingredient Rule**: If a package has more than 3 ingredients, don't buy it.",
-                    "**Cook Once**: Cook a big batch of meat/veggies on Sunday."
+                    "**Shop the edges**: Buy most of your food from the produce, meat, and dairy sections.",
+                    "**Simple ingredients**: Try to avoid foods with long lists of ingredients you don't recognize.",
+                    "**Batch cook**: Prepare some simple meals in advance so you aren't tempted by fast food."
                 ],
                 sources: [109, 112],
-                risks: "A diet high in processed foods is the single biggest driver of modern chronic disease, including obesity, diabetes, and depression."
+                risks: "A diet high in processed foods is a major driver of most modern health problems."
             };
             return null;
         }
@@ -160,8 +160,8 @@ const assessmentModel = [
         inputType: 'select',
         options: [
             { value: 'early', label: '3+ hours before bed' },
-            { value: 'late', label: 'Right before bed' },
-            { value: 'snack', label: 'I snack in bed' }
+            { value: 'late', label: '1-2 hours before bed' },
+            { value: 'snack', label: 'Right before bed / In bed' }
         ],
         defaultValue: 'late',
         evaluate: (val) => {
@@ -169,20 +169,20 @@ const assessmentModel = [
                 id: 'early_dinner',
                 type: 'foundation',
                 priority: 'high',
-                title: "Stop Late Night Eating",
-                reasoning: "Digesting food takes a lot of energy. If you eat right before bed, your body is working instead of resting.",
+                title: "Don't eat before bed",
+                reasoning: "Your body needs to focus on resting and repairing itself while you sleep, not digesting a heavy meal.",
                 timeline_results: [
-                    { time: 'Tonight', effect: 'Your sleep heart rate will be lower, and your recovery (HRV) will be higher.' },
-                    { time: '1 Week', effect: 'Acid reflux or heartburn will likely disappear.' },
-                    { time: 'Long Term', effect: 'Your body becomes better at burning fat for fuel while you sleep.' }
+                    { time: 'Tonight', effect: 'Your heart rate will be lower during sleep, leading to better recovery.' },
+                    { time: '1 Week', effect: 'Reduced chance of heartburn or indigestion.' },
+                    { time: 'Long Term', effect: 'Better metabolic health and weight control.' }
                 ],
                 protocol: [
-                    "**Kitchen Closed**: Set a strict time to close the kitchen (e.g., 8 PM).",
-                    "**Herbal Tea**: Drink Chamomile or Peppermint tea if you feel hungry.",
-                    "**Brush Teeth**: Brush immediately after dinner to signal you are done."
+                    "**Kitchen's closed**: Pick a time (like 8 PM) to stop eating for the night.",
+                    "**Tea**: If you feel like snacking, try a cup of herbal tea instead.",
+                    "**Brush early**: Brushing your teeth right after dinner can help stop the urge to snack."
                 ],
                 sources: [14],
-                risks: "Eating late prevents your body from releasing Human Growth Hormone (HGH) during sleep, slowing down repair and recovery."
+                risks: "Eating late can disrupt your sleep and slow down your body's natural repair processes."
             };
             return null;
         }
@@ -193,7 +193,7 @@ const assessmentModel = [
         id: 'exercise_habit',
         category: 'Movement',
         prompt: 'Do you exercise regularly?',
-        subtext: '(Gym, running, sports, etc.)',
+        subtext: '(Gym, running, sports, home workouts)',
         inputType: 'select',
         options: [
             { value: 'yes', label: 'Yes' },
@@ -205,20 +205,20 @@ const assessmentModel = [
                 id: 'movement_start',
                 type: 'foundation',
                 priority: 'critical',
-                title: "Start Moving",
-                reasoning: "Your body was built to move. Sedentary living is one of the biggest risks to your long-term health.",
+                title: "Exercise more",
+                reasoning: "Humans aren't meant to be sedentary. Regular movement is essential for almost every part of your health.",
                 timeline_results: [
-                    { time: 'Immediately', effect: 'Moving releases endorphins. You will feel better just 5 minutes into a walk.' },
-                    { time: '2 Weeks', effect: 'Walking up stairs won\'t leave you winded. You will have more daily stamina.' },
-                    { time: '1 Year', effect: 'You are cutting your risk of all-cause mortality significantly. You are literally adding years to your life.' }
+                    { time: 'Immediately', effect: 'Exercise releases endorphins that improve your mood right away.' },
+                    { time: '2 Weeks', effect: 'You\'ll notice you have more stamina and get tired less easily.' },
+                    { time: '1 Year', effect: 'You\'re significantly lowering your risk of major health issues and adding years to your life.' }
                 ],
                 protocol: [
-                    "**The Daily Walk**: Just walk for 20 minutes a day. That's it.",
-                    "**Stairs**: Take the stairs instead of the elevator.",
-                    "**Stand Up**: Stand up every hour, even just for a minute."
+                    "**Daily walk**: Start with just 20 minutes a day.",
+                    "**Take the stairs**: Skip the elevator and take the stairs whenever you can.",
+                    "**Bodyweight basics**: Try doing 5-10 squats or pushups when you have a free moment."
                 ],
                 sources: [139],
-                risks: "Sedentary behavior is an independent risk factor for mortality. It literally speeds up the shortening of your telomeres (aging)."
+                risks: "Not moving enough is a major risk factor for chronic disease and faster aging."
             };
             return null;
         }
@@ -227,7 +227,7 @@ const assessmentModel = [
         id: 'sedentary_bouts',
         category: 'Movement',
         prompt: 'How long do you usually sit at a time without getting up?',
-        subtext: '(at work, watching TV, gaming)',
+        subtext: '(Work, TV, gaming, studying)',
         inputType: 'select',
         options: [
             { value: 'short', label: '< 30 minutes' },
@@ -240,20 +240,20 @@ const assessmentModel = [
                 id: 'sedentary_interrupt',
                 type: 'foundation',
                 priority: 'high',
-                title: "Break Up Sitting Time",
-                reasoning: "Sitting for long periods shuts down an enzyme called LPL that burns fat. Even if you workout, long sitting bouts negate many benefits.",
+                title: "Sit less",
+                reasoning: "Sitting for hours at a time is bad for your circulation and metabolism, even if you exercise later.",
                 timeline_results: [
-                    { time: 'Immediately', effect: 'Standing up reactivates fat-burning enzymes and improves blood sugar regulation.' },
-                    { time: '1 Month', effect: 'Chronic hip tightness and lower back pain will begin to resolve.' },
-                    { time: 'Long Term', effect: 'You protect your blood vessels from damage associated with blood pooling and stagnation.' }
+                    { time: 'Immediately', effect: 'Standing up improves your blood sugar regulation and wakes up your muscles.' },
+                    { time: '1 Month', effect: 'Less stiffness in your hips and lower back.' },
+                    { time: 'Long Term', effect: 'Better overall metabolic health.' }
                 ],
                 protocol: [
-                    "**The 30-Minute Rule**: Stand up every 30 minutes, even if just for 30 seconds.",
-                    "**Drink More Water**: It forces you to get up to use the bathroom.",
-                    "**Standing Desk**: If possible, alternate between sitting and standing."
+                    "**The 30-minute rule**: Try to stand up every half hour, even just for 30 seconds.",
+                    "**Drink water**: It'll keep you hydrated and force you to get up more often.",
+                    "**Active breaks**: Do a quick stretch or pace around while waiting for things (like coffee brewing)."
                 ],
                 sources: [139],
-                risks: "Prolonged sitting causes blood to pool in legs and glucose levels to spike. It is a direct cause of metabolic dysfunction."
+                risks: "Long periods of sitting are linked to metabolic issues and increased inflammation."
             };
             return null;
         }
@@ -271,20 +271,20 @@ const assessmentModel = [
                 id: 'step_baseline',
                 type: 'foundation',
                 priority: 'high',
-                title: "Get Your Steps Up",
-                reasoning: "Walking is the easiest superfood. Getting to 7,000 steps drops your risk of dying early by nearly 50%.",
+                title: "Walk more",
+                reasoning: "Walking 7,000 steps a day cuts your risk of early death by nearly 50%. It is one of the most effective things you can do for your health.",
                 timeline_results: [
-                    { time: '1 Week', effect: 'Improved digestion after meals and better mood management.' },
-                    { time: '1 Month', effect: 'Your resting blood pressure will likely decrease.' },
-                    { time: 'Lifetime', effect: 'Mobility is independence. Walking now ensures you can still walk easily when you are 80.' }
+                    { time: '1 Week', effect: 'Better digestion and a more stable mood.' },
+                    { time: '1 Month', effect: 'Possible improvements in blood pressure and energy.' },
+                    { time: 'Lifetime', effect: 'Staying mobile now helps you stay independent as you get older.' }
                 ],
                 protocol: [
-                    "**Walking Meetings**: Take phone calls while walking.",
-                    "**Park Far Away**: Don't look for the closest spot.",
-                    "**After Dinner**: A 10-minute walk after eating helps manage blood sugar."
+                    "**Walk and talk**: Take phone calls while walking around.",
+                    "**Park further away**: Don't always look for the closest parking spot.",
+                    "**Post-meal walk**: A 10-minute walk after dinner is great for your blood sugar."
                 ],
                 sources: [139, 140],
-                risks: "Low daily activity is linked to hippocampal atrophy (brain shrinkage) and significantly higher risk of cardiovascular events."
+                risks: "Very low activity levels are linked to poor cardiovascular health and brain aging."
             };
             return null;
         }
@@ -306,20 +306,20 @@ const assessmentModel = [
                 id: 'social_rx',
                 type: 'foundation',
                 priority: 'high',
-                title: "Prioritize Connection",
-                reasoning: "Loneliness is dangerous. Risks are dangerous comparable to smoking. Humans are built to be around other humans.",
+                title: "See people more often",
+                reasoning: "Regular social contact is essential for mental health. Chronic loneliness carries a health risk comparable to smoking 15 cigarettes a day.",
                 timeline_results: [
-                    { time: 'Immediately', effect: 'Social interaction releases oxytocin and dopamine, instantly improving your mood and reducing background anxiety.' },
-                    { time: '1 Month', effect: 'Your body\'s stress response system will calm down, lowering your baseline cortisol levels.' },
-                    { time: 'Long Term', effect: 'Strong social ties are the strongest predictor of happiness and cognitive health in old age.' }
+                    { time: 'Immediately', effect: 'Socializing can instantly improve your mood and lower your stress.' },
+                    { time: '1 Month', effect: 'You\'ll feel more connected and less anxious on a daily basis.' },
+                    { time: 'Long Term', effect: 'Strong social ties are one of the best predictors of long-term happiness and brain health.' }
                 ],
                 protocol: [
-                    "**Schedule It**: Put a coffee date or call on the calendar.",
-                    "**Call a Friend**: Just call for 10 minutes.",
-                    "**Join a Group**: Find a club or group with shared interests."
+                    "**Schedule a date**: Put a coffee date or a quick call on your calendar.",
+                    "**Quick call**: Call a friend for just 10 minutes to catch up.",
+                    "**Join a group**: Look for a local club or hobby group to meet new people."
                 ],
                 sources: [130, 31],
-                risks: "Chronic loneliness triggers a cellular stress response that lowers immunity and increases inflammation."
+                risks: "Chronic isolation is linked to higher stress levels and a weaker immune system."
             };
             return null;
         }
@@ -333,7 +333,7 @@ const assessmentModel = [
             { value: 'low', label: 'Low - Usually calm and resilient' },
             { value: 'moderate', label: 'Moderate - Manageable daily pressures' },
             { value: 'high', label: 'High - Frequently stressed or anxious' },
-            { value: 'extreme', label: 'Extreme - Constantly overwhelmed or at a breaking point' }
+            { value: 'extreme', label: 'Extreme - Constantly overwhelmed' }
         ],
         defaultValue: 'moderate',
         evaluate: (val) => {
@@ -341,20 +341,20 @@ const assessmentModel = [
                 id: 'stress_protocol',
                 type: 'foundation',
                 priority: 'critical',
-                title: "Stress Override",
-                reasoning: "Chronic stress keeps cortisol high, which shreds your sleep, destroys muscle, and promotes visceral fat. It is biologically impossible to thrive in a high-stress state.",
+                title: "Manage stress",
+                reasoning: "Being constantly stressed is hard on your heart and makes it difficult to sleep or recover from exercise.",
                 timeline_results: [
-                    { time: 'Immediate', effect: 'The Physiological Sigh methods drops arousal in seconds.' },
-                    { time: '1 Week', effect: 'Resting heart rate (RHR) will drop and Heart Rate Variability (HRV) will rise - key markers of recovery.' },
-                    { time: 'Long Term', effect: 'You minimize the risk of burnout and stress-induced cognitive decline.' }
+                    { time: 'Immediate', effect: 'Simple breathing exercises can lower your heart rate in seconds.' },
+                    { time: '1 Week', effect: 'You\'ll likely find it easier to fall asleep and stay asleep.' },
+                    { time: 'Long Term', effect: 'You\'ll be better protected against burnout and stress-related health issues.' }
                 ],
                 protocol: [
-                    "**Physiological Sigh**: Double inhale through nose, long exhale through mouth. Do this 3 times whenever stressed. It mechanically offloads CO2.",
-                    "**Box Breathing**: Inhale 4s, Hold 4s, Exhale 4s, Hold 4s. Resets the nervous system.",
-                    "**NSDR**: 10 minutes of 'Non-Sleep Deep Rest' (Yoga Nidra) is more restorative than a nap."
+                    "**Physiological Sigh**: Take a deep double-breath in through your nose, then a long exhale through your mouth. Repeat 3 times.",
+                    "**Nature time**: Spend just 10 minutes outside; it lowers stress hormones naturally.",
+                    "**Short breaks**: Take 10 minutes a day to sit quietly without your phone."
                 ],
                 sources: [154],
-                risks: "Unmanaged stress destroys the hippocampus (memory center) and promotes the accumulation of visceral belly fat."
+                risks: "Constant high stress affects your memory and makes it harder for your body to manage weight."
             };
             return null;
         }
@@ -376,20 +376,20 @@ const assessmentModel = [
                 id: 'oral_systemic_defense',
                 type: 'foundation',
                 priority: 'high',
-                title: "Heal Your Gums",
-                reasoning: "Bleeding gums are an open door for bacteria to enter your bloodstream and reach your heart/brain. It is a sign of systemic inflammation.",
+                title: "Fix your gums",
+                reasoning: "Bleeding gums are a sign of inflammation. Keeping your mouth healthy is surprisingly important for your heart health too.",
                 timeline_results: [
-                    { time: '1 Week', effect: 'Bleeding will stop as your gums heal and tighten around the teeth.' },
-                    { time: '1 Month', effect: 'Your systemic inflammation (hs-CRP) will drop, taking stress off your entire immune system.' },
-                    { time: 'Long Term', effect: 'You significantly lower your risk of cardiovascular disease and maybe even Alzheimer\'s.' }
+                    { time: '1 Week', effect: 'Bleeding will start to stop as your gums heal.' },
+                    { time: '1 Month', effect: 'Less inflammation in your mouth means less stress on your immune system.' },
+                    { time: 'Long Term', effect: 'Good oral health is linked to a lower risk of heart disease.' }
                 ],
                 protocol: [
-                    "**Salt Water Rinse**: Rinse with warm salt water daily to kill bacteria.",
-                    "**Soft Floss**: Use expanding floss that is gentle on gums.",
-                    "**Vitamin C**: Ensure you are getting enough Vitamin C for collagen repair."
+                    "**Floss daily**: Use a gentle floss to clean between your teeth every day.",
+                    "**Salt water**: Rinsing with warm salt water can help soothe irritated gums.",
+                    "**See a dentist**: If bleeding persists, a professional cleaning is usually necessary."
                 ],
                 sources: [56, 112],
-                risks: "Gum disease allows oral bacteria to enter the bloodstream, contributing to arterial plaque and heart disease."
+                risks: "Gum issues can allow bacteria to enter your bloodstream, which can affect your heart over time."
             };
             return null;
         }
@@ -403,7 +403,7 @@ const assessmentModel = [
         inputType: 'select',
         options: [
             { value: 'high', label: '30+ mins outdoors' },
-            { value: 'supplement', label: 'I take Vitamin D3' },
+            { value: 'supplement', label: 'I take Vitamin D' },
             { value: 'low', label: 'Mostly indoors / < 15 mins' }
         ],
         defaultValue: 'low',
@@ -412,20 +412,20 @@ const assessmentModel = [
                 id: 'vitamin_d_sun',
                 type: 'foundation',
                 priority: 'high',
-                title: "Solar Nutrition",
-                reasoning: "Vitamin D is actually a hormone that regulates over 1,000 genes. Deficiency is linked to depression, weak immunity, and poor sleep.",
+                title: "Get some sun",
+                reasoning: "Sunlight helps your body produce Vitamin D and regulates your internal clock. Lack of sun is linked to lower mood and energy.",
                 timeline_results: [
-                    { time: '1 Week', effect: 'Your circadian rhythm will anchor, helping you fall asleep faster at night.' },
-                    { time: '3 Months', effect: 'Optimized testosterone/estrogen levels and stronger bone density.' },
-                    { time: 'Long Term', effect: 'Significant reduction in all-cause mortality and autoimmune risks.' }
+                    { time: '1 Week', effect: 'Getting morning sun helps you fall asleep more easily at night.' },
+                    { time: '3 Months', effect: 'Improved mood and stronger immune function.' },
+                    { time: 'Long Term', effect: 'Better bone health and lower risk of chronic issues.' }
                 ],
                 protocol: [
-                    "**Morning Sun**: Get 10-20 minutes of sun on as much skin as possible before 10 AM.",
-                    "**Supplement Smart**: If winter, consider 5,000 IU Vitamin D3 + K2 (talk to doc).",
-                    "**Eat Fish**: Fatty fish like salmon are decent natural sources."
+                    "**Morning sun**: Try to get 10-20 minutes of sun on your skin before 10 AM.",
+                    "**Supplement**: If you live somewhere with little sun, consider a Vitamin D supplement.",
+                    "**Eat fish**: Foods like salmon are good natural sources of Vitamin D."
                 ],
                 sources: [160],
-                risks: "Vitamin D deficiency correlates with higher rates of cancer, severe depression, and autoimmune diseases."
+                risks: "Vitamin D deficiency is very common and is linked to depression and weak immunity."
             };
             return null;
         }
@@ -450,20 +450,20 @@ const assessmentModel = [
                 id: 'vo2_max_training', 
                 type: 'optimizer',
                 priority: 'high',
-                title: "Push Your Heart",
-                reasoning: "High intensity exercise improves your 'VO2 Max' - basically how well your body uses oxygen. It is the #1 predictor of a long life.",
+                title: "Intense exercise",
+                reasoning: "Occasionally pushing your heart rate up makes your cardiovascular system much more efficient.",
                 timeline_results: [
-                    { time: 'During Workout', effect: 'It will feel uncomfortable. That is the signal to your heart to grow stronger.' },
-                    { time: '1 Month', effect: 'Daily tasks like carrying groceries or climbing stairs will feel effortless.' },
-                    { time: '1 Year', effect: 'You physically reverse the age of your heart, adding functional years to your life.' }
+                    { time: 'During Workout', effect: 'It feels hard, but that\'s what signals your heart to get stronger.' },
+                    { time: '1 Month', effect: 'Normal activities like climbing stairs will feel much easier.' },
+                    { time: '1 Year', effect: 'You\'ll have significantly better cardiovascular fitness and endurance.' }
                 ],
                 protocol: [
-                    "**The 4x4**: Warm up, then go HARD for 4 minutes, recover for 4 minutes. Repeat 4 times.",
-                    "**Hill Sprints**: Run up a hill for 30 seconds, walk down. Repeat.",
-                    "**Sports**: Play a high-intensity sport like soccer or basketball."
+                    "**Intervals**: Try 1 minute of fast running or cycling followed by 1 minute of rest. Repeat a few times.",
+                    "**Hill walks**: Walk up a steep hill until you're breathing hard.",
+                    "**Sports**: Play a game that involves some sprinting, like football or tennis."
                 ],
                 sources: [17],
-                risks: "Low VO2 max is a stronger predictor of death than smoking or diabetes. You physically age faster without intensity."
+                risks: "Without occasional intensity, your cardiovascular fitness can decline faster as you age."
             };
             return null;
         }
@@ -485,20 +485,20 @@ const assessmentModel = [
                 id: 'strength_foundation',
                 type: 'foundation',
                 priority: 'medium',
-                title: "Build Muscle Armor",
-                reasoning: "Muscle is your body's armor. If you don't use it, you lose it. Strong muscles protect your bones and metabolism.",
+                title: "Strength training",
+                reasoning: "Keeping your muscles strong protects your joints and helps maintain your metabolism.",
                 timeline_results: [
-                    { time: '2 Weeks', effect: 'You\'ll feel stronger due to neural adaptations (your brain learning to use your muscles).' },
-                    { time: '3 Months', effect: 'Visible changes in muscle tone and posture. You will stand taller and feel more robust.' },
-                    { time: 'Long Term', effect: 'Muscle acts as a glucose sink, protecting you from diabetes and keeping your metabolism high.' }
+                    { time: '2 Weeks', effect: 'You\'ll start to feel more "solid" and capable during daily tasks.' },
+                    { time: '3 Months', effect: 'Visible changes in posture and muscle tone.' },
+                    { time: 'Long Term', effect: 'Strong muscles protect your bones and help you stay mobile as you get older.' }
                 ],
                 protocol: [
-                    "**Basic Lifts**: Learn to Squat, Hinge (Deadlift), Push, and Pull.",
-                    "**2 Days a Week**: You only need 2 sessions to see benefits.",
-                    "**Bodyweight**: Pushups and lunges are a great start."
+                    "**Basic movements**: Try pushups, squats, and lunges.",
+                    "**Twice a week**: Just two strength sessions a week are enough to see big benefits.",
+                    "**Use weights**: If bodyweight exercises get easy, try using some dumbbells or resistance bands."
                 ],
                 sources: [20],
-                risks: "Sarcopenia (muscle loss) is the primary cause of frailty in old age. Weak muscles mean weak bones and metabolism."
+                risks: "Muscle loss is a major cause of weakness and injury as people age."
             };
             return null;
         }
@@ -519,20 +519,20 @@ const assessmentModel = [
                 id: 'dopamine_reset',
                 type: 'foundation',
                 priority: 'medium',
-                title: "Break the Scroll",
-                reasoning: "Constant scrolling messes with your brain's reward system (dopamine). It makes real life feel boring and raises anxiety.",
+                title: "Less phone time",
+                reasoning: "Constant scrolling can fragment your attention and make you feel more anxious or bored with real life.",
                 timeline_results: [
-                    { time: '2 Days', effect: 'You might feel bored. This is good. Boredom is the precursor to creativity and calm.' },
-                    { time: '2 Weeks', effect: 'Your attention span will recover. You will be able to watch a movie or read a book without needing to check your phone.' },
-                    { time: '1 Year', effect: 'You will reclaim hundreds of hours of your life that would used to vanish into the screen.' }
+                    { time: '2 Days', effect: 'You might feel bored at first, but this often leads to more creativity.' },
+                    { time: '2 Weeks', effect: 'Your focus will improve, making it easier to read or work without distraction.' },
+                    { time: '1 Year', effect: 'You\'ll get back a surprising amount of time for other hobbies and activities.' }
                 ],
                 protocol: [
-                    "**Grayscale**: Make your screen black and white (in Accessibility settings). It makes the phone boring.",
-                    "**Notifications Off**: Turn off everything except texts/calls.",
-                    "**Distance**: Don't keep the phone in your pocket at home."
+                    "**Grayscale**: Try setting your phone to black and white; it makes it much less addictive.",
+                    "**Turn off alerts**: Disable non-essential notifications so your phone isn't constantly buzzing.",
+                    "**Keep it away**: Don't keep your phone in your pocket when you're at home."
                 ],
                 sources: [153],
-                risks: "Your baseline dopamine levels drop, leading to anhedonia (inability to feel pleasure) and fragmented attention."
+                risks: "Endless scrolling can lower your attention span and increase feelings of restlessness."
             };
             return null;
         }
@@ -882,26 +882,26 @@ function renderResults() {
             
             <div class="card-body">
                 <div class="reasoning-section">
-                    <h5>The Why</h5>
+                    <h5>Why it matters</h5>
                     <p>${item.reasoning}</p>
                 </div>
 
                 ${item.risks ? `
                 <div class="risk-section">
-                    <h5>The Cost of Inaction</h5>
+                    <h5>If you don't</h5>
                     <p>${item.risks}</p>
                 </div>
                 ` : ''}
 
                 <div class="protocol-section">
-                    <h5>The What</h5>
+                    <h5>What to do</h5>
                     <ul class="protocol-list">
                         ${protocolHtml}
                     </ul>
                 </div>
 
                 <div class="timeline-section">
-                    <h5>The Result</h5>
+                    <h5>What to expect</h5>
                     <div class="timeline-container">
                         ${timelineHtml}
                     </div>
@@ -909,7 +909,7 @@ function renderResults() {
 
                 <div class="sources-section">
                     <details>
-                        <summary>View Sources</summary>
+                        <summary>Sources</summary>
                         <ul class="source-list">
                             ${sourcesHtml}
                         </ul>
