@@ -1,5 +1,5 @@
 /* Scoped styles for the biohacking tool */
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+/* Font loading moved to HTML for performance */
 
 :root {
     --bg-color: var(--background-color, #ffffff);

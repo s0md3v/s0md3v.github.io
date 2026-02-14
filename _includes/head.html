@@ -118,6 +118,11 @@
   </script>
   <script src="{{ '/assets/js/common.js' | relative_url }}" defer></script>
 
+  {% if page.custom_css %}
+    {% for stylesheet in page.custom_css %}
+      <link rel="stylesheet" href="{{ stylesheet | relative_url }}">
+    {% endfor %}
+  {% endif %}
 
   {% include schema-person.html %}
 </head>
