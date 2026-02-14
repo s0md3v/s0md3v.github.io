@@ -39,7 +39,7 @@ p { margin: 0; line-height: 1.6; color: var(--text-muted); }
 
 h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 3rem; letter-spacing: -0.04em; }
 
-.subtitle { font-size: 1.5rem; font-weight: 300; max-width: 35ch; margin-bottom: 3rem; }
+.subtitle { font-size: 1.5rem; font-weight: 300; margin-bottom: 3rem; }
 
 
 
