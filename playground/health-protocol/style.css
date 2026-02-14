@@ -69,6 +69,8 @@ h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 3rem; letter-spacing: -
 
 .range-value-display { font-size: 4rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
 input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; background: transparent; }
+
+/* Webkit (Chrome/Safari) */
 input[type=range]::-webkit-slider-thumb { 
     -webkit-appearance: none; height: 32px; width: 32px; border-radius: 50%; 
     background: var(--bg-color); border: 4px solid var(--accent); cursor: pointer; margin-top: -12px; 
@@ -77,6 +79,22 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]::-webkit-slider-runnable-track { 
     width: 100%; height: 8px; background: var(--border); border-radius: 4px; border: none;
 }
+
+/* Firefox */
+input[type=range]::-moz-range-thumb {
+    height: 24px; width: 24px; border-radius: 50%; 
+    background: var(--bg-color); border: 4px solid var(--accent); cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+input[type=range]::-moz-range-track {
+    width: 100%; height: 8px; background: var(--border); border-radius: 4px; border: none;
+}
+input[type=range]::-moz-range-progress {
+    background: var(--accent);
+    border-radius: 4px;
+    height: 8px;
+}
+
 .range-labels { display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-muted); }
 
 .select-grid { display: flex; flex-direction: column; gap: 0.75rem; }
