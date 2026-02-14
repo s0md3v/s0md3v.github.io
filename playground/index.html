@@ -1,0 +1,100 @@
+---
+layout: default
+title: Playground
+permalink: /playground/
+---
+
+<style>
+  .playground-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Lexend', sans-serif;
+  }
+  
+  .playground-header {
+    margin-bottom: 3rem;
+  }
+  
+  .playground-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .playground-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted, #666);
+    line-height: 1.5;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tool-card {
+    display: block;
+    background: var(--code-bg, #f9fafb);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-color: var(--accent-color, #2563eb);
+  }
+
+  .tool-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tool-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted, #666);
+    line-height: 1.4;
+  }
+
+  .arrow-icon {
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: all 0.2s;
+    color: var(--accent-color, #2563eb);
+  }
+
+  .tool-card:hover .arrow-icon {
+    opacity: 1;
+    transform: translateX(0);
+  }
+</style>
+
+<div class="playground-container">
+  <header class="playground-header">
+    <h1 class="playground-title">Playground</h1>
+    <p class="playground-subtitle">Small tools, experiments, and interactive guides I've built. Less serious than my main work, but hopefully just as useful.</p>
+  </header>
+
+  <div class="tools-grid">
+    <a href="/playground/biohacking/" class="tool-card">
+      <div class="tool-title">
+        Feel Better, Fast
+        <span class="arrow-icon">→</span>
+      </div>
+      <p class="tool-desc">A 2-minute audit of your daily habits to find the low-hanging fruit for better energy, sleep, and mood.</p>
+    </a>
+    
+    <!-- Future tools go here -->
+    
+  </div>
+</div>

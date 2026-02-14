@@ -1,0 +1,83 @@
+---
+layout: default
+title: Human Architecture
+permalink: /playground/biohacking/
+---
+<link rel="stylesheet" href="style.css">
+
+<div class="app-container">
+        <!-- Landing View -->
+        <section id="landing-view" class="view active">
+            <div class="content-wrapper">
+                <header class="hero">
+                    <h1>Feel Better, Fast</h1>
+                    <p class="subtitle">Discover the small daily habits that make the biggest difference to your health.</p>
+                </header>
+
+                <div class="action-area start-area">
+                    <button id="start-btn" class="primary-btn">Begin Audit</button>
+                    <p class="disclaimer">Est. time: 2 minutes • Runs locally in your browser</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assessment View -->
+        <section id="assessment-view" class="view hidden">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="assessment-stage">
+                <!-- Left Nav -->
+                <div class="nav-side left">
+                    <button id="back-btn" class="side-nav-btn" disabled>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                </div>
+
+                <div class="content-wrapper assessment-wrapper">
+                    <div class="question-header">
+                        <span class="category-tag" id="category-tag">Category</span>
+                        <h2 id="question-text">Question Text</h2>
+                        <p id="question-subtext" class="subtext"></p>
+                    </div>
+
+                    <div id="input-area" class="input-area">
+                        <!-- Dynamic Inputs injected here -->
+                    </div>
+                    
+                    <!-- Mobile Nav (Visible < 1100px) -->
+                    <div class="navigation-controls-mobile">
+                        <button id="mobile-back-btn" class="text-btn" disabled>← Back</button>
+                        <button id="mobile-next-btn" class="primary-btn small">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Right Nav -->
+                <div class="nav-side right">
+                    <button id="next-btn" class="side-nav-btn primary">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results View -->
+        <section id="results-view" class="view hidden">
+            <div class="content-wrapper results-wrapper">
+                <header class="results-header">
+                    <h2>Optimization Protocol</h2>
+                </header>
+
+                <div id="results-list" class="results-list">
+                    <!-- Results injected here -->
+                </div>
+
+                <div class="action-area">
+                    <button id="restart-btn" class="text-btn">Restart Audit</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
