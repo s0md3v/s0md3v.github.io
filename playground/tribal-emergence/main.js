@@ -37,6 +37,10 @@ resizeCanvas();
 function startGame(mapData = null) {
     world = new World(canvas.width, canvas.height, audioController, mapData);
     renderer = new Renderer(ctx, world);
+
+    // Initial Zoom: Scale to ensure a consistent view regardless of screen resolution
+    // Standard RTS view: roughly 1500 world units wide
+    renderer.camera.zoom = Math.max(0.5, canvas.width / 1500);
     
     // Wire up Debug Toggles
     const updateDebug = () => {
@@ -90,16 +94,63 @@ document.getElementById('btn-start').onclick = () => {
 };
 
 
-// Inspector click handler
+// Camera Controls
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+
 canvas.addEventListener('mousedown', (e) => {
+    if (!renderer) return;
+    
+    // Middle Mouse or Alt+Click for Panning
+    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+        isDragging = true;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+        e.preventDefault();
+        return;
+    }
+
     if (!world) return;
     const rect = canvas.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
-    const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
+    
+    // Transform Screen to World
+    const screenX = ((e.clientX - rect.left) / rect.width) * canvas.width;
+    const screenY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+    
+    const cam = renderer.camera;
+    const worldX = (screenX - canvas.width / 2) / cam.zoom + cam.x;
+    const worldY = (screenY - canvas.height / 2) / cam.zoom + cam.y;
     
     // Wider search radius for mobile/easy clicking
-    selectedAgent = world.agents.find(a => Utils.distance(a.pos, {x, y}) < a.radius + 15);
+    selectedAgent = world.agents.find(a => Utils.distance(a.pos, {x: worldX, y: worldY}) < a.radius + 15);
 });
+
+window.addEventListener('mousemove', (e) => {
+    if (isDragging && renderer) {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        
+        renderer.camera.x -= dx / renderer.camera.zoom;
+        renderer.camera.y -= dy / renderer.camera.zoom;
+        
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    }
+});
+
+window.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+canvas.addEventListener('wheel', (e) => {
+    if (!renderer) return;
+    e.preventDefault();
+    
+    const zoomSpeed = 0.001;
+    renderer.camera.zoom -= e.deltaY * zoomSpeed;
+    renderer.camera.zoom = Math.max(0.1, Math.min(5.0, renderer.camera.zoom));
+}, { passive: false });
 
 function updateInspector() {
     if (!world) return;
@@ -169,7 +220,7 @@ function updateInspector() {
                     <div class="hud-ammo-block">
                         <div class="hud-ammo-value">${weapon.ammo}</div>
                         <div class="hud-ammo-meta">
-                            <span>/${weapon.maxAmmo}</span>
+                            <span>/ ${weapon.carriedAmmo}</span>
                             <span>${weapon.type.toUpperCase()}</span>
                         </div>
                     </div>

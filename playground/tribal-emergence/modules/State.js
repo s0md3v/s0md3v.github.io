@@ -18,7 +18,10 @@ export class State {
 
         // Deep copy of inventory to track ammo individually
         this.inventory = {
-            weapon: { ...loadout.weapon },
+            weapon: { 
+                ...loadout.weapon,
+                carriedAmmo: loadout.weapon.initialCarriedAmmo || 0
+            },
             utility: loadout.utility.map(u => ({ ...u }))
         };
         this.lastFireTime = 0;

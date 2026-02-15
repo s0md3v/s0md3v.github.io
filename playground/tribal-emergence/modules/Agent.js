@@ -431,8 +431,14 @@ export class Agent {
                 distressType = 'MEDIC';
                 this.addBark("MEDIC!");
             } else if (isPinned) {
-                distressType = 'NEED_COVER';
-                this.addBark("NEED COVER!");
+                // If I am already in cover, communicate support need, not cover need
+                if (this.brain.isSafe(world)) {
+                    distressType = 'PINNED'; // Different signal? Or reuse? Let's keep signal simple for now or change bark.
+                    this.addBark("UNDER FIRE!");
+                } else {
+                    distressType = 'NEED_COVER';
+                    this.addBark("NEED COVER!");
+                }
             }
 
             // Use SpatialGrid to find allies to shout at
@@ -500,10 +506,16 @@ export class Agent {
         if (this.movementMode === 'BOUNDING') return false;
         
         if (weapon.ammo <= 0) {
+            if (weapon.carriedAmmo <= 0) return false; // Out of ammo completely
+
             // STRESS PENALTY: Reloading is slower when panicked
             const stressPenalty = 1.0 + (this.state.stress / 100) * (Config.AGENT.STRESS_RELOAD_MULT - 1.0);
             this.state.reloadingUntil = now + (Config.PHYSICS.RELOAD_TIME * stressPenalty);
-            weapon.ammo = weapon.maxAmmo;
+            
+            const refillAmount = Math.min(weapon.maxAmmo, weapon.carriedAmmo);
+            weapon.ammo = refillAmount;
+            weapon.carriedAmmo -= refillAmount;
+            
             this.addBark("RELOADING!");
             return false;
         }
@@ -662,7 +674,19 @@ export class Agent {
             // PASS HEATMAP FOR TACTICAL PATHFINDING
             // If Sneaking, prefer stealth paths (through bushes)
             const preferStealth = (this.movementMode === 'SNEAKING' || this.movementMode === 'COVERING');
-            this.path = world.findPath(this.pos, targetPos, this.memory.heatmap, preferStealth, this.memory.dreadZones);
+            this.path = world.findPath(this.pos, targetPos, this.memory.heatmap, preferStealth);
+            
+            // Path Failure Check
+            if (!this.path || this.path.length === 0) {
+                 if (this.currentAction && (this.currentAction.type === 'MOVE' || this.currentAction.type === 'RETREAT')) {
+                     // Abort action to prevent being stuck looking at a wall
+                     this.currentAction = { type: 'IDLE', score: 0 };
+                     if (Math.random() < 0.05) this.addBark("CAN'T GO THERE!");
+                     this.isMoving = false;
+                     return;
+                 }
+            }
+
             this.lastPathTarget = { ...targetPos };
         }
 
@@ -747,7 +771,17 @@ export class Agent {
         
         // Dynamic Speed Calculation
         const currentSpeed = this.calculateCurrentSpeed(world);
-        const dist = currentSpeed * (dt / 1000);
+        let dist = currentSpeed * (dt / 1000);
+
+        // Arrival Snapping: If we are extremely close to the target, just snap to it and stop moving.
+        // This prevents infinite micro-wiggling.
+        if (distToActive < 5) {
+             dist = Math.min(dist, distToActive);
+             if (distToActive < 1) {
+                 this.isMoving = false;
+                 return; 
+             }
+        }
 
         // Stamina Consumption
         const drainRate = Config.AGENT.MODES[this.movementMode].DRAIN;
@@ -768,28 +802,67 @@ export class Agent {
         const nextX = this.pos.x + Math.cos(moveAngle) * dist;
         const nextY = this.pos.y + Math.sin(moveAngle) * dist;
 
-        // Sliding Collision with Radius (10px)
+        // Sliding Collision with Radius (Robust Circle vs AABB)
         const rad = this.radius;
-        const canMoveX = !world.isWallAt(nextX - rad, this.pos.y) && 
-                         !world.isWallAt(nextX + rad, this.pos.y) &&
-                         !world.isWallAt(nextX, this.pos.y - rad) &&
-                         !world.isWallAt(nextX, this.pos.y + rad);
-
-        const canMoveY = !world.isWallAt(this.pos.x - rad, nextY) && 
-                         !world.isWallAt(this.pos.x + rad, nextY) &&
-                         !world.isWallAt(this.pos.x, nextY - rad) &&
-                         !world.isWallAt(this.pos.x, nextY + rad);
         
-        // Try to move X
-        if (canMoveX) {
-            this.pos.x = nextX;
-        }
-        // Try to move Y
-        if (canMoveY) {
-            this.pos.y = nextY;
+        // Helper to check if a circle is colliding with any world obstacles
+        const isColliding = (px, py) => {
+             // 4-point sample is fast but can clip corners.
+             // Better: Check 8 points or full box. 
+             // Optimized: Check 5 points (Center + 4 cardinals at radius)
+             if (world.isWallAt(px, py)) return true;
+             if (world.isWallAt(px + rad, py)) return true;
+             if (world.isWallAt(px - rad, py)) return true;
+             if (world.isWallAt(px, py + rad)) return true;
+             if (world.isWallAt(px, py - rad)) return true;
+             
+             // Check diagonals if we really want to avoid corner cutting
+             const diag = rad * 0.707;
+             if (world.isWallAt(px + diag, py + diag)) return true;
+             if (world.isWallAt(px - diag, py + diag)) return true;
+             if (world.isWallAt(px + diag, py - diag)) return true;
+             if (world.isWallAt(px - diag, py - diag)) return true;
+             
+             return false;
+        };
+
+        const canMoveX = !isColliding(nextX, this.pos.y);
+        const canMoveY = !isColliding(this.pos.x, nextY);
+        
+        if (isColliding(this.pos.x, this.pos.y)) {
+            // Panic push: Determine WHICH direction is blocked and push opposite
+            let pushX = 0;
+            let pushY = 0;
+            const pushDist = dist * 4; // Strong push
+
+            // Check 4 cardinal directions to see where the wall is relative to center
+            if (world.isWallAt(this.pos.x + rad, this.pos.y)) pushX -= pushDist;
+            if (world.isWallAt(this.pos.x - rad, this.pos.y)) pushX += pushDist;
+            if (world.isWallAt(this.pos.x, this.pos.y + rad)) pushY -= pushDist;
+            if (world.isWallAt(this.pos.x, this.pos.y - rad)) pushY += pushDist;
+            
+            // If completely inside (all blocked) or weirdly center blocked
+            if (pushX === 0 && pushY === 0) {
+                 // Push towards last known good position (or just reverse velocity)
+                 const center = { x: world.width / 2, y: world.height / 2 };
+                 const angleToCenter = Utils.angle(this.pos, center);
+                 pushX = Math.cos(angleToCenter) * pushDist;
+                 pushY = Math.sin(angleToCenter) * pushDist;
+            }
+
+            this.pos.x += pushX;
+            this.pos.y += pushY;
+        } else {
+            // Normal Movement
+            if (canMoveX) {
+                this.pos.x = nextX;
+            }
+            if (canMoveY) {
+                this.pos.y = nextY;
+            }
         }
 
-        // If both failed, we are stuck against a corner or face
+        // If both failed (Cornered)
         if (!canMoveX && !canMoveY) {
             this.lastPathTarget = null;
         }
@@ -857,10 +930,13 @@ export class Agent {
                             else if (item.type === 'WeaponCrate') {
                                 this.state.inventory.weapon = { 
                                     type: 'Fast Gun', range: 500, projectileSpeed: 600, fireRate: 300, 
-                                    damage: 2, ammo: 120, maxAmmo: 120 
+                                    damage: 2, ammo: 60, maxAmmo: 60, carriedAmmo: 120 
                                 };
                             } else if (item.type === 'AmmoCrate') {
-                                this.state.inventory.weapon.ammo = this.state.inventory.weapon.maxAmmo;
+                                // Refill magazine and add 2 spare magazines
+                                const weapon = this.state.inventory.weapon;
+                                weapon.ammo = weapon.maxAmmo;
+                                weapon.carriedAmmo += (weapon.maxAmmo * 2);
                             }
                         }
                     } else {
@@ -941,16 +1017,16 @@ export class Agent {
                         const myWeapon = this.state.inventory.weapon;
                         const sourceWeapon = source.state.inventory.weapon;
                         
-                        // Transfer logic: donor gives 20% of their max ammo
-                        const transferAmount = Math.floor(myWeapon.maxAmmo * 0.2);
-                        if (sourceWeapon.ammo > transferAmount) {
-                            sourceWeapon.ammo -= transferAmount;
-                            myWeapon.ammo = Math.min(myWeapon.maxAmmo, myWeapon.ammo + transferAmount);
-                            
-                            // Successful logistics increases trust
-                            this.memory.modifyTrust(source.id, 0.05);
-                        }
-                    }
+                                                // Transfer logic: donor gives 2 magazines from carriedAmmo
+                                                const transferAmount = myWeapon.maxAmmo * 2;
+                                                if (sourceWeapon.carriedAmmo > 0) {
+                                                    const actualTransfer = Math.min(sourceWeapon.carriedAmmo, transferAmount);
+                                                    sourceWeapon.carriedAmmo -= actualTransfer;
+                                                    myWeapon.carriedAmmo += actualTransfer;
+                        
+                                                    // Successful logistics increases trust
+                                                    this.memory.modifyTrust(source.id, 0.05);
+                                                }                    }
                 }
                 break;
             case 'ATTACK':

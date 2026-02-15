@@ -204,10 +204,23 @@ function setupEvents() {
 
     document.querySelectorAll('.tool-btn').forEach(btn => {
         btn.onclick = () => {
+            // Fix: Cancel move if active to prevent state corruption
+            if (movingObject) {
+                 mapData.layers[movingObject.layer][movingObject.originalKey] = movingObject.data;
+                 movingObject = null;
+            }
+
             currentTool = btn.dataset.tool;
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         };
+    });
+
+    // Fix: Listen for tool switch events from keyboard shortcuts
+    canvas.addEventListener('switchTool', (e) => {
+        const tool = e.detail;
+        const btn = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
+        if (btn) btn.click();
     });
 
     document.querySelectorAll('.icon-btn').forEach(btn => {
@@ -399,7 +412,8 @@ function handleMove(x, y, eventType) {
                 data: JSON.parse(JSON.stringify(mapData.layers[currentLayer][obj.key])), // Deep copy
                 originalKey: obj.key,
                 offsetX: x - obj.x,
-                offsetY: y - obj.y
+                offsetY: y - obj.y,
+                layer: currentLayer // Store original layer
             };
             // Remove original temporarily (visual feedback)
             delete mapData.layers[currentLayer][obj.key];
@@ -420,28 +434,50 @@ function handleMove(x, y, eventType) {
 }
 
 // Global mouse up handler needs to finish move
+// Global mouse up handler needs to finish move
 window.addEventListener('mouseup', (e) => {
     if (movingObject) {
          const rect = canvas.getBoundingClientRect();
-         const cx = Math.floor((e.clientX - rect.left) / (TILE_SIZE * camera.zoom));
-         const cy = Math.floor((e.clientY - rect.top) / (TILE_SIZE * camera.zoom));
+         // Fix: Correctly account for camera translation and zoom
+         const worldX = (e.clientX - rect.left - camera.x) / camera.zoom;
+         const worldY = (e.clientY - rect.top - camera.y) / camera.zoom;
+         
+         const cx = Math.floor(worldX / TILE_SIZE);
+         const cy = Math.floor(worldY / TILE_SIZE);
          
          // Place object
          const finalX = cx - movingObject.offsetX;
          const finalY = cy - movingObject.offsetY;
          
-         // Validate bounds? Or just let it place
-         const key = `${finalX},${finalY}`;
-         mapData.layers[currentLayer][key] = movingObject.data;
-         
-         // Select it
-         selectedTile = { 
-             x: finalX, y: finalY, 
-             w: (movingObject.data.rot % 2 !== 0 ? movingObject.data.ty : movingObject.data.tx) || 1,
-             h: (movingObject.data.rot % 2 !== 0 ? movingObject.data.tx : movingObject.data.ty) || 1,
-             layer: currentLayer 
-         };
-         selectedObjectKey = key;
+         // Bounds Check
+         const maxW = currentLayer === 2 ? mapData.width * RES_FACTOR : mapData.width;
+         const maxH = currentLayer === 2 ? mapData.height * RES_FACTOR : mapData.height;
+
+         if (finalX >= 0 && finalY >= 0 && finalX < maxW && finalY < maxH) {
+             const key = `${finalX},${finalY}`;
+             // Note: Placing in currentLayer (allowing layer transfer)
+             mapData.layers[currentLayer][key] = movingObject.data;
+             
+             // Select it
+             selectedTile = { 
+                 x: finalX, y: finalY, 
+                 w: (movingObject.data.rot % 2 !== 0 ? movingObject.data.ty : movingObject.data.tx) || 1,
+                 h: (movingObject.data.rot % 2 !== 0 ? movingObject.data.tx : movingObject.data.ty) || 1,
+                 layer: currentLayer 
+             };
+             selectedObjectKey = key;
+         } else {
+             // Restore to original position and layer if dropped out of bounds
+             mapData.layers[movingObject.layer][movingObject.originalKey] = movingObject.data;
+             const [ox, oy] = movingObject.originalKey.split(',').map(Number);
+             selectedTile = {
+                 x: ox, y: oy,
+                 w: (movingObject.data.rot % 2 !== 0 ? movingObject.data.ty : movingObject.data.tx) || 1,
+                 h: (movingObject.data.rot % 2 !== 0 ? movingObject.data.tx : movingObject.data.ty) || 1,
+                 layer: movingObject.layer
+             };
+             selectedObjectKey = movingObject.originalKey;
+         }
          
          movingObject = null;
     }

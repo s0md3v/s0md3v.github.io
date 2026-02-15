@@ -9,7 +9,7 @@ The Agent is the primary actor, composed of four distinct modules that drive its
 | :--- | :--- | :--- |
 | **Traits** | Static personality profile based on the Big 5 model. | `Openness` (Pathfinding/Flanking), `Conscientiousness` (Stickiness to plans), `Extraversion` (Social/Communication), `Agreeableness` (Aggression modifier), `Neuroticism` (Stress susceptibility). |
 | **State** | Dynamic physiological and psychological status. | `HP`, `Stamina` (0-100), `Stress` (0-100), `Morale`, `SocialBattery`, `Inventory`, `Suppression` (0-100), `isPinned`, `Role`, `Buffs`. |
-| **Memory** | Knowledge base of the world. | `KnownHostiles` (Last seen pos), `DangerZones` (Sound events), `Heatmap` (Danger density), `SocialCredit` (Trust), `LeaderApproval` (0-100), `DreadZones` (Death locations), `DistressSignals`. |
+| **Memory** | Knowledge base of the world. | `KnownHostiles` (Last seen pos), `DangerZones` (Sound events), `Heatmap` (Danger density), `SocialCredit` (Trust), `LeaderApproval` (0-100), `DistressSignals`. |
 | **Brain** | The decision-making engine. | Graph-based Finite State Machine + Role-specific heuristics. |
 
 ---
@@ -62,7 +62,6 @@ Agents perceive the world through a multi-modal, threshold-based system.
     *   *Accumulation*: Fatigue is no longer just stress-based. Sustained sprinting (`BOUNDING` mode) now physically wears agents down.
     *   *Effect*: High fatigue permanently reduces stamina recovery and increases the stress floor.
 *   **Ghosts of War (Trauma)**:
-    *   *Dread Zones*: Areas where allies have died become "Cursed Ground."
     *   *Shellshock*: High trauma (`traumaLevel > 50`) creates a permanent stress floor, making agents panic earlier and recover slower.
 *   **Berserk State**: Max Stress + Low Morale = Suicide Charge.
 *   **Social Battery**:
@@ -84,7 +83,6 @@ The "Brain" uses a Weighted Directed Graph to switch states, now suffering from 
     *   *Stubbornness*: Exhausted agents have high "Stay Weight," meaning they are likely to stick to their current action even if it's no longer optimal (e.g., staying in cover too long).
 *   **Tactical Pathfinding**:
     *   *Heat-Aware*: Avoids known danger zones.
-    *   *Dread-Aware*: Avoids areas where allies died.
 *   **Ambush Tactics**:
     *   *Lurk*: Agents (esp. Marksmen/Breachers) will actively seek out nearby bushes (`scoreLurk`) when they suspect enemies but have no visual contact.
     *   *Trigger Discipline*: Agents in bushes will **Hold Fire** until enemies are within "Kill Range" (<150px) or they are compromised.

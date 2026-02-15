@@ -5,7 +5,6 @@ export class Memory {
     constructor(worldWidth = 1200, worldHeight = 800) {
         this.knownHostiles = []; 
         this.dangerZones = []; 
-        this.dreadZones = []; 
         this.distressSignals = new Map(); 
         this.socialCredit = new Map(); 
         this.detectionMeters = new Map(); 
@@ -88,10 +87,6 @@ export class Memory {
         this.distressSignals.set(id, { type, position, timestamp: time });
     }
 
-    addDread(x, y, radius, time) {
-        this.dreadZones.push({ x, y, radius, timestamp: time });
-    }
-
     cleanup(world, dt) {
         const now = Date.now();
         // Remove hostiles not seen for 10 seconds or that no longer exist in world
@@ -110,9 +105,6 @@ export class Memory {
         
         // Decay danger zones (Sounds) - Short memory (30s)
         this.dangerZones = this.dangerZones.filter(dz => (now - dz.timestamp) < 30000);
-
-        // Decay dread zones (Death) - Long memory (60s)
-        this.dreadZones = this.dreadZones.filter(dz => (now - dz.timestamp) < 60000);
 
         // Decay detection meters
         const detectDecay = Config.SENSORY.DETECTION_DECAY * (dt / 1000);

@@ -198,14 +198,17 @@ export class Decision {
             w += (1 - (this.agent.state.hp / this.agent.state.maxHp)) * 0.8;
         }
         
-        const ammoThreshold = this.agent.state.inventory.weapon.maxAmmo * 0.3;
-        if (this.agent.state.inventory.weapon.ammo < ammoThreshold) {
-            w += (1 - (this.agent.state.inventory.weapon.ammo / this.agent.state.inventory.weapon.maxAmmo)) * 1.0;
-        }
+                const weapon = this.agent.state.inventory.weapon;
+                const totalAmmo = weapon.ammo + weapon.carriedAmmo;
+                const initialTotal = weapon.maxAmmo + (weapon.initialCarriedAmmo || weapon.maxAmmo * 4);
+                const ammoThreshold = initialTotal * 0.4;
         
-        // Marksmen and Gunners are more ammo-dependent
-        if (this.agent.role === 'MARKSMAN' || this.agent.role === 'GUNNER') w *= 1.2;
-
+                if (totalAmmo < ammoThreshold) {
+                    w += (1 - (totalAmmo / initialTotal)) * 1.5;
+                }
+        
+                // Marksmen and Gunners are more ammo-dependent
+                if (this.agent.role === 'MARKSMAN' || this.agent.role === 'GUNNER') w *= 1.3;
         const hasLoot = this.hasLootKnowledge(world);
         if (!hasLoot) w *= 0.1; 
 
@@ -521,30 +524,29 @@ export class Decision {
 
     // --- HELPER METHODS ---
 
-    scoreResupply(world) {
-        const weapon = this.agent.state.inventory.weapon;
-        const ammoPct = weapon.ammo / weapon.maxAmmo;
-        
-        // Only look for resupply if we are below 25% ammo
-        if (ammoPct > 0.25) return { type: 'NONE', score: 0 };
-
-        let bestSource = null;
-        let bestScore = -1;
-
-        world.agents.forEach(a => {
-            if (a.team === this.agent.team && a !== this.agent && !a.state.isDowned) {
-                const sourceWeapon = a.state.inventory.weapon;
-                // Allies must have plenty of ammo themselves to share
-                if (sourceWeapon.ammo > sourceWeapon.maxAmmo * 0.5) {
-                    const dist = Utils.distance(this.agent.pos, a.pos);
-                    if (dist > 300) return;
-
-                    // Trust Synergy: Only ask people we trust
-                    const trust = this.agent.memory.socialCredit.get(a.id) || 0.5;
-                    if (trust < 0.4) return;
-
-                    const score = (1.0 - ammoPct) * 2.0 + trust;
-                    if (score > bestScore) {
+        scoreResupply(world) {
+            const weapon = this.agent.state.inventory.weapon;
+            
+            // Only look for resupply if we have less than 2 spare magazines
+            if (weapon.carriedAmmo > weapon.maxAmmo * 2) return { type: 'NONE', score: 0 };
+    
+            let bestSource = null;
+            let bestScore = -1;
+    
+            world.agents.forEach(a => {
+                if (a.team === this.agent.team && a !== this.agent && !a.state.isDowned) {
+                    const sourceWeapon = a.state.inventory.weapon;
+                    // Allies must have at least 2 spare magazines to share
+                    if (sourceWeapon.carriedAmmo >= sourceWeapon.maxAmmo * 2) {
+                        const dist = Utils.distance(this.agent.pos, a.pos);
+                        if (dist > 300) return;
+    
+                        // Trust Synergy: Only ask people we trust
+                        const trust = this.agent.memory.socialCredit.get(a.id) || 0.5;
+                        if (trust < 0.4) return;
+    
+                        const ammoPct = weapon.carriedAmmo / (weapon.maxAmmo * 5); // Normalized to roughly 5 mags
+                        const score = (1.0 - ammoPct) * 2.0 + trust;                    if (score > bestScore) {
                         bestScore = score;
                         bestSource = a;
                     }
@@ -644,12 +646,21 @@ export class Decision {
 
     scorePatrol(world) {
          if (!this.agent.patrolTarget || Utils.distance(this.agent.pos, this.agent.patrolTarget) < 20) {
-            const angle = this.agent.angle + (Math.random() - 0.5) * Math.PI;
-            const dist = 100 + Math.random() * 200;
-            this.agent.patrolTarget = {
-                x: Utils.clamp(this.agent.pos.x + Math.cos(angle) * dist, 50, world.width - 50),
-                y: Utils.clamp(this.agent.pos.y + Math.sin(angle) * dist, 50, world.height - 50)
-            };
+            let found = false;
+            let attempts = 0;
+            while (!found && attempts < 10) {
+                const angle = this.agent.angle + (Math.random() - 0.5) * Math.PI;
+                const dist = 100 + Math.random() * 200;
+                const tx = Utils.clamp(this.agent.pos.x + Math.cos(angle) * dist, 50, world.width - 50);
+                const ty = Utils.clamp(this.agent.pos.y + Math.sin(angle) * dist, 50, world.height - 50);
+                
+                if (!world.isWallAt(tx, ty)) {
+                    this.agent.patrolTarget = { x: tx, y: ty };
+                    found = true;
+                }
+                attempts++;
+            }
+            if (!found) this.agent.patrolTarget = this.agent.pos; // Fallback
         }
         return { type: 'MOVE', target: this.agent.patrolTarget, score: 1, movementMode: 'SNEAKING' };
     }
@@ -681,6 +692,31 @@ export class Decision {
             finalTarget = { x: heatX, y: heatY };
         }
         
+        // Ensure validity
+        if (world.isWallAt(finalTarget.x, finalTarget.y)) {
+             // Spiral search for nearest valid point
+             const spiralStep = 20;
+             let found = false;
+             for (let r = spiralStep; r < 200; r += spiralStep) {
+                 for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+                     const tx = finalTarget.x + Math.cos(a) * r;
+                     const ty = finalTarget.y + Math.sin(a) * r;
+                     if (!world.isWallAt(tx, ty)) {
+                         finalTarget = { x: tx, y: ty };
+                         found = true;
+                         break;
+                     }
+                 }
+                 if (found) break;
+             }
+        }
+
+        // Anti-Wiggle: If we are already at the objective, stop trying to go there.
+        // Let Patrol take over.
+        if (Utils.distance(this.agent.pos, finalTarget) < 40) {
+            return { type: 'NONE', score: 0 };
+        }
+
         return { type: 'MOVE', target: finalTarget, score: 1, movementMode: 'SNEAKING' };
     }
 
@@ -720,10 +756,27 @@ export class Decision {
 
         if (hasLOS) {
             if (shouldAdvance) {
-                if (!inChaos) this.agent.lastAdvanceTime = Date.now(); // Signal intent to squad
-                const flankSpot = this.findFlankSpot(world, enemyPos);
-                if (flankSpot) moveTarget = flankSpot;
-                else moveTarget = enemyPos;
+                // 1. Determine Intent (Flank or safe cover)
+                let intendedTarget = this.findFlankSpot(world, enemyPos);
+                
+                if (!intendedTarget) {
+                     // Fallback: No flank spot, find cover
+                     intendedTarget = this.findNearestCover(world, 200);
+                }
+
+                if (intendedTarget) {
+                    // 2. Check Arrival
+                    // If we are close, switch to TACTICAL to face the enemy
+                    if (Utils.distance(this.agent.pos, intendedTarget) < 50) {
+                        shouldAdvance = false;
+                    } else if (!inChaos) {
+                        this.agent.lastAdvanceTime = Date.now();
+                    }
+                    moveTarget = intendedTarget;
+                } else {
+                    // Start holding ground if we can't find anywhere to go
+                    shouldAdvance = false;
+                }
             } else {
                 const tacticalCover = this.findNearestCover(world, 100);
                 if (tacticalCover && Utils.distance(this.agent.pos, tacticalCover) > 20) {
@@ -771,19 +824,20 @@ export class Decision {
             if (tacticalScore < bestTacticalScore) {
                 let safeX = coverCenter.x;
                 let safeY = coverCenter.y;
-                const buffer = 15;
+                const buffer = 25; // Increased buffer (was 15) to keep agents out of walls
+                const margin = 15; // Margin from wall ends
                 
                 if (c.w > c.h) {
                     if (enemyPos.y < c.y) safeY = c.y + c.h + buffer;
                     else safeY = c.y - buffer;
-                    safeX = Utils.clamp(enemyPos.x, c.x + 5, c.x + c.w - 5);
+                    safeX = Utils.clamp(enemyPos.x, c.x + margin, c.x + c.w - margin);
                 } else {
                     if (enemyPos.x < c.x) safeX = c.x + c.w + buffer;
                     else safeX = c.x - buffer;
-                    safeY = Utils.clamp(enemyPos.y, c.y + 5, c.y + c.h - 5);
+                    safeY = Utils.clamp(enemyPos.y, c.y + margin, c.y + c.h - margin);
                 }
 
-                if (!world.isWallAt(safeX, safeY)) {
+                if (!this.isSpotBlocked(world, safeX, safeY)) {
                     // Check Friendly Fire Lines
                     if (!this.isPositionTacticallyValid({x: safeX, y: safeY}, enemyPos, world)) {
                          tacticalScore += 2000; // Heavy penalty for blocking/being blocked
@@ -800,43 +854,94 @@ export class Decision {
     }
 
     findFlankSpot(world, enemyPos) {
-        const radius = 150;
-        const samples = 8;
+        const radii = [150, 100, 200];
+        const samples = 12;
         let bestSpot = null;
-        let bestScore = -1;
+        let bestScore = -Infinity;
 
-        for (let i = 0; i < samples; i++) {
-            const angle = (i / samples) * Math.PI * 2;
-            const tx = this.agent.pos.x + Math.cos(angle) * radius;
-            const ty = this.agent.pos.y + Math.sin(angle) * radius;
+        for (const radius of radii) {
+            for (let i = 0; i < samples; i++) {
+                const angle = (i / samples) * Math.PI * 2;
+                const tx = this.agent.pos.x + Math.cos(angle) * radius;
+                const ty = this.agent.pos.y + Math.sin(angle) * radius;
 
-            if (world.isWallAt(tx, ty)) continue;
+                // Robust Collision Check
+                if (this.isSpotBlocked(world, tx, ty)) continue;
 
-            const distToEnemy = Utils.distance({x: tx, y: ty}, enemyPos);
-            
-            const score = (300 - distToEnemy) + (this.agent.traits.openness * 100);
-            if (score > bestScore) {
-                bestScore = score;
-                bestSpot = { x: tx, y: ty };
+                const distToEnemy = Utils.distance({x: tx, y: ty}, enemyPos);
+                
+                // Score: Closer is generally better for flanking/closing in
+                // But avoid hugging the enemy (melee range)
+                let score = (500 - distToEnemy) + (this.agent.traits.openness * 100);
+                
+                if (distToEnemy < 50) score -= 500; // Too close!
+                
+                // Prioritize spots that provide a new angle of attack (Angle difference)
+                const angleToEnemyOld = Utils.angle(this.agent.pos, enemyPos);
+                const angleToEnemyNew = Utils.angle({x: tx, y: ty}, enemyPos);
+                const angleDiff = Math.abs(Utils.angleDiff(angleToEnemyOld, angleToEnemyNew));
+                
+                score += angleDiff * 100; // Bonus for changing the angle
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestSpot = { x: tx, y: ty };
+                }
             }
         }
         return bestSpot;
     }
 
+    isSpotBlocked(world, x, y) {
+        const r = 12; // Slightly larger than agent radius (10) for safety
+        if (world.isWallAt(x, y)) return true;
+        if (world.isWallAt(x + r, y)) return true;
+        if (world.isWallAt(x - r, y)) return true;
+        if (world.isWallAt(x, y + r)) return true;
+        if (world.isWallAt(x, y - r)) return true;
+        return false;
+    }
+
     scoreRetreat(world) {
         const nearestCover = this.findNearestCover(world);
         if (nearestCover) {
+            // Check if we are already there
+            const dist = Utils.distance(this.agent.pos, nearestCover);
+            if (dist < 40) {
+                 // We are safe(ish). Hold Ground.
+                 const enemy = this.getThreatSource(world, true);
+                 if (enemy) {
+                     return { type: 'ATTACK', targetId: enemy.id, score: 2.0, movementMode: 'TACTICAL' };
+                 } else {
+                     return { type: 'IDLE', score: 1.0 };
+                 }
+            }
             return { type: 'RETREAT', target: nearestCover, score: 1, movementMode: 'BOUNDING' };
         }
         return { type: 'RETREAT', score: 1, movementMode: 'BOUNDING' };
+    }
+
+    findNearestValidPoint(world, x, y, range = 100) {
+        if (!world.isWallAt(x, y)) return { x, y };
+
+        const spiralStep = 20;
+        for (let r = spiralStep; r < range; r += spiralStep) {
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+                const tx = x + Math.cos(a) * r;
+                const ty = y + Math.sin(a) * r;
+                if (!world.isWallAt(tx, ty)) return { x: tx, y: ty };
+            }
+        }
+        return { x, y };
     }
 
     scoreRegroup(world) {
         const squadCenter = this.agent.getSquadCenter(world);
         const distToSquad = Utils.distance(this.agent.pos, squadCenter);
         
-        // Don't regroup if we are already there
-        if (distToSquad < 60) return { type: 'NONE', score: 0 };
+        // Don't regroup if we are already "close enough"
+        // Increased hysteresis to 80 to prevent oscillating in and out of the zone
+        if (distToSquad < 80) return { type: 'NONE', score: 0 };
 
         // Real War: Rallying is easier if the destination is safe
         const mem = this.agent.memory;
@@ -846,6 +951,18 @@ export class Decision {
         if (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) {
             destinationHeat = mem.heatmap[gy][gx];
         }
+
+        // Formation Offset: Ring around the center
+        // Use ID to deterministically spread out
+        const angle = (this.agent.id % 6) * (Math.PI / 3);
+        const offsetDist = 40;
+        let target = {
+            x: squadCenter.x + Math.cos(angle) * offsetDist,
+            y: squadCenter.y + Math.sin(angle) * offsetDist
+        };
+        
+        // Ensure formation point is valid
+        target = this.findNearestValidPoint(world, target.x, target.y);
 
         // Factors: Squad proximity, low heat at destination, and morale
         let score = (1.0 - (destinationHeat / 10)) * 2.0;
@@ -857,7 +974,7 @@ export class Decision {
         // If we are already being shot at (high stress), we are less likely to regroup and more likely to keep retreating
         if (this.agent.state.stress > 80) score *= 0.4;
 
-        return { type: 'MOVE', target: squadCenter, score: score };
+        return { type: 'MOVE', target: target, score: score };
     }
 
     scoreLoot(world) {
@@ -956,7 +1073,18 @@ export class Decision {
             return { type: 'IDLE', score: 1.0 }; // Passive resistance
         }
 
-        return { type: 'MOVE', target: leader.pos, score: 1 };
+        // Formation Offset: Follow slightly behind/around leader
+        const angle = (this.agent.id % 5) * (Math.PI / 2.5) + Math.PI; // Semicircle behind
+        const offsetDist = 40 + (Math.floor(this.agent.id / 3) * 20); // Layers
+        let target = {
+            x: leader.pos.x + Math.cos(angle) * offsetDist,
+            y: leader.pos.y + Math.sin(angle) * offsetDist
+        };
+
+        // Ensure valid
+        target = this.findNearestValidPoint(world, target.x, target.y);
+
+        return { type: 'MOVE', target: target, score: 1 };
     }
     
     scoreSuppress(world) {

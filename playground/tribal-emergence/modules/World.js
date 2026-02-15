@@ -447,8 +447,6 @@ export class World {
                     other.memory.modifyLeaderApproval(-Config.WORLD.APPROVAL_LOSS_DEATH);
                 }
 
-                // Add Dread Zone (Permanent Fear of this spot)
-                other.memory.addDread(dead.pos.x, dead.pos.y, 80, Date.now());
                 other.react(this);
             } else {
                 // Enemy Team Reward
@@ -595,9 +593,8 @@ export class World {
         return { x: (minX+maxX)/2, y: (minY+maxY)/2 };
     }
 
-    // A* Pathfinding (Now Heat-Aware & Dread-Aware)
-    // A* Pathfinding (Optimized: Uses Coarse Visual Grid)
-    findPath(startPos, endPos, heatmap = null, preferStealth = false, dreadZones = []) {
+    // A* Pathfinding (Optimized: Uses Coarse Visual Grid, Heat-Aware)
+    findPath(startPos, endPos, heatmap = null, preferStealth = false) {
         // Use Coarse Grid (16px) for pathfinding to reduce search space by 16x
         const step = Config.WORLD.VISUAL_GRID_SIZE;
         
@@ -645,7 +642,77 @@ export class World {
                     });
                     curr = curr.parent;
                 }
-                return path.reverse();
+                path.reverse();
+                
+                // STRING PULLING: Simplify Path
+                // Reduces zig-zag movement which causes corner clipping
+                if (path.length > 2) {
+                    const smoothed = [path[0]];
+                    let lastIdx = 0;
+                    
+                    for (let i = 1; i < path.length; i++) {
+                        // Check if we can walk directly from last confirmed point to i+1
+                        // If we can, skip i. If not, add i as a necessary waypoint.
+                        // We check the NEXT point (i+1) if it exists, otherwise we just add the end.
+                        
+                        let target = path[i];
+                        if (i < path.length - 1) {
+                            // Look ahead as far as possible? 
+                            // Standard Algo: Check line from 'last' to 'current'. If blocked, insert 'prev'.
+                            // Better: Check line from 'last' to 'next'.
+                        }
+                    }
+                    
+                    // Simple Greensboro implementation:
+                    // Iterate from start. Try to connect to furthest possible node.
+                    const newPath = [path[0]];
+                    let bookmark = 0;
+                    
+                    for (let i = 1; i < path.length; i++) {
+                        // Check LOS between bookmark and i
+                        // We need a robust "thick line" check or circle cast.
+                        // hasLineOfSight checks center-to-center raycast.
+                        // We need to ensure the agent width fits.
+                        
+                        // Heuristic: If distance is short and LOS is clear, it's probably fine.
+                        // But for long lines, we might clip corners.
+                        // Let's use hasLineOfSight with a stricter check.
+                        
+                        // If clear, continue. If blocked, push (i-1) and set bookmark = i-1.
+                        const p1 = path[bookmark];
+                        const p2 = path[i];
+                        
+                        // We need to check if the FULL WIDTH of the agent can pass.
+                        // hasLineOfSight only checks center ray.
+                        // Let's check 3 rays: Center, Left Edge, Right Edge relative to movement.
+                        const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+                        const perp = angle + Math.PI/2;
+                        const r = 9; // Safety radius
+                        
+                        const p1L = { x: p1.x + Math.cos(perp)*r, y: p1.y + Math.sin(perp)*r };
+                        const p1R = { x: p1.x - Math.cos(perp)*r, y: p1.y - Math.sin(perp)*r };
+                        const p2L = { x: p2.x + Math.cos(perp)*r, y: p2.y + Math.sin(perp)*r };
+                        const p2R = { x: p2.x - Math.cos(perp)*r, y: p2.y - Math.sin(perp)*r };
+                        
+                        let blocked = !this.hasLineOfSight(p1, p2, Infinity, true);
+                        if (!blocked) blocked = !this.hasLineOfSight(p1L, p2L, Infinity, true);
+                        if (!blocked) blocked = !this.hasLineOfSight(p1R, p2R, Infinity, true);
+
+                        if (blocked) {
+                            // The direct path is blocked.
+                            // So we MUST go to the previous point (i-1) to clear the obstacle.
+                            newPath.push(path[i-1]);
+                            bookmark = i - 1;
+                            // Re-check from new bookmark to i?
+                            // No, path[i-1] to path[i] is guaranteed by A* grid adjacency.
+                            // So process continues from i (next loop checks bookmark to i+1)
+                        }
+                    }
+                    newPath.push(path[path.length-1]);
+                    return newPath;
+                }
+                
+                return path;
             }
 
             closedSet.add(getHash(current.x, current.y));
@@ -661,7 +728,13 @@ export class World {
                 // Improved Collision Check: Sample 4 points to ensure a 20px agent can fit
                 const cx = neighbor.x * step + step/2;
                 const cy = neighbor.y * step + step/2;
-                const offset = step / 3;
+                // Agent Radius is 10px. 
+                // Grid step is 16px. Center is at 8px.
+                // If we check offset 5.33 (step/3), we check span of ~10.6px.
+                // If we check offset 8 or 9, we check span of ~16-18px.
+                // To prevent clipping walls (which start at 8px from center), we need to check if the agent's body (radius 10) hits the wall.
+                // We should check slightly less than radius to allow "squeezing" but huge clipping is bad.
+                const offset = 9; 
                 
                 // If this is the target tile, we skip the strict area check because we know the specific end point is valid
                 const isTargetTile = (neighbor.x === endX && neighbor.y === endY);
@@ -690,17 +763,6 @@ export class World {
                     }
                 }
 
-                // Dread Cost (Ghosts of War)
-                let dreadCost = 0;
-                if (dreadZones && dreadZones.length > 0) {
-                    for (const dread of dreadZones) {
-                        const dist = Math.hypot(cx - dread.x, cy - dread.y);
-                        if (dist < dread.radius) {
-                            dreadCost += 50; 
-                        }
-                    }
-                }
-
                 // Movement Cost & Terrain Logic
                 let moveCost = 1;
                 
@@ -716,7 +778,7 @@ export class World {
                     }
                 }
 
-                const gScore = current.g + moveCost + tacticalCost + dreadCost;
+                const gScore = current.g + moveCost + tacticalCost;
                 let existing = openSet.find(o => o.x === neighbor.x && o.y === neighbor.y);
 
                 if (!existing) {

@@ -4,6 +4,8 @@ export class Renderer {
     constructor(ctx, world) {
         this.ctx = ctx;
         this.world = world;
+        this.camera = { x: world.width / 2, y: world.height / 2, zoom: 1 };
+        
         this.debugOptions = {
             showVision: false,
             showTrust: false,
@@ -27,16 +29,25 @@ export class Renderer {
     }
 
     render() {
-        // Clear background
+        // Clear background (Screen Space)
+        this.ctx.fillStyle = '#111'; // Darker background for "void"
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        this.ctx.save();
+        
+        // Apply Camera Transform
+        // Center view on camera position
+        this.ctx.translate(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
+        this.ctx.scale(this.camera.zoom, this.camera.zoom);
+        this.ctx.translate(-this.camera.x, -this.camera.y);
+
+        // Map Background (World Space)
         this.ctx.fillStyle = '#252525';
         this.ctx.fillRect(0, 0, this.world.width, this.world.height);
 
-        this.drawVisualLayers(); // NEW: Draw map tiles
+        this.drawVisualLayers(); 
 
-        // this.drawMap(); // OLD: Debug View of Walls (Optional, maybe keep for debug?)
-        // If we have visual layers, we might not want to draw the ugly gray walls on top.
-        // But for now, let's keep walls but maybe make them transparent if map is loaded?
-        // Actually, let's only draw walls if NO visual layers exist, or debug is on.
+        // Draw Map Walls if needed
         if (this.world.visualLayers.length === 0 || this.debugOptions.showVision) {
             this.drawMap();
         }
@@ -56,6 +67,8 @@ export class Renderer {
         this.drawEffects();
         this.drawBarks();
         this.drawDebug();
+        
+        this.ctx.restore();
     }
 
     drawVisualLayers() {
@@ -498,31 +511,6 @@ export class Renderer {
                         }
                     }
                 });
-            }
-        }
-
-        // 4. Dread Zones
-        if (this.debugOptions.showHeatmap) {
-            const inspector = document.getElementById('agent-details');
-            if (inspector) {
-                const agentIdMatch = inspector.innerHTML.match(/UNIT #(\d+)/); 
-                if (agentIdMatch) {
-                    const agentId = parseInt(agentIdMatch[1]);
-                    const agent = this.world.agents.find(a => a.id === agentId);
-                    if (agent && agent.memory.dreadZones) {
-                        this.ctx.fillStyle = 'rgba(100, 0, 100, 0.2)';
-                        this.ctx.strokeStyle = 'rgba(150, 0, 150, 0.5)';
-                        agent.memory.dreadZones.forEach(dread => {
-                            this.ctx.beginPath();
-                            this.ctx.arc(dread.x, dread.y, dread.radius, 0, Math.PI * 2);
-                            this.ctx.fill();
-                            this.ctx.stroke();
-                            this.ctx.font = '12px serif';
-                            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                            this.ctx.fillText('☠️', dread.x, dread.y);
-                        });
-                    }
-                }
             }
         }
     }

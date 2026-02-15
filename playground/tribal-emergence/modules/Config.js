@@ -89,31 +89,31 @@ export const Config = {
         RIFLEMAN: {
             hp: 5,
             speedMod: 1.0,
-            weapon: { type: 'Rifle', range: 400, damage: 1, fireRate: 600, ammo: 3, maxAmmo: 40, projectileSpeed: 500 },
+            weapon: { type: 'Rifle', range: 450, damage: 1, fireRate: 150, ammo: 30, maxAmmo: 30, initialCarriedAmmo: 120, projectileSpeed: 600 },
             utility: [{ type: 'FragGrenade', count: 1 }]
         },
         BREACHER: {
             hp: 8,
             speedMod: 1.1,
-            weapon: { type: 'Shotgun', range: 150, damage: 3, fireRate: 1200, ammo: 3, maxAmmo: 12, projectileSpeed: 400 },
+            weapon: { type: 'Shotgun', range: 180, damage: 3, fireRate: 800, ammo: 8, maxAmmo: 8, initialCarriedAmmo: 32, projectileSpeed: 500 },
             utility: [{ type: 'Flashbang', count: 2 }, { type: 'FragGrenade', count: 1 }]
         },
         MARKSMAN: {
             hp: 4,
             speedMod: 1.0,
-            weapon: { type: 'Sniper', range: 800, damage: 5, fireRate: 2000, ammo: 3, maxAmmo: 10, projectileSpeed: 800 },
+            weapon: { type: 'Sniper', range: 900, damage: 5, fireRate: 1500, ammo: 5, maxAmmo: 5, initialCarriedAmmo: 25, projectileSpeed: 1000 },
             utility: [{ type: 'SmokeGrenade', count: 1 }]
         },
         GUNNER: {
             hp: 6,
             speedMod: 0.85,
-            weapon: { type: 'LMG', range: 500, damage: 1, fireRate: 100, ammo: 3, maxAmmo: 200, spread: 0.1, projectileSpeed: 450 },
+            weapon: { type: 'LMG', range: 600, damage: 1, fireRate: 100, ammo: 100, maxAmmo: 100, initialCarriedAmmo: 300, spread: 0.12, projectileSpeed: 550 },
             utility: []
         },
         MEDIC: {
             hp: 5,
             speedMod: 1.05,
-            weapon: { type: 'SMG', range: 250, damage: 1, fireRate: 100, ammo: 3, maxAmmo: 60, projectileSpeed: 350 },
+            weapon: { type: 'SMG', range: 300, damage: 1, fireRate: 100, ammo: 30, maxAmmo: 30, initialCarriedAmmo: 150, projectileSpeed: 450 },
             utility: [{ type: 'Medkit', count: 3 }, { type: 'SmokeGrenade', count: 2 }]
         }
     },
