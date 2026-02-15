@@ -11,6 +11,7 @@ export class Memory {
         this.leaderApproval = 50; 
         this.discoveredCovers = new Set(); 
         this.knownLoot = []; 
+        this.unreachableAreas = []; // {x, y, timestamp} 
         
         // PHYSICAL RESOLUTION: Keep intelligence 'vague' regardless of map size
         // One cell = Config.WORLD.INTEL_GRID_SIZE pixels (approx 75px)
@@ -87,6 +88,15 @@ export class Memory {
         this.distressSignals.set(id, { type, position, timestamp: time });
     }
 
+    markUnreachable(pos) {
+        this.unreachableAreas.push({ x: pos.x, y: pos.y, timestamp: Date.now() });
+    }
+
+    isUnreachable(pos) {
+        // Check if close to any known unreachable point
+        return this.unreachableAreas.some(u => Utils.distance(pos, u) < 40); 
+    }
+
     cleanup(world, dt) {
         const now = Date.now();
         // Remove hostiles not seen for 10 seconds or that no longer exist in world
@@ -105,6 +115,9 @@ export class Memory {
         
         // Decay danger zones (Sounds) - Short memory (30s)
         this.dangerZones = this.dangerZones.filter(dz => (now - dz.timestamp) < 30000);
+
+        // Cleanup unreachable areas (short term memory - 5s)
+        this.unreachableAreas = this.unreachableAreas.filter(u => (now - u.timestamp) < 5000);
 
         // Decay detection meters
         const detectDecay = Config.SENSORY.DETECTION_DECAY * (dt / 1000);

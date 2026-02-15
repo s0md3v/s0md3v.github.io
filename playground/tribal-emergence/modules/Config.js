@@ -3,6 +3,7 @@ export const Config = {
     WORLD: {
         GRID_SIZE: 4, // Higher accuracy (4x4px sub-tiles)
         VISUAL_GRID_SIZE: 16, // Visual asset scale
+        PATHFINDING_GRID_SIZE: 8, // Higher resolution for A* (was 16)
         SPATIAL_GRID_SIZE: 100, 
         WIDTH: 0, // Set at runtime
         HEIGHT: 0, // Set at runtime
@@ -89,32 +90,32 @@ export const Config = {
         RIFLEMAN: {
             hp: 5,
             speedMod: 1.0,
-            weapon: { type: 'Rifle', range: 450, damage: 1, fireRate: 150, ammo: 30, maxAmmo: 30, initialCarriedAmmo: 120, projectileSpeed: 600 },
-            utility: [{ type: 'FragGrenade', count: 1 }]
+            weapon: { type: 'Rifle', visualType: 'rifle', range: 600, optimalRange: 300, falloff: 0.0005, damage: 1, fireRate: 150, ammo: 30, maxAmmo: 30, initialCarriedAmmo: 120, projectileSpeed: 700, spread: 0.02 },
+            utility: [{ type: 'FragGrenade', count: 2 }, { type: 'SmokeGrenade', count: 1 }]
         },
         BREACHER: {
             hp: 8,
             speedMod: 1.1,
-            weapon: { type: 'Shotgun', range: 180, damage: 3, fireRate: 800, ammo: 8, maxAmmo: 8, initialCarriedAmmo: 32, projectileSpeed: 500 },
-            utility: [{ type: 'Flashbang', count: 2 }, { type: 'FragGrenade', count: 1 }]
+            weapon: { type: 'Shotgun', visualType: 'pistol', range: 250, optimalRange: 60, falloff: 0.004, damage: 3, fireRate: 800, ammo: 8, maxAmmo: 8, initialCarriedAmmo: 32, projectileSpeed: 500, spread: 0.15 },
+            utility: [{ type: 'Flashbang', count: 3 }, { type: 'FragGrenade', count: 1 }]
         },
         MARKSMAN: {
             hp: 4,
             speedMod: 1.0,
-            weapon: { type: 'Sniper', range: 900, damage: 5, fireRate: 1500, ammo: 5, maxAmmo: 5, initialCarriedAmmo: 25, projectileSpeed: 1000 },
-            utility: [{ type: 'SmokeGrenade', count: 1 }]
+            weapon: { type: 'Sniper', visualType: 'rifle', range: 900, optimalRange: 500, falloff: 0.0001, damage: 5, fireRate: 1500, ammo: 5, maxAmmo: 5, initialCarriedAmmo: 25, projectileSpeed: 1000, spread: 0.001 },
+            utility: [{ type: 'SmokeGrenade', count: 2 }]
         },
         GUNNER: {
             hp: 6,
             speedMod: 0.85,
-            weapon: { type: 'LMG', range: 600, damage: 1, fireRate: 100, ammo: 100, maxAmmo: 100, initialCarriedAmmo: 300, spread: 0.12, projectileSpeed: 550 },
+            weapon: { type: 'LMG', visualType: 'lmg', range: 600, optimalRange: 250, falloff: 0.0008, damage: 1, fireRate: 100, ammo: 100, maxAmmo: 100, initialCarriedAmmo: 300, spread: 0.12, projectileSpeed: 600 },
             utility: []
         },
         MEDIC: {
             hp: 5,
             speedMod: 1.05,
-            weapon: { type: 'SMG', range: 300, damage: 1, fireRate: 100, ammo: 30, maxAmmo: 30, initialCarriedAmmo: 150, projectileSpeed: 450 },
-            utility: [{ type: 'Medkit', count: 3 }, { type: 'SmokeGrenade', count: 2 }]
+            weapon: { type: 'SMG', visualType: 'pistol', range: 350, optimalRange: 100, falloff: 0.002, damage: 1, fireRate: 100, ammo: 30, maxAmmo: 30, initialCarriedAmmo: 150, projectileSpeed: 500, spread: 0.08 },
+            utility: [{ type: 'Medkit', count: 8 }, { type: 'SmokeGrenade', count: 4 }]
         }
     },
 
@@ -132,12 +133,14 @@ export const Config = {
         PINNED_THRESHOLD: 80, // Stress/Suppression level to be pinned
         
         // Utility
-        GRENADE_RANGE: 250,
-        SMOKE_DURATION: 10000,
-        SMOKE_RADIUS: 60,
-        FRAG_RADIUS: 80,
-        FRAG_DAMAGE: 4,
+        GRENADE_RANGE: 400,
+        SMOKE_DURATION: 15000,
+        SMOKE_RADIUS: 100,
+        FRAG_RADIUS: 140,
+        FRAG_DAMAGE: 5,
         RELOAD_TIME: 2000,
+        GRENADE_FUSE: 3000, // 3s total fuse
+        GRENADE_ARM_TIME: 800, // 800ms to pull pin and prep throw
         
         // Environment
         COVER_HP_WOOD: 20,

@@ -54,7 +54,18 @@ export class MapLoader {
                     result.grid[gy][gx] = 1;
                     result.walls.push({ x, y, w: this.metaSize, h: this.metaSize });
                 } else if (type === 2) { // Bush
-                    result.grid[gy][gx] = 2; // Vision block
+                    // Fill the entire footprint for procedural or tile-based bushes
+                    const markRadius = 1; // Mark at least 3x3 to match expected wall logic
+                    for (let dy = -markRadius; dy <= markRadius; dy++) {
+                        for (let dx = -markRadius; dx <= markRadius; dx++) {
+                            const ny = gy + dy;
+                            const nx = gx + dx;
+                            if (ny >= 0 && ny < result.grid.length && nx >= 0 && nx < result.grid[0].length) {
+                                result.grid[ny][nx] = 2; // Vision block
+                            }
+                        }
+                    }
+
                     if (!handledBushes.has(visualKey)) {
                         result.bushes.push({ 
                             x: vgx * this.visualSize + this.visualSize/2, 
@@ -64,8 +75,23 @@ export class MapLoader {
                         handledBushes.add(visualKey);
                     }
                 } else if (type === 3 || type === 4) { // Cover
-                    result.grid[gy][gx] = type; 
+                    // Covers are visual tiles (16px), mark the entire 4x4 meta-grid area
+                    const span = this.visualSize / this.metaSize;
+                    const startGy = Math.floor((vgy * this.visualSize) / this.metaSize);
+                    const startGx = Math.floor((vgx * this.visualSize) / this.metaSize);
+
                     if (!handledCovers.has(visualKey)) {
+                        // Mark all 16 cells (4x4)
+                        for (let dy = 0; dy < span; dy++) {
+                            for (let dx = 0; dx < span; dx++) {
+                                const ny = startGy + dy;
+                                const nx = startGx + dx;
+                                if (ny >= 0 && ny < result.grid.length && nx >= 0 && nx < result.grid[0].length) {
+                                    result.grid[ny][nx] = type;
+                                }
+                            }
+                        }
+
                         result.covers.push({
                             x: vgx * this.visualSize, 
                             y: vgy * this.visualSize, 

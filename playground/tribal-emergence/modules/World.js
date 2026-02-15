@@ -173,8 +173,9 @@ export class World {
     markGrid(rect, val) {
         const startGx = Math.floor(rect.x / this.gridSize);
         const startGy = Math.floor(rect.y / this.gridSize);
-        const endGx = Math.floor((rect.x + rect.w) / this.gridSize);
-        const endGy = Math.floor((rect.y + rect.h) / this.gridSize);
+        // Use -0.01 to ensure a rect ending exactly on a grid line doesn't bleed into the next cell
+        const endGx = Math.floor((rect.x + rect.w - 0.01) / this.gridSize);
+        const endGy = Math.floor((rect.y + rect.h - 0.01) / this.gridSize);
 
         for (let y = startGy; y <= endGy; y++) {
             for (let x = startGx; x <= endGx; x++) {
@@ -186,21 +187,24 @@ export class World {
     }
 
     spawnLoot() {
-        // High-value loot in the Hub
-        for (let i = 0; i < 10; i++) {
-            const x = this.width / 2 + (Math.random() - 0.5) * 300;
-            const y = this.height / 2 + (Math.random() - 0.5) * 300;
-            const pos = this.findSpawnPoint(x-50, y-50, x+50, y+50);
-            if (pos) this.loot.push({ x: pos.x, y: pos.y, type: Math.random() > 0.5 ? 'WeaponCrate' : 'Medkit', radius: 5 });
+        // High-value crates (Weapon & Medkits) spread globally
+        for (let i = 0; i < 8; i++) {
+            const pos = this.findSpawnPoint(0, 0, this.width, this.height, 2);
+            if (pos) {
+                const type = Math.random() > 0.6 ? 'WeaponCrate' : 'Medkit';
+                this.loot.push({ x: pos.x, y: pos.y, type: type, radius: 5 });
+            }
         }
 
-        // Standard loot everywhere
-        for (let i = 0; i < 20; i++) {
-            const pos = this.findSpawnPoint(0, 0, this.width, this.height);
-            const rand = Math.random();
-            let type = 'AmmoCrate';
-            if (rand > 0.8) type = 'Medkit';
-            this.loot.push({ x: pos.x, y: pos.y, type: type, radius: 5 });
+        // Standard utility/ammo crates spread globally (Reduced frequency)
+        for (let i = 0; i < 5; i++) {
+            const pos = this.findSpawnPoint(0, 0, this.width, this.height, 2);
+            if (pos) {
+                const rand = Math.random();
+                let type = 'AmmoCrate';
+                if (rand > 0.85) type = 'Medkit';
+                this.loot.push({ x: pos.x, y: pos.y, type: type, radius: 5 });
+            }
         }
     }
 
@@ -334,7 +338,7 @@ export class World {
             if (agent.rank === 1) {
                 const nearbyEntities = this.spatial.query(agent.pos.x, agent.pos.y, Config.WORLD.LEADERSHIP_RANGE);
                 nearbyEntities.forEach(entity => {
-                    if (entity.team === agent.team && entity !== agent) {
+                    if (!entity.isCover && entity.team === agent.team && entity !== agent) {
                          entity.buffs.leader = true; 
                     }
                 });
@@ -479,15 +483,16 @@ export class World {
         
         // Damage
         const victims = this.spatial.query(x, y, radius);
-            victims.forEach(v => {
-                const dist = Utils.distance({x, y}, v.pos);
-                if (dist < radius) {
-                    const dmg = Config.PHYSICS.FRAG_DAMAGE * (1 - dist / radius);
-                    v.takeDamage(dmg, this);
-                    v.state.modifyStress(50); 
-                    v.suppress(100, this);
-                }
-            });
+        victims.forEach(v => {
+            if (v.isCover) return; 
+            const dist = Utils.distance({x, y}, v.pos);
+            if (dist < radius) {
+                const dmg = Config.PHYSICS.FRAG_DAMAGE * (1 - dist / radius);
+                v.takeDamage(dmg, this);
+                v.state.modifyStress(50); 
+                v.suppress(100, this);
+            }
+        });
 
         // Damage Cover
         this.covers.forEach(cover => {
@@ -574,10 +579,32 @@ export class World {
         if (gx < 0 || gy < 0 || gy >= this.naturalGrid.length || gx >= this.naturalGrid[0].length) {
             return true;
         }
+        if (gx < 0 || gy < 0 || gy >= this.naturalGrid.length || gx >= this.naturalGrid[0].length) {
+            return true;
+        }
         return this.naturalGrid[gy][gx] === 1;
     }
+
+    isPositionClear(x, y, radius) {
+        // Robust check for spawning/target selection
+        const step = this.gridSize;
+        const startGx = Math.floor((x - radius) / step);
+        const endGx = Math.floor((x + radius) / step);
+        const startGy = Math.floor((y - radius) / step);
+        const endGy = Math.floor((y + radius) / step);
+
+        for (let gy = startGy; gy <= endGy; gy++) {
+            for (let gx = startGx; gx <= endGx; gx++) {
+                 if (gx < 0 || gy < 0 || gy >= this.grid.length || gx >= this.grid[0].length) return false;
+                 // Check any blocking terrain (Wall=1, Cover=3,4)
+                 const cell = this.grid[gy][gx];
+                 if (cell === 1 || cell === 3 || cell === 4) return false;
+            }
+        }
+        return true;
+    }
     
-    findSpawnPoint(minX, minY, maxX, maxY) {
+    findSpawnPoint(minX, minY, maxX, maxY, padding = 1) {
         let attempts = 0;
         while(attempts < 100) {
             const x = Utils.randomGaussian((minX + maxX)/2, (maxX - minX)/4);
@@ -585,9 +612,24 @@ export class World {
             const gx = Math.floor(x / this.gridSize);
             const gy = Math.floor(y / this.gridSize);
             
-            if (gx >= 0 && gy >= 0 && gy < this.grid.length && gx < this.grid[0].length) {
-                if (this.grid[gy][gx] === 0) return { x, y };
+            let isClear = true;
+            for (let dy = -padding; dy <= padding; dy++) {
+                for (let dx = -padding; dx <= padding; dx++) {
+                    const nx = gx + dx;
+                    const ny = gy + dy;
+                    if (nx < 0 || ny < 0 || ny >= this.grid.length || nx >= this.grid[0].length) {
+                        isClear = false;
+                        break;
+                    }
+                    if (this.grid[ny][nx] !== 0) {
+                        isClear = false;
+                        break;
+                    }
+                }
+                if (!isClear) break;
             }
+
+            if (isClear) return { x, y };
             attempts++;
         }
         return { x: (minX+maxX)/2, y: (minY+maxY)/2 };
@@ -595,15 +637,15 @@ export class World {
 
     // A* Pathfinding (Optimized: Uses Coarse Visual Grid, Heat-Aware)
     findPath(startPos, endPos, heatmap = null, preferStealth = false) {
-        // Use Coarse Grid (16px) for pathfinding to reduce search space by 16x
-        const step = Config.WORLD.VISUAL_GRID_SIZE;
+        // Use Coarse Grid (8px) for pathfinding to reduce search space but maintain some precision
+        const step = Config.WORLD.PATHFINDING_GRID_SIZE;
         
         const startX = Math.floor(startPos.x / step);
         const startY = Math.floor(startPos.y / step);
         const endX = Math.floor(endPos.x / step);
         const endY = Math.floor(endPos.y / step);
 
-        if (startX === endX && startY === endY) return [];
+        if (startX === endX && startY === endY) return [endPos]; // Direct move for short distance
         if (this.isWallAt(endPos.x, endPos.y)) return []; // End is blocked
 
         const rows = Math.ceil(this.height / step);
@@ -614,7 +656,7 @@ export class World {
         
         const getHash = (x, y) => (y << 16) | x;
         let iterations = 0;
-        const maxIterations = 3000; // Fail-safe limit
+        const maxIterations = 25000; // Increased to ensure coverage of full map (15k nodes)
 
         while (openSet.length > 0) {
             if (iterations++ > maxIterations) break; // Emergency exit
@@ -684,10 +726,10 @@ export class World {
                         
                         // We need to check if the FULL WIDTH of the agent can pass.
                         // hasLineOfSight only checks center ray.
-                        // Let's check 3 rays: Center, Left Edge, Right Edge relative to movement.
+                        // Use 3 rays: Center, Left Edge, Right Edge.
                         const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
                         const perp = angle + Math.PI/2;
-                        const r = 9; // Safety radius
+                        const r = Config.AGENT.RADIUS + 2; // Robust radius (12px)
                         
                         const p1L = { x: p1.x + Math.cos(perp)*r, y: p1.y + Math.sin(perp)*r };
                         const p1R = { x: p1.x - Math.cos(perp)*r, y: p1.y - Math.sin(perp)*r };
@@ -719,35 +761,63 @@ export class World {
 
             const neighbors = [
                 { x: current.x + 1, y: current.y }, { x: current.x - 1, y: current.y },
-                { x: current.x, y: current.y + 1 }, { x: current.x, y: current.y - 1 }
+                { x: current.x, y: current.y + 1 }, { x: current.x, y: current.y - 1 },
+                // Enable diagonals for smoother paths
+                { x: current.x + 1, y: current.y + 1 }, { x: current.x - 1, y: current.y - 1 },
+                { x: current.x + 1, y: current.y - 1 }, { x: current.x - 1, y: current.y + 1 }
             ];
 
             for (const neighbor of neighbors) {
                 if (neighbor.x < 0 || neighbor.x >= cols || neighbor.y < 0 || neighbor.y >= rows) continue;
                 
-                // Improved Collision Check: Sample 4 points to ensure a 20px agent can fit
+                // Improved Collision Check: Sample points to ensure agent can fit
                 const cx = neighbor.x * step + step/2;
                 const cy = neighbor.y * step + step/2;
-                // Agent Radius is 10px. 
-                // Grid step is 16px. Center is at 8px.
-                // If we check offset 5.33 (step/3), we check span of ~10.6px.
-                // If we check offset 8 or 9, we check span of ~16-18px.
-                // To prevent clipping walls (which start at 8px from center), we need to check if the agent's body (radius 10) hits the wall.
-                // We should check slightly less than radius to allow "squeezing" but huge clipping is bad.
-                const offset = 9; 
                 
-                // If this is the target tile, we skip the strict area check because we know the specific end point is valid
+                // Agent Radius is 10px. 
+                // We use a margin slightly SMALLER than radius to allow "grazing" walls without getting stuck.
+                // Physics will handle the subtle pushes. Pathfinding should just ensure we aren't centering on a wall.
+                const offset = Config.AGENT.RADIUS - 1; 
+                
+                // If this is the target tile, we skip the strict area check
                 const isTargetTile = (neighbor.x === endX && neighbor.y === endY);
+                
+                // Check Center
+                if (this.isWallAt(cx, cy)) continue;
 
+                // Check Corners (Full body clearance)
                 if (!isTargetTile) {
-                    if (this.isWallAt(cx, cy) || 
-                        this.isWallAt(cx - offset, cy - offset) ||
+                    if (this.isWallAt(cx - offset, cy - offset) ||
                         this.isWallAt(cx + offset, cy + offset) ||
                         this.isWallAt(cx - offset, cy + offset) ||
                         this.isWallAt(cx + offset, cy - offset)) continue;
                 }
 
+                // CHECK CORNER CUTTING (DIAGONAL SAFETY)
+                // If moving diagonally (e.g., NE), check if North OR East are blocked.
+                // If either is blocked, we are "cutting" a corner, which leads to clipping.
+                if (neighbor.x !== current.x && neighbor.y !== current.y) {
+                    const dx = neighbor.x - current.x;
+                    const dy = neighbor.y - current.y;
+                    
+                    // Check orthogonal neighbors
+                    const n1 = { x: current.x + dx, y: current.y };
+                    const n2 = { x: current.x, y: current.y + dy };
+                    
+                    const c1x = n1.x * step + step/2;
+                    const c1y = n1.y * step + step/2;
+                    const c2x = n2.x * step + step/2;
+                    const c2y = n2.y * step + step/2;
+
+                    // If either orthogonal neighbor is a wall, forbid the diagonal move
+                    if (this.isWallAt(c1x, c1y) || this.isWallAt(c2x, c2y)) continue;
+                }
+
                 if (closedSet.has(getHash(neighbor.x, neighbor.y))) continue;
+                
+                // Diagonal Cost Math
+                const isDiagonal = (neighbor.x !== current.x && neighbor.y !== current.y);
+                const stepCost = isDiagonal ? 1.414 : 1.0;
 
                 // Tactical Cost: Map coarse grid to heatmap
                 let tacticalCost = 0;
@@ -778,7 +848,7 @@ export class World {
                     }
                 }
 
-                const gScore = current.g + moveCost + tacticalCost;
+                const gScore = current.g + (moveCost * stepCost) + tacticalCost;
                 let existing = openSet.find(o => o.x === neighbor.x && o.y === neighbor.y);
 
                 if (!existing) {
@@ -799,15 +869,19 @@ export class World {
     }
 
     heuristic(x1, y1, x2, y2) {
-        return Math.abs(x2 - x1) + Math.abs(y2 - y1);
+        // Octile Distance for 8-way movement (Standard: D * (dx + dy) + (D2 - 2 * D) * min(dx, dy))
+        // Here D=1, D2=1.414.
+        const dx = Math.abs(x2 - x1);
+        const dy = Math.abs(y2 - y1);
+        return 1 * (dx + dy) + (1.414 - 2) * Math.min(dx, dy); 
     }
     
     // Line of Sight
-    hasLineOfSight(p1, p2, maxDist = Infinity, checkCovers = false, ignoreTargetBush = false) {
+    hasLineOfSight(p1, p2, maxDist = Infinity, checkCovers = true, ignoreTargetBush = false) {
         const dist = Utils.distance(p1, p2);
         if (dist > maxDist) return false;
         
-        const stepSize = 8; // Slightly larger for performance
+        const stepSize = this.gridSize; // Match grid resolution for accuracy
         const steps = Math.ceil(dist / stepSize);
         const dx = (p2.x - p1.x) / steps;
         const dy = (p2.y - p1.y) / steps;
@@ -815,8 +889,9 @@ export class World {
         const targetGx = Math.floor(p2.x / this.gridSize);
         const targetGy = Math.floor(p2.y / this.gridSize);
 
-        // Start check from slightly ahead of p1 to avoid self-blocking when right against cover
-        for (let i = 2; i < steps - 1; i++) { 
+        // Check full path including start and end vicinity
+        // Start at 1 to allow strictly valid start point, but check up to steps
+        for (let i = 1; i <= steps; i++) { 
              const x = p1.x + dx * i;
              const y = p1.y + dy * i;
              
@@ -824,26 +899,32 @@ export class World {
              const gy = Math.floor(y / this.gridSize);
 
              if (gx >= 0 && gy >= 0 && gy < this.grid.length && gx < this.grid[0].length) {
-                 if (this.naturalGrid[gy][gx] === 1) return false;
+                 const cell = this.grid[gy][gx];
                  
-                 if (checkCovers) {
-                     const cell = this.grid[gy][gx];
-                     if (cell === 1) return false; // Wall blocked
-                     
-                     if (cell === 2) { // Bush blocked
-                         // Exception: If we are looking for a target IN this bush, and we are AT this bush (approx)
-                         if (ignoreTargetBush && gx === targetGx && gy === targetGy) {
-                             // Allow vision into the target's own bush
-                             continue;
-                         }
-                         return false;
+                 // Vision blocked by Walls (1) and Covers (3, 4)
+                 if (cell === 1 || cell === 3 || cell === 4) return false;
+                 
+                 // Vision blocked by Bushes (2) if checkCovers is true
+                 if (checkCovers && cell === 2) {
+                     // Exception: If we are looking for a target IN this bush, and we are AT this bush (approx)
+                     if (ignoreTargetBush && gx === targetGx && gy === targetGy) {
+                         continue;
                      }
+                     return false;
                  }
              }
-
+             
              // Check for smoke occlusion
-             for (const s of this.smokes) {
-                 if (Utils.distance({x, y}, s) < s.radius) return false;
+             if (i * stepSize > 40) {
+                 // Optimization: Only check if smoke array has items
+                 if (this.smokes.length > 0) {
+                     for (const s of this.smokes) {
+                        // Simple dist check
+                        const dxs = x - s.x;
+                        const dys = y - s.y;
+                        if ((dxs*dxs + dys*dys) < s.radius*s.radius) return false;
+                     }
+                 }
              }
         }
         return true;

@@ -41,6 +41,8 @@ export class Agent {
         this.rank = 0; // 0: Private, 1: Captain
         this.buffs = { leader: false };
         this.lastThrowTime = 0;
+        this.armingUntil = 0;
+        this.armingAction = null;
         this.lastAdvanceTime = 0;
         this.lastDistressTime = 0;
         this.distanceMoved = 0; // Track distance for footstep sounds
@@ -109,7 +111,7 @@ export class Agent {
         if (now >= this.nextCohesionTime) {
             const cohesionRange = Config.AGENT.COHESION_RADIUS;
             this.cachedAlliesNearby = world.spatial.query(this.pos.x, this.pos.y, cohesionRange)
-                .filter(a => a.team === this.team && a !== this && Utils.distance(this.pos, a.pos) < cohesionRange).length;
+                .filter(a => !a.isCover && a.team === this.team && a !== this && Utils.distance(this.pos, a.pos) < cohesionRange).length;
             this.nextCohesionTime = now + 500;
         }
         const alliesNearby = this.cachedAlliesNearby;
@@ -179,6 +181,15 @@ export class Agent {
             this.state.inBush = true;
         }
 
+        // Update Smoke State
+        const wasInSmoke = this.state.inSmoke;
+        this.state.inSmoke = world.smokes.some(s => Utils.distance(this.pos, s) < s.radius);
+        if (this.state.inSmoke && !wasInSmoke) {
+             // Status reporting: Extraverts and Conscientious agents are more likely to report
+             const reportProb = (this.traits.extraversion * 0.3) + (this.traits.conscientiousness * 0.2);
+             if (Math.random() < reportProb) this.addBark("SMOKE SCREEN!");
+        }
+
         this.isMoving = false; // Reset for next frame
         
         if (this.state.isDowned || this.state.isDead) return;
@@ -193,22 +204,65 @@ export class Agent {
         // Check for active grenades nearby
         for (const p of world.projectiles) {
             if ((p.type === 'GRENADE' || p.type === 'SMOKE') && p.active) {
-                 if (Utils.distance(this.pos, p.pos) < Config.PHYSICS.FRAG_RADIUS * 1.5) {
-                     // FORCE FLEE
-                     this.addBark("GRENADE!");
-                     const angleFromGrenade = Utils.angle(p.pos, this.pos);
-                     const bleedDist = 100;
-                     this.currentAction = {
-                        type: 'MOVE',
-                        target: {
-                            x: this.pos.x + Math.cos(angleFromGrenade) * bleedDist,
-                            y: this.pos.y + Math.sin(angleFromGrenade) * bleedDist
-                        }
-                     };
-                     this.path = []; 
-                     this.moveTo(this.currentAction.target, dt, world, Config.AGENT.TURN_SPEED * 2, 1.5); 
-                     this.state.update(dt, stressBaseline, true); // Update state and return
-                     return;
+                 const dist = Utils.distance(this.pos, p.pos);
+                 const dangerRadius = p.type === 'GRENADE' ? Config.PHYSICS.FRAG_RADIUS * 1.5 : 40;
+                 
+                 if (dist < dangerRadius) {
+                     const isTeammate = p.team === this.team;
+                     
+                     if (p.type === 'GRENADE') {
+                         // Variety in barks based on personality
+                         // Incoming enemy frag: Panic (neuroticism) + Loudness (extraversion)
+                         const panicShoutProb = (this.traits.neuroticism * 0.6) + (this.traits.extraversion * 0.3);
+                         // Warning teammate: Altruism (agreeableness) + Loudness (extraversion)
+                         const warningShoutProb = (this.traits.agreeableness * 0.7) + (this.traits.extraversion * 0.2);
+
+                         if (p.ownerId === this.id) {
+                            if (dist < 60 && Math.random() < (this.traits.extraversion * 0.8)) {
+                                this.addBark("OOPS!");
+                            }
+                         } else if (isTeammate) {
+                             if (Math.random() < warningShoutProb) {
+                                 this.addBark(dist < 60 ? "WATCH IT!" : "FRAG!");
+                             }
+                         } else {
+                             if (Math.random() < panicShoutProb) {
+                                 this.addBark("GRENADE!");
+                             }
+                         }
+
+                         // FORCE FLEE for frag
+                         const angleFromGrenade = Utils.angle(p.pos, this.pos);
+                         const bleedDist = 100;
+                         this.currentAction = {
+                            type: 'MOVE',
+                            target: {
+                                x: this.pos.x + Math.cos(angleFromGrenade) * bleedDist,
+                                y: this.pos.y + Math.sin(angleFromGrenade) * bleedDist
+                            }
+                         };
+                         this.path = []; 
+                         this.moveTo(this.currentAction.target, dt, world, Config.AGENT.TURN_SPEED * 2, 1.5); 
+                         this.state.update(dt, stressBaseline, true);
+                         return;
+                     } else if (p.type === 'SMOKE') {
+                         // Smoke reaction: rarer barks, no panic fleeing
+                         const smokeObserveProb = this.traits.extraversion * 0.3;
+                         const teammateSmokeProb = (this.traits.extraversion * 0.1) + (this.traits.conscientiousness * 0.1);
+
+                         if (Math.random() < smokeObserveProb && !isTeammate) {
+                             this.addBark("SMOKE!");
+                         } else if (Math.random() < teammateSmokeProb && isTeammate && dist < 50) {
+                             this.addBark("SMOKING...");
+                         }
+                         
+                         // Only move slightly if extremely close to avoid canister hit
+                         if (dist < 30) {
+                            const angleFromGrenade = Utils.angle(p.pos, this.pos);
+                            this.pos.x += Math.cos(angleFromGrenade) * 2;
+                            this.pos.y += Math.sin(angleFromGrenade) * 2;
+                         }
+                     }
                  }
             }
         }
@@ -428,8 +482,15 @@ export class Agent {
             // Determine distress type
             let distressType = null;
             if (isWounded) {
-                distressType = 'MEDIC';
-                this.addBark("MEDIC!");
+                const hasMedkit = this.state.inventory.utility.some(u => u.type === 'Medkit' && u.count > 0);
+                const nearbyMedkit = world.loot.some(l => l.type === 'Medkit' && Utils.distance(this.pos, l) < 50);
+                
+                if (!hasMedkit && !nearbyMedkit) {
+                    distressType = 'MEDIC';
+                    this.addBark("MEDIC!");
+                } else if (hasMedkit) {
+                     this.addBark("I'M HIT! PATCHING!");
+                }
             } else if (isPinned) {
                 // If I am already in cover, communicate support need, not cover need
                 if (this.brain.isSafe(world)) {
@@ -444,6 +505,7 @@ export class Agent {
             // Use SpatialGrid to find allies to shout at
             const potentialAllies = world.spatial.query(this.pos.x, this.pos.y, voiceRadius);
             const allies = potentialAllies.filter(a => 
+                !a.isCover &&
                 a.team === this.team && 
                 a.id !== this.id && 
                 Utils.distance(this.pos, a.pos) < voiceRadius
@@ -499,8 +561,8 @@ export class Agent {
         const weapon = this.state.inventory.weapon;
         const now = Date.now();
 
-        // 1. Reloading Logic
-        if (this.state.reloadingUntil > now) return false;
+        // 1. Reloading/Arming Logic
+        if (this.state.reloadingUntil > now || this.armingUntil > now) return false;
         
         // NO SHOOTING WHILE SPRINTING
         if (this.movementMode === 'BOUNDING') return false;
@@ -566,15 +628,8 @@ export class Agent {
                 
                 if (hasFriendly) {
                    // FRIENDLY IN LOF! STOP!
-                   // Sidestep
                    this.addBark("CHECK FIRE!");
-                   const avoidAngle = fireAngle + Math.PI/2;
-                   if (!this.currentAction.moveTarget) {
-                        this.currentAction.moveTarget = {
-                            x: this.pos.x + Math.cos(avoidAngle) * 30,
-                            y: this.pos.y + Math.sin(avoidAngle) * 30
-                        };
-                   }
+                   // Just hold fire and let the brain pick a new spot next frame if needed
                    return false;
                 }
             }
@@ -596,27 +651,54 @@ export class Agent {
         this.state.lastFireTime = now;
         if (world && world.audio) world.audio.playGunshot();
 
-        // STRESS PENALTY: Accuracy suffers when panicked
-        const stressAccPenalty = (this.state.stress / 100) * Config.AGENT.STRESS_ACCURACY_MULT;
-        const inaccuracy = ((1 - this.traits.accuracyBase) * 0.2 + (this.state.stress / 100) * 0.1 + stressAccPenalty) * inaccuracyMultiplier;
-        const shootAngle = this.angle + (Math.random() - 0.5) * inaccuracy;
+        // ACCURACY CALCULATION
+        // Base spread from weapon stats
+        let spread = weapon.spread || 0.05;
         
+        // Distance Falloff
+        const optimalRange = weapon.optimalRange || 200;
+        const falloffRate = weapon.falloff || 0.001;
+        
+        if (distToTarget > optimalRange) {
+            spread += (distToTarget - optimalRange) * falloffRate;
+        }
+
+        // Modifiers
+        const stressFactor = (this.state.stress / 100);
+        const stressPenalty = stressFactor * Config.AGENT.STRESS_ACCURACY_MULT; // e.g. +0.3 rads at max stress
+        const skillBonus = (this.traits.accuracyBase) * 0.02; // Minor skill reduction
+        const movementPenalty = this.movementMode !== 'TACTICAL' && this.movementMode !== 'COVERING' ? 0.05 : 0.0;
+
+        let totalInaccuracy = (spread + stressPenalty + movementPenalty - skillBonus) * inaccuracyMultiplier;
+        
+        // Clamp minimum spread
+        totalInaccuracy = Math.max(0.01, totalInaccuracy);
+        
+        const shootAngle = this.angle + (Math.random() - 0.5) * totalInaccuracy;
+        
+        const forwardOffset = 22;
+        const sideOffset = 6;
+        const startX = this.pos.x + Math.cos(this.angle) * forwardOffset - Math.sin(this.angle) * sideOffset;
+        const startY = this.pos.y + Math.sin(this.angle) * forwardOffset + Math.cos(this.angle) * sideOffset;
+
         const startingCovers = this.getCurrentCovers(world);
 
         const projectile = new Projectile(
             this.id,
             this.team,
-            this.pos.x,
-            this.pos.y,
+            startX,
+            startY,
             shootAngle,
             weapon.projectileSpeed,
             weapon.damage,
             'BULLET',
-            startingCovers
+            startingCovers,
+            null,
+            weapon.visualType
         );
         world.projectiles.push(projectile);
         
-        world.addSoundEvent(this.pos.x, this.pos.y, Config.PHYSICS.SOUND_RADIUS_GUNSHOT, 'GUNSHOT', this.id, this.team);
+        world.addSoundEvent(startX, startY, Config.PHYSICS.SOUND_RADIUS_GUNSHOT, 'GUNSHOT', this.id, this.team);
         return true;
     }
 
@@ -678,10 +760,16 @@ export class Agent {
             
             // Path Failure Check
             if (!this.path || this.path.length === 0) {
+                 this.memory.markUnreachable(targetPos);
+                 
                  if (this.currentAction && (this.currentAction.type === 'MOVE' || this.currentAction.type === 'RETREAT')) {
                      // Abort action to prevent being stuck looking at a wall
                      this.currentAction = { type: 'IDLE', score: 0 };
-                     if (Math.random() < 0.05) this.addBark("CAN'T GO THERE!");
+                     
+                     // Only bark if we haven't barked about this recently (checked via unreachable memory?)
+                     // Actually, just random is fine if we stop trying to go there.
+                     if (Math.random() < 0.1) this.addBark("CAN'T GO THERE!");
+                     
                      this.isMoving = false;
                      return;
                  }
@@ -802,77 +890,87 @@ export class Agent {
         const nextX = this.pos.x + Math.cos(moveAngle) * dist;
         const nextY = this.pos.y + Math.sin(moveAngle) * dist;
 
-        // Sliding Collision with Radius (Robust Circle vs AABB)
+        // Improved Sliding Collision with Radius (Grid-Range Check)
         const rad = this.radius;
+        const gridSize = world.gridSize;
         
-        // Helper to check if a circle is colliding with any world obstacles
+        // Helper to check if a circle at (px, py) overlaps any wall/cover cells
         const isColliding = (px, py) => {
-             // 4-point sample is fast but can clip corners.
-             // Better: Check 8 points or full box. 
-             // Optimized: Check 5 points (Center + 4 cardinals at radius)
-             if (world.isWallAt(px, py)) return true;
-             if (world.isWallAt(px + rad, py)) return true;
-             if (world.isWallAt(px - rad, py)) return true;
-             if (world.isWallAt(px, py + rad)) return true;
-             if (world.isWallAt(px, py - rad)) return true;
-             
-             // Check diagonals if we really want to avoid corner cutting
-             const diag = rad * 0.707;
-             if (world.isWallAt(px + diag, py + diag)) return true;
-             if (world.isWallAt(px - diag, py + diag)) return true;
-             if (world.isWallAt(px + diag, py - diag)) return true;
-             if (world.isWallAt(px - diag, py - diag)) return true;
-             
-             return false;
+            const minGx = Math.floor((px - rad) / gridSize);
+            const maxGx = Math.floor((px + rad) / gridSize);
+            const minGy = Math.floor((py - rad) / gridSize);
+            const maxGy = Math.floor((py + rad) / gridSize);
+
+            for (let gy = minGy; gy <= maxGy; gy++) {
+                for (let gx = minGx; gx <= maxGx; gx++) {
+                    if (gx < 0 || gy < 0 || gy >= world.grid.length || gx >= world.grid[0].length) return true;
+                    const cell = world.grid[gy][gx];
+                    // 1=Wall, 3=Cover (Stone), 4=Cover (Wood)
+                    if (cell === 1 || cell === 3 || cell === 4) return true;
+                }
+            }
+            return false;
         };
 
-        const canMoveX = !isColliding(nextX, this.pos.y);
-        const canMoveY = !isColliding(this.pos.x, nextY);
-        
-        if (isColliding(this.pos.x, this.pos.y)) {
-            // Panic push: Determine WHICH direction is blocked and push opposite
-            let pushX = 0;
-            let pushY = 0;
-            const pushDist = dist * 4; // Strong push
+        const willCollideDiag = isColliding(nextX, nextY);
 
-            // Check 4 cardinal directions to see where the wall is relative to center
-            if (world.isWallAt(this.pos.x + rad, this.pos.y)) pushX -= pushDist;
-            if (world.isWallAt(this.pos.x - rad, this.pos.y)) pushX += pushDist;
-            if (world.isWallAt(this.pos.x, this.pos.y + rad)) pushY -= pushDist;
-            if (world.isWallAt(this.pos.x, this.pos.y - rad)) pushY += pushDist;
-            
-            // If completely inside (all blocked) or weirdly center blocked
-            if (pushX === 0 && pushY === 0) {
-                 // Push towards last known good position (or just reverse velocity)
-                 const center = { x: world.width / 2, y: world.height / 2 };
-                 const angleToCenter = Utils.angle(this.pos, center);
-                 pushX = Math.cos(angleToCenter) * pushDist;
-                 pushY = Math.sin(angleToCenter) * pushDist;
-            }
-
-            this.pos.x += pushX;
-            this.pos.y += pushY;
+        if (!willCollideDiag) {
+            // Path is clear - move freely
+            this.pos.x = nextX;
+            this.pos.y = nextY;
         } else {
-            // Normal Movement
-            if (canMoveX) {
+            // Diagonal is blocked - attempt sliding movement
+            const canMoveX = !isColliding(nextX, this.pos.y);
+            const canMoveY = !isColliding(this.pos.x, nextY);
+
+            if (canMoveX && !canMoveY) {
+                // Only X is clear - slide along X axis
                 this.pos.x = nextX;
-            }
-            if (canMoveY) {
+            } else if (canMoveY && !canMoveX) {
+                // Only Y is clear - slide along Y axis
                 this.pos.y = nextY;
+            } else if (canMoveX && canMoveY) {
+                // BOTH are clear individually but diagonal is blocked (Corner case)
+                // Pick the axis with the larger velocity component to maximize movement
+                const dx = Math.abs(Math.cos(moveAngle));
+                const dy = Math.abs(Math.sin(moveAngle));
+                if (dx > dy) {
+                    this.pos.x = nextX;
+                } else {
+                    this.pos.y = nextY;
+                }
+            } else {
+                // Both axes blocked - we are stuck
+                this.isMoving = false;
+                this.path = null;
+                this.lastPathTarget = null;
             }
         }
 
-        // If both failed (Cornered)
-        if (!canMoveX && !canMoveY) {
-            this.lastPathTarget = null;
+        // Panic Recovery: If somehow already inside a wall/cover, push out to nearest clear space
+        if (isColliding(this.pos.x, this.pos.y)) {
+            const pushDist = dist * 2 + 1; // Minimum push to clear a cell boundary
+            const directions = [
+                {x: pushDist, y: 0}, {x: -pushDist, y: 0},
+                {x: 0, y: pushDist}, {x: 0, y: -pushDist},
+                {x: pushDist, y: pushDist}, {x: -pushDist, y: -pushDist}
+            ];
+            
+            for (const dir of directions) {
+                if (!isColliding(this.pos.x + dir.x, this.pos.y + dir.y)) {
+                    this.pos.x += dir.x;
+                    this.pos.y += dir.y;
+                    break;
+                }
+            }
         }
     }
 
     executeAction(action, dt, world) {
         let turnSpeed = Config.AGENT.TURN_SPEED;
 
-        // Pinned Effect: Cannot Move
-        if (this.state.isPinned) {
+        // Pinned/Arming Effect: Cannot Move
+        if (this.state.isPinned || this.armingUntil > Date.now()) {
             // Can still shoot but with high inaccuracy
             // Can rotate but slowly
             turnSpeed *= 0.5;
@@ -926,17 +1024,27 @@ export class Agent {
                             // Remove from my own memory so I don't try to loop back if re-evaluating
                             this.memory.knownLoot = this.memory.knownLoot.filter(l => l.x !== item.x || l.y !== item.y);
 
-                            if (item.type === 'Medkit') this.state.hp = Math.min(this.state.maxHp, this.state.hp + 1);
-                            else if (item.type === 'WeaponCrate') {
+                            if (item.type === 'Medkit') {
+                                // Add to medical bag if we have one, or just heal
+                                const kits = this.state.inventory.utility.find(u => u.type === 'Medkit');
+                                if (kits) kits.count += 2; // Refill 2 kits
+                                this.state.hp = Math.min(this.state.maxHp, this.state.hp + 2); // Also immediate heal
+                            } else if (item.type === 'WeaponCrate') {
                                 this.state.inventory.weapon = { 
-                                    type: 'Fast Gun', range: 500, projectileSpeed: 600, fireRate: 300, 
-                                    damage: 2, ammo: 60, maxAmmo: 60, carriedAmmo: 120 
+                                    type: 'Fast Gun', range: 500, projectileSpeed: 700, fireRate: 300, 
+                                    damage: 2, ammo: 60, maxAmmo: 60, carriedAmmo: 120, spread: 0.04
                                 };
+                                // Bonus frag for finding a crate
+                                const frags = this.state.inventory.utility.find(u => u.type === 'FragGrenade');
+                                if (frags) frags.count++;
                             } else if (item.type === 'AmmoCrate') {
                                 // Refill magazine and add 2 spare magazines
                                 const weapon = this.state.inventory.weapon;
                                 weapon.ammo = weapon.maxAmmo;
                                 weapon.carriedAmmo += (weapon.maxAmmo * 2);
+                                
+                                // Resupply 1 of each utility item
+                                this.state.inventory.utility.forEach(u => u.count++);
                             }
                         }
                     } else {
@@ -945,67 +1053,117 @@ export class Agent {
                 }
                 break;
             case 'THROW':
-                // Check if we have utility
-                const grenadeType = action.grenadeType || 'FragGrenade';
-                const utilIdx = this.state.inventory.utility.findIndex(u => u.type === grenadeType && u.count > 0);
+                // GRENADE HANDLING IMPROVEMENT: MULTI-STEP AIMING & ARMING
+                const gType = action.grenadeType || 'FragGrenade';
+                const gIdx = this.state.inventory.utility.findIndex(u => u.type === gType && u.count > 0);
                 
-                if (utilIdx > -1 && action.target) {
-                    // Turn to target
-                    const targetAngle = Utils.angle(this.pos, action.target);
-                    this.rotateTowards(targetAngle, dt, turnSpeed * 2, canSnap);
+                if (gIdx > -1 && action.target) {
+                    const now = Date.now();
                     
-                    // Throw!
-                    this.state.inventory.utility[utilIdx].count--;
-                    this.lastThrowTime = Date.now();
-                    this.addBark("FRAG OUT!");
-                    
-                    // Create Projectile
-                    const dist = Utils.distance(this.pos, action.target);
-                    const throwSpeed = 400; 
-                    const startingCovers = this.getCurrentCovers(world);
-                    
-                    const pType = (grenadeType === 'SmokeGrenade') ? 'SMOKE' : 'GRENADE';
-                    const pRadius = (pType === 'SMOKE') ? Config.PHYSICS.SMOKE_RADIUS : Config.PHYSICS.FRAG_RADIUS;
+                    // 1. Check if we are already in the arming process
+                    if (this.armingUntil === 0) {
+                        this.armingUntil = now + Config.PHYSICS.GRENADE_ARM_TIME;
+                        this.armingAction = action;
+                        this.addBark(gType === 'SmokeGrenade' ? "DEPLOYING SMOKE!" : "PREPPING FRAG!");
+                        return; // Wait for next frames
+                    }
 
-                    const p = new Projectile(
-                        this.id, this.team, this.pos.x, this.pos.y, 
-                        this.angle, throwSpeed, pRadius, pType,
-                        startingCovers
-                    );
-                    p.damage = (pType === 'SMOKE') ? 0 : Config.PHYSICS.FRAG_DAMAGE; 
-                    world.projectiles.push(p);
+                    // 2. Rotate to target during arming
+                    const targetAngle = Utils.angle(this.pos, action.target);
+                    const turnSpeedBonus = 2.0; 
+                    this.rotateTowards(targetAngle, dt, turnSpeed * turnSpeedBonus, canSnap);
+
+                    // 3. Check if done arming
+                    if (now >= this.armingUntil) {
+                        // Throw!
+                        this.state.inventory.utility[gIdx].count--;
+                        this.lastThrowTime = now;
+                        this.armingUntil = 0;
+                        this.armingAction = null;
+                        
+                        this.addBark(gType === 'SmokeGrenade' ? "SMOKE OUT!" : "FRAG OUT!");
+                        
+                        const pType = (gType === 'SmokeGrenade') ? 'SMOKE' : 'GRENADE';
+                        const pRadius = (pType === 'SMOKE') ? Config.PHYSICS.SMOKE_RADIUS : Config.PHYSICS.FRAG_RADIUS;
+                        const startingCovers = this.getCurrentCovers(world);
+
+                        // Throw from hand (offset sideways and slightly forward)
+                        const handForwardOffset = 10;
+                        const handSideOffset = 8;
+                        const throwX = this.pos.x + Math.cos(this.angle) * handForwardOffset - Math.sin(this.angle) * handSideOffset;
+                        const throwY = this.pos.y + Math.sin(this.angle) * handForwardOffset + Math.cos(this.angle) * handSideOffset;
+
+                        // PRECISION AIMING: The projectile now knows its destination
+                        const p = new Projectile(
+                            this.id, this.team, throwX, throwY, 
+                            this.angle, 0, pRadius, pType,
+                            startingCovers, action.target
+                        );
+                        
+                        // COOKING LOGIC: If target is close, the fuse is already partially depleted
+                        const dist = Utils.distance(this.pos, action.target);
+                        if (dist < 150) {
+                             p.fuse -= 1000; // Cook for 1s to prevent them from running away
+                        }
+
+                        p.damage = (pType === 'SMOKE') ? 0 : Config.PHYSICS.FRAG_DAMAGE; 
+                        world.projectiles.push(p);
+                    }
+                } else {
+                    this.armingUntil = 0;
+                    this.armingAction = null;
+                }
+                break;
+            case 'SELF_HEAL':
+                {
+                    const medkitIdx = this.state.inventory.utility.findIndex(u => u.type === 'Medkit' && u.count > 0);
+                    if (medkitIdx > -1) {
+                        this.state.inventory.utility[medkitIdx].count--;
+                        const healingAmount = this.role === 'MEDIC' ? this.state.maxHp : this.state.maxHp * 0.5;
+                        this.state.hp = Math.min(this.state.maxHp, this.state.hp + healingAmount);
+                        this.state.isDowned = false;
+                        this.state.modifyStress(-30);
+                        this.addBark("APPLYING FIRST AID");
+                    }
                 }
                 break;
             case 'HEAL':
                 if (action.targetId) {
                     const patient = world.agents.find(a => a.id === action.targetId);
-                    if (patient && Utils.distance(this.pos, patient.pos) < 30) {
+                    if (patient && Utils.distance(this.pos, patient.pos) < 35) {
                         const medkitIdx = this.state.inventory.utility.findIndex(u => u.type === 'Medkit' && u.count > 0);
                         if (medkitIdx > -1) {
                             // Consume Medkit
                             this.state.inventory.utility[medkitIdx].count--;
 
-                            // Apply Healing
-                            patient.state.isDowned = false;
-                            patient.state.hp = patient.state.maxHp;
-                            patient.state.modifyStress(-50); // Huge relief
-                            patient.state.fatigue = Math.max(0, patient.state.fatigue - 20);
+                            // Apply Role-Based Healing
+                            const isMedic = this.role === 'MEDIC';
+                            const healingAmount = isMedic ? patient.state.maxHp : patient.state.maxHp * 0.6;
+                            
+                            patient.state.hp = Math.min(patient.state.maxHp, patient.state.hp + healingAmount);
+                            patient.state.isDowned = false; 
+                            patient.state.modifyStress(isMedic ? -50 : -25);
+                            patient.state.fatigue = Math.max(0, patient.state.fatigue - (isMedic ? 20 : 10));
 
                             // Social & Feedback
-                            this.addBark("YOU'RE GOOD!");
-                            patient.addBark("THANKS DOC!");
-                            this.memory.modifyTrust(patient.id, 0.5);
-                            patient.memory.modifyTrust(this.id, 0.5);
+                            if (isMedic) {
+                                this.addBark("YOU'RE GOOD!");
+                                patient.addBark("THANKS DOC!");
+                            } else {
+                                this.addBark("PATCHING YOU UP!");
+                                patient.addBark("THANKS!");
+                            }
+                            
+                            this.memory.modifyTrust(patient.id, 0.4);
+                            patient.memory.modifyTrust(this.id, 0.4);
                             
                             // Remove signal
                             this.memory.distressSignals.delete(patient.id);
                         } else {
                             this.addBark("I'M OUT!");
-                            // Remove signal so we don't loop
                             this.memory.distressSignals.delete(patient.id);
                         }
                     } else if (patient) {
-                        // Fail-safe move (should be handled by Decision)
                         this.moveTo(patient.pos, dt, world, turnSpeed);
                     }
                 }

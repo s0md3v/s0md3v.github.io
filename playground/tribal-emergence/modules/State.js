@@ -30,6 +30,8 @@ export class State {
         this.isDead = false;
         this.isFrozenUntil = 0;
         this.fatigue = 0; // Cumulative permanent stress impact
+        this.inSmoke = false;
+        this.inBush = false;
     }
 
     modifyStress(amount) {

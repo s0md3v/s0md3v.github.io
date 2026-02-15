@@ -18,12 +18,26 @@ export class Renderer {
             blue_alive: new Image(),
             blue_down: new Image(),
             red_alive: new Image(),
-            red_down: new Image()
+            red_down: new Image(),
+            icon_hp: new Image(),
+            icon_ammo: new Image(),
+            bullets: { rifle: [], lmg: [], pistol: [] }
         };
         this.sprites.blue_alive.src = './assets/blue_alive.bmp';
         this.sprites.blue_down.src = './assets/blue_down.bmp';
         this.sprites.red_alive.src = './assets/red_alive.bmp';
         this.sprites.red_down.src = './assets/red_down.bmp';
+
+        this.sprites.icon_hp.src = './assets/icons/HP.png';
+        this.sprites.icon_ammo.src = './assets/icons/Ammo.png';
+
+        ['rifle', 'lmg', 'pistol'].forEach(type => {
+            for(let i=1; i<=3; i++) {
+                const img = new Image();
+                img.src = `./assets/frames/${type}/${i}.png`;
+                this.sprites.bullets[type].push(img);
+            }
+        });
         
         this.tileCache = {};
     }
@@ -175,39 +189,67 @@ export class Renderer {
 
     drawSmokes() {
         for (const s of this.world.smokes) {
-            const alpha = Math.min(0.4, s.life / 2000); // Fade out at the end
-            this.ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`;
+            const lifeRatio = s.life / Config.PHYSICS.SMOKE_DURATION;
+            const alpha = Math.min(0.6, lifeRatio * 1.5);
+            
+            this.ctx.save();
+            // Core cloud with radial gradient
+            const gradient = this.ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.radius);
+            gradient.addColorStop(0, `rgba(220, 220, 220, ${alpha})`);
+            gradient.addColorStop(0.6, `rgba(180, 180, 180, ${alpha * 0.7})`);
+            gradient.addColorStop(1, `rgba(140, 140, 140, 0)`);
+            
+            this.ctx.fillStyle = gradient;
             this.ctx.beginPath();
             this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
             this.ctx.fill();
 
-            // Inner "thick" part
-            this.ctx.fillStyle = `rgba(150, 150, 150, ${alpha * 0.5})`;
-            this.ctx.beginPath();
-            this.ctx.arc(s.x, s.y, s.radius * 0.6, 0, Math.PI * 2);
-            this.ctx.fill();
+            // Bilowing "fluff" details
+            const detailCount = 5;
+            for (let i = 0; i < detailCount; i++) {
+                const angle = (i / detailCount) * Math.PI * 2 + (Date.now() / 3000);
+                const distMult = 0.3 + Math.sin(Date.now() / 1000 + i) * 0.1;
+                const ox = Math.cos(angle) * s.radius * distMult;
+                const oy = Math.sin(angle) * s.radius * distMult;
+                const r = s.radius * (0.4 + Math.sin(Date.now() / 600 + i) * 0.05);
+                
+                this.ctx.fillStyle = `rgba(210, 210, 210, ${alpha * 0.25})`;
+                this.ctx.beginPath();
+                this.ctx.arc(s.x + ox, s.y + oy, r, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+            this.ctx.restore();
         }
     }
 
     drawLoot() {
         for (const item of this.world.loot) {
-            this.ctx.beginPath();
-            this.ctx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
-            if (item.type === 'WeaponCrate') this.ctx.fillStyle = '#d4af37';
-            else if (item.type === 'Medkit') this.ctx.fillStyle = '#ff69b4';
-            else if (item.type === 'AmmoCrate') this.ctx.fillStyle = '#4ae24a'; // Green
-            
-            this.ctx.fill();
-            this.ctx.strokeStyle = '#fff';
-            this.ctx.stroke();
+            let img = null;
+            if (item.type === 'Medkit' && this.sprites.icon_hp.complete) img = this.sprites.icon_hp;
+            else if ((item.type === 'AmmoCrate' || item.type === 'WeaponCrate') && this.sprites.icon_ammo.complete) img = this.sprites.icon_ammo;
+
+            if (img && img.width > 0) {
+                 const size = 24; 
+                 this.ctx.drawImage(img, item.x - size/2, item.y - size/2, size, size);
+            } else {
+                this.ctx.beginPath();
+                this.ctx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
+                if (item.type === 'WeaponCrate') this.ctx.fillStyle = '#d4af37';
+                else if (item.type === 'Medkit') this.ctx.fillStyle = '#ff69b4';
+                else if (item.type === 'AmmoCrate') this.ctx.fillStyle = '#4ae24a'; 
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#fff';
+                this.ctx.stroke();
+            }
         }
     }
+
 
     drawAgents() {
         for (const agent of this.world.agents) {
             this.ctx.save();
             this.ctx.translate(agent.pos.x, agent.pos.y);
-            this.ctx.rotate(agent.angle);
+            this.ctx.rotate(agent.angle + Math.PI / 2); // Rotate sprite to match engine orientation
 
             // Select Sprite
             let sprite = null;
@@ -301,11 +343,67 @@ export class Renderer {
     }
 
     drawProjectiles() {
-        this.ctx.fillStyle = '#fff';
         for (const p of this.world.projectiles) {
-            this.ctx.beginPath();
-            this.ctx.arc(p.pos.x, p.pos.y, p.radius, 0, Math.PI * 2);
-            this.ctx.fill();
+            this.ctx.save();
+            this.ctx.translate(p.pos.x, p.pos.y);
+            
+            if (p.type === 'GRENADE') {
+                // Frag Grenade: Dark Sphere with a fuse spark
+                this.ctx.fillStyle = '#2c3e50';
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#34495e';
+                this.ctx.stroke();
+
+                // Fuse Spark
+                const pulse = (Math.sin(Date.now() / 50) + 1) / 2;
+                this.ctx.fillStyle = `rgba(255, 100, 0, ${0.5 + pulse * 0.5})`;
+                this.ctx.beginPath();
+                this.ctx.arc(p.radius * 0.5, -p.radius * 0.5, 2, 0, Math.PI * 2);
+                this.ctx.fill();
+            } else if (p.type === 'SMOKE') {
+                // Smoke Grenade: Gray canister
+                this.ctx.fillStyle = '#95a5a6';
+                if (p.angle !== undefined) this.ctx.rotate(p.angle);
+                this.ctx.fillRect(-p.radius, -p.radius * 1.5, p.radius * 2, p.radius * 3);
+                this.ctx.strokeStyle = '#7f8c8d';
+                this.ctx.strokeRect(-p.radius, -p.radius * 1.5, p.radius * 2, p.radius * 3);
+            } else {
+                 // Bullet Logic (Frames)
+                 const visualType = p.visualType || 'pistol'; // Default fallback
+                 const frames = this.sprites.bullets[visualType];
+
+                 if (frames && frames.length > 0) {
+                     this.ctx.rotate(p.angle + Math.PI/2); 
+                     
+                     let frameIndex = 1; // Bullet in motion (2.png)
+                     if (p.elapsed < 50) frameIndex = 0; // Muzzle Flash (1.png)
+                     
+                     const img = frames[frameIndex];
+                     if (img && img.complete && img.width > 0) {
+                         // Scale based on type? Rifles are longer?
+                         const scale = 0.5;
+                         const w = img.width * scale;
+                         const h = img.height * scale;
+                         this.ctx.drawImage(img, -w/2, -h/2, w, h);
+                     } else {
+                         // Image not ready fallback
+                         this.ctx.fillStyle = '#fff';
+                         this.ctx.beginPath();
+                         this.ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+                         this.ctx.fill();
+                     }
+                 } else {
+                     // No frames fallback
+                     this.ctx.fillStyle = '#fff';
+                     this.ctx.beginPath();
+                     this.ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+                     this.ctx.fill();
+                 }
+            }
+            
+            this.ctx.restore();
         }
     }
 
@@ -376,9 +474,42 @@ export class Renderer {
         this.ctx.fillStyle = 'rgba(255, 100, 50, 0.6)';
         for (const e of this.world.effects) {
             if (e.type === 'EXPLOSION') {
+                 const lifeRatio = e.life / 300; // 0 to 1
+                 const t = 1 - lifeRatio; // progress 0 to 1
+
+                 this.ctx.save();
+
+                 // 1. Shockwave Ring
+                 this.ctx.strokeStyle = `rgba(255, 255, 255, ${lifeRatio * 0.5})`;
+                 this.ctx.lineWidth = 2;
                  this.ctx.beginPath();
-                 this.ctx.arc(e.x, e.y, e.radius * (1 - e.life/300), 0, Math.PI * 2);
+                 this.ctx.arc(e.x, e.y, e.radius * t * 1.2, 0, Math.PI * 2);
+                 this.ctx.stroke();
+
+                 // 2. Main Blast (Orange/Red Gradient)
+                 const grad = this.ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.radius * t);
+                 grad.addColorStop(0, `rgba(255, 255, 200, ${lifeRatio})`); // White-ish center
+                 grad.addColorStop(0.3, `rgba(255, 150, 50, ${lifeRatio * 0.8})`); // Orange
+                 grad.addColorStop(1, `rgba(200, 50, 0, 0)`); // Dissipating Red
+                 
+                 this.ctx.fillStyle = grad;
+                 this.ctx.beginPath();
+                 this.ctx.arc(e.x, e.y, e.radius * t, 0, Math.PI * 2);
                  this.ctx.fill();
+
+                 // 3. Secondary Flashes (Debris simulation)
+                 if (t < 0.5) {
+                     this.ctx.fillStyle = `rgba(255, 255, 255, ${lifeRatio})`;
+                     for(let i=0; i<4; i++) {
+                         const ang = i * Math.PI/2 + (t * 2);
+                         const dist = e.radius * 0.4 * t;
+                         this.ctx.beginPath();
+                         this.ctx.arc(e.x + Math.cos(ang)*dist, e.y + Math.sin(ang)*dist, 10 * lifeRatio, 0, Math.PI * 2);
+                         this.ctx.fill();
+                     }
+                 }
+
+                 this.ctx.restore();
             }
         }
     }

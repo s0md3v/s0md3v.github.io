@@ -126,12 +126,19 @@ export class Decision {
                 
                 if (enemy) return combatInertia; 
                 return base;
+                // SCAVENGING INTERTIA
             case THOUGHT_SCAVANGE:
                 if (this.agent.currentAction && this.agent.currentAction.type === 'LOOT') {
+                    // DANGER OVERRIDE: If an enemy is breathing down our neck, abandon the loot!
+                    const enemy = this.getThreatSource(world, true);
+                    if (enemy && Utils.distance(this.agent.pos, enemy.pos || enemy.lastKnownPosition) < 200) {
+                         return 0; // Drop it immediately (panic)
+                    }
                     return base + 0.8;
                 }
                 return base;
             case THOUGHT_SURVIVAL:
+                // Adrenaline: If stress is extremely high, we are locked in panic
                 if (this.agent.state.stress > 80) return base + 0.8;
                 return base;
             case THOUGHT_SOCIAL:
@@ -156,6 +163,12 @@ export class Decision {
         // SUSPICION CHECK: Recent DangerZones (Sounds)
         const recentSound = this.agent.memory.dangerZones.find(dz => (Date.now() - dz.timestamp) < 2000);
         
+        // AMMO CHECK: If I have no ammo, I shouldn't start a fight unless I'm a Medic or desperate
+        if (this.agent.state.inventory.weapon.ammo <= 0 && this.agent.role !== 'MEDIC') {
+            // Can't fight with empty gun. Maybe investigate sound if no threat visible?
+            if (threat) return 0; 
+        }
+
         let w = 0;
 
         if (threat || recentSound) {
@@ -195,20 +208,29 @@ export class Decision {
         let w = 0;
         const hpThreshold = this.agent.state.maxHp * 0.7;
         if (this.agent.state.hp < hpThreshold) {
-            w += (1 - (this.agent.state.hp / this.agent.state.maxHp)) * 0.8;
+            let hpWeight = (1 - (this.agent.state.hp / this.agent.state.maxHp)) * 1.5;
+            // Desperation: If we know where a Medkit is, scavenger drive is much higher
+            if (world.loot.some(l => l.type === 'Medkit' && Utils.distance(this.agent.pos, l) < 600)) {
+                hpWeight *= 2.0;
+            }
+            w += hpWeight;
         }
         
-                const weapon = this.agent.state.inventory.weapon;
-                const totalAmmo = weapon.ammo + weapon.carriedAmmo;
-                const initialTotal = weapon.maxAmmo + (weapon.initialCarriedAmmo || weapon.maxAmmo * 4);
-                const ammoThreshold = initialTotal * 0.4;
+        const weapon = this.agent.state.inventory.weapon;
+        const totalAmmo = weapon.ammo + weapon.carriedAmmo;
+        const initialTotal = weapon.maxAmmo + (weapon.initialCarriedAmmo || weapon.maxAmmo * 4);
+        const ammoThreshold = initialTotal * 0.4;
+
+        if (totalAmmo < ammoThreshold) {
+            w += (1 - (totalAmmo / initialTotal)) * 1.5;
+        }
         
-                if (totalAmmo < ammoThreshold) {
-                    w += (1 - (totalAmmo / initialTotal)) * 1.5;
-                }
+        // Critical Ammo Shortage (Empty) - Extreme priority
+        if (totalAmmo === 0) w += 3.0;
+
+        // Marksmen and Gunners are more ammo-dependent
+        if (this.agent.role === 'MARKSMAN' || this.agent.role === 'GUNNER') w *= 1.3;
         
-                // Marksmen and Gunners are more ammo-dependent
-                if (this.agent.role === 'MARKSMAN' || this.agent.role === 'GUNNER') w *= 1.3;
         const hasLoot = this.hasLootKnowledge(world);
         if (!hasLoot) w *= 0.1; 
 
@@ -216,7 +238,13 @@ export class Decision {
     }
 
     w_IdleToSocial(world) {
-        if (this.agent.state.socialBattery < 20) return 0.6; 
+        // Linear increase as battery drops
+        const batteryMissing = 100 - this.agent.state.socialBattery;
+        
+        // Extraverts need it more
+        const need = batteryMissing * (0.5 + this.agent.traits.extraversion);
+        
+        if (need > 40) return 0.6 + (need / 100); 
         return 0;
     }
 
@@ -228,6 +256,11 @@ export class Decision {
         // AMBUSH LOGIC: If taking damage but no visible enemy, panic weight is much higher
         if (hpPct < 1.0 && !threat) {
              w += (1.0 - hpPct) * 2.0;
+        }
+        
+        // DEFENESLESS: If visible threat and NO ammo, massive panic boost
+        if (threat && this.agent.state.inventory.weapon.ammo <= 0) {
+            w += 2.0 + (this.agent.traits.neuroticism * 2.0);
         }
         
         // SHELLSHOCK (Ghosts of War)
@@ -256,7 +289,12 @@ export class Decision {
         if (hpPct < 0.4) w += 0.8;
         if (hpPct < 0.2) w += 1.5;
         
-        if (this.agent.state.inventory.weapon.ammo <= 0) w += 0.7; 
+        // IMMEDIATE RETREAT: No ammo = Death. Run away to reload/resupply safely.
+        if (this.agent.state.inventory.weapon.ammo <= 0) {
+             const enemy = this.getThreatSource(world, true);
+             if (enemy) w += 3.0; // Run if threatened
+             else w += 0.5; // Just uncomfortable
+        }
         
         // LEADER PRESERVATION: Captains are more cautious
         if (this.agent.rank === 1) w += 0.5;
@@ -268,7 +306,7 @@ export class Decision {
 
         // Safety in numbers: If I have many allies nearby, I'm less likely to run
         const alliesNearby = world.spatial.query(this.agent.pos.x, this.agent.pos.y, 200)
-            .filter(a => a.team === this.agent.team && a !== this.agent).length;
+            .filter(a => !a.isCover && a.team === this.agent.team && a !== this.agent).length;
         
         if (alliesNearby >= 2) w -= 0.5;
         if (alliesNearby >= 4) w -= 1.0;
@@ -288,7 +326,17 @@ export class Decision {
     }
 
     w_CombatToScavange(world) {
-         if (this.agent.state.inventory.weapon.ammo <= 0) return Config.AI.WEIGHTS.LOW_AMMO_WEIGHT;
+         // ONLY scavenge from combat if we are safeish.
+         // If we are out of ammo but under fire, we should go to SURVIVAL (Retreat), not Scavange.
+         
+         if (this.agent.state.inventory.weapon.ammo <= 0) {
+             const enemy = this.getThreatSource(world, true);
+             // If enemy is visible and close, Scavange is SUICIDE. Return 0.
+             if (enemy && Utils.distance(this.agent.pos, enemy.pos || enemy.lastKnownPosition) < 300) {
+                 return 0; // Force Survival check
+             }
+             return Config.AI.WEIGHTS.LOW_AMMO_WEIGHT;
+         }
          return 0;
     }
 
@@ -312,9 +360,11 @@ export class Decision {
     }
 
     w_SurvivalToCombat(world) {
-        // If we found cover and have ammo/hp
+        // If we found cover OR we are just angry enough to fight back
         const inCover = this.isSafe(world);
-        if (inCover && this.agent.state.inventory.weapon.ammo > 0) {
+        const stressOk = this.agent.state.stress < 80;
+        
+        if ((inCover || stressOk) && this.agent.state.inventory.weapon.ammo > 0) {
             // High boost to fight back once safe
             return 0.9 + (this.agent.traits.extraversion * 0.4); 
         }
@@ -342,10 +392,21 @@ export class Decision {
             if (hasMedicSignal) return 3.0;
         }
 
-        // If we bumped into enemy and have some ammo
         const enemy = this.getThreatSource(world, true);
-        if (enemy && Utils.distance(this.agent.pos, enemy.pos || enemy.lastKnownPosition) < 150 && this.agent.state.inventory.weapon.ammo > 5) {
-            return 0.9; // Self defense
+        
+        // SELF PRESERVATION: If enemy is too close, fight or flight!
+        if (enemy) {
+            const dist = Utils.distance(this.agent.pos, enemy.pos || enemy.lastKnownPosition);
+            
+            // If super close, fight with whatever we have (even 1 bullet)
+            if (dist < 200 && this.agent.state.inventory.weapon.ammo > 0) {
+                return 3.0; // Override everything, defend yourself!
+            }
+            
+            // Standard engagement
+            if (dist < 400 && this.agent.state.inventory.weapon.ammo > 0) {
+                return 1.5;
+            }
         }
         return 0;
     }
@@ -384,72 +445,82 @@ export class Decision {
     }
 
     actCombat(world) {
-        // MUTINY CHECK (REALISM): Can I lead better in this crisis?
+        const candidates = [];
+
+        // 1. MUTINY CHECK (Overrides everything)
         const mutiny = this.scoreMutiny(world);
         if (mutiny.score > 2.0) return mutiny;
 
-        if (this.agent.role === 'MEDIC') {
-            const healScore = this.scoreHeal(world);
-            if (healScore.score > 1.5) return healScore;
-        }
-
-        // Evaluate Rescue (Moving to help/cover wounded)
-        const rescueScore = this.scoreRescue(world);
-        if (rescueScore.type !== 'NONE' && rescueScore.score > 2.0) {
-            return rescueScore;
-        }
-
-        // AMBUSH/LURK LOGIC
-        const lurkScore = this.scoreLurk(world);
-        if (lurkScore.type !== 'NONE' && lurkScore.score > 1.5) {
-             return lurkScore;
-        }
-
-        // BERSERK BREAKING POINT
-        // At max stress and low morale, agent might go berserk (suicide charge)
+        // 2. BERSERK (Overrides everything)
+        // At max stress and low morale, agent might go berserk
         if (this.agent.state.stress > 95 && this.agent.state.morale < 20) {
             const enemy = this.getThreatSource(world, true);
             if (enemy) {
                 const enemyPos = enemy.lastKnownPosition || enemy.pos;
-                // High speed, no cover, direct charge
                 return { type: 'ATTACK', target: enemyPos, score: 10.0, speedMultiplier: 1.5, movementMode: 'BOUNDING' };
             }
         }
 
-        // COGNITIVE REALISM: Accuracy-Driven Tactics
-        // If I can't aim (High Stress), I should SUPPRESS (Volume Fire) instead of ATTACK (Precision)
+        // 3. Gather Candidates
+
+        // HEAT/MEDIC
+        // HEALING
+        const hasMedkit = this.agent.state.inventory.utility.some(u => u.type === 'Medkit' && u.count > 0);
+        if (hasMedkit) {
+            const healScore = this.scoreHeal(world);
+            const threshold = this.agent.role === 'MEDIC' ? 1.5 : 4.0; // Non-medics only heal if desperate (high score)
+            if (healScore.score > threshold) candidates.push(healScore);
+        }
+
+        // SELF HEAL 
+        const selfHeal = this.scoreSelfHeal(world);
+        if (selfHeal.score > 2.5) candidates.push(selfHeal);
+
+        // RESCUE
+        const rescueScore = this.scoreRescue(world);
+        if (rescueScore.type !== 'NONE' && rescueScore.score > 2.0) {
+            candidates.push(rescueScore);
+        }
+
+        // LURK
+        const lurkScore = this.scoreLurk(world);
+        if (lurkScore.type !== 'NONE' && lurkScore.score > 1.5) {
+             candidates.push(lurkScore);
+        }
+
+        // SUPPRESSION
         const stressAccPenalty = (this.agent.state.stress / 100) * Config.AGENT.STRESS_ACCURACY_MULT;
         const currentAccuracy = this.agent.traits.accuracyBase - stressAccPenalty;
-        
-        const sprayAndPrayBonus = currentAccuracy < 0.6 ? 1.0 : 0.0; // Bonus to suppression if shaky
+        const sprayAndPrayBonus = currentAccuracy < 0.6 ? 1.0 : 0.0;
 
-        // ROLE-SPECIFIC SPECIALS
-        if (this.agent.role === 'GUNNER') {
-            const suppressScore = this.scoreSuppress(world);
-            // Gunners are 2x more likely to choose suppression
-            if (suppressScore.type === 'SUPPRESS' && suppressScore.score > 0.5) {
-                return suppressScore;
+        const suppressScore = this.scoreSuppress(world);
+        if (suppressScore.type === 'SUPPRESS') {
+            suppressScore.score += sprayAndPrayBonus;
+            // Gunner bonus is already in scoreSuppress, just check threshold
+            if (suppressScore.score > 0.5) {
+                 candidates.push(suppressScore);
             }
         }
 
-        // Evaluate Suppression (Blind fire)
-        const suppressScore = this.scoreSuppress(world);
-        if (suppressScore.type === 'SUPPRESS' && (suppressScore.score + sprayAndPrayBonus) > 1.0) {
-            return suppressScore;
-        }
-
-        // Evaluate Throwing
+        // GRENADES
         const grenadeScore = this.scoreThrow(world);
         if (grenadeScore.type === 'THROW' && grenadeScore.score > 1.5) {
-            return grenadeScore;
+            candidates.push(grenadeScore);
         }
 
+        // STANDARD COMBAT
         const combatScore = this.scoreCombat(world);
-        // If accuracy is trash, don't try to snipe
         if (currentAccuracy < 0.4 && combatScore.type === 'ATTACK') {
              combatScore.score *= 0.5; 
         }
-        return combatScore; 
+        candidates.push(combatScore);
+
+        // 4. Select Best
+        candidates.sort((a, b) => b.score - a.score);
+
+        if (candidates.length > 0) return candidates[0];
+        
+        return { type: 'IDLE', score: 0 };
     }
 
     actSurvival(world) {
@@ -462,6 +533,9 @@ export class Decision {
         if (smokeScore.type === 'THROW' && smokeScore.score > 1.5) {
             return smokeScore;
         }
+
+        const selfHeal = this.scoreSelfHeal(world);
+        if (selfHeal.score > 3.0) return selfHeal;
 
         const regroup = this.scoreRegroup(world);
         if (regroup.score > 1.5) return regroup;
@@ -546,10 +620,11 @@ export class Decision {
                         if (trust < 0.4) return;
     
                         const ammoPct = weapon.carriedAmmo / (weapon.maxAmmo * 5); // Normalized to roughly 5 mags
-                        const score = (1.0 - ammoPct) * 2.0 + trust;                    if (score > bestScore) {
-                        bestScore = score;
-                        bestSource = a;
-                    }
+                        const score = (1.0 - ammoPct) * 2.0 + trust;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestSource = a;
+                        }
                 }
             }
         });
@@ -654,14 +729,20 @@ export class Decision {
                 const tx = Utils.clamp(this.agent.pos.x + Math.cos(angle) * dist, 50, world.width - 50);
                 const ty = Utils.clamp(this.agent.pos.y + Math.sin(angle) * dist, 50, world.height - 50);
                 
-                if (!world.isWallAt(tx, ty)) {
+                // Use robust check instead of just point check
+                // Relaxed to exact radius: Allows picking spots near walls
+                if (world.isPositionClear(tx, ty, this.agent.radius)) {
                     this.agent.patrolTarget = { x: tx, y: ty };
                     found = true;
                 }
                 attempts++;
             }
-            if (!found) this.agent.patrolTarget = this.agent.pos; // Fallback
-        }
+                if (!found) this.agent.patrolTarget = this.agent.pos; // Fallback
+            }
+            if (!this.agent.patrolTarget || this.agent.memory.isUnreachable(this.agent.patrolTarget)) {
+                this.agent.patrolTarget = null; // Reset if unreachable
+                return { type: 'NONE', score: 0 };
+            }
         return { type: 'MOVE', target: this.agent.patrolTarget, score: 1, movementMode: 'SNEAKING' };
     }
 
@@ -701,7 +782,7 @@ export class Decision {
                  for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
                      const tx = finalTarget.x + Math.cos(a) * r;
                      const ty = finalTarget.y + Math.sin(a) * r;
-                     if (!world.isWallAt(tx, ty)) {
+                     if (world.isPositionClear(tx, ty, this.agent.radius)) {
                          finalTarget = { x: tx, y: ty };
                          found = true;
                          break;
@@ -711,11 +792,11 @@ export class Decision {
              }
         }
 
-        // Anti-Wiggle: If we are already at the objective, stop trying to go there.
-        // Let Patrol take over.
         if (Utils.distance(this.agent.pos, finalTarget) < 40) {
             return { type: 'NONE', score: 0 };
         }
+        
+        if (this.agent.memory.isUnreachable(finalTarget)) return { type: 'NONE', score: 0 };
 
         return { type: 'MOVE', target: finalTarget, score: 1, movementMode: 'SNEAKING' };
     }
@@ -754,45 +835,79 @@ export class Decision {
              shouldAdvance = false; // Stay put and cover
         }
 
-        if (hasLOS) {
-            if (shouldAdvance) {
-                // 1. Determine Intent (Flank or safe cover)
-                let intendedTarget = this.findFlankSpot(world, enemyPos);
-                
-                if (!intendedTarget) {
-                     // Fallback: No flank spot, find cover
-                     intendedTarget = this.findNearestCover(world, 200);
-                }
+        if (shouldAdvance) {
+            // 1. Determine Intent (Flank or safe cover)
+            let intendedTarget = this.findFlankSpot(world, enemyPos);
+            
+            if (!intendedTarget) {
+                 // Fallback: No flank spot, find cover (Increased radius)
+                 intendedTarget = this.findNearestCover(world, 500);
+            }
 
-                if (intendedTarget) {
-                    // 2. Check Arrival
-                    // If we are close, switch to TACTICAL to face the enemy
-                    if (Utils.distance(this.agent.pos, intendedTarget) < 50) {
-                        shouldAdvance = false;
-                    } else if (!inChaos) {
-                        this.agent.lastAdvanceTime = Date.now();
-                    }
-                    moveTarget = intendedTarget;
-                } else {
-                    // Start holding ground if we can't find anywhere to go
+            if (intendedTarget) {
+                // 2. Check Arrival
+                if (Utils.distance(this.agent.pos, intendedTarget) < 50) {
                     shouldAdvance = false;
+                } else if (!inChaos) {
+                    this.agent.lastAdvanceTime = Date.now();
                 }
+                moveTarget = intendedTarget;
             } else {
-                const tacticalCover = this.findNearestCover(world, 100);
-                if (tacticalCover && Utils.distance(this.agent.pos, tacticalCover) > 20) {
-                    moveTarget = tacticalCover;
-                }
+                moveTarget = enemyPos;
             }
         } else {
-            moveTarget = enemyPos;
+            // Defensive/Holding: Find nearest cover relative to enemy last known position
+            // Increased radius (Run to cover if exposed)
+            const tacticalCover = this.findNearestCover(world, 500);
+            if (tacticalCover && Utils.distance(this.agent.pos, tacticalCover) > 20) {
+                moveTarget = tacticalCover;
+                // If we don't see them and have no cover to move to, head to last known
+                moveTarget = enemyPos;
+            }
+        }
+        
+        if (moveTarget && this.agent.memory.isUnreachable(moveTarget)) {
+            moveTarget = null; // Cancel move if unreachable
         }
 
         if (this.agent.role === 'MARKSMAN' && dist < 350) {
-            moveTarget = this.findNearestCover(world, 300); 
+            moveTarget = this.findNearestCover(world, 400); 
         }
 
         if (enemy.id) {
-             return { type: 'ATTACK', targetId: enemy.id, moveTarget: moveTarget, score: 2.0, movementMode: shouldAdvance ? 'BOUNDING' : 'TACTICAL' };
+             let score = 2.0;
+             const movementMode = shouldAdvance ? 'BOUNDING' : 'TACTICAL';
+
+             // HIT CHANCE CALCULATION
+             const weapon = this.agent.state.inventory.weapon;
+             const optimal = weapon.optimalRange || 200;
+             const falloff = weapon.falloff || 0.001;
+             let spread = weapon.spread || 0.05;
+             if (dist > optimal) spread += (dist - optimal) * falloff;
+             
+             // Approximate arc size at target distance
+             const arcWidth = dist * spread; 
+             const targetSize = 20; // 2x radius
+             const hitChance = Math.min(1.0, targetSize / Math.max(1, arcWidth));
+             
+             // DECISION LOGIC: SHOULD I FIRE?
+             // Reckless: High Stress, High Extraversion, or "Spray and Pray" roles
+             const isReckless = this.agent.state.stress > 60 || this.agent.traits.extraversion > 0.7 || this.agent.role === 'GUNNER';
+             const isCautious = this.agent.traits.conscientiousness > 0.6 && this.agent.state.stress < 40;
+
+             if (hitChance < 0.15 && !isReckless) {
+                 if (isCautious) {
+                     // Too hard to hit, don't waste ammo. Reposition instead.
+                     score = 0.5; // Downrank ATTACK, prefer MOVE or HIDE
+                 } else {
+                     score *= 0.8;
+                 }
+                 // this.agent.addBark("OUT OF RANGE!");
+             } else if (hitChance > 0.6) {
+                 score += 1.0; // Confident shot
+             }
+
+             return { type: 'ATTACK', targetId: enemy.id, moveTarget: moveTarget, score: score, movementMode: movementMode };
         } else {
             return { type: 'ATTACK', target: enemyPos, moveTarget: moveTarget, score: 2.0, movementMode: shouldAdvance ? 'BOUNDING' : 'TACTICAL' };
         }
@@ -804,17 +919,25 @@ export class Decision {
         if (!enemy) return null;
         
         const enemyPos = enemy.lastKnownPosition || enemy.pos;
+        const rangeSq = range * range;
 
         let bestCoverPos = null;
         let bestTacticalScore = Infinity; 
         
-        world.covers.forEach(c => {
-            const coverCenter = { x: c.x + c.w/2, y: c.y + c.h/2 };
-            const dist = Utils.distance(this.agent.pos, coverCenter);
-            if (dist > range) return;
+        for (let i = 0; i < world.covers.length; i++) {
+            const c = world.covers[i];
+            const cx = c.x + c.w/2;
+            const cy = c.y + c.h/2;
+            
+            const dx = this.agent.pos.x - cx;
+            const dy = this.agent.pos.y - cy;
+            const distSq = dx*dx + dy*dy;
 
-            const gridX = Math.floor((coverCenter.x / world.width) * mem.gridCols);
-            const gridY = Math.floor((coverCenter.y / world.height) * mem.gridRows);
+            if (distSq > rangeSq) continue;
+            const dist = Math.sqrt(distSq);
+
+            const gridX = Math.floor((cx / world.width) * mem.gridCols);
+            const gridY = Math.floor((cy / world.height) * mem.gridRows);
             
             const heat = (gridX >= 0 && gridX < mem.gridCols && gridY >= 0 && gridY < mem.gridRows) 
                          ? mem.heatmap[gridY][gridX] : 0;
@@ -822,10 +945,10 @@ export class Decision {
             let tacticalScore = dist + (heat * 100);
 
             if (tacticalScore < bestTacticalScore) {
-                let safeX = coverCenter.x;
-                let safeY = coverCenter.y;
-                const buffer = 25; // Increased buffer (was 15) to keep agents out of walls
-                const margin = 15; // Margin from wall ends
+                let safeX = cx;
+                let safeY = cy;
+                const buffer = 25;
+                const margin = 15;
                 
                 if (c.w > c.h) {
                     if (enemyPos.y < c.y) safeY = c.y + c.h + buffer;
@@ -838,9 +961,8 @@ export class Decision {
                 }
 
                 if (!this.isSpotBlocked(world, safeX, safeY)) {
-                    // Check Friendly Fire Lines
                     if (!this.isPositionTacticallyValid({x: safeX, y: safeY}, enemyPos, world)) {
-                         tacticalScore += 2000; // Heavy penalty for blocking/being blocked
+                         tacticalScore += 2000; 
                     }
 
                     if (tacticalScore < bestTacticalScore) {
@@ -849,7 +971,7 @@ export class Decision {
                     }
                 }
             }
-        });
+        }
         return bestCoverPos;
     }
 
@@ -918,6 +1040,17 @@ export class Decision {
             }
             return { type: 'RETREAT', target: nearestCover, score: 1, movementMode: 'BOUNDING' };
         }
+        
+        // General retreat
+        // ... (existing logic just returns RETREAT without target, which implies backwards?)
+        // The implementation assumes RETREAT has a target in moveTo usually?
+        // Actually, if action has no target, moveTo isn't called with it.
+        // But let's check nearestCover specifically:
+        
+        if (nearestCover && this.agent.memory.isUnreachable(nearestCover)) {
+             return { type: 'NONE', score: 0 };
+        }
+        
         return { type: 'RETREAT', score: 1, movementMode: 'BOUNDING' };
     }
 
@@ -984,9 +1117,15 @@ export class Decision {
         const evaluateLoot = (item) => {
             const dist = Utils.distance(this.agent.pos, item);
             const hasLOS = world.hasLineOfSight(this.agent.pos, item);
-            const score = dist + (hasLOS ? 0 : 200); 
+            let score = dist + (hasLOS ? 0 : 200); 
+
+            // Priority boost for Medkits when wounded
+            if (item.type === 'Medkit' && this.agent.state.hp < this.agent.state.maxHp * 0.8) {
+                const healthImpact = (1.0 - (this.agent.state.hp / this.agent.state.maxHp)) * 600;
+                score -= healthImpact;
+            }
             
-            if (score < bestScore && dist < this.agent.traits.visionRadius * 1.5) {
+            if (score < bestScore && dist < this.agent.traits.visionRadius * 1.8) {
                 bestScore = score;
                 bestLoot = item;
             }
@@ -999,6 +1138,9 @@ export class Decision {
         }
 
         if (!bestLoot) return { type: 'NONE', score: 0 };
+        
+        if (this.agent.memory.isUnreachable(bestLoot)) return { type: 'NONE', score: 0 };
+        
         return { type: 'LOOT', target: bestLoot, score: 1 };
     }
 
@@ -1165,6 +1307,16 @@ export class Decision {
                 }
             }
             
+            // SMOKE SUPPRESSION: If there's an active smoke cloud near the enemy, spray into it
+            for (const smoke of world.smokes) {
+                const distToEnemy = Utils.distance(smoke, targetPos);
+                if (distToEnemy < smoke.radius + 30) {
+                    baseScore += 1.5;
+                    // this.agent.addBark("EAT SMOKE!"); // Too noisy
+                    break;
+                }
+            }
+            
             if (baseScore > 0.8) {
                 return { type: 'SUPPRESS', target: targetPos, score: baseScore };
             }
@@ -1186,40 +1338,84 @@ export class Decision {
         if (dist > 60 && dist < Config.PHYSICS.GRENADE_RANGE) {
             const hasLOS = enemy.id ? world.hasLineOfSight(this.agent.pos, enemyPos) : false;
 
-            // 1. SMOKE GRENADE LOGIC (Break Contact / Tactical Withdrawal)
+            // 1. SMOKE GRENADE LOGIC (Tactical Concealment)
             const hasSmoke = inventory.some(u => u.type === 'SmokeGrenade' && u.count > 0);
-            if (hasSmoke && (preferredType === 'SmokeGrenade' || this.agent.state.stress > 60 || this.currentThought === THOUGHT_SURVIVAL)) {
-                let smokeScore = 1.0;
-                if (this.currentThought === THOUGHT_SURVIVAL) smokeScore += 2.0;
-                if (this.agent.state.stress > 80) smokeScore += 1.5;
-                if (this.agent.role === 'MEDIC') smokeScore += 1.0;
+            if (hasSmoke && (preferredType === 'SmokeGrenade' || !preferredType)) {
+                let smokeScore = 0;
+                let smokeTarget = null;
 
-                // Throw smoke between self and enemy
-                const smokePos = {
-                    x: (this.agent.pos.x + enemyPos.x) / 2,
-                    y: (this.agent.pos.y + enemyPos.y) / 2
-                };
+                // 1a. MEDICAL SMOKE (Priority)
+                const signals = Array.from(this.agent.memory.distressSignals.values());
+                const distressedAlly = signals.find(s => s.type === 'MEDIC' && Utils.distance(this.agent.pos, s.position) < Config.PHYSICS.GRENADE_RANGE);
+                
+                if (distressedAlly) {
+                    smokeScore = 4.0;
+                    // Throw smoke slightly between the ally and the known enemy direction to mask the rescue
+                    const enemyAngle = Utils.angle(distressedAlly.position, enemyPos);
+                    smokeTarget = {
+                        x: distressedAlly.position.x + Math.cos(enemyAngle) * 40,
+                        y: distressedAlly.position.y + Math.sin(enemyAngle) * 40
+                    };
+                }
 
-                return { type: 'THROW', target: smokePos, grenadeType: 'SmokeGrenade', score: smokeScore };
+                // 1b. OFFENSIVE SMOKE (Breacher Strategy)
+                if (smokeScore < 2.5 && this.agent.role === 'BREACHER' && dist < 300) {
+                    smokeScore = 3.0;
+                    smokeTarget = enemyPos; // Blind them directly
+                }
+
+                // 1c. DEFENSIVE SMOKE (Survival)
+                if (smokeScore < 2.0 && (this.agent.state.stress > 60 || this.currentThought === THOUGHT_SURVIVAL)) {
+                    smokeScore = 2.5;
+                    smokeTarget = {
+                        x: (this.agent.pos.x + enemyPos.x) / 2,
+                        y: (this.agent.pos.y + enemyPos.y) / 2
+                    };
+                }
+
+                if (smokeScore > 1.5 && smokeTarget) {
+                    return { type: 'THROW', target: smokeTarget, grenadeType: 'SmokeGrenade', score: smokeScore };
+                }
             }
 
             // 2. FRAG GRENADE LOGIC (Lethal Flush)
             const hasFrag = inventory.some(u => u.type === 'FragGrenade' && u.count > 0);
             if (hasFrag && (preferredType === 'FragGrenade' || !preferredType)) {
-                let fragScore = 1.2;
+                let fragScore = 1.0;
 
-                // ROLE INFLUENCE: Breachers use grenades to clear rooms/covers
+                // 2a. TARGET SELECTION (Cluster & Cover)
+                const clusterRadius = Config.PHYSICS.FRAG_RADIUS;
+                const enemiesNearby = world.spatial.query(enemyPos.x, enemyPos.y, clusterRadius)
+                    .filter(a => !a.isCover && a.team !== this.agent.team && !a.state.isDead);
+                
+                // Bonus for clusters
+                fragScore += (enemiesNearby.length - 1) * 0.8;
+
+                // 2b. FLUSHING LOGIC
+                // Is the target in cover?
+                const targetInCover = world.covers.some(c => 
+                    enemyPos.x >= c.x - 10 && enemyPos.x <= c.x + c.w + 10 &&
+                    enemyPos.y >= c.y - 10 && enemyPos.y <= c.y + c.h + 10
+                );
+                if (targetInCover) fragScore += 1.5;
+
+                // 2c. COLLATERAL DAMAGE CHECK (Safety)
+                // Don't throw if allies are in the blast zone
+                const alliesInDanger = world.spatial.query(enemyPos.x, enemyPos.y, clusterRadius + 20)
+                    .some(a => !a.isCover && a.team === this.agent.team);
+                if (alliesInDanger) fragScore -= 5.0; // Hard veto
+
+                // ROLE INFLUENCE: Breachers/Riflemen are more aggressive with frags
                 if (this.agent.role === 'BREACHER') fragScore *= 1.5;
+                if (this.agent.role === 'RIFLEMAN') fragScore *= 1.2;
 
                 if (!hasLOS) {
-                     return { type: 'THROW', target: enemyPos, grenadeType: 'FragGrenade', score: fragScore * 2.0 };
+                     fragScore *= 1.5; // Good for lobbing over unseen threats
                 }
                 
-                if (this.agent.traits.agreeableness < 0.4 && Math.random() < 0.3) {
-                     return { type: 'THROW', target: enemyPos, grenadeType: 'FragGrenade', score: fragScore * 1.5 };
+                if (fragScore > 1.2) {
+                    return { type: 'THROW', target: enemyPos, grenadeType: 'FragGrenade', score: fragScore };
                 }
-
-                return { type: 'THROW', target: enemyPos, grenadeType: 'FragGrenade', score: fragScore };
             }
         }
         return { type: 'NONE', score: 0 };
@@ -1266,6 +1462,31 @@ export class Decision {
         }
 
         return { type: 'NONE', score: 0 };
+    }
+
+    scoreSelfHeal(world) {
+        const hpPct = this.agent.state.hp / this.agent.state.maxHp;
+        if (hpPct >= 0.85) return { type: 'NONE', score: 0 };
+
+        const hasMedkit = this.agent.state.inventory.utility.some(u => u.type === 'Medkit' && u.count > 0);
+        if (!hasMedkit) return { type: 'NONE', score: 0 };
+
+        // Score increases as HP drops.
+        let score = (1.0 - hpPct) * 6.0;
+        
+        // If we are safe (in cover), we are more likely to heal
+        if (this.agent.brain.isSafe(world)) {
+            score += 3.0;
+        } else {
+            // If under fire, healing is risky (only do if critical)
+            const threat = this.getThreatSource(world, true);
+            if (threat) {
+                if (hpPct > 0.3) score = 0; // Don't stop to heal if being shot and not dying
+                else score -= 2.0; 
+            }
+        }
+
+        return { type: 'SELF_HEAL', score: score };
     }
 
     scoreRescue(world) {
