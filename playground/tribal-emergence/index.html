@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribal Emergence Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="simulation-container">
+        <canvas id="sim-canvas"></canvas>
+        <div id="inspector-sidebar">
+
+            <div id="agent-details">
+                <div class="placeholder-text">Select a unit to view field data.</div>
+            </div>
+            <div id="personality-chart-container" style="display: none;">
+                <canvas id="personality-canvas"></canvas>
+            </div>
+            <div id="debug-controls">
+                <h3>Visual Overlays</h3>
+                <label class="debug-option"><input type="checkbox" id="toggle-vision"> Vision Cones</label>
+                <label class="debug-option"><input type="checkbox" id="toggle-trust"> Tactical Links</label>
+                <label class="debug-option"><input type="checkbox" id="toggle-comm"> Comm Pulses</label>
+                <label class="debug-option"><input type="checkbox" id="toggle-heatmap"> Awareness Grid</label>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

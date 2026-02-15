@@ -1,0 +1,436 @@
+:root {
+    --bg-main: #1a1a1a;
+    --bg-canvas: #252525;
+    --bg-sidebar: #121214;
+    --bg-sidebar-header: #1a1a1f;
+    --bg-panel: #1e1e24;
+    --text-main: #e0e0e0;
+    --text-muted: #888;
+    --accent: #d4af37;
+    --accent-dim: rgba(212, 175, 55, 0.2);
+    --border-color: #32323d;
+    --sidebar-width: 340px;
+    
+    --color-health: #44cc44;
+    --color-stress: #cc4444;
+    --color-morale: #4444cc;
+    --color-stamina: #d4af37;
+    --color-suppression: #ff8800;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    height: 100dvh;
+    display: flex;
+}
+
+#simulation-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#sim-canvas {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    background-color: var(--bg-canvas);
+}
+
+#inspector-sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border-color);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    z-index: 10;
+    height: 100%;
+    font-size: 14px;
+}
+
+#inspector-sidebar h2 {
+    background: var(--bg-sidebar-header);
+    margin: 0;
+    padding: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+#agent-details {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    min-height: 0;
+}
+
+/* --- Identity Section --- */
+.identity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.agent-id {
+    font-family: 'Courier New', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+}
+
+.squad-badge {
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.team-blue { background: #3b7ad6; color: #fff; }
+.team-red { background: #d63b3b; color: #fff; }
+
+.role-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.captain-star {
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+/* --- Intent Section --- */
+.intent-box {
+    background: var(--bg-panel);
+    border-left: 3px solid var(--accent);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0 4px 4px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.intent-box::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--accent-dim) 0%, transparent 100%);
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.intent-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.intent-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    color: #fff;
+    line-height: 1.3;
+}
+
+/* --- Stats Grid --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.stat-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.stat-track {
+    height: 6px;
+    background: #000;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.stat-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fill-hp { background: var(--color-health); box-shadow: 0 0 8px rgba(68, 204, 68, 0.4); }
+.fill-stress { background: var(--color-stress); box-shadow: 0 0 8px rgba(204, 68, 68, 0.4); }
+.fill-morale { background: var(--color-morale); }
+.fill-stamina { background: var(--color-stamina); }
+.fill-suppression { background: var(--color-suppression); }
+
+/* --- Status Effects --- */
+.status-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.status-badge {
+    background: #2a2a30;
+    color: #aaa;
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 1px solid #3a3a40;
+}
+
+.status-badge.active {
+    background: #d63b3b;
+    color: #fff;
+    border-color: #ff5555;
+    box-shadow: 0 0 10px rgba(214, 59, 59, 0.3);
+    border: 1px solid #ff5555;
+}
+.status-badge.active.buff {
+    background: #3b7ad6;
+    border-color: #5599ff;
+    box-shadow: 0 0 10px rgba(59, 122, 214, 0.3);
+}
+
+/* --- Personality --- */
+#personality-chart-container {
+    padding: 1rem;
+    background: #16161a;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 220px;
+}
+.chart-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+/* --- Debug Controls --- */
+#debug-controls {
+    background: #121214;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+#debug-controls h3 {
+    font-size: 0.75rem;
+    margin: 0 0 10px 0;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.debug-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+}
+.debug-option:hover { color: #fff; }
+
+.debug-option input {
+    appearance: none;
+    width: 14px; height: 14px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 2px;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
+}
+.debug-option input:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.placeholder-text {
+    color: #444;
+    text-align: center;
+    margin-top: 60px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+/* --- HUD / Compact Stats --- */
+.hud-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding-top: 5px;
+}
+
+/* Integrity (HP) - Top Bar */
+.hud-vitals-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.hud-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.hud-value-text {
+    font-family: 'Courier New', monospace;
+    color: #eee;
+    font-size: 0.9rem;
+}
+
+.hud-bar-track {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    position: relative;
+    border-radius: 2px; /* slight rounding */
+}
+.hud-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.2s ease-out;
+}
+.hud-bar-fill.fill-hp { background: var(--color-health); box-shadow: 0 0 10px rgba(68, 204, 68, 0.3); }
+.hud-bar-fill.fill-stamina { background: var(--color-stamina); }
+.hud-bar-fill.fill-morale { background: var(--color-morale); }
+
+/* Combat Grid (Ammo + Stress) */
+.hud-combat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Ammo - Big Typography */
+.hud-ammo-block {
+    display: flex;
+    flex-direction: column;
+}
+.hud-ammo-value {
+    font-family: 'Courier New', monospace;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 0.8;
+    color: #fff;
+    letter-spacing: -2px;
+}
+.hud-ammo-meta {
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 4px;
+    font-weight: 600;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* Stress - Minimalist Circle */
+.hud-stress-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+}
+.hud-stress-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a20;
+    flex-shrink: 0;
+}
+.hud-stress-circle::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; bottom: 4px;
+    background: var(--bg-sidebar);
+    border-radius: 50%;
+}
+.hud-stress-val {
+    position: absolute;
+    z-index: 2;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #fff;
+}
+.hud-stress-label {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.hud-stress-title {
+    font-size: 0.65rem;
+    color: #666;
+    font-weight: 700;
+}
+.hud-stress-status {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-stress);
+}
+
+/* Secondary Lists (Stamina / Morale) */
+.hud-secondary-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 5px;
+    border-top: 1px solid #222;
+    margin-top: 5px;
+}
