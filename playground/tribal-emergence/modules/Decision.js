@@ -176,6 +176,13 @@ export class Decision {
             w += (1 - this.agent.traits.agreeableness) * 0.2;
         }
 
+        // MEDIC override: If I hear a Medic call, I enter "Combat" state (Action state)
+        if (this.agent.role === 'MEDIC') {
+            const hasMedicSignal = Array.from(this.agent.memory.distressSignals.values())
+                .some(s => s.type === 'MEDIC' && Utils.distance(this.agent.pos, s.position) < 500);
+            if (hasMedicSignal) return 3.0;
+        }
+
         // COMMAND INFLUENCE: If leader is fighting, I should fight
         if (this.getLeaderThought(world) === THOUGHT_COMBAT) {
              w += 1.5;
@@ -286,6 +293,13 @@ export class Decision {
         // If no enemies for a while
         const enemy = this.getThreatSource(world, true);
         const timeInState = Date.now() - this.agent.lastThoughtChange;
+
+        // Medic check: Don't relax if someone needs help
+        if (this.agent.role === 'MEDIC') {
+             const hasMedicSignal = Array.from(this.agent.memory.distressSignals.values())
+                .some(s => s.type === 'MEDIC' && Utils.distance(this.agent.pos, s.position) < 500);
+             if (hasMedicSignal) return 0;
+        }
         
         if (!enemy) {
              if (timeInState > 5000) return 0.8; // Relax after 5s of no contact
@@ -318,6 +332,13 @@ export class Decision {
     }
 
     w_ScavangeToCombat(world) {
+        // MEDIC override
+        if (this.agent.role === 'MEDIC') {
+            const hasMedicSignal = Array.from(this.agent.memory.distressSignals.values())
+                .some(s => s.type === 'MEDIC' && Utils.distance(this.agent.pos, s.position) < 500);
+            if (hasMedicSignal) return 3.0;
+        }
+
         // If we bumped into enemy and have some ammo
         const enemy = this.getThreatSource(world, true);
         if (enemy && Utils.distance(this.agent.pos, enemy.pos || enemy.lastKnownPosition) < 150 && this.agent.state.inventory.weapon.ammo > 5) {
@@ -569,9 +590,9 @@ export class Decision {
         
         // 3. Suspected (Heatmap/Sound)
         if (includeSuspected) {
-            const hSize = 16;
-            const gx = Math.floor((this.agent.pos.x / world.width) * hSize);
-            const gy = Math.floor((this.agent.pos.y / world.height) * hSize);
+            const mem = this.agent.memory;
+            const gx = Math.floor((this.agent.pos.x / world.width) * mem.gridCols);
+            const gy = Math.floor((this.agent.pos.y / world.height) * mem.gridRows);
             
             let maxHeat = 0;
             let heatPos = null;
@@ -581,14 +602,14 @@ export class Decision {
             const retentionState = (this.currentThought === THOUGHT_COMBAT || this.currentThought === THOUGHT_SURVIVAL);
             const heatThreshold = retentionState ? 1.0 : 3.0;
 
-            for(let y = Math.max(0, gy-2); y <= Math.min(hSize-1, gy+2); y++) {
-                for(let x = Math.max(0, gx-2); x <= Math.min(hSize-1, gx+2); x++) {
+            for(let y = Math.max(0, gy-2); y <= Math.min(mem.gridRows-1, gy+2); y++) {
+                for(let x = Math.max(0, gx-2); x <= Math.min(mem.gridCols-1, gx+2); x++) {
                     const heat = this.agent.memory.heatmap[y][x];
                     if (heat > heatThreshold && heat > maxHeat) {
                         maxHeat = heat;
                         heatPos = {
-                            x: (x + 0.5) * (world.width / hSize),
-                            y: (y + 0.5) * (world.height / hSize)
+                            x: (x + 0.5) * (world.width / mem.gridCols),
+                            y: (y + 0.5) * (world.height / mem.gridRows)
                         };
                     }
                 }
@@ -641,10 +662,10 @@ export class Decision {
         let maxHeat = 0;
         const mem = this.agent.memory;
         
-        const startCol = this.agent.team === 0 ? 8 : 0;
-        const endCol = this.agent.team === 0 ? 15 : 7;
+        const startCol = this.agent.team === 0 ? Math.floor(mem.gridCols/2) : 0;
+        const endCol = this.agent.team === 0 ? mem.gridCols - 1 : Math.floor(mem.gridCols/2) - 1;
         
-        for (let y = 4; y < 12; y++) {
+        for (let y = 0; y < mem.gridRows; y++) {
             for (let x = startCol; x <= endCol; x++) {
                 if (mem.heatmap[y][x] > maxHeat) {
                     maxHeat = mem.heatmap[y][x];
@@ -655,8 +676,8 @@ export class Decision {
 
         let finalTarget = { x: targetX, y: targetY };
         if (bestHeatCell && maxHeat > 2) {
-            const heatX = (bestHeatCell.x + 0.5) * (world.width / 16);
-            const heatY = (bestHeatCell.y + 0.5) * (world.height / 16);
+            const heatX = (bestHeatCell.x + 0.5) * (world.width / mem.gridCols);
+            const heatY = (bestHeatCell.y + 0.5) * (world.height / mem.gridRows);
             finalTarget = { x: heatX, y: heatY };
         }
         
@@ -725,6 +746,7 @@ export class Decision {
     }
 
     findNearestCover(world, range = 600) {
+        const mem = this.agent.memory;
         const enemy = this.getThreatSource(world, true);
         if (!enemy) return null;
         
@@ -738,11 +760,11 @@ export class Decision {
             const dist = Utils.distance(this.agent.pos, coverCenter);
             if (dist > range) return;
 
-            const gridX = Math.floor((coverCenter.x / world.width) * 16);
-            const gridY = Math.floor((coverCenter.y / world.height) * 16);
+            const gridX = Math.floor((coverCenter.x / world.width) * mem.gridCols);
+            const gridY = Math.floor((coverCenter.y / world.height) * mem.gridRows);
             
-            const heat = (gridX >= 0 && gridX < 16 && gridY >= 0 && gridY < 16) 
-                         ? this.agent.memory.heatmap[gridY][gridX] : 0;
+            const heat = (gridX >= 0 && gridX < mem.gridCols && gridY >= 0 && gridY < mem.gridRows) 
+                         ? mem.heatmap[gridY][gridX] : 0;
             
             let tacticalScore = dist + (heat * 100);
 
@@ -817,11 +839,12 @@ export class Decision {
         if (distToSquad < 60) return { type: 'NONE', score: 0 };
 
         // Real War: Rallying is easier if the destination is safe
-        const gx = Math.floor((squadCenter.x / world.width) * 16);
-        const gy = Math.floor((squadCenter.y / world.height) * 16);
+        const mem = this.agent.memory;
+        const gx = Math.floor((squadCenter.x / world.width) * mem.gridCols);
+        const gy = Math.floor((squadCenter.y / world.height) * mem.gridRows);
         let destinationHeat = 0;
-        if (gx >= 0 && gx < 16 && gy >= 0 && gy < 16) {
-            destinationHeat = this.agent.memory.heatmap[gy][gx];
+        if (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) {
+            destinationHeat = mem.heatmap[gy][gx];
         }
 
         // Factors: Squad proximity, low heat at destination, and morale
@@ -904,10 +927,11 @@ export class Decision {
         const approvalFactor = this.agent.memory.leaderApproval / 100;
         
         // Check heat at destination
-        const gx = Math.floor((leader.pos.x / world.width) * 16);
-        const gy = Math.floor((leader.pos.y / world.height) * 16);
-        const destinationHeat = (gx >= 0 && gx < 16 && gy >= 0 && gy < 16) 
-            ? this.agent.memory.heatmap[gy][gx] : 0;
+        const mem = this.agent.memory;
+        const gx = Math.floor((leader.pos.x / world.width) * mem.gridCols);
+        const gy = Math.floor((leader.pos.y / world.height) * mem.gridRows);
+        const destinationHeat = (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) 
+            ? mem.heatmap[gy][gx] : 0;
             
         // Suicide Order Check: High heat OR known enemy LOS
         const isSuicidal = destinationHeat > Config.WORLD.SUICIDE_ORDER_THRESHOLD;
@@ -962,19 +986,19 @@ export class Decision {
         }
         
         if (!targetPos) {
-            const heatmap = this.agent.memory.heatmap;
+            const mem = this.agent.memory;
+            const heatmap = mem.heatmap;
             let maxHeat = 0;
-            const hSize = 16;
-            const gx = Math.floor((this.agent.pos.x / world.width) * hSize);
-            const gy = Math.floor((this.agent.pos.y / world.height) * hSize);
+            const gx = Math.floor((this.agent.pos.x / world.width) * mem.gridCols);
+            const gy = Math.floor((this.agent.pos.y / world.height) * mem.gridRows);
             
-            for(let y = Math.max(0, gy-2); y <= Math.min(hSize-1, gy+2); y++) {
-                for(let x = Math.max(0, gx-2); x <= Math.min(hSize-1, gx+2); x++) {
+            for(let y = Math.max(0, gy-2); y <= Math.min(mem.gridRows-1, gy+2); y++) {
+                for(let x = Math.max(0, gx-2); x <= Math.min(mem.gridCols-1, gx+2); x++) {
                     const heat = heatmap[y][x];
                     if (heat > 3) {
                          const cellPos = { 
-                            x: (x + 0.5) * (world.width / 16), 
-                            y: (y + 0.5) * (world.height / 16) 
+                            x: (x + 0.5) * (world.width / mem.gridCols), 
+                            y: (y + 0.5) * (world.height / mem.gridRows) 
                         };
                         const dist = Utils.distance(this.agent.pos, cellPos);
                         if (dist < this.agent.state.inventory.weapon.range && heat > maxHeat) {

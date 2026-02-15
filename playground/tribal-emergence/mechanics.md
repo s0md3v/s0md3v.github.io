@@ -99,6 +99,10 @@ The "Brain" uses a Weighted Directed Graph to switch states, now suffering from 
     *   *Crossfire Panic*: Being suppressed from two angles (>90° separation) multiplies stress impact by **2.5x**, breaking morale instantly.
 *   **Tactical Logistics**: Agents share ammo with trusted allies when low.
 *   **Rescue Instinct**: Non-medic agents with high Agreeableness will attempt to rescue/cover downed allies (`scoreRescue`).
+*   **Medic Logic**:
+    *   *Priority Response*: Medics override all other behaviors (Idling, Looting, Socializing) to respond to "MEDIC!" distress signals.
+    *   *Combat Persistence*: Medics will not relax from Combat state while an ally is signaling for help.
+    *   *Intervention*: Upon reaching a wounded ally, Medics consume a Medkit to instantly restore HP and clear "Downed" status, significantly reducing the patient's stress.
 
 ### 2.5. Technical Architecture (Performance & Realism)
 To simulate human limitations and optimize CPU usage, critical systems run on decoupled timelines:

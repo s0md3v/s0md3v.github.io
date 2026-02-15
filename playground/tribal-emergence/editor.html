@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribal Emergence - Level Editor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #toolbar {
+            height: 50px;
+            background-color: #333333;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 15px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        #editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        
+        #sidebar {
+            width: 300px;
+            min-width: 300px;
+            background-color: #252526;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        #sidebar h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #3e3e42;
+            padding-bottom: 10px;
+        }
+
+        #main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #1e1e1e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                linear-gradient(45deg, #2a2a2a 25%, transparent 25%), 
+                linear-gradient(-45deg, #2a2a2a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #2a2a2a 75%), 
+                linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        canvas {
+            background-color: #000;
+            box-shadow: 0 0 40px rgba(0,0,0,0.7);
+            cursor: crosshair;
+        }
+
+        .category-header {
+            font-weight: bold;
+            padding: 8px 12px;
+            background-color: #3e3e42;
+            margin-top: 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .category-header:hover {
+            background-color: #4e4e52;
+        }
+
+        .asset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 0;
+        }
+
+        .asset-item {
+            width: 44px;
+            height: 44px;
+            background-color: #333;
+            border: 2px solid #3e3e42;
+            cursor: pointer;
+            object-fit: contain;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .asset-item:hover {
+            border-color: #007acc;
+            transform: scale(1.1);
+        }
+
+        .asset-item.selected {
+            border-color: #007acc;
+            background-color: #3c3c3c;
+            box-shadow: 0 0 10px rgba(0, 122, 204, 0.5);
+        }
+
+        .spawn-brush {
+            border: 2px solid #555 !important;
+        }
+
+        .spawn-brush.selected {
+            border-color: white !important;
+            box-shadow: 0 0 5px rgba(255,255,255,0.5) !important;
+        }
+
+        .category-header {
+            background-color: #37373d;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-bottom: 1px solid #444;
+            user-select: none;
+            color: #ddd;
+            margin-top: 5px;
+        }
+
+        button {
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #1177bb;
+        }
+        
+        .tool-btn {
+            background-color: #3e3e42;
+        }
+        
+        .tool-btn.active {
+            background-color: #007acc;
+        }
+
+        input, select {
+            background-color: #3c3c3c;
+            color: white;
+            border: 1px solid #3e3e42;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        #status-bar {
+            height: 25px;
+            background-color: #007acc;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 0.75rem;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .icon-btn {
+            background-color: #333;
+            border: 1px solid #444;
+            color: #888;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .icon-btn.active {
+            color: #fff;
+            background-color: #444;
+            border-color: #666;
+        }
+
+        .icon-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toolbar">
+        <button id="btn-save">Save Map</button>
+        <input type="file" id="file-load" accept=".json" style="display: none;">
+        <button id="btn-load">Load Map</button>
+        
+        <div style="flex: 1;"></div>
+        
+        <label>Map Size:</label>
+        <input type="number" id="map-width" value="64" style="width: 60px;">
+        <span style="color: #666;">x</span>
+        <input type="number" id="map-height" value="48" style="width: 60px;">
+        <button id="btn-resize">Resize</button>
+
+        <div style="width: 20px; border-left: 1px solid #444; height: 100%;"></div>
+        
+        <label>Tool:</label>
+        <button class="tool-btn active" data-tool="brush">Brush</button>
+        <button class="tool-btn" data-tool="eraser">Eraser</button>
+        <button class="tool-btn" data-tool="select">Select</button>
+        <button class="tool-btn" data-tool="move" title="Move Object (M)">Move</button>
+
+        <div style="width: 20px;"></div>
+
+        <button id="btn-rotate" title="Rotate Selected (R)">↻</button>
+        
+        <div style="width: 20px;"></div>
+
+        <label>Layer Visibility:</label>
+        <div id="visibility-toggles" style="display: flex; gap: 4px;">
+            <button class="icon-btn active" data-layer="0" title="Toggle Ground Visibility">Ground</button>
+            <button class="icon-btn active" data-layer="1" title="Toggle Objects Visibility">Objects</button>
+            <button class="icon-btn active" data-layer="2" title="Toggle Meta Visibility">Meta</button>
+        </div>
+    </div>
+
+    <div id="editor-container">
+        <div id="sidebar">
+            <h3>Assets</h3>
+            <div id="asset-browser">
+                <div id="spawn-category">
+                    <div class="category-header">Spawns</div>
+                    <div class="asset-list">
+                        <div class="asset-item spawn-brush" data-type="5" style="background-color: #ffff00; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold; font-size:10px;">T1</div>
+                        <div class="asset-item spawn-brush" data-type="6" style="background-color: #ff00ff; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:10px;">T2</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-area">
+            <div id="canvas-container">
+                <canvas id="editor-canvas"></canvas>
+            </div>
+            <div id="status-bar">
+                <span id="coord-display">X: 0, Y: 0</span>
+                <span>Zoom: <span id="zoom-display">200%</span></span>
+                <span id="selected-info"></span>
+                <div style="flex:1"></div>
+                <span>Undo (Ctrl+Z) | Redo (Ctrl+Y)</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="editor.js"></script>
+</body>
+</html>
+

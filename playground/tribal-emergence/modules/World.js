@@ -6,16 +6,14 @@ import { MapGenerator } from './MapGenerator.js';
 import { SpatialGrid } from './SpatialGrid.js';
 import { EventBus } from './EventBus.js';
 
-export class World {
-    constructor(width, height) {
-        this.width = Math.max(1, width);
-        this.height = Math.max(1, height);
-        Config.WORLD.WIDTH = this.width;
-        Config.WORLD.HEIGHT = this.height;
+import { MapLoader } from './MapLoader.js';
 
+export class World {
+    constructor(width, height, audioController, mapData = null) {
+        this.audio = audioController; // Store audio controller
+        
         this.gridSize = Config.WORLD.GRID_SIZE;
         this.events = new EventBus();
-        this.spatial = new SpatialGrid(width, height, Config.WORLD.SPATIAL_GRID_SIZE);
         
         this.agents = [];
         this.projectiles = [];
@@ -27,18 +25,52 @@ export class World {
         this.effects = []; // Visual effects {x, y, radius, type, life}
         this.smokes = []; // {x, y, radius, life}
         this.commandChaos = { 0: 0, 1: 0 }; // team -> time remaining in chaos
+        this.visualLayers = []; // [Layer0, Layer1] from map
 
-        // 1. Map Generation
-        const mapGen = new MapGenerator(width, height, this.gridSize);
-        this.naturalGrid = mapGen.generate(); // 2D array of natural walls
-        this.grid = this.naturalGrid.map(row => [...row]); // Copy for general pathfinding
-        this.walls = mapGen.convertToWalls(this.grid); // Rects
+        if (mapData) {
+             // Load from Map
+             const loader = new MapLoader();
+             const loaded = loader.load(mapData);
+             
+             this.width = loaded.width;
+             this.height = loaded.height;
+             Config.WORLD.WIDTH = this.width;
+             Config.WORLD.HEIGHT = this.height;
 
-        // 2. Decorators
-        this.generateCovers();
-        this.generateBushes();
-        this.spawnAgents();
-        this.spawnLoot();
+             this.grid = loaded.grid;
+             this.naturalGrid = this.grid.map(row => [...row]); // Copy for safety
+             this.walls = loaded.walls;
+             this.bushes = loaded.bushes;
+             this.covers = loaded.covers;
+             this.spawns = loaded.spawns;
+             this.visualLayers = loaded.visualLayers;
+
+             // Initialize Spatial Grid with new dimensions
+             this.spatial = new SpatialGrid(this.width, this.height, Config.WORLD.SPATIAL_GRID_SIZE);
+
+             // Spawn Agents at map spawn points
+             this.spawnAgentsFromMap();
+             this.spawnLoot(); // Loot still random for now? Or adds loot points to map?
+        } else {
+            // Legacy Procedural Generation
+            this.width = Math.max(1, width);
+            this.height = Math.max(1, height);
+            Config.WORLD.WIDTH = this.width;
+            Config.WORLD.HEIGHT = this.height;
+            this.spatial = new SpatialGrid(width, height, Config.WORLD.SPATIAL_GRID_SIZE);
+
+            // 1. Map Generation
+            const mapGen = new MapGenerator(width, height, this.gridSize);
+            this.naturalGrid = mapGen.generate(); // 2D array of natural walls
+            this.grid = this.naturalGrid.map(row => [...row]); // Copy for general pathfinding
+            this.walls = mapGen.convertToWalls(this.grid); // Rects
+
+            // 2. Decorators
+            this.generateCovers();
+            this.generateBushes();
+            this.spawnAgents();
+            this.spawnLoot();
+        }
 
         // 3. Event Listeners
         this.events.on('sound', (data) => this.handleSound(data));
@@ -172,6 +204,51 @@ export class World {
         }
     }
 
+    spawnAgentsFromMap() {
+        const squadComposition = ['MEDIC', 'GUNNER', 'MARKSMAN', 'BREACHER', 'RIFLEMAN', 'RIFLEMAN'];
+        
+        // Group spawns by team
+        const team1Spawns = this.spawns.filter(s => s.team === 0);
+        const team2Spawns = this.spawns.filter(s => s.team === 1);
+
+        // Fallback: If no spawns defined in map, use default random logic
+        if (team1Spawns.length === 0 || team2Spawns.length === 0) {
+            console.warn("No spawn points found in map data. Falling back to random base spawning.");
+            this.spawnAgents();
+            return;
+        }
+
+        // Team 1
+        const team1 = [];
+        for (let i = 0; i < 6; i++) {
+            // Cycle through spawns or reuse if not enough
+            const spawn = team1Spawns[i % team1Spawns.length];
+            if (spawn) {
+                // Add jitter if reusing spawn
+                const x = spawn.x + (Math.random() - 0.5) * 20;
+                const y = spawn.y + (Math.random() - 0.5) * 20;
+                team1.push(new Agent(i, 0, x, y, squadComposition[i], this));
+            }
+        }
+        this.electLeader(team1);
+        this.agents.push(...team1);
+
+        // Team 2
+        const team2 = [];
+        for (let i = 0; i < 6; i++) {
+             const spawn = team2Spawns[i % team2Spawns.length];
+             if (spawn) {
+                const x = spawn.x + (Math.random() - 0.5) * 20;
+                const y = spawn.y + (Math.random() - 0.5) * 20;
+                team2.push(new Agent(i + 6, 1, x, y, squadComposition[i], this));
+             }
+        }
+        this.electLeader(team2);
+        this.agents.push(...team2);
+
+        this.agents.forEach(a => a.initTeammateTrust(this));
+    }
+
     spawnAgents() {
         const squadComposition = ['MEDIC', 'GUNNER', 'MARKSMAN', 'BREACHER', 'RIFLEMAN', 'RIFLEMAN'];
 
@@ -179,7 +256,7 @@ export class World {
         const team1 = [];
         for (let i = 0; i < 6; i++) {
             const pos = this.findSpawnPoint(50, 50, 200, this.height - 50);
-            if (pos) team1.push(new Agent(i, 0, pos.x, pos.y, squadComposition[i]));
+            if (pos) team1.push(new Agent(i, 0, pos.x, pos.y, squadComposition[i], this));
         }
         this.electLeader(team1);
         this.agents.push(...team1);
@@ -188,7 +265,7 @@ export class World {
         const team2 = [];
         for (let i = 0; i < 6; i++) {
             const pos = this.findSpawnPoint(this.width - 200, 50, this.width - 50, this.height - 50);
-            if (pos) team2.push(new Agent(i + 6, 1, pos.x, pos.y, squadComposition[i]));
+            if (pos) team2.push(new Agent(i + 6, 1, pos.x, pos.y, squadComposition[i], this));
         }
         this.electLeader(team2);
         this.agents.push(...team2);
@@ -476,7 +553,9 @@ export class World {
         if (gx < 0 || gy < 0 || gy >= this.grid.length || gx >= this.grid[0].length) {
             return true;
         }
-        return this.grid[gy][gx] === 1; // Only 1 is a hard wall
+        const cell = this.grid[gy][gx];
+        // Non-walkable if Wall (1) or Cover (3, 4)
+        return cell === 1 || cell === 3 || cell === 4;
     }
 
     isVisionBlockedAt(x, y) {
@@ -517,34 +596,52 @@ export class World {
     }
 
     // A* Pathfinding (Now Heat-Aware & Dread-Aware)
+    // A* Pathfinding (Optimized: Uses Coarse Visual Grid)
     findPath(startPos, endPos, heatmap = null, preferStealth = false, dreadZones = []) {
-        const startX = Math.floor(startPos.x / this.gridSize);
-        const startY = Math.floor(startPos.y / this.gridSize);
-        const endX = Math.floor(endPos.x / this.gridSize);
-        const endY = Math.floor(endPos.y / this.gridSize);
+        // Use Coarse Grid (16px) for pathfinding to reduce search space by 16x
+        const step = Config.WORLD.VISUAL_GRID_SIZE;
+        
+        const startX = Math.floor(startPos.x / step);
+        const startY = Math.floor(startPos.y / step);
+        const endX = Math.floor(endPos.x / step);
+        const endY = Math.floor(endPos.y / step);
 
         if (startX === endX && startY === endY) return [];
-        if (this.isWallAt(endPos.x, endPos.y)) return [];
+        if (this.isWallAt(endPos.x, endPos.y)) return []; // End is blocked
 
-        const rows = this.grid.length;
-        const cols = this.grid[0].length;
+        const rows = Math.ceil(this.height / step);
+        const cols = Math.ceil(this.width / step);
         
         const openSet = [{ x: startX, y: startY, g: 0, h: this.heuristic(startX, startY, endX, endY), parent: null }];
         const closedSet = new Set(); 
         
         const getHash = (x, y) => (y << 16) | x;
+        let iterations = 0;
+        const maxIterations = 3000; // Fail-safe limit
 
         while (openSet.length > 0) {
-            openSet.sort((a, b) => (a.g + a.h) - (b.g + b.h));
-            const current = openSet.shift(); 
+            if (iterations++ > maxIterations) break; // Emergency exit
+
+            // Optimized: Simple linear scan instead of sort
+            let lowestIndex = 0;
+            for (let i = 1; i < openSet.length; i++) {
+                if (openSet[i].g + openSet[i].h < openSet[lowestIndex].g + openSet[lowestIndex].h) {
+                    lowestIndex = i;
+                }
+            }
+            const current = openSet[lowestIndex];
             
+            // Remove efficiently
+            if (lowestIndex === openSet.length - 1) openSet.pop();
+            else openSet[lowestIndex] = openSet.pop();
+
             if (current.x === endX && current.y === endY) {
                 const path = [];
                 let curr = current;
                 while (curr.parent) {
                     path.push({ 
-                        x: curr.x * this.gridSize + this.gridSize / 2, 
-                        y: curr.y * this.gridSize + this.gridSize / 2 
+                        x: curr.x * step + step / 2, 
+                        y: curr.y * step + step / 2 
                     });
                     curr = curr.parent;
                 }
@@ -560,39 +657,63 @@ export class World {
 
             for (const neighbor of neighbors) {
                 if (neighbor.x < 0 || neighbor.x >= cols || neighbor.y < 0 || neighbor.y >= rows) continue;
-                if (this.grid[neighbor.y][neighbor.x] === 1) continue;
+                
+                // Improved Collision Check: Sample 4 points to ensure a 20px agent can fit
+                const cx = neighbor.x * step + step/2;
+                const cy = neighbor.y * step + step/2;
+                const offset = step / 3;
+                
+                // If this is the target tile, we skip the strict area check because we know the specific end point is valid
+                const isTargetTile = (neighbor.x === endX && neighbor.y === endY);
+
+                if (!isTargetTile) {
+                    if (this.isWallAt(cx, cy) || 
+                        this.isWallAt(cx - offset, cy - offset) ||
+                        this.isWallAt(cx + offset, cy + offset) ||
+                        this.isWallAt(cx - offset, cy + offset) ||
+                        this.isWallAt(cx + offset, cy - offset)) continue;
+                }
+
                 if (closedSet.has(getHash(neighbor.x, neighbor.y))) continue;
 
-                // Tactical Cost: Map world grid (usually ~40x30) to heatmap (16x16)
+                // Tactical Cost: Map coarse grid to heatmap
                 let tacticalCost = 0;
                 if (heatmap) {
-                    const hx = Math.floor((neighbor.x * this.gridSize / this.width) * 16);
-                    const hy = Math.floor((neighbor.y * this.gridSize / this.height) * 16);
-                    if (hx >= 0 && hx < 16 && hy >= 0 && hy < 16) {
-                        tacticalCost = heatmap[hy][hx] * 10; // Each unit of heat adds 10 "distance" units
+                    const hRows = heatmap.length;
+                    const hCols = heatmap[0].length;
+                    // Map coarse world coords to heatmap coords
+                    const hx = Math.floor((cx / this.width) * hCols);
+                    const hy = Math.floor((cy / this.height) * hRows);
+                    
+                    if (hx >= 0 && hx < hCols && hy >= 0 && hy < hRows) {
+                        tacticalCost = heatmap[hy][hx] * 10; 
                     }
                 }
 
                 // Dread Cost (Ghosts of War)
                 let dreadCost = 0;
                 if (dreadZones && dreadZones.length > 0) {
-                    const nx = neighbor.x * this.gridSize + this.gridSize / 2;
-                    const ny = neighbor.y * this.gridSize + this.gridSize / 2;
-                    
                     for (const dread of dreadZones) {
-                        const dist = Math.hypot(nx - dread.x, ny - dread.y);
+                        const dist = Math.hypot(cx - dread.x, cy - dread.y);
                         if (dist < dread.radius) {
-                            dreadCost += 50; // Huge penalty for walking over a grave
+                            dreadCost += 50; 
                         }
                     }
                 }
 
-                // Movement Cost
+                // Movement Cost & Terrain Logic
                 let moveCost = 1;
-                if (this.grid[neighbor.y][neighbor.x] === 2) {
-                    // Bush Logic
-                    if (preferStealth) moveCost = 1; // Neutral cost to encourage using cover
-                    else moveCost = 10; // High cost to move through bush (avoid unless necessary)
+                
+                // Check terrain type at center of coarse tile
+                const gx = Math.floor(cx / this.gridSize);
+                const gy = Math.floor(cy / this.gridSize);
+                
+                if (gy >= 0 && gy < this.grid.length && gx >= 0 && gx < this.grid[0].length) {
+                    const cell = this.grid[gy][gx];
+                    if (cell === 2) { // Bush
+                        if (preferStealth) moveCost = 1;
+                        else moveCost = 10;
+                    }
                 }
 
                 const gScore = current.g + moveCost + tacticalCost + dreadCost;

@@ -1,11 +1,13 @@
 export const Config = {
     // World Settings
     WORLD: {
-        GRID_SIZE: 20, // Size of pathfinding/obstacle grid cells
-        SPATIAL_GRID_SIZE: 100, // Size of buckets for spatial hashing (collision/vision)
+        GRID_SIZE: 4, // Higher accuracy (4x4px sub-tiles)
+        VISUAL_GRID_SIZE: 16, // Visual asset scale
+        SPATIAL_GRID_SIZE: 100, 
         WIDTH: 0, // Set at runtime
         HEIGHT: 0, // Set at runtime
-        COMMAND_CHAOS_DURATION: 10000 // 10 seconds of chaos after leader death
+        COMMAND_CHAOS_DURATION: 10000, // 10 seconds of chaos after leader death
+        INTEL_GRID_SIZE: 75 // Constant physical resolution for 'vague' intelligence (pixels)
     },
     
     // Agent Settings
@@ -87,31 +89,31 @@ export const Config = {
         RIFLEMAN: {
             hp: 5,
             speedMod: 1.0,
-            weapon: { type: 'Rifle', range: 400, damage: 1, fireRate: 600, ammo: 40, maxAmmo: 40, projectileSpeed: 500 },
+            weapon: { type: 'Rifle', range: 400, damage: 1, fireRate: 600, ammo: 3, maxAmmo: 40, projectileSpeed: 500 },
             utility: [{ type: 'FragGrenade', count: 1 }]
         },
         BREACHER: {
             hp: 8,
             speedMod: 1.1,
-            weapon: { type: 'Shotgun', range: 150, damage: 3, fireRate: 1200, ammo: 12, maxAmmo: 12, projectileSpeed: 400 },
+            weapon: { type: 'Shotgun', range: 150, damage: 3, fireRate: 1200, ammo: 3, maxAmmo: 12, projectileSpeed: 400 },
             utility: [{ type: 'Flashbang', count: 2 }, { type: 'FragGrenade', count: 1 }]
         },
         MARKSMAN: {
             hp: 4,
             speedMod: 1.0,
-            weapon: { type: 'Sniper', range: 800, damage: 5, fireRate: 2000, ammo: 10, maxAmmo: 10, projectileSpeed: 800 },
+            weapon: { type: 'Sniper', range: 800, damage: 5, fireRate: 2000, ammo: 3, maxAmmo: 10, projectileSpeed: 800 },
             utility: [{ type: 'SmokeGrenade', count: 1 }]
         },
         GUNNER: {
             hp: 6,
             speedMod: 0.85,
-            weapon: { type: 'LMG', range: 500, damage: 1, fireRate: 100, ammo: 200, maxAmmo: 200, spread: 0.1, projectileSpeed: 450 },
+            weapon: { type: 'LMG', range: 500, damage: 1, fireRate: 100, ammo: 3, maxAmmo: 200, spread: 0.1, projectileSpeed: 450 },
             utility: []
         },
         MEDIC: {
             hp: 5,
             speedMod: 1.05,
-            weapon: { type: 'SMG', range: 250, damage: 1, fireRate: 100, ammo: 60, maxAmmo: 60, projectileSpeed: 350 },
+            weapon: { type: 'SMG', range: 250, damage: 1, fireRate: 100, ammo: 3, maxAmmo: 60, projectileSpeed: 350 },
             utility: [{ type: 'Medkit', count: 3 }, { type: 'SmokeGrenade', count: 2 }]
         }
     },

@@ -2,22 +2,26 @@ import { Utils } from './Utils.js';
 import { Config } from './Config.js';
 
 export class Memory {
-    constructor() {
-        this.knownHostiles = []; // { id, lastKnownPosition: {x, y}, timestamp }
-        this.dangerZones = []; // { x, y, intensity, timestamp }
-        this.dreadZones = []; // { x, y, radius, timestamp } - Where allies died
-        this.distressSignals = new Map(); // AgentID -> { type, position, timestamp }
-        this.socialCredit = new Map(); // AgentID -> float (trust)
-        this.detectionMeters = new Map(); // AgentID -> float (0-1)
-        this.leaderApproval = 50; // 0-100, starts neutral
-        this.discoveredCovers = new Set(); // Set of cover objects seen
-        this.knownLoot = []; // { x, y, type, timestamp }
+    constructor(worldWidth = 1200, worldHeight = 800) {
+        this.knownHostiles = []; 
+        this.dangerZones = []; 
+        this.dreadZones = []; 
+        this.distressSignals = new Map(); 
+        this.socialCredit = new Map(); 
+        this.detectionMeters = new Map(); 
+        this.leaderApproval = 50; 
+        this.discoveredCovers = new Set(); 
+        this.knownLoot = []; 
         
-        // 16x16 Spatial Heatmap
-        this.gridSize = 16;
-        this.heatmap = Array(16).fill(0).map(() => Array(16).fill(0));
-        this.obstacleMap = Array(16).fill(-1).map(() => Array(16).fill(-1)); // -1: unknown, 0: walk, 1: wall
-        this.traumaLevel = 0; // Cumulative permanent stress
+        // PHYSICAL RESOLUTION: Keep intelligence 'vague' regardless of map size
+        // One cell = Config.WORLD.INTEL_GRID_SIZE pixels (approx 75px)
+        const cellRes = Config.WORLD.INTEL_GRID_SIZE;
+        this.gridCols = Math.max(8, Math.floor(worldWidth / cellRes));
+        this.gridRows = Math.max(8, Math.floor(worldHeight / cellRes));
+        
+        this.heatmap = Array(this.gridRows).fill(0).map(() => Array(this.gridCols).fill(0));
+        this.obstacleMap = Array(this.gridRows).fill(-1).map(() => Array(this.gridCols).fill(-1));
+        this.traumaLevel = 0; 
     }
 
     modifyLeaderApproval(amount) {
@@ -25,14 +29,14 @@ export class Memory {
     }
 
     updateHeat(x, y, world, amount = 1) {
-        const cellX = Math.floor((x / world.width) * this.gridSize);
-        const cellY = Math.floor((y / world.height) * this.gridSize);
+        const cellX = Math.floor((x / world.width) * this.gridCols);
+        const cellY = Math.floor((y / world.height) * this.gridRows);
 
         for (let dy = -1; dy <= 1; dy++) {
             for (let dx = -1; dx <= 1; dx++) {
                 const nx = cellX + dx;
                 const ny = cellY + dy;
-                if (nx >= 0 && nx < this.gridSize && ny >= 0 && ny < this.gridSize) {
+                if (nx >= 0 && nx < this.gridCols && ny >= 0 && ny < this.gridRows) {
                     const inc = (dx === 0 && dy === 0) ? amount : amount * 0.5;
                     this.heatmap[ny][nx] = Math.min(10, this.heatmap[ny][nx] + inc);
                 }
@@ -44,10 +48,10 @@ export class Memory {
         if (confidence < 0.3) return; // Ignore low confidence intel
 
         // Knowledge is not additive: take the maximum awareness level for each cell
-        for (let y = 0; y < this.gridSize; y++) {
-            for (let x = 0; x < this.gridSize; x++) {
+        for (let y = 0; y < this.gridRows; y++) {
+            for (let x = 0; x < this.gridCols; x++) {
                 // Diminished returns on untrusted heat
-                const incomingHeat = otherHeatmap[y][x] * confidence;
+                const incomingHeat = (otherHeatmap[y] ? otherHeatmap[y][x] : 0) * confidence;
                 this.heatmap[y][x] = Math.max(this.heatmap[y][x], incomingHeat);
             }
         }
@@ -122,8 +126,8 @@ export class Memory {
 
         // Decay heatmap
         const decayAmount = 0.5 * (dt / 1000); // 0.5 units per second
-        for (let y = 0; y < this.gridSize; y++) {
-            for (let x = 0; x < this.gridSize; x++) {
+        for (let y = 0; y < this.gridRows; y++) {
+            for (let x = 0; x < this.gridCols; x++) {
                 if (this.heatmap[y][x] > 0) {
                     this.heatmap[y][x] = Math.max(0, this.heatmap[y][x] - decayAmount);
                 }

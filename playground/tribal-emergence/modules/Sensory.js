@@ -106,7 +106,11 @@ export class Sensory {
             const dist = Utils.distance(this.agent.pos, item);
             if (dist > range) continue;
 
-            if (world.hasLineOfSight(this.agent.pos, item)) {
+            const angleTo = Utils.angle(this.agent.pos, item);
+            const inFOV = Math.abs(Utils.angleDiff(this.agent.angle, angleTo)) <= fov / 2;
+            const inPeripheral = dist < 60;
+
+            if ((inFOV || inPeripheral) && world.hasLineOfSight(this.agent.pos, item)) {
                  const mem = this.agent.memory.knownLoot;
                  const existing = mem.find(l => l.x === item.x && l.y === item.y);
                  if (!existing) {
@@ -114,6 +118,25 @@ export class Sensory {
                  } else {
                      existing.timestamp = Date.now();
                  }
+            }
+        }
+
+        // 4b. Cleanup Ghost Loot (Visual Verification)
+        const mem = this.agent.memory.knownLoot;
+        for (let i = mem.length - 1; i >= 0; i--) {
+            const known = mem[i];
+            const dist = Utils.distance(this.agent.pos, known);
+            if (dist > range) continue;
+
+            const angleTo = Utils.angle(this.agent.pos, known);
+            const inFOV = Math.abs(Utils.angleDiff(this.agent.angle, angleTo)) <= fov / 2;
+            
+            if (inFOV && world.hasLineOfSight(this.agent.pos, known)) {
+                // We are looking right at where it should be. Is it actually there?
+                const stillThere = world.loot.some(l => l.x === known.x && l.y === known.y);
+                if (!stillThere) {
+                    mem.splice(i, 1);
+                }
             }
         }
 
@@ -143,10 +166,11 @@ export class Sensory {
 
     updateObstacleMap(x, y, world, val) {
         // Safe update
-        const gx = Math.floor((x / world.width) * 16);
-        const gy = Math.floor((y / world.height) * 16);
-        if (gx >= 0 && gx < 16 && gy >= 0 && gy < 16) {
-            this.agent.memory.obstacleMap[gy][gx] = val;
+        const mem = this.agent.memory;
+        const gx = Math.floor((x / world.width) * mem.gridCols);
+        const gy = Math.floor((y / world.height) * mem.gridRows);
+        if (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) {
+            mem.obstacleMap[gy][gx] = val;
         }
     }
 

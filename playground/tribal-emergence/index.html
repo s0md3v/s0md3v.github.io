@@ -26,6 +26,30 @@
             </div>
         </div>
     </div>
+    <div id="ui-layer">
+        <div id="unit-card" class="panel">
+            <!-- Details extracted via JS -->
+                 UNIT #009 <span style="float:right; color:#ff4444">BRAVO</span>
+                 <br><br>
+                 <div id="unit-status">...</div>
+        </div>
+    </div>
+    
+    <!-- Start Menu Overlay -->
+    <div id="start-menu" style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:1000; color:white;">
+        <h1>TRIBAL EMERGENCE</h1>
+        <div style="margin: 20px; text-align: center;">
+            <p>Select Map (JSON)</p>
+            <input type="file" id="map-select" accept=".json" style="color:white; margin-bottom: 20px;">
+            <br>
+            <button id="btn-start" style="padding:10px 20px; font-size:1.2em; cursor:pointer;">START SIMULATION</button>
+            <br><br>
+            <button id="btn-random" style="padding:5px 10px; cursor:pointer;">Generate Random Map</button>
+        </div>
+        <br>
+        <a href="editor.html" target="_blank" style="color:#007acc; text-decoration:none; font-size: 1.1em;">Open Level Editor</a>
+    </div>
+
     <script type="module" src="main.js"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@ import { Projectile } from './Projectile.js';
 import { Config } from './Config.js';
 
 export class Agent {
-    constructor(id, team, x, y, role = 'RIFLEMAN') {
+    constructor(id, team, x, y, role = 'RIFLEMAN', world) {
         this.id = id;
         this.team = team;
         this.pos = { x, y };
@@ -20,7 +20,7 @@ export class Agent {
         this.role = role;
         
         this.state = new State(this.role);
-        this.memory = new Memory();
+        this.memory = new Memory(world.width, world.height);
         
         this.sensory = new Sensory(this);
         this.brain = new Decision(this);
@@ -119,12 +119,12 @@ export class Agent {
         stressBaseline += this.memory.traumaLevel;
         
         // Heatmap awareness (Uncertainty)
-        const hSize = 16;
-        const gx = Math.floor((this.pos.x / world.width) * hSize);
-        const gy = Math.floor((this.pos.y / world.height) * hSize);
+        const mem = this.memory;
+        const gx = Math.floor((this.pos.x / world.width) * mem.gridCols);
+        const gy = Math.floor((this.pos.y / world.height) * mem.gridRows);
         let localHeat = 0;
-        if (gx >= 0 && gx < hSize && gy >= 0 && gy < hSize) {
-            localHeat = this.memory.heatmap[gy][gx];
+        if (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) {
+            localHeat = mem.heatmap[gy][gx];
         }
 
         const visibleEnemies = this.sensory.scan(world).filter(a => a.team !== this.team && this.memory.isSpotted(a.id));
@@ -300,6 +300,7 @@ export class Agent {
 
     takeDamage(amount, world = null) {
         this.state.takeDamage(amount);
+        if (world && world.audio) world.audio.playHit();
         
         // CHANCE TO FREEZE (Shock)
         if (amount > 1 && Math.random() < Config.AGENT.FROZEN_PROB_PER_HIT) {
@@ -581,6 +582,7 @@ export class Agent {
         // 5. Fire!
         weapon.ammo--;
         this.state.lastFireTime = now;
+        if (world && world.audio) world.audio.playGunshot();
 
         // STRESS PENALTY: Accuracy suffers when panicked
         const stressAccPenalty = (this.state.stress / 100) * Config.AGENT.STRESS_ACCURACY_MULT;
@@ -766,11 +768,29 @@ export class Agent {
         const nextX = this.pos.x + Math.cos(moveAngle) * dist;
         const nextY = this.pos.y + Math.sin(moveAngle) * dist;
 
-        if (!world.isWallAt(nextX, nextY)) {
-             this.pos.x = nextX;
-             this.pos.y = nextY;
-        } else {
-            // If stuck against a wall, force path recalculation
+        // Sliding Collision with Radius (10px)
+        const rad = this.radius;
+        const canMoveX = !world.isWallAt(nextX - rad, this.pos.y) && 
+                         !world.isWallAt(nextX + rad, this.pos.y) &&
+                         !world.isWallAt(nextX, this.pos.y - rad) &&
+                         !world.isWallAt(nextX, this.pos.y + rad);
+
+        const canMoveY = !world.isWallAt(this.pos.x - rad, nextY) && 
+                         !world.isWallAt(this.pos.x + rad, nextY) &&
+                         !world.isWallAt(this.pos.x, nextY - rad) &&
+                         !world.isWallAt(this.pos.x, nextY + rad);
+        
+        // Try to move X
+        if (canMoveX) {
+            this.pos.x = nextX;
+        }
+        // Try to move Y
+        if (canMoveY) {
+            this.pos.y = nextY;
+        }
+
+        // If both failed, we are stuck against a corner or face
+        if (!canMoveX && !canMoveY) {
             this.lastPathTarget = null;
         }
     }
@@ -816,16 +836,27 @@ export class Agent {
             case 'LOOT':
                 if (action.target) {
                     const dist = Utils.distance(this.pos, action.target);
-                    if (dist < 15) {
-                        const idx = world.loot.indexOf(action.target);
+                    if (Math.random() < 0.01) this.addBark("GETTING LOOT");
+                    
+                    if (dist < 30) {
+                        // Support both direct reference and memory-copy matching
+                        const idx = world.loot.findIndex(l => 
+                            l === action.target || 
+                            (l.x === action.target.x && l.y === action.target.y)
+                        );
                         if (idx > -1) {
                             const item = world.loot.splice(idx, 1)[0];
+                            console.log(`Agent ${this.id} picked up ${item.type} at ${item.x}, ${item.y}`);
                             this.state.morale = Math.min(100, this.state.morale + 15);
                             this.targetPos = null;
+                            
+                            // Remove from my own memory so I don't try to loop back if re-evaluating
+                            this.memory.knownLoot = this.memory.knownLoot.filter(l => l.x !== item.x || l.y !== item.y);
+
                             if (item.type === 'Medkit') this.state.hp = Math.min(this.state.maxHp, this.state.hp + 1);
                             else if (item.type === 'WeaponCrate') {
                                 this.state.inventory.weapon = { 
-                                    type: 'Fast Gun', projectileSpeed: 600, fireRate: 300, 
+                                    type: 'Fast Gun', range: 500, projectileSpeed: 600, fireRate: 300, 
                                     damage: 2, ammo: 120, maxAmmo: 120 
                                 };
                             } else if (item.type === 'AmmoCrate') {
@@ -870,7 +901,38 @@ export class Agent {
                 }
                 break;
             case 'HEAL':
-                // ... (previous logic)
+                if (action.targetId) {
+                    const patient = world.agents.find(a => a.id === action.targetId);
+                    if (patient && Utils.distance(this.pos, patient.pos) < 30) {
+                        const medkitIdx = this.state.inventory.utility.findIndex(u => u.type === 'Medkit' && u.count > 0);
+                        if (medkitIdx > -1) {
+                            // Consume Medkit
+                            this.state.inventory.utility[medkitIdx].count--;
+
+                            // Apply Healing
+                            patient.state.isDowned = false;
+                            patient.state.hp = patient.state.maxHp;
+                            patient.state.modifyStress(-50); // Huge relief
+                            patient.state.fatigue = Math.max(0, patient.state.fatigue - 20);
+
+                            // Social & Feedback
+                            this.addBark("YOU'RE GOOD!");
+                            patient.addBark("THANKS DOC!");
+                            this.memory.modifyTrust(patient.id, 0.5);
+                            patient.memory.modifyTrust(this.id, 0.5);
+                            
+                            // Remove signal
+                            this.memory.distressSignals.delete(patient.id);
+                        } else {
+                            this.addBark("I'M OUT!");
+                            // Remove signal so we don't loop
+                            this.memory.distressSignals.delete(patient.id);
+                        }
+                    } else if (patient) {
+                        // Fail-safe move (should be handled by Decision)
+                        this.moveTo(patient.pos, dt, world, turnSpeed);
+                    }
+                }
                 break;
             case 'RESUPPLY':
                 if (action.targetId) {

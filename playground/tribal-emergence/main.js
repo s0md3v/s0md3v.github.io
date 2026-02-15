@@ -1,41 +1,98 @@
 import { World } from './modules/World.js';
 import { Renderer } from './modules/Renderer.js';
 import { Utils } from './modules/Utils.js';
+import { AudioController } from './modules/AudioController.js';
 
 let selectedAgent = null;
+
+// Initialize Audio
+const audioController = new AudioController();
+
+const resumeAudio = () => {
+    if (audioController.context && audioController.context.state === 'suspended') {
+        audioController.context.resume().then(() => {
+            console.log("AudioContext resumed successfully.");
+        }).catch(err => console.warn("AudioContext resume failed:", err));
+    }
+};
+
+window.addEventListener('click', resumeAudio, { once: true });
+window.addEventListener('keydown', resumeAudio, { once: true });
+window.addEventListener('touchstart', resumeAudio, { once: true });
 
 
 const canvas = document.getElementById('sim-canvas');
 const ctx = canvas.getContext('2d');
+let world, renderer;
+let animationId;
 
 // Resize canvas to fill available space dynamically
 function resizeCanvas() {
-    // Set internal resolution to match display size
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-const world = new World(canvas.width, canvas.height);
-const renderer = new Renderer(ctx, world);
+function startGame(mapData = null) {
+    world = new World(canvas.width, canvas.height, audioController, mapData);
+    renderer = new Renderer(ctx, world);
+    
+    // Wire up Debug Toggles
+    const updateDebug = () => {
+        renderer.debugOptions.showVision = document.getElementById('toggle-vision').checked;
+        renderer.debugOptions.showTrust = document.getElementById('toggle-trust').checked;
+        renderer.debugOptions.showComm = document.getElementById('toggle-comm').checked;
+        renderer.debugOptions.showHeatmap = document.getElementById('toggle-heatmap').checked;
+    };
+    
+    document.getElementById('toggle-vision').onchange = updateDebug;
+    document.getElementById('toggle-trust').onchange = updateDebug;
+    document.getElementById('toggle-comm').onchange = updateDebug;
+    document.getElementById('toggle-heatmap').onchange = updateDebug;
+    updateDebug(); // Init
 
-// Debug toggle handlers
-document.getElementById('toggle-vision').addEventListener('change', (e) => {
-    renderer.debugOptions.showVision = e.target.checked;
-});
-document.getElementById('toggle-trust').addEventListener('change', (e) => {
-    renderer.debugOptions.showTrust = e.target.checked;
-});
-document.getElementById('toggle-comm').addEventListener('change', (e) => {
-    renderer.debugOptions.showComm = e.target.checked;
-});
-document.getElementById('toggle-heatmap').addEventListener('change', (e) => {
-    renderer.debugOptions.showHeatmap = e.target.checked;
-});
+    // Hide Menu
+    document.getElementById('start-menu').style.display = 'none';
+
+    // Start Loop
+    lastTime = performance.now();
+    loop(lastTime);
+}
+
+// Menu Handlers
+document.getElementById('btn-random').onclick = () => {
+    resumeAudio();
+    startGame(null);
+};
+
+document.getElementById('btn-start').onclick = () => {
+    const fileInput = document.getElementById('map-select');
+    const file = fileInput.files[0];
+    
+    resumeAudio();
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                startGame(json);
+            } catch (err) {
+                alert("Invalid Map File");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    } else {
+        alert("Please select a map file or choose Random.");
+    }
+};
+
 
 // Inspector click handler
 canvas.addEventListener('mousedown', (e) => {
+    if (!world) return;
     const rect = canvas.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
     const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
@@ -45,11 +102,13 @@ canvas.addEventListener('mousedown', (e) => {
 });
 
 function updateInspector() {
+    if (!world) return;
     const inspector = document.getElementById('agent-details');
     const chartContainer = document.getElementById('personality-chart-container');
     const agent = selectedAgent;
 
-    if (agent) {
+    if (agent && !agent.state.isDead) { // Only show alive agents or recently dead?
+        // ... (existing logic)
         const weapon = agent.state.inventory.weapon;
         const hpPercent = (agent.state.hp / agent.state.maxHp) * 100;
         const stressPercent = agent.state.stress;
@@ -288,6 +347,8 @@ function getActionDescription(agent) {
 
 let lastTime = performance.now();
 function loop(timestamp) {
+    if (!world) return;
+    
     const dt = Math.min(100, timestamp - lastTime);
     lastTime = timestamp;
 
@@ -295,7 +356,5 @@ function loop(timestamp) {
     renderer.render();
     updateInspector();
 
-    requestAnimationFrame(loop);
+    animationId = requestAnimationFrame(loop);
 }
-
-requestAnimationFrame(loop);

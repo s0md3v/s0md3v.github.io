@@ -10,6 +10,20 @@ export class Renderer {
             showComm: false,
             showHeatmap: false
         };
+        
+        // Load Sprites
+        this.sprites = {
+            blue_alive: new Image(),
+            blue_down: new Image(),
+            red_alive: new Image(),
+            red_down: new Image()
+        };
+        this.sprites.blue_alive.src = './assets/blue_alive.bmp';
+        this.sprites.blue_down.src = './assets/blue_down.bmp';
+        this.sprites.red_alive.src = './assets/red_alive.bmp';
+        this.sprites.red_down.src = './assets/red_down.bmp';
+        
+        this.tileCache = {};
     }
 
     render() {
@@ -17,57 +31,107 @@ export class Renderer {
         this.ctx.fillStyle = '#252525';
         this.ctx.fillRect(0, 0, this.world.width, this.world.height);
 
-        this.drawMap();
-        this.drawCovers();
-        this.drawBushes();
+        this.drawVisualLayers(); // NEW: Draw map tiles
+
+        // this.drawMap(); // OLD: Debug View of Walls (Optional, maybe keep for debug?)
+        // If we have visual layers, we might not want to draw the ugly gray walls on top.
+        // But for now, let's keep walls but maybe make them transparent if map is loaded?
+        // Actually, let's only draw walls if NO visual layers exist, or debug is on.
+        if (this.world.visualLayers.length === 0 || this.debugOptions.showVision) {
+            this.drawMap();
+        }
+
+        // Only draw debug markers if vision debug is on
+        if (this.debugOptions.showVision) {
+            this.drawCovers();
+            this.drawBushes();
+            this.drawObstacleMap();
+        }
+
         this.drawSmokes();
         this.drawLoot();
         this.drawAgents();
         this.drawProjectiles();
         this.drawHeatmap();
-        this.drawObstacleMap();
         this.drawEffects();
         this.drawBarks();
         this.drawDebug();
     }
 
-    drawBarks() {
-        this.ctx.font = 'bold 14px monospace';
-        this.ctx.textAlign = 'center';
+    drawVisualLayers() {
+        if (!this.world.visualLayers) return;
         
-        for (const agent of this.world.agents) {
-            if (!agent.barks) continue;
-            
-            agent.barks.forEach((bark, i) => {
-                const lifeRatio = bark.life / 2000;
-                const alpha = Math.min(1.0, lifeRatio * 2); 
-                const yOffset = (1 - lifeRatio) * 30; // Float up 30px
+        this.world.visualLayers.forEach(layer => {
+            if (!layer) return;
+            for (const [key, data] of Object.entries(layer)) {
+                const [gx, gy] = key.split(',').map(Number);
+                const x = gx * Config.WORLD.VISUAL_GRID_SIZE;
+                const y = gy * Config.WORLD.VISUAL_GRID_SIZE;
+
+                // Handle both old string format and new object format
+                const path = typeof data === 'string' ? data : data.path;
+                const tx = data.tx || 1;
+                const ty = data.ty || 1;
+                const rot = data.rot || 0;
                 
-                this.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                this.ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
-                this.ctx.lineWidth = 3;
+                let img = this.tileCache[path];
+                if (!img) {
+                    img = new Image();
+                    img.src = path;
+                    this.tileCache[path] = img;
+                }
                 
-                const by = agent.pos.y - 40 - yOffset - (i * 15); // Stack if multiple
-                
-                this.ctx.strokeText(bark.text, agent.pos.x, by);
-                this.ctx.fillText(bark.text, agent.pos.x, by);
-            });
+                if (img.complete) {
+                    const w = Config.WORLD.VISUAL_GRID_SIZE * tx;
+                    const h = Config.WORLD.VISUAL_GRID_SIZE * ty;
+                    
+                    // Logic MUST match editor.js renderObject
+                    let curW = w;
+                    let curH = h;
+                    if (rot % 2 !== 0) {
+                        curW = h;
+                        curH = w;
+                    }
+
+                    if (rot !== 0) {
+                        const cx = x + curW/2;
+                        const cy = y + curH/2;
+                        
+                        this.ctx.save();
+                        this.ctx.translate(cx, cy);
+                        this.ctx.rotate(rot * Math.PI / 2);
+                        this.ctx.drawImage(img, -w/2, -h/2, w, h);
+                        this.ctx.restore();
+                    } else {
+                        this.ctx.drawImage(img, x, y, w, h);
+                    }
+                }
+            }
+        });
+    }
+
+    drawMap() {
+        this.ctx.fillStyle = '#444';
+        for (const wall of this.world.walls) {
+            this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
         }
     }
 
-    drawSmokes() {
-        for (const s of this.world.smokes) {
-            const alpha = Math.min(0.4, s.life / 2000); // Fade out at the end
-            this.ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`;
-            this.ctx.beginPath();
-            this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            // Inner "thick" part
-            this.ctx.fillStyle = `rgba(150, 150, 150, ${alpha * 0.5})`;
-            this.ctx.beginPath();
-            this.ctx.arc(s.x, s.y, s.radius * 0.6, 0, Math.PI * 2);
-            this.ctx.fill();
+    drawCovers() {
+        this.ctx.fillStyle = 'rgba(74, 226, 114, 0.4)'; // Semi-transparent green
+        this.ctx.strokeStyle = 'rgba(74, 226, 114, 0.8)';
+        this.ctx.lineWidth = 1;
+        for (const cover of this.world.covers) {
+            // Color based on Health (Green -> Red)
+            const hpRatio = cover.hp / cover.maxHp;
+            const r = Math.floor(255 * (1 - hpRatio));
+            const g = Math.floor(255 * hpRatio);
+            
+            this.ctx.fillStyle = `rgba(${r}, ${g}, 114, 0.4)`;
+            this.ctx.strokeStyle = `rgba(${r}, ${g}, 114, 0.8)`;
+            
+            this.ctx.fillRect(cover.x, cover.y, cover.w, cover.h);
+            this.ctx.strokeRect(cover.x, cover.y, cover.w, cover.h);
         }
     }
 
@@ -96,85 +160,18 @@ export class Renderer {
         }
     }
 
-    drawEffects() {
-        this.ctx.fillStyle = 'rgba(255, 100, 50, 0.6)';
-        for (const e of this.world.effects) {
-            if (e.type === 'EXPLOSION') {
-                 this.ctx.beginPath();
-                 this.ctx.arc(e.x, e.y, e.radius * (1 - e.life/300), 0, Math.PI * 2);
-                 this.ctx.fill();
-            }
-        }
-    }
-
-    drawHeatmap() {
-        if (!this.debugOptions.showHeatmap) return;
-
-        const inspector = document.getElementById('agent-details');
-        if (!inspector) return;
-        
-        const agentIdMatch = inspector.innerHTML.match(/UNIT #(\d+)/); 
-        if (!agentIdMatch) return;
-        
-        const agentId = parseInt(agentIdMatch[1]);
-        const agent = this.world.agents.find(a => a.id === agentId);
-        if (!agent) return;
-
-        const grid = agent.memory.heatmap;
-        const rows = agent.memory.gridSize;
-        const cols = agent.memory.gridSize;
-        const cellW = this.world.width / cols;
-        const cellH = this.world.height / rows;
-
-        for (let y = 0; y < rows; y++) {
-            for (let x = 0; x < cols; x++) {
-                const heat = grid[y][x];
-                if (heat > 0) {
-                    this.ctx.fillStyle = `rgba(255, 0, 0, ${heat / 20})`; 
-                    this.ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
-                }
-            }
-        }
-    }
-
-    drawObstacleMap() {
-        if (!this.debugOptions.showHeatmap) return; // Share toggle for now or add new one
-
-        const inspector = document.getElementById('agent-details');
-        if (!inspector) return;
-        
-        const agentIdMatch = inspector.innerHTML.match(/UNIT #(\d+)/);
-        if (!agentIdMatch) return;
-        
-        const agentId = parseInt(agentIdMatch[1]);
-        const agent = this.world.agents.find(a => a.id === agentId);
-        if (!agent) return;
-
-        const grid = agent.memory.obstacleMap;
-        const rows = 16;
-        const cols = 16;
-        const cellW = this.world.width / cols;
-        const cellH = this.world.height / rows;
-
-        for (let y = 0; y < rows; y++) {
-            for (let x = 0; x < cols; x++) {
-                const type = grid[y][x];
-                if (type === 1) {
-                    this.ctx.fillStyle = `rgba(255, 255, 255, 0.15)`; // Discovered wall
-                    this.ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
-                } else if (type === 0) {
-                    this.ctx.strokeStyle = `rgba(255, 255, 255, 0.05)`; // Discovered empty
-                    this.ctx.strokeRect(x * cellW, y * cellH, cellW, cellH);
-                }
-            }
-        }
-    }
-
-    drawProjectiles() {
-        this.ctx.fillStyle = '#fff';
-        for (const p of this.world.projectiles) {
+    drawSmokes() {
+        for (const s of this.world.smokes) {
+            const alpha = Math.min(0.4, s.life / 2000); // Fade out at the end
+            this.ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`;
             this.ctx.beginPath();
-            this.ctx.arc(p.pos.x, p.pos.y, p.radius, 0, Math.PI * 2);
+            this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // Inner "thick" part
+            this.ctx.fillStyle = `rgba(150, 150, 150, ${alpha * 0.5})`;
+            this.ctx.beginPath();
+            this.ctx.arc(s.x, s.y, s.radius * 0.6, 0, Math.PI * 2);
             this.ctx.fill();
         }
     }
@@ -193,55 +190,48 @@ export class Renderer {
         }
     }
 
-    drawMap() {
-        this.ctx.fillStyle = '#444';
-        for (const wall of this.world.walls) {
-            this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-        }
-    }
-
-    drawCovers() {
-        this.ctx.fillStyle = 'rgba(74, 226, 114, 0.4)'; // Semi-transparent green
-        this.ctx.strokeStyle = 'rgba(74, 226, 114, 0.8)';
-        this.ctx.lineWidth = 1;
-        for (const cover of this.world.covers) {
-            // Color based on Health (Green -> Red)
-            const hpRatio = cover.hp / cover.maxHp;
-            const r = Math.floor(255 * (1 - hpRatio));
-            const g = Math.floor(255 * hpRatio);
-            
-            this.ctx.fillStyle = `rgba(${r}, ${g}, 114, 0.4)`;
-            this.ctx.strokeStyle = `rgba(${r}, ${g}, 114, 0.8)`;
-            
-            this.ctx.fillRect(cover.x, cover.y, cover.w, cover.h);
-            this.ctx.strokeRect(cover.x, cover.y, cover.w, cover.h);
-        }
-    }
-
     drawAgents() {
         for (const agent of this.world.agents) {
             this.ctx.save();
             this.ctx.translate(agent.pos.x, agent.pos.y);
             this.ctx.rotate(agent.angle);
 
-            // Body
-            this.ctx.beginPath();
-            if (agent.state.isDowned) {
-                this.ctx.ellipse(0, 0, agent.radius * 1.5, agent.radius * 0.7, 0, 0, Math.PI * 2);
+            // Select Sprite
+            let sprite = null;
+            if (agent.team === 0) {
+                sprite = agent.state.isDowned ? this.sprites.blue_down : this.sprites.blue_alive;
             } else {
-                this.ctx.arc(0, 0, agent.radius, 0, Math.PI * 2);
+                sprite = agent.state.isDowned ? this.sprites.red_down : this.sprites.red_alive;
             }
-            this.ctx.fillStyle = agent.team === 0 ? '#4a90e2' : '#e24a4a'; // Blue vs Red
-            this.ctx.fill();
-            this.ctx.strokeStyle = agent.state.inventory.weapon.type === 'Fast Gun' ? '#d4af37' : '#fff';
-            this.ctx.lineWidth = agent.state.inventory.weapon.type === 'Fast Gun' ? 3 : 2;
-            this.ctx.stroke();
+
+            if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+                // Draw Sprite (Centered)
+                // Scale slightly to match radius
+                const size = agent.radius * 2.5; 
+                this.ctx.drawImage(sprite, -size/2, -size/2, size, size);
+            } else {
+                // Fallback to primitive
+                this.ctx.beginPath();
+                if (agent.state.isDowned) {
+                    this.ctx.ellipse(0, 0, agent.radius * 1.5, agent.radius * 0.7, 0, 0, Math.PI * 2);
+                } else {
+                    this.ctx.arc(0, 0, agent.radius, 0, Math.PI * 2);
+                }
+                this.ctx.fillStyle = agent.team === 0 ? '#4a90e2' : '#e24a4a'; 
+                this.ctx.fill();
+                this.ctx.strokeStyle = agent.state.inventory.weapon.type === 'Fast Gun' ? '#d4af37' : '#fff';
+                this.ctx.lineWidth = agent.state.inventory.weapon.type === 'Fast Gun' ? 3 : 2;
+                this.ctx.stroke();
+            }
 
             // Downed Effect (Bleeding pulse)
             if (agent.state.isDowned) {
                 const pulse = (Math.sin(Date.now() / 200) + 1) / 2;
                 this.ctx.strokeStyle = `rgba(255, 0, 0, ${pulse})`;
                 this.ctx.lineWidth = 3;
+                this.ctx.stroke(); // Stroke around sprite rect or circle? Maybe circle is better
+                this.ctx.beginPath();
+                this.ctx.arc(0, 0, agent.radius + 5, 0, Math.PI * 2);
                 this.ctx.stroke();
             }
 
@@ -258,7 +248,7 @@ export class Renderer {
                  this.ctx.strokeStyle = '#FFFF00';
                  this.ctx.lineWidth = 2;
                  this.ctx.beginPath();
-                 this.ctx.arc(0, 0, agent.radius + 4, 0, Math.PI * 2);
+                 this.ctx.arc(0, 0, agent.radius + 8, 0, Math.PI * 2);
                  this.ctx.stroke();
             }
 
@@ -275,7 +265,7 @@ export class Renderer {
             this.ctx.fillStyle = 'rgba(50, 50, 50, 0.5)';
             this.ctx.fillRect(agent.pos.x - 10, agent.pos.y - 18, 20, 2);
             this.ctx.fillStyle = '#ffeb3b'; // Yellow
-            const staminaRatio = agent.state.stamina / 100; // Config.AGENT.MAX_STAMINA is 100
+            const staminaRatio = agent.state.stamina / 100; 
             this.ctx.fillRect(agent.pos.x - 10, agent.pos.y - 18, 20 * staminaRatio, 2);
             
             // State Emoji
@@ -297,10 +287,117 @@ export class Renderer {
         }
     }
 
+    drawProjectiles() {
+        this.ctx.fillStyle = '#fff';
+        for (const p of this.world.projectiles) {
+            this.ctx.beginPath();
+            this.ctx.arc(p.pos.x, p.pos.y, p.radius, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+    }
+
+    drawHeatmap() {
+        if (!this.debugOptions.showHeatmap) return;
+
+        const inspector = document.getElementById('agent-details');
+        if (!inspector) return;
+        
+        const agentIdMatch = inspector.innerHTML.match(/UNIT #(\d+)/); 
+        if (!agentIdMatch) return;
+        
+        const agentId = parseInt(agentIdMatch[1]);
+        const agent = this.world.agents.find(a => a.id === agentId);
+        if (!agent) return;
+
+        const grid = agent.memory.heatmap;
+        const rows = agent.memory.gridRows;
+        const cols = agent.memory.gridCols;
+        const cellW = this.world.width / cols;
+        const cellH = this.world.height / rows;
+
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                const heat = grid[y][x];
+                if (heat > 0) {
+                    this.ctx.fillStyle = `rgba(255, 0, 0, ${heat / 20})`; 
+                    this.ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
+                }
+            }
+        }
+    }
+
+    drawObstacleMap() {
+        if (!this.debugOptions.showHeatmap) return; 
+
+        const inspector = document.getElementById('agent-details');
+        if (!inspector) return;
+        
+        const agentIdMatch = inspector.innerHTML.match(/UNIT #(\d+)/);
+        if (!agentIdMatch) return;
+        
+        const agentId = parseInt(agentIdMatch[1]);
+        const agent = this.world.agents.find(a => a.id === agentId);
+        if (!agent) return;
+
+        const grid = agent.memory.obstacleMap;
+        const rows = agent.memory.gridRows;
+        const cols = agent.memory.gridCols;
+        const cellW = this.world.width / cols;
+        const cellH = this.world.height / rows;
+
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                const type = grid[y][x];
+                if (type === 1) {
+                    this.ctx.fillStyle = `rgba(255, 255, 255, 0.15)`; 
+                    this.ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
+                } else if (type === 0) {
+                    this.ctx.strokeStyle = `rgba(255, 255, 255, 0.05)`; 
+                    this.ctx.strokeRect(x * cellW, y * cellH, cellW, cellH);
+                }
+            }
+        }
+    }
+
+    drawEffects() {
+        this.ctx.fillStyle = 'rgba(255, 100, 50, 0.6)';
+        for (const e of this.world.effects) {
+            if (e.type === 'EXPLOSION') {
+                 this.ctx.beginPath();
+                 this.ctx.arc(e.x, e.y, e.radius * (1 - e.life/300), 0, Math.PI * 2);
+                 this.ctx.fill();
+            }
+        }
+    }
+
+    drawBarks() {
+        this.ctx.font = 'bold 14px monospace';
+        this.ctx.textAlign = 'center';
+        
+        for (const agent of this.world.agents) {
+            if (!agent.barks) continue;
+            
+            agent.barks.forEach((bark, i) => {
+                const lifeRatio = bark.life / 2000;
+                const alpha = Math.min(1.0, lifeRatio * 2); 
+                const yOffset = (1 - lifeRatio) * 30; 
+                
+                this.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                this.ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+                this.ctx.lineWidth = 3;
+                
+                const by = agent.pos.y - 40 - yOffset - (i * 15); 
+                
+                this.ctx.strokeText(bark.text, agent.pos.x, by);
+                this.ctx.fillText(bark.text, agent.pos.x, by);
+            });
+        }
+    }
+
     drawDebug() {
         const now = Date.now();
 
-        // 1. Vision Cones (Overhauled for Smoothness & Performance)
+        // 1. Vision Cones
         for (const agent of this.world.agents) {
             const baseAlpha = this.debugOptions.showVision ? 0.175 : 0.05;
             const teamColor = agent.team === 0 ? '74, 144, 226' : '226, 74, 74';
@@ -321,32 +418,12 @@ export class Renderer {
                 this.ctx.fill();
             }
 
-            // --- B. Main FOV Cone (Smooth Arc) ---
-            // Radial gradient handles the distance fall-off smoothly
-            const coneGrad = this.ctx.createRadialGradient(agent.pos.x, agent.pos.y, range * 0.2, agent.pos.x, agent.pos.y, range);
-            coneGrad.addColorStop(0, `rgba(${teamColor}, ${baseAlpha})`);
-            coneGrad.addColorStop(0.6, `rgba(${teamColor}, ${baseAlpha * 0.4})`);
-            coneGrad.addColorStop(1, `rgba(${teamColor}, 0)`);
-            
-            this.ctx.fillStyle = coneGrad;
-            this.ctx.beginPath();
-            this.ctx.moveTo(agent.pos.x, agent.pos.y);
-            this.ctx.arc(agent.pos.x, agent.pos.y, range, agent.angle - fov/2, agent.angle + fov/2);
-            this.ctx.closePath();
-            this.ctx.fill();
+            // --- B. Main FOV Cone (Occluded by Walls) ---
+            this.drawOccludedCone(agent.pos, agent.angle, fov, range, teamColor, baseAlpha);
 
-            // --- C. Fovea (High Detail Zone - Smooth Focus) ---
+            // --- C. Fovea (High Detail Zone) ---
             if (this.debugOptions.showVision) {
-                const fovGrad = this.ctx.createRadialGradient(agent.pos.x, agent.pos.y, 0, agent.pos.x, agent.pos.y, range);
-                fovGrad.addColorStop(0, `rgba(${teamColor}, ${baseAlpha * 0.8})`);
-                fovGrad.addColorStop(1, `rgba(${teamColor}, 0)`);
-                
-                this.ctx.fillStyle = fovGrad;
-                this.ctx.beginPath();
-                this.ctx.moveTo(agent.pos.x, agent.pos.y);
-                this.ctx.arc(agent.pos.x, agent.pos.y, range, agent.angle - fovea/2, agent.angle + fovea/2);
-                this.ctx.closePath();
-                this.ctx.fill();
+                this.drawOccludedCone(agent.pos, agent.angle, fovea, range, teamColor, baseAlpha * 0.4);
             }
 
             // --- D. Visualize Detection Meters for Hostiles ---
@@ -360,11 +437,9 @@ export class Renderer {
                         const mx = target.pos.x - meterW/2;
                         const my = target.pos.y + 15;
                         
-                        // Background
                         this.ctx.fillStyle = 'rgba(0,0,0,0.5)';
                         this.ctx.fillRect(mx, my, meterW, meterH);
                         
-                        // Progress
                         const pct = Math.min(1.0, val / Config.SENSORY.DETECTION_THRESHOLD);
                         this.ctx.fillStyle = pct >= 1.0 ? '#ff0' : '#fff';
                         this.ctx.fillRect(mx, my, meterW * pct, meterH);
@@ -372,7 +447,7 @@ export class Renderer {
                 }
             });
 
-            // Shout Pulse (Existing)
+            // Shout Pulse
             if (agent.showShoutUntil > now) {
                 const remaining = (agent.showShoutUntil - now) / 500;
                 this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.8 * remaining})`;
@@ -383,7 +458,7 @@ export class Renderer {
             }
         }
 
-        // 2. Trust Links (Existing)
+        // 2. Trust Links
         if (this.debugOptions.showTrust) {
             this.ctx.lineWidth = 1;
             for (const agent of this.world.agents) {
@@ -402,7 +477,7 @@ export class Renderer {
             }
         }
 
-        // 3. Comm Lines (Recent updates)
+        // 3. Comm Lines
         if (this.debugOptions.showComm) {
             this.ctx.lineWidth = 1.5;
             for (const agent of this.world.agents) {
@@ -414,7 +489,7 @@ export class Renderer {
                         if (target) {
                             const alpha = 1 - (elapsed / 2000);
                             this.ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-                            this.ctx.setLineDash([5, 5]); // Dashed line for data flow
+                            this.ctx.setLineDash([5, 5]); 
                             this.ctx.beginPath();
                             this.ctx.moveTo(agent.pos.x, agent.pos.y);
                             this.ctx.lineTo(target.pos.x, target.pos.y);
@@ -426,7 +501,7 @@ export class Renderer {
             }
         }
 
-        // 4. Dread Zones (Ghosts of War)
+        // 4. Dread Zones
         if (this.debugOptions.showHeatmap) {
             const inspector = document.getElementById('agent-details');
             if (inspector) {
@@ -435,14 +510,13 @@ export class Renderer {
                     const agentId = parseInt(agentIdMatch[1]);
                     const agent = this.world.agents.find(a => a.id === agentId);
                     if (agent && agent.memory.dreadZones) {
-                        this.ctx.fillStyle = 'rgba(100, 0, 100, 0.2)'; // Faint Purple
+                        this.ctx.fillStyle = 'rgba(100, 0, 100, 0.2)';
                         this.ctx.strokeStyle = 'rgba(150, 0, 150, 0.5)';
                         agent.memory.dreadZones.forEach(dread => {
                             this.ctx.beginPath();
                             this.ctx.arc(dread.x, dread.y, dread.radius, 0, Math.PI * 2);
                             this.ctx.fill();
                             this.ctx.stroke();
-                            // Skull icon?
                             this.ctx.font = '12px serif';
                             this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                             this.ctx.fillText('☠️', dread.x, dread.y);
@@ -451,5 +525,34 @@ export class Renderer {
                 }
             }
         }
+    }
+
+    drawOccludedCone(pos, angle, fov, range, color, alpha) {
+        range = range || 400; // Fallback
+        const rayCount = 30; // Sufficient for debug visualization
+        const points = [];
+        points.push(pos);
+
+        for (let i = 0; i <= rayCount; i++) {
+            const rayAngle = angle - fov / 2 + (fov * i) / rayCount;
+            const dist = this.world.getRayDistance(pos, rayAngle, range);
+            points.push({
+                x: pos.x + Math.cos(rayAngle) * dist,
+                y: pos.y + Math.sin(rayAngle) * dist
+            });
+        }
+
+        const grad = this.ctx.createRadialGradient(pos.x, pos.y, range * 0.1, pos.x, pos.y, range);
+        grad.addColorStop(0, `rgba(${color}, ${alpha})`);
+        grad.addColorStop(1, `rgba(${color}, 0)`);
+
+        this.ctx.fillStyle = grad;
+        this.ctx.beginPath();
+        this.ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            this.ctx.lineTo(points[i].x, points[i].y);
+        }
+        this.ctx.closePath();
+        this.ctx.fill();
     }
 }
