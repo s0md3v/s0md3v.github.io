@@ -26,6 +26,8 @@ plugins:
 jekyll-minifier:
   uglifier_args:
     harmony: true
+  exclude:
+    - "playground/**/*"
 
 sass:
   style: compressed
