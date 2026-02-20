@@ -46,7 +46,7 @@ a:hover {
   font-family: "Biro Script US Plus", monospace;
   color: var(--link-visited);
   opacity: 0.8;
-  font-size: 1.35rem;
+  font-size: 1.62rem;
 }
 
 .top-left {
@@ -96,7 +96,7 @@ a:hover {
   font-family: "Biro Script US Plus", monospace;
   color: var(--link-visited);
   opacity: 0.8;
-  font-size: 1.3rem;
+  font-size: 1.56rem;
   white-space: nowrap;
   display: flex;
   flex-direction: column;

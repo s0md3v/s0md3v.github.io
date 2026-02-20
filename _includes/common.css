@@ -235,7 +235,7 @@ pre>code {
 }
 
 .post-meta {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-family: 'Biro Script US Plus', sans-serif;
   color: var(--muted-color);
   position: relative;
@@ -585,7 +585,7 @@ li {
   font-family: "Biro Script US Plus", monospace;
   color: var(--link-visited);
   opacity: 0.8;
-  font-size: 1.35rem;
+  font-size: 1.62rem;
 }
 
 .top-left {
@@ -621,7 +621,7 @@ li {
   font-family: "Biro Script US Plus", monospace;
   color: var(--link-visited);
   opacity: 0.8;
-  font-size: 1.3rem;
+  font-size: 1.56rem;
   white-space: nowrap;
   display: flex;
   flex-direction: column;
@@ -777,7 +777,7 @@ li {
   text-align: center;
   font-family: 'Biro Script US Plus', monospace;
   color: var(--link-visited);
-  font-size: 1.2rem;
+  font-size: 1.44rem;
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: auto;
