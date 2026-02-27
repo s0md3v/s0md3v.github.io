@@ -554,7 +554,7 @@ pre>code {
 
 p,
 li {
-  font-family: sans-serif;
+  font-family: var(--blog-font-family);
   /* Fallback/Default */
 }
 

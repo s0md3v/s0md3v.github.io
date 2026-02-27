@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadFontSettings() {
         // Initial theme load is already done at top level
 
-        const font = localStorage.getItem('font') || 'system';
+        const font = localStorage.getItem('font') || 'lexend';
         // We set propertly on documentElement, so it's safe to do here
         document.documentElement.style.setProperty('--blog-font-family', getFontFamily(font));
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const brackets = [
             ['{', '}'],
             ['(', ')'],
-            ['[', ']'],
+            [':', ':'],
             ['|', '|'],
         ];
 
