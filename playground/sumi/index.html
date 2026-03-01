@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumi - Abstract Wallpaper Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-glass: rgba(20, 20, 20, 0.6);
+            --border-glass: rgba(255, 255, 255, 0.15);
+            --accent: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --panel-width: 340px;
+        }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background: #000; color: #fff; font-family: 'Lexend', sans-serif;
+        }
+        canvas { display: block; width: 100vw; height: 100vh; }
+
+        /* UI Panel */
+        #ui {
+            position: absolute; top: 20px; left: 20px;
+            background: var(--bg-glass); backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 24px; width: var(--panel-width);
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+            z-index: 100; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        #ui.hide { opacity: 0; transform: translateX(-30px) scale(0.98); visibility: hidden; pointer-events: none; }
+
+        /* Header */
+        .ui-header {
+            padding: 28px 24px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .ui-header h1 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.8px; }
+        .random-icon-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff;
+            padding: 10px; border-radius: 12px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .random-icon-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); transform: rotate(15deg); }
+
+        /* Tabs */
+        .tab-headers {
+            display: flex; padding: 0 20px; gap: 4px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .tab-btn {
+            flex: 1; padding: 14px 0; background: none; border: none;
+            color: var(--text-muted); cursor: pointer; font-family: inherit;
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1.2px; transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active { color: #fff; border-bottom-color: #fff; }
+        .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.8); }
+
+        /* Content Area */
+        .tab-content {
+            padding: 24px; max-height: calc(100vh - 220px); overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+        }
+        .tab-content::-webkit-scrollbar { width: 4px; }
+        .tab-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .tab-pane { display: none; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-pane.active { display: block; }
+
+        /* Controls */
+        .control-section { margin-bottom: 20px; }
+        .label-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.9);
+        }
+        .val-badge {
+            font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.08);
+            padding: 2px 8px; border-radius: 6px; color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        select {
+            width: 100%; background: rgba(255, 255, 255, 0.08); color: #fff;
+            border: 1px solid var(--border-glass); padding: 12px;
+            border-radius: 12px; outline: none; transition: all 0.2s;
+            margin-bottom: 20px; font-family: inherit; font-size: 14px;
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+        }
+        select:hover { background-color: rgba(255,255,255,0.12); }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%; height: 4px; 
+            background: rgba(255,255,255,0.1); border-radius: 2px;
+            outline: none; margin-bottom: 24px; transition: all 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 18px; height: 18px;
+            background: #fff; border-radius: 50%; cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5); transition: transform 0.1s;
+        }
+        input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.2); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+
+        /* Playback Bar */
+        .playback-bar {
+            display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px;
+            margin-top: 8px;
+        }
+        .playback-bar button {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border-glass);
+            color: #fff; padding: 12px; border-radius: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .playback-bar button:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+        .play-btn { background: rgba(255,255,255,0.12) !important; }
+
+        /* Palette Picker */
+        #palette-picker {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-top: 12px;
+        }
+        .palette-item {
+            aspect-ratio: 1; border-radius: 10px; cursor: pointer; overflow: hidden;
+            display: flex; flex-direction: column; border: 2px solid transparent;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .palette-item:hover { transform: scale(1.1); z-index: 1; }
+        .palette-item.active { border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .palette-color { flex: 1; }
+
+        .custom-colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+        .color-input-wrapper {
+            aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-glass);
+            transition: transform 0.2s;
+        }
+        .color-input-wrapper:hover { transform: scale(1.05); }
+        .color-input-wrapper input { width: 150%; height: 150%; margin: -25%; cursor: pointer; border: none; }
+
+        /* Export */
+        .export-btn {
+            width: 100%; padding: 16px; background: #fff; color: #000;
+            border: none; border-radius: 16px; font-weight: 600; cursor: pointer;
+            font-family: inherit; font-size: 15px; transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .export-btn:hover { background: #f0f0f0; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+
+        .hidden { display: none !important; }
+        
+        .hint {
+            font-size: 11px; color: var(--text-muted); text-align: center;
+            margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-glass);
+            line-height: 1.6;
+        }
+        .hint b { color: rgba(255,255,255,0.8); }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            :root { --panel-width: calc(100vw - 40px); }
+            #ui { left: 20px; right: 20px; top: auto; bottom: 20px; max-height: 80vh; }
+            #ui.hide { transform: translateY(30px) scale(0.98); }
+            .ui-header h1 { font-size: 20px; }
+            .tab-btn { font-size: 10px; padding: 12px 0; }
+            .tab-content { padding: 16px; max-height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+        <div class="ui-header">
+            <h1>Sumi</h1>
+            <button class="random-icon-btn" id="random-btn" title="Randomize (R)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+            </button>
+        </div>
+
+        <div class="tab-headers">
+            <button class="tab-btn active" data-tab="scene">Scene</button>
+            <button class="tab-btn" data-tab="fx">Effects</button>
+            <button class="tab-btn" data-tab="colors">Colors</button>
+            <button class="tab-btn" data-tab="export">Export</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- SCENE TAB -->
+            <div class="tab-pane active" id="tab-scene">
+                <div class="control-section">
+                    <div class="label-row">Preset</div>
+                    <select id="preset-select">
+                        <option value="Bars">Bars</option>
+                        <option value="Circle">Circle</option>
+                        <option value="Plasma">Plasma</option>
+                        <option value="Waves">Waves</option>
+                        <option value="Terrain">Terrain</option>
+                        <option value="Flow">Flow</option>
+                        <option value="Nebula">Nebula</option>
+                        <option value="Particles">Particles</option>
+                        <option value="Silk">Silk</option>
+                    </select>
+
+                    <div id="group-angle">
+                        <div class="label-row">Angle <span class="val-badge" id="val-angle">0°</span></div>
+                        <input type="range" id="input-angle" min="0" max="6.283" step="0.01" value="0">
+                    </div>
+
+                    <div id="group-scale">
+                        <div class="label-row">Scale <span class="val-badge" id="val-scale">1.0</span></div>
+                        <input type="range" id="input-scale" min="0.1" max="5.0" step="0.1" value="1.0">
+                    </div>
+
+                    <div id="group-center">
+                        <div class="label-row">Center X <span class="val-badge" id="val-center-x">0.0</span></div>
+                        <input type="range" id="input-center-x" min="-1" max="1" step="0.01" value="0">
+                        <div class="label-row">Center Y <span class="val-badge" id="val-center-y">0.0</span></div>
+                        <input type="range" id="input-center-y" min="-1" max="1" step="0.01" value="0">
+                    </div>
+
+                    <div id="group-speed">
+                        <div class="label-row"><span id="label-speed">Time Scrub</span> <span class="val-badge" id="val-speed">0.0</span></div>
+                        <input type="range" id="input-speed" min="0" max="20" step="0.01" value="0">
+                    </div>
+
+                    <div class="playback-bar">
+                        <button id="btn-prev" title="Step Back">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                        </button>
+                        <button id="btn-play" class="play-btn" title="Play/Pause (Space)">
+                            <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="pause-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+                        <button id="btn-next" title="Step Forward">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EFFECTS TAB -->
+            <div class="tab-pane" id="tab-fx">
+                <div class="control-section">
+                    <div class="label-row">Warp Style</div>
+                    <select id="input-distort-type">
+                        <option value="0">None</option>
+                        <option value="1">Swirl</option>
+                        <option value="2">Turbulent</option>
+                        <option value="3">Lens Distortion</option>
+                        <option value="4">Polar Twist</option>
+                    </select>
+                    
+                    <div class="label-row">Warp Intensity <span class="val-badge" id="val-distort-strength">0.0</span></div>
+                    <input type="range" id="input-distort-strength" min="0" max="10" step="0.1" value="0">
+
+                    <div class="label-row">Warp Density <span class="val-badge" id="val-distort-scale">3.0</span></div>
+                    <input type="range" id="input-distort-scale" min="1" max="10" step="0.1" value="3">
+
+                    <div class="label-row">Contrast <span class="val-badge" id="val-contrast">1.00</span></div>
+                    <input type="range" id="input-contrast" min="0.5" max="2" step="0.01" value="1.0">
+
+                    <div class="label-row">Saturation <span class="val-badge" id="val-saturation">1.00</span></div>
+                    <input type="range" id="input-saturation" min="0" max="2" step="0.01" value="1.0">
+
+                    <div class="label-row">Gradient Smoothness <span class="val-badge" id="val-blend">0.5</span></div>
+                    <input type="range" id="input-blend" min="0" max="3" step="0.01" value="0.5">
+
+                    <div class="label-row">Grain / Noise <span class="val-badge" id="val-noise">0.05</span></div>
+                    <input type="range" id="input-noise" min="0" max="1" step="0.01" value="0.05">
+
+                    <div class="label-row">Bloom / Glow <span class="val-badge" id="val-bloom">0.5</span></div>
+                    <input type="range" id="input-bloom" min="0" max="2" step="0.01" value="0.5">
+
+                    <div class="label-row">Chromatic Aberration <span class="val-badge" id="val-chromatic">0.02</span></div>
+                    <input type="range" id="input-chromatic" min="0" max="0.5" step="0.001" value="0.02">
+
+                    <div class="label-row">Symmetry (Kaleidoscope) <span class="val-badge" id="val-symmetry">0</span></div>
+                    <input type="range" id="input-symmetry" min="0" max="8" step="1" value="0">
+                </div>
+            </div>
+
+            <!-- COLORS TAB -->
+            <div class="tab-pane" id="tab-colors">
+                <div class="control-section">
+                    <div class="label-row">Mood / Category</div>
+                    <select id="category-select">
+                        <option value="All">All Categories</option>
+                        <option value="Deep">Deep</option>
+                        <option value="Vivid">Vivid</option>
+                        <option value="Organic">Organic</option>
+                        <option value="Muted">Muted</option>
+                        <option value="Airy">Airy</option>
+                        <option value="Arctic">Arctic</option>
+                        <option value="Solar">Solar</option>
+                        <option value="Cyber">Cyber</option>
+                    </select>
+
+                    <div class="label-row">Color Rotation <span class="val-badge" id="val-hue">0.00</span></div>
+                    <input type="range" id="input-hue" min="0" max="1" step="0.01" value="0">
+
+                    <div class="label-row">Fine-tune Colors</div>
+                    <div class="custom-colors">
+                        <div class="color-input-wrapper"><input type="color" id="color-1" value="#1a2a80"></div>
+                        <div class="color-input-wrapper"><input type="color" id="color-2" value="#3b38a0"></div>
+                        <div class="color-input-wrapper"><input type="color" id="color-3" value="#7a85c1"></div>
+                        <div class="color-input-wrapper"><input type="color" id="color-4" value="#b2b0e8"></div>
+                    </div>
+
+                    <div class="label-row" style="margin-top:28px">Palette Presets</div>
+                    <div id="palette-picker"></div>
+                </div>
+            </div>
+
+            <!-- EXPORT TAB -->
+            <div class="tab-pane" id="tab-export">
+                <div class="control-section">
+                    <div class="label-row">Target Resolution</div>
+                    <select id="resolution-select">
+                        <option value="window">Current Window</option>
+                        <option value="1920x1080">Full HD (16:9)</option>
+                        <option value="2560x1440">QHD (16:9)</option>
+                        <option value="3840x2160">4K UHD (16:9)</option>
+                        <option value="1080x1920">Mobile (9:16)</option>
+                    </select>
+                    <button class="export-btn" id="export-btn">Download Image</button>
+                    
+                    <div class="hint">
+                        <b>Space</b> Play/Pause &nbsp; <b>R</b> Random<br>
+                        <b>E</b> Export &nbsp; <b>S</b> Toggle UI
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

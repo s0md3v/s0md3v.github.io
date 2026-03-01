@@ -1,0 +1,10256 @@
+export const mapData = 
+{
+  "width": 36,
+  "height": 24,
+  "tileSize": 16,
+  "layers": [
+    {
+      "0,0": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,0": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,0": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "18,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "19,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,0": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,1": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,1": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,1": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "18,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "19,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,1": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,2": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,2": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,2": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "18,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "19,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,2": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,3": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,3": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,3": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "16,3": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,3": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "20,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "21,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "23,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "24,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "25,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "26,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "27,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "28,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "29,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "31,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "32,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "33,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "34,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "35,3": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "0,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,4": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,4": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,4": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "20,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "21,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "22,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "23,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "24,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "25,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "26,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "27,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "28,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "29,4": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "31,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "32,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "33,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "34,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "35,4": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "0,5": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "1,5": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "4,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "5,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "7,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "8,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "9,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,5": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "11,5": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,5": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,5": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,5": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "20,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "21,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "23,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "24,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "25,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "26,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "27,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "28,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "29,5": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,5": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "31,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "32,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "33,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "34,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "35,5": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "0,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "4,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "5,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "7,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "8,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "9,6": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,6": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "11,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,6": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,6": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,6": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,6": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,7": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,7": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,7": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,7": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "11,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,7": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,7": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,7": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,7": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,8": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,8": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "11,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "12,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "13,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "14,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "15,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "16,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "17,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,8": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,8": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,9": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,9": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "11,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "12,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "13,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "14,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "15,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "16,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "17,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,9": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,9": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,10": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "1,10": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,10": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,10": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,10": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,10": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,10": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,10": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,11": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,11": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,11": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,11": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,11": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,11": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,11": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,11": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,11": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,12": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,12": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,12": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,12": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,12": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,12": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,12": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,12": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,12": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,13": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,13": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "17,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,13": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "26,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "27,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "28,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "29,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "31,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "32,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "33,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "34,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "35,13": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "0,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,14": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,14": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "12,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "13,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "14,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "15,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "16,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,14": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,14": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,14": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,14": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,15": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,15": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "12,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "13,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "14,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "15,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "16,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,15": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,15": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,15": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,15": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,16": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,16": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "6,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,16": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,16": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,16": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,16": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,16": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,16": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,16": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,17": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "2,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "3,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "4,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "5,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "6,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "7,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "8,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "9,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "10,17": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,17": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,17": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,17": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,17": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "3,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "4,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "5,18": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "7,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "8,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "9,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "11,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,18": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,18": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,18": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "1,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "2,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,19": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,19": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,19": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,19": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,19": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,19": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "27,19": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "28,19": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "29,19": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "30,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,19": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "1,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "2,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,20": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,20": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,20": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,20": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,20": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "1,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "2,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,21": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "15,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "16,21": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,21": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "18,21": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,21": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "1,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "2,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,22": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,22": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "15,22": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "16,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "17,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "19,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "20,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "21,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "22,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "23,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "24,22": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "25,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "32,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "33,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "0,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "1,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "2,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "3,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "4,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "5,23": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "7,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "8,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "9,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "10,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "11,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "13,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,23": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "15,23": {
+        "path": "assets/tileset/terrain/tile_0029_grass6.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "16,23": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "17,23": "assets/tileset/terrain/tile_0108_asphalt7.png",
+      "18,23": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "19,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "20,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "21,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "22,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "23,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "24,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "25,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "27,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "28,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "30,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "31,23": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "32,23": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "33,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "34,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "35,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "12,5": "assets/tileset/terrain/tile_0029_grass6.png",
+      "14,5": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,14": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,15": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,16": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,17": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,18": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,19": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "26,20": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,21": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,22": "assets/tileset/terrain/tile_0029_grass6.png",
+      "26,23": "assets/tileset/terrain/tile_0029_grass6.png",
+      "29,17": {
+        "path": "assets/tileset/terrain/tile_0108_asphalt7.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      }
+    },
+    {
+      "21,15": {
+        "path": "assets/tileset/wall/small_house3_color3.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "20,13": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "21,13": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,13": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "20,18": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "21,18": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "20,14": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "20,15": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 4.71238898038469
+      },
+      "20,16": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "20,17": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 4.71238898038469
+      },
+      "23,20": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,20": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "21,19": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "21,20": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,18": {
+        "path": "assets/tileset/wall/car_black4.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "33,14": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "33,15": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 4.71238898038469
+      },
+      "33,17": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 4,
+        "rot": 1.5707963267948966
+      },
+      "34,17": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "35,17": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "2,7": {
+        "path": "assets/tileset/bush/TDS04_0021_Tree2.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 4.71238898038469
+      },
+      "12,3": {
+        "path": "assets/tileset/bush/TDS04_0020_Tree3.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "7,2": {
+        "path": "assets/tileset/wall/small_house2_color1.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,14": {
+        "path": "assets/tileset/wall/small_house2_color3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "2,14": {
+        "path": "assets/tileset/bush/TDS04_0020_Tree3.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 0
+      },
+      "3,15": {
+        "path": "assets/tileset/bush/TDS04_0022_Tree1.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "17,0": {
+        "path": "assets/tileset/wall/building1_color3.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "6,18": {
+        "path": "assets/tileset/wall/building2_color3-1.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "0,7": {
+        "path": "assets/tileset/wall/small_house2_color3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "3,9": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "4,10": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 4.71238898038469
+      },
+      "5,10": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "23,12": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "23,21": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "28,20": {
+        "path": "assets/tileset/wall/police_car.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "34,15": {
+        "path": "assets/tileset/wall/car_orange5.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "10,21": {
+        "path": "assets/tileset/wall/building1_color3-1.png",
+        "tx": 5,
+        "ty": 2,
+        "rot": 0
+      },
+      "20,23": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "15,8": {
+        "path": "assets/tileset/wall/car_orange5.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "12,5": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 0
+      },
+      "4,9": {
+        "path": "assets/tileset/wall/TDS04_0000_House01.png",
+        "tx": 2,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "6,8": {
+        "path": "assets/tileset/wall/TDS04_0000_House01.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "6,11": {
+        "path": "assets/tileset/wall/TDS04_0000_House01.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "3,11": {
+        "path": "assets/tileset/wall/TDS04_0000_House01.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 4.71238898038469
+      },
+      "9,11": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "14,11": {
+        "path": "assets/tileset/wall/small_house2_color3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "34,14": {
+        "path": "assets/tileset/wall/car_black3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "26,11": {
+        "path": "assets/tileset/wall/car_orange5.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "1,18": {
+        "path": "assets/tileset/wall/small_house3_color3-1.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 0
+      },
+      "2,3": {
+        "path": "assets/tileset/bush/TDS04_0020_Tree3.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "3,0": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "17,16": {
+        "path": "assets/tileset/wall/small_house2_color2.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "1,1": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 4.71238898038469
+      },
+      "1,4": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "5,3": {
+        "path": "assets/tileset/wall/car_black4.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "9,7": {
+        "path": "assets/tileset/wall/car_black3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "11,2": {
+        "path": "assets/tileset/wall/small_house1_color1.png",
+        "tx": 2,
+        "ty": 1.3333333333333333,
+        "rot": 0
+      },
+      "15,1": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 0
+      },
+      "19,2": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 0
+      },
+      "25,2": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 0
+      },
+      "10,14": {
+        "path": "assets/tileset/wall/building1_color3.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "10,19": {
+        "path": "assets/tileset/wall/building1_color3.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "12,18": {
+        "path": "assets/tileset/bush/TDS04_0019_Tree4.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "14,20": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "12,15": {
+        "path": "assets/tileset/bush/TDS04_0019_Tree4.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "15,17": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "16,20": {
+        "path": "assets/tileset/wall/small_house3_color1.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "19,20": {
+        "path": "assets/tileset/wall/small_house1_color1.png",
+        "tx": 2,
+        "ty": 1.3333333333333333,
+        "rot": 0
+      },
+      "30,21": {
+        "path": "assets/tileset/wall/building2_color3-1.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 0
+      },
+      "34,22": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "34,21": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "12,16": {
+        "path": "assets/tileset/wall/building1_color3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "16,17": {
+        "path": "assets/tileset/wall/small_house1_color2.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 0
+      },
+      "27,17": {
+        "path": "assets/tileset/wall/TDS04_0000_House01.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "25,17": {
+        "path": "assets/tileset/bush/TDS04_0022_Tree1.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "26,14": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "30,14": {
+        "path": "assets/tileset/bush/TDS04_0020_Tree3.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 0
+      },
+      "23,2": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "23,3": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "17,5": {
+        "path": "assets/tileset/wall/building1_color3-1.png",
+        "tx": 5,
+        "ty": 2,
+        "rot": 0
+      },
+      "21,6": {
+        "path": "assets/tileset/wall/building1_color3-1.png",
+        "tx": 3,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "24,8": {
+        "path": "assets/tileset/wall/small_house1_color2.png",
+        "tx": 2,
+        "ty": 1.3333333333333333,
+        "rot": 3.141592653589793
+      },
+      "26,8": {
+        "path": "assets/tileset/wall/small_house2_color2.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "24,6": {
+        "path": "assets/tileset/wall/building1_color3-1.png",
+        "tx": 2,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "20,1": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "27,10": {
+        "path": "assets/tileset/wall/car_black4.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "27,11": {
+        "path": "assets/tileset/bush/TDS04_0021_Tree2.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "25,4": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "28,4": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "27,6": {
+        "path": "assets/tileset/wall/small_house1_color3.png",
+        "tx": 2,
+        "ty": 1.3333333333333333,
+        "rot": 0
+      },
+      "33,11": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 0
+      },
+      "32,7": {
+        "path": "assets/tileset/wall/TDS04_0000_House01.png",
+        "tx": 2,
+        "ty": 3,
+        "rot": 0
+      },
+      "31,5": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 3.141592653589793
+      },
+      "32,5": {
+        "path": "assets/tileset/bush/TDS04_0021_Tree2.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "21,1": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,1": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "23,1": {
+        "path": "assets/tileset/bush/TDS04_0010_Bush-03.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "9,16": {
+        "path": "assets/tileset/wall/building1_color3-1.png",
+        "tx": 5,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "31,11": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 3,
+        "rot": 1.5707963267948966
+      },
+      "30,11": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 0
+      },
+      "31,10": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "30,17": {
+        "path": "assets/tileset/wall/police_car.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 4.71238898038469
+      },
+      "22,12": {
+        "path": "assets/tileset/bush/TDS04_0011_Bush-02.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "22,9": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "23,9": {
+        "path": "assets/tileset/wall/small_house3_color3-1.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "17,14": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 0
+      },
+      "16,13": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 3,
+        "rot": 1.5707963267948966
+      },
+      "26,15": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 5,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "18,7": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 3,
+        "rot": 1.5707963267948966
+      },
+      "18,9": {
+        "path": "assets/tileset/wall/building2_color3-1.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "27,1": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "29,8": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "29,7": {
+        "path": "assets/tileset/wall/TDS04_House02.png",
+        "tx": 4,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      },
+      "7,13": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "8,10": {
+        "path": "assets/tileset/bush/TDS04_0012_Bush-01.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "4,5": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 3,
+        "rot": 0
+      },
+      "10,3": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 4,
+        "rot": 0
+      },
+      "8,1": {
+        "path": "assets/tileset/wall/small_house1_color1.png",
+        "tx": 2,
+        "ty": 1.3333333333333333,
+        "rot": 4.71238898038469
+      },
+      "12,7": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "32,19": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "25,12": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 1.5707963267948966
+      },
+      "8,2": {
+        "path": "assets/tileset/wall/small_house3_color1.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "7,16": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "7,23": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "4,1": {
+        "path": "assets/tileset/wall/car_black3.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 4.71238898038469
+      },
+      "5,0": {
+        "path": "assets/tileset/bush/TDS04_0019_Tree4.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "25,22": {
+        "path": "assets/tileset/bush/TDS04_0020_Tree3.png",
+        "tx": 3,
+        "ty": 2,
+        "rot": 3.141592653589793
+      },
+      "26,21": {
+        "path": "assets/tileset/bush/TDS04_0021_Tree2.png",
+        "tx": 2,
+        "ty": 2,
+        "rot": 0
+      },
+      "25,0": {
+        "path": "assets/tileset/wall/TDS04_0009_WatchTower.png",
+        "tx": 1,
+        "ty": 1,
+        "rot": 0
+      },
+      "35,6": {
+        "path": "assets/tileset/cover/industrial_element1_color1.png",
+        "tx": 1,
+        "ty": 2,
+        "rot": 1.5707963267948966
+      }
+    },
+    {
+      "88,60": 1,
+      "89,60": 1,
+      "90,60": 1,
+      "91,60": 1,
+      "87,61": 1,
+      "88,61": 1,
+      "89,61": 1,
+      "90,61": 1,
+      "91,61": 1,
+      "86,62": 1,
+      "87,62": 1,
+      "88,62": 1,
+      "89,62": 1,
+      "90,62": 1,
+      "91,62": 1,
+      "84,63": 1,
+      "85,63": 1,
+      "86,63": 1,
+      "87,63": 1,
+      "88,63": 1,
+      "89,63": 1,
+      "90,63": 1,
+      "91,63": 1,
+      "84,64": 1,
+      "85,64": 1,
+      "86,64": 1,
+      "87,64": 1,
+      "88,64": 1,
+      "89,64": 1,
+      "90,64": 1,
+      "91,64": 1,
+      "84,65": 1,
+      "85,65": 1,
+      "86,65": 1,
+      "87,65": 1,
+      "88,65": 1,
+      "89,65": 1,
+      "90,65": 1,
+      "91,65": 1,
+      "84,66": 1,
+      "85,66": 1,
+      "86,66": 1,
+      "87,66": 1,
+      "88,66": 1,
+      "89,66": 1,
+      "90,66": 1,
+      "91,66": 1,
+      "84,67": 1,
+      "85,67": 1,
+      "86,67": 1,
+      "87,67": 1,
+      "88,67": 1,
+      "89,67": 1,
+      "90,67": 1,
+      "91,67": 1,
+      "84,68": 1,
+      "85,68": 1,
+      "86,68": 1,
+      "87,68": 1,
+      "88,68": 1,
+      "89,68": 1,
+      "90,68": 1,
+      "91,68": 1,
+      "84,69": 1,
+      "85,69": 1,
+      "86,69": 1,
+      "87,69": 1,
+      "88,69": 1,
+      "89,69": 1,
+      "90,69": 1,
+      "84,70": 1,
+      "85,70": 1,
+      "86,70": 1,
+      "87,70": 1,
+      "88,70": 1,
+      "89,70": 1,
+      "84,71": 1,
+      "85,71": 1,
+      "87,71": 1,
+      "86,71": 1,
+      "81,52": 2,
+      "82,52": 2,
+      "83,52": 2,
+      "80,53": 2,
+      "81,53": 2,
+      "82,53": 2,
+      "83,53": 2,
+      "80,54": 2,
+      "81,54": 2,
+      "82,54": 2,
+      "83,54": 2,
+      "80,55": 2,
+      "81,55": 2,
+      "82,55": 2,
+      "83,55": 2,
+      "85,52": 2,
+      "86,52": 2,
+      "87,52": 2,
+      "84,53": 2,
+      "85,53": 2,
+      "86,53": 2,
+      "87,53": 2,
+      "84,54": 2,
+      "85,54": 2,
+      "86,54": 2,
+      "87,54": 2,
+      "85,55": 2,
+      "86,55": 2,
+      "87,55": 2,
+      "89,52": 2,
+      "90,52": 2,
+      "91,52": 2,
+      "88,53": 2,
+      "89,53": 2,
+      "90,53": 2,
+      "91,53": 2,
+      "88,54": 2,
+      "89,54": 2,
+      "90,54": 2,
+      "91,54": 2,
+      "89,55": 2,
+      "90,55": 2,
+      "91,55": 2,
+      "81,72": 2,
+      "82,72": 2,
+      "83,72": 2,
+      "80,73": 2,
+      "81,73": 2,
+      "82,73": 2,
+      "83,73": 2,
+      "80,74": 2,
+      "81,74": 2,
+      "82,74": 2,
+      "83,74": 2,
+      "80,75": 2,
+      "81,75": 2,
+      "82,75": 2,
+      "83,75": 2,
+      "85,72": 2,
+      "86,72": 2,
+      "87,72": 2,
+      "84,73": 2,
+      "85,73": 2,
+      "86,73": 2,
+      "87,73": 2,
+      "84,74": 2,
+      "85,74": 2,
+      "86,74": 2,
+      "87,74": 2,
+      "84,75": 2,
+      "85,75": 2,
+      "86,75": 2,
+      "81,56": 2,
+      "82,56": 2,
+      "83,56": 2,
+      "80,57": 2,
+      "81,57": 2,
+      "82,57": 2,
+      "83,57": 2,
+      "80,58": 2,
+      "81,58": 2,
+      "82,58": 2,
+      "83,58": 2,
+      "80,59": 2,
+      "81,59": 2,
+      "82,59": 2,
+      "81,60": 2,
+      "82,60": 2,
+      "83,60": 2,
+      "80,61": 2,
+      "81,61": 2,
+      "82,61": 2,
+      "83,61": 2,
+      "80,62": 2,
+      "81,62": 2,
+      "82,62": 2,
+      "83,62": 2,
+      "80,63": 2,
+      "81,63": 2,
+      "82,63": 2,
+      "83,63": 2,
+      "81,64": 2,
+      "82,64": 2,
+      "83,64": 2,
+      "80,65": 2,
+      "81,65": 2,
+      "82,65": 2,
+      "83,65": 2,
+      "80,66": 2,
+      "81,66": 2,
+      "82,66": 2,
+      "83,66": 2,
+      "80,67": 2,
+      "81,67": 2,
+      "82,67": 2,
+      "81,68": 2,
+      "82,68": 2,
+      "83,68": 2,
+      "80,69": 2,
+      "81,69": 2,
+      "82,69": 2,
+      "83,69": 2,
+      "80,70": 2,
+      "81,70": 2,
+      "82,70": 2,
+      "83,70": 2,
+      "80,71": 2,
+      "81,71": 2,
+      "82,71": 2,
+      "83,71": 2,
+      "93,80": 2,
+      "94,80": 2,
+      "95,80": 2,
+      "92,81": 2,
+      "93,81": 2,
+      "94,81": 2,
+      "95,81": 2,
+      "92,82": 2,
+      "93,82": 2,
+      "94,82": 2,
+      "95,82": 2,
+      "93,83": 2,
+      "94,83": 2,
+      "95,83": 2,
+      "89,80": 2,
+      "90,80": 2,
+      "91,80": 2,
+      "88,81": 2,
+      "89,81": 2,
+      "90,81": 2,
+      "91,81": 2,
+      "88,82": 2,
+      "89,82": 2,
+      "90,82": 2,
+      "91,82": 2,
+      "88,83": 2,
+      "89,83": 2,
+      "90,83": 2,
+      "91,83": 2,
+      "85,76": 2,
+      "86,76": 2,
+      "87,76": 2,
+      "84,77": 2,
+      "85,77": 2,
+      "86,77": 2,
+      "87,77": 2,
+      "84,78": 2,
+      "85,78": 2,
+      "86,78": 2,
+      "87,78": 2,
+      "84,79": 2,
+      "85,79": 2,
+      "86,79": 2,
+      "87,79": 2,
+      "85,80": 2,
+      "86,80": 2,
+      "87,80": 2,
+      "84,81": 2,
+      "85,81": 2,
+      "86,81": 2,
+      "87,81": 2,
+      "84,82": 2,
+      "85,82": 2,
+      "86,82": 2,
+      "87,82": 2,
+      "85,83": 2,
+      "86,83": 2,
+      "87,83": 2,
+      "91,72": 1,
+      "92,72": 1,
+      "91,73": 1,
+      "92,73": 1,
+      "93,73": 1,
+      "91,74": 1,
+      "92,74": 1,
+      "93,74": 1,
+      "91,75": 1,
+      "92,75": 1,
+      "93,75": 1,
+      "91,76": 1,
+      "92,76": 1,
+      "93,76": 1,
+      "91,77": 1,
+      "92,77": 1,
+      "93,77": 1,
+      "91,78": 1,
+      "92,78": 1,
+      "93,78": 1,
+      "91,79": 1,
+      "92,79": 1,
+      "133,56": 2,
+      "134,56": 2,
+      "135,56": 2,
+      "132,57": 2,
+      "133,57": 2,
+      "134,57": 2,
+      "135,57": 2,
+      "132,58": 2,
+      "133,58": 2,
+      "134,58": 2,
+      "135,58": 2,
+      "132,59": 2,
+      "133,59": 2,
+      "134,59": 2,
+      "133,60": 2,
+      "134,60": 2,
+      "135,60": 2,
+      "132,61": 2,
+      "133,61": 2,
+      "134,61": 2,
+      "135,61": 2,
+      "132,62": 2,
+      "133,62": 2,
+      "134,62": 2,
+      "135,62": 2,
+      "132,63": 2,
+      "133,63": 2,
+      "134,63": 2,
+      "135,63": 2,
+      "138,68": 3,
+      "139,68": 3,
+      "138,69": 3,
+      "139,69": 3,
+      "140,69": 3,
+      "139,70": 3,
+      "140,70": 3,
+      "141,70": 3,
+      "140,71": 3,
+      "141,71": 3,
+      "137,68": 2,
+      "136,69": 2,
+      "137,69": 2,
+      "136,70": 2,
+      "137,70": 2,
+      "138,70": 2,
+      "136,71": 2,
+      "137,71": 2,
+      "138,71": 2,
+      "139,71": 2,
+      "141,68": 2,
+      "142,68": 2,
+      "143,68": 2,
+      "141,69": 2,
+      "142,69": 2,
+      "143,69": 2,
+      "142,70": 2,
+      "143,70": 2,
+      "142,71": 2,
+      "143,71": 2,
+      "10,28": 2,
+      "11,28": 2,
+      "12,28": 2,
+      "13,28": 2,
+      "9,29": 2,
+      "10,29": 2,
+      "11,29": 2,
+      "12,29": 2,
+      "13,29": 2,
+      "14,29": 2,
+      "8,30": 2,
+      "9,30": 2,
+      "10,30": 2,
+      "11,30": 2,
+      "12,30": 2,
+      "13,30": 2,
+      "14,30": 2,
+      "15,30": 2,
+      "8,31": 2,
+      "9,31": 2,
+      "10,31": 2,
+      "11,31": 2,
+      "12,31": 2,
+      "13,31": 2,
+      "14,31": 2,
+      "15,31": 2,
+      "8,32": 2,
+      "9,32": 2,
+      "10,32": 2,
+      "11,32": 2,
+      "12,32": 2,
+      "13,32": 2,
+      "14,32": 2,
+      "15,32": 2,
+      "8,33": 2,
+      "9,33": 2,
+      "10,33": 2,
+      "11,33": 2,
+      "12,33": 2,
+      "13,33": 2,
+      "14,33": 2,
+      "15,33": 2,
+      "9,34": 2,
+      "10,34": 2,
+      "11,34": 2,
+      "12,34": 2,
+      "13,34": 2,
+      "14,34": 2,
+      "10,35": 2,
+      "11,35": 2,
+      "12,35": 2,
+      "13,35": 2,
+      "14,35": 2,
+      "51,12": 2,
+      "52,12": 2,
+      "53,12": 2,
+      "50,13": 2,
+      "51,13": 2,
+      "52,13": 2,
+      "53,13": 2,
+      "54,13": 2,
+      "50,14": 2,
+      "51,14": 2,
+      "52,14": 2,
+      "53,14": 2,
+      "54,14": 2,
+      "49,15": 2,
+      "50,15": 2,
+      "51,15": 2,
+      "52,15": 2,
+      "53,15": 2,
+      "54,15": 2,
+      "48,16": 2,
+      "49,16": 2,
+      "50,16": 2,
+      "51,16": 2,
+      "52,16": 2,
+      "53,16": 2,
+      "54,16": 2,
+      "48,17": 2,
+      "49,17": 2,
+      "50,17": 2,
+      "51,17": 2,
+      "52,17": 2,
+      "53,17": 2,
+      "54,17": 2,
+      "48,18": 2,
+      "49,18": 2,
+      "50,18": 2,
+      "51,18": 2,
+      "52,18": 2,
+      "53,18": 2,
+      "54,18": 2,
+      "48,19": 2,
+      "49,19": 2,
+      "50,19": 2,
+      "51,19": 2,
+      "52,19": 2,
+      "53,19": 2,
+      "54,19": 2,
+      "48,20": 2,
+      "49,20": 2,
+      "50,20": 2,
+      "51,20": 2,
+      "52,20": 2,
+      "53,20": 2,
+      "54,20": 2,
+      "55,20": 2,
+      "49,21": 2,
+      "50,21": 2,
+      "51,21": 2,
+      "52,21": 2,
+      "53,21": 2,
+      "54,21": 2,
+      "55,21": 2,
+      "50,22": 2,
+      "51,22": 2,
+      "52,22": 2,
+      "53,22": 2,
+      "54,22": 2,
+      "50,23": 2,
+      "51,23": 2,
+      "52,23": 2,
+      "53,23": 2,
+      "28,8": 1,
+      "29,8": 1,
+      "30,8": 1,
+      "31,8": 1,
+      "28,9": 1,
+      "29,9": 1,
+      "30,9": 1,
+      "31,9": 1,
+      "28,10": 1,
+      "29,10": 1,
+      "30,10": 1,
+      "31,10": 1,
+      "28,11": 1,
+      "29,11": 1,
+      "30,11": 1,
+      "31,11": 1,
+      "24,56": 1,
+      "25,56": 1,
+      "26,56": 1,
+      "27,56": 1,
+      "28,56": 1,
+      "29,56": 1,
+      "30,56": 1,
+      "31,56": 1,
+      "24,57": 1,
+      "25,57": 1,
+      "26,57": 1,
+      "27,57": 1,
+      "28,57": 1,
+      "29,57": 1,
+      "30,57": 1,
+      "31,57": 1,
+      "24,58": 1,
+      "25,58": 1,
+      "26,58": 1,
+      "27,58": 1,
+      "28,58": 1,
+      "29,58": 1,
+      "30,58": 1,
+      "31,58": 1,
+      "24,59": 1,
+      "25,59": 1,
+      "26,59": 1,
+      "27,59": 1,
+      "28,59": 1,
+      "29,59": 1,
+      "30,59": 1,
+      "31,59": 1,
+      "24,60": 1,
+      "25,60": 1,
+      "26,60": 1,
+      "27,60": 1,
+      "28,60": 1,
+      "29,60": 1,
+      "30,60": 1,
+      "31,60": 1,
+      "24,61": 1,
+      "25,61": 1,
+      "26,61": 1,
+      "27,61": 1,
+      "28,61": 1,
+      "29,61": 1,
+      "30,61": 1,
+      "31,61": 1,
+      "24,62": 1,
+      "25,62": 1,
+      "26,62": 1,
+      "27,62": 1,
+      "28,62": 1,
+      "29,62": 1,
+      "30,62": 1,
+      "31,62": 1,
+      "24,63": 1,
+      "25,63": 1,
+      "26,63": 1,
+      "27,63": 1,
+      "28,63": 1,
+      "29,63": 1,
+      "30,63": 1,
+      "31,63": 1,
+      "12,56": 2,
+      "13,56": 2,
+      "14,56": 2,
+      "15,56": 2,
+      "10,57": 2,
+      "11,57": 2,
+      "12,57": 2,
+      "13,57": 2,
+      "14,57": 2,
+      "15,57": 2,
+      "16,57": 2,
+      "17,57": 2,
+      "18,57": 2,
+      "10,58": 2,
+      "11,58": 2,
+      "12,58": 2,
+      "13,58": 2,
+      "14,58": 2,
+      "15,58": 2,
+      "16,58": 2,
+      "17,58": 2,
+      "18,58": 2,
+      "19,58": 2,
+      "9,59": 2,
+      "10,59": 2,
+      "11,59": 2,
+      "12,59": 2,
+      "13,59": 2,
+      "14,59": 2,
+      "15,59": 2,
+      "16,59": 2,
+      "17,59": 2,
+      "18,59": 2,
+      "19,59": 2,
+      "8,60": 2,
+      "9,60": 2,
+      "10,60": 2,
+      "11,60": 2,
+      "12,60": 2,
+      "13,60": 2,
+      "14,60": 2,
+      "15,60": 2,
+      "16,60": 2,
+      "17,60": 2,
+      "18,60": 2,
+      "19,60": 2,
+      "8,61": 2,
+      "9,61": 2,
+      "10,61": 2,
+      "11,61": 2,
+      "12,61": 2,
+      "13,61": 2,
+      "14,61": 2,
+      "15,61": 2,
+      "16,61": 2,
+      "17,61": 2,
+      "18,61": 2,
+      "19,61": 2,
+      "8,62": 2,
+      "9,62": 2,
+      "10,62": 2,
+      "11,62": 2,
+      "12,62": 2,
+      "13,62": 2,
+      "14,62": 2,
+      "15,62": 2,
+      "16,62": 2,
+      "17,62": 2,
+      "18,62": 2,
+      "9,63": 2,
+      "10,63": 2,
+      "11,63": 2,
+      "12,63": 2,
+      "13,63": 2,
+      "19,62": 2,
+      "14,63": 2,
+      "15,63": 2,
+      "16,63": 2,
+      "17,63": 2,
+      "18,63": 2,
+      "19,63": 2,
+      "12,64": 2,
+      "13,64": 2,
+      "14,64": 2,
+      "15,64": 2,
+      "16,64": 2,
+      "17,64": 2,
+      "18,64": 2,
+      "19,64": 2,
+      "12,65": 2,
+      "13,65": 2,
+      "14,65": 2,
+      "15,65": 2,
+      "16,65": 2,
+      "17,65": 2,
+      "18,65": 2,
+      "19,65": 2,
+      "13,66": 2,
+      "14,66": 2,
+      "15,66": 2,
+      "16,66": 2,
+      "17,66": 2,
+      "18,66": 2,
+      "13,67": 2,
+      "14,67": 2,
+      "15,67": 2,
+      "16,67": 2,
+      "17,67": 2,
+      "68,0": 1,
+      "69,0": 1,
+      "70,0": 1,
+      "71,0": 1,
+      "68,1": 1,
+      "69,1": 1,
+      "70,1": 1,
+      "71,1": 1,
+      "68,2": 1,
+      "69,2": 1,
+      "70,2": 1,
+      "71,2": 1,
+      "68,3": 1,
+      "69,3": 1,
+      "70,3": 1,
+      "71,3": 1,
+      "25,72": 1,
+      "26,72": 1,
+      "27,72": 1,
+      "28,72": 1,
+      "29,72": 1,
+      "30,72": 1,
+      "25,73": 1,
+      "26,73": 1,
+      "27,73": 1,
+      "28,73": 1,
+      "29,73": 1,
+      "30,73": 1,
+      "31,73": 1,
+      "25,74": 1,
+      "26,74": 1,
+      "27,74": 1,
+      "28,74": 1,
+      "29,74": 1,
+      "30,74": 1,
+      "31,74": 1,
+      "24,75": 1,
+      "25,75": 1,
+      "26,75": 1,
+      "27,75": 1,
+      "28,75": 1,
+      "29,75": 1,
+      "30,75": 1,
+      "31,75": 1,
+      "24,76": 1,
+      "25,76": 1,
+      "26,76": 1,
+      "27,76": 1,
+      "28,76": 1,
+      "29,76": 1,
+      "30,76": 1,
+      "31,76": 1,
+      "24,77": 1,
+      "25,77": 1,
+      "26,77": 1,
+      "27,77": 1,
+      "28,77": 1,
+      "29,77": 1,
+      "30,77": 1,
+      "31,77": 1,
+      "24,78": 1,
+      "25,78": 1,
+      "26,78": 1,
+      "27,78": 1,
+      "28,78": 1,
+      "29,78": 1,
+      "30,78": 1,
+      "31,78": 1,
+      "24,79": 1,
+      "25,79": 1,
+      "26,79": 1,
+      "27,79": 1,
+      "28,79": 1,
+      "29,79": 1,
+      "30,79": 1,
+      "31,79": 1,
+      "24,80": 1,
+      "25,80": 1,
+      "26,80": 1,
+      "27,80": 1,
+      "28,80": 1,
+      "29,80": 1,
+      "30,80": 1,
+      "31,80": 1,
+      "24,81": 1,
+      "25,81": 1,
+      "26,81": 1,
+      "27,81": 1,
+      "28,81": 1,
+      "29,81": 1,
+      "30,81": 1,
+      "24,82": 1,
+      "25,82": 1,
+      "26,82": 1,
+      "27,82": 1,
+      "28,82": 1,
+      "29,82": 1,
+      "30,82": 1,
+      "24,83": 1,
+      "25,83": 1,
+      "26,83": 1,
+      "27,83": 1,
+      "28,83": 1,
+      "29,83": 1,
+      "30,83": 1,
+      "0,28": 1,
+      "1,28": 1,
+      "2,28": 1,
+      "3,28": 1,
+      "4,28": 1,
+      "5,28": 1,
+      "6,28": 1,
+      "7,28": 1,
+      "0,29": 1,
+      "1,29": 1,
+      "2,29": 1,
+      "3,29": 1,
+      "4,29": 1,
+      "5,29": 1,
+      "6,29": 1,
+      "7,29": 1,
+      "0,30": 1,
+      "1,30": 1,
+      "2,30": 1,
+      "3,30": 1,
+      "4,30": 1,
+      "5,30": 1,
+      "6,30": 1,
+      "7,30": 1,
+      "0,31": 1,
+      "1,31": 1,
+      "2,31": 1,
+      "3,31": 1,
+      "4,31": 1,
+      "5,31": 1,
+      "6,31": 1,
+      "7,31": 1,
+      "0,32": 1,
+      "1,32": 1,
+      "2,32": 1,
+      "3,32": 1,
+      "4,32": 1,
+      "5,32": 1,
+      "6,32": 1,
+      "7,32": 1,
+      "0,33": 1,
+      "1,33": 1,
+      "2,33": 1,
+      "3,33": 1,
+      "4,33": 1,
+      "5,33": 1,
+      "6,33": 1,
+      "7,33": 1,
+      "0,34": 1,
+      "1,34": 1,
+      "2,34": 1,
+      "3,34": 1,
+      "4,34": 1,
+      "5,34": 1,
+      "6,34": 1,
+      "7,34": 1,
+      "0,35": 1,
+      "1,35": 1,
+      "2,35": 1,
+      "3,35": 1,
+      "4,35": 1,
+      "5,35": 1,
+      "6,35": 1,
+      "7,35": 1,
+      "13,36": 2,
+      "14,36": 2,
+      "15,36": 2,
+      "12,37": 2,
+      "13,37": 2,
+      "14,37": 2,
+      "15,37": 2,
+      "12,38": 2,
+      "13,38": 2,
+      "14,38": 2,
+      "15,38": 2,
+      "12,39": 2,
+      "13,39": 2,
+      "14,39": 2,
+      "15,39": 2,
+      "17,40": 2,
+      "18,40": 2,
+      "19,40": 2,
+      "16,41": 2,
+      "17,41": 2,
+      "18,41": 2,
+      "19,41": 2,
+      "16,42": 2,
+      "17,42": 2,
+      "18,42": 2,
+      "19,42": 2,
+      "16,43": 2,
+      "17,43": 2,
+      "18,43": 2,
+      "19,43": 2,
+      "21,40": 2,
+      "22,40": 2,
+      "23,40": 2,
+      "20,41": 2,
+      "21,41": 2,
+      "22,41": 2,
+      "23,41": 2,
+      "20,42": 2,
+      "21,42": 2,
+      "22,42": 2,
+      "23,42": 2,
+      "20,43": 2,
+      "21,43": 2,
+      "22,43": 2,
+      "93,48": 2,
+      "94,48": 2,
+      "95,48": 2,
+      "92,49": 2,
+      "93,49": 2,
+      "94,49": 2,
+      "95,49": 2,
+      "92,50": 2,
+      "93,50": 2,
+      "94,50": 2,
+      "95,50": 2,
+      "92,51": 2,
+      "93,51": 2,
+      "94,51": 2,
+      "95,51": 2,
+      "93,84": 2,
+      "94,84": 2,
+      "95,84": 2,
+      "92,85": 2,
+      "93,85": 2,
+      "94,85": 2,
+      "95,85": 2,
+      "92,86": 2,
+      "93,86": 2,
+      "94,86": 2,
+      "95,86": 2,
+      "92,87": 2,
+      "93,87": 2,
+      "94,87": 2,
+      "95,87": 2,
+      "115,81": 1,
+      "116,81": 1,
+      "115,82": 1,
+      "116,82": 1,
+      "117,82": 1,
+      "115,83": 1,
+      "116,83": 1,
+      "117,83": 1,
+      "115,84": 1,
+      "116,84": 1,
+      "117,84": 1,
+      "115,85": 1,
+      "116,85": 1,
+      "117,85": 1,
+      "115,86": 1,
+      "116,86": 1,
+      "138,62": 1,
+      "139,62": 1,
+      "140,62": 1,
+      "138,63": 1,
+      "139,63": 1,
+      "140,63": 1,
+      "141,63": 1,
+      "139,64": 1,
+      "140,64": 1,
+      "141,64": 1,
+      "139,65": 1,
+      "140,65": 1,
+      "141,65": 1,
+      "40,84": 1,
+      "41,84": 1,
+      "42,84": 1,
+      "43,84": 1,
+      "44,84": 1,
+      "45,84": 1,
+      "46,84": 1,
+      "47,84": 1,
+      "48,84": 1,
+      "49,84": 1,
+      "50,84": 1,
+      "51,84": 1,
+      "52,84": 1,
+      "53,84": 1,
+      "54,84": 1,
+      "55,84": 1,
+      "56,84": 1,
+      "57,84": 1,
+      "58,84": 1,
+      "59,84": 1,
+      "40,85": 1,
+      "41,85": 1,
+      "42,85": 1,
+      "43,85": 1,
+      "44,85": 1,
+      "45,85": 1,
+      "46,85": 1,
+      "47,85": 1,
+      "48,85": 1,
+      "49,85": 1,
+      "50,85": 1,
+      "51,85": 1,
+      "52,85": 1,
+      "53,85": 1,
+      "54,85": 1,
+      "55,85": 1,
+      "56,85": 1,
+      "57,85": 1,
+      "58,85": 1,
+      "59,85": 1,
+      "40,86": 1,
+      "41,86": 1,
+      "42,86": 1,
+      "43,86": 1,
+      "44,86": 1,
+      "45,86": 1,
+      "46,86": 1,
+      "47,86": 1,
+      "48,86": 1,
+      "49,86": 1,
+      "50,86": 1,
+      "51,86": 1,
+      "52,86": 1,
+      "53,86": 1,
+      "54,86": 1,
+      "55,86": 1,
+      "56,86": 1,
+      "57,86": 1,
+      "58,86": 1,
+      "59,86": 1,
+      "40,87": 1,
+      "41,87": 1,
+      "42,87": 1,
+      "43,87": 1,
+      "44,87": 1,
+      "45,87": 1,
+      "46,87": 1,
+      "47,87": 1,
+      "48,87": 1,
+      "49,87": 1,
+      "50,87": 1,
+      "51,87": 1,
+      "52,87": 1,
+      "53,87": 1,
+      "54,87": 1,
+      "55,87": 1,
+      "56,87": 1,
+      "57,87": 1,
+      "58,87": 1,
+      "59,87": 1,
+      "40,88": 1,
+      "41,88": 1,
+      "42,88": 1,
+      "43,88": 1,
+      "44,88": 1,
+      "45,88": 1,
+      "46,88": 1,
+      "47,88": 1,
+      "48,88": 1,
+      "49,88": 1,
+      "50,88": 1,
+      "51,88": 1,
+      "52,88": 1,
+      "53,88": 1,
+      "54,88": 1,
+      "55,88": 1,
+      "56,88": 1,
+      "57,88": 1,
+      "58,88": 1,
+      "59,88": 1,
+      "40,89": 1,
+      "41,89": 1,
+      "42,89": 1,
+      "43,89": 1,
+      "44,89": 1,
+      "45,89": 1,
+      "46,89": 1,
+      "47,89": 1,
+      "48,89": 1,
+      "49,89": 1,
+      "50,89": 1,
+      "51,89": 1,
+      "52,89": 1,
+      "53,89": 1,
+      "54,89": 1,
+      "55,89": 1,
+      "56,89": 1,
+      "57,89": 1,
+      "58,89": 1,
+      "59,89": 1,
+      "40,90": 1,
+      "41,90": 1,
+      "42,90": 1,
+      "43,90": 1,
+      "44,90": 1,
+      "45,90": 1,
+      "46,90": 1,
+      "47,90": 1,
+      "48,90": 1,
+      "49,90": 1,
+      "50,90": 1,
+      "51,90": 1,
+      "52,90": 1,
+      "53,90": 1,
+      "54,90": 1,
+      "55,90": 1,
+      "56,90": 1,
+      "57,90": 1,
+      "58,90": 1,
+      "59,90": 1,
+      "40,91": 1,
+      "41,91": 1,
+      "42,91": 1,
+      "43,91": 1,
+      "44,91": 1,
+      "45,91": 1,
+      "46,91": 1,
+      "47,91": 1,
+      "48,91": 1,
+      "49,91": 1,
+      "50,91": 1,
+      "51,91": 1,
+      "52,91": 1,
+      "53,91": 1,
+      "54,91": 1,
+      "55,91": 1,
+      "56,91": 1,
+      "57,91": 1,
+      "58,91": 1,
+      "59,91": 1,
+      "80,92": 1,
+      "81,92": 1,
+      "82,92": 1,
+      "83,92": 1,
+      "80,93": 1,
+      "81,93": 1,
+      "82,93": 1,
+      "83,93": 1,
+      "80,94": 1,
+      "81,94": 1,
+      "82,94": 1,
+      "83,94": 1,
+      "80,95": 1,
+      "81,95": 1,
+      "82,95": 1,
+      "83,95": 1,
+      "62,34": 1,
+      "63,34": 1,
+      "64,34": 1,
+      "62,35": 1,
+      "63,35": 1,
+      "64,35": 1,
+      "65,35": 1,
+      "63,36": 1,
+      "64,36": 1,
+      "65,36": 1,
+      "63,37": 1,
+      "64,37": 1,
+      "65,37": 1,
+      "56,20": 1,
+      "57,20": 1,
+      "58,20": 1,
+      "59,20": 1,
+      "60,20": 1,
+      "61,20": 1,
+      "62,20": 1,
+      "63,20": 1,
+      "48,21": 1,
+      "56,21": 1,
+      "57,21": 1,
+      "58,21": 1,
+      "59,21": 1,
+      "60,21": 1,
+      "61,21": 1,
+      "62,21": 1,
+      "63,21": 1,
+      "48,22": 1,
+      "49,22": 1,
+      "55,22": 1,
+      "56,22": 1,
+      "57,22": 1,
+      "58,22": 1,
+      "59,22": 1,
+      "60,22": 1,
+      "61,22": 1,
+      "62,22": 1,
+      "63,22": 1,
+      "48,23": 1,
+      "49,23": 1,
+      "54,23": 1,
+      "55,23": 1,
+      "56,23": 1,
+      "57,23": 1,
+      "58,23": 1,
+      "59,23": 1,
+      "60,23": 1,
+      "61,23": 1,
+      "62,23": 1,
+      "63,23": 1,
+      "48,24": 1,
+      "49,24": 1,
+      "50,24": 1,
+      "51,24": 1,
+      "52,24": 1,
+      "53,24": 1,
+      "54,24": 1,
+      "55,24": 1,
+      "56,24": 1,
+      "57,24": 1,
+      "58,24": 1,
+      "59,24": 1,
+      "60,24": 1,
+      "61,24": 1,
+      "62,24": 1,
+      "63,24": 1,
+      "48,25": 1,
+      "49,25": 1,
+      "50,25": 1,
+      "51,25": 1,
+      "52,25": 1,
+      "53,25": 1,
+      "54,25": 1,
+      "55,25": 1,
+      "56,25": 1,
+      "57,25": 1,
+      "58,25": 1,
+      "59,25": 1,
+      "60,25": 1,
+      "61,25": 1,
+      "62,25": 1,
+      "63,25": 1,
+      "48,26": 1,
+      "49,26": 1,
+      "50,26": 1,
+      "51,26": 1,
+      "52,26": 1,
+      "53,26": 1,
+      "54,26": 1,
+      "55,26": 1,
+      "56,26": 1,
+      "57,26": 1,
+      "58,26": 1,
+      "59,26": 1,
+      "60,26": 1,
+      "61,26": 1,
+      "62,26": 1,
+      "63,26": 1,
+      "48,27": 1,
+      "49,27": 1,
+      "50,27": 1,
+      "51,27": 1,
+      "52,27": 1,
+      "53,27": 1,
+      "54,27": 1,
+      "55,27": 1,
+      "56,27": 1,
+      "57,27": 1,
+      "58,27": 1,
+      "59,27": 1,
+      "60,27": 1,
+      "61,27": 1,
+      "62,27": 1,
+      "63,27": 1,
+      "17,36": 1,
+      "18,36": 1,
+      "19,36": 1,
+      "16,37": 1,
+      "17,37": 1,
+      "18,37": 1,
+      "19,37": 1,
+      "16,38": 1,
+      "17,38": 1,
+      "18,38": 1,
+      "19,38": 1,
+      "16,39": 1,
+      "17,39": 1,
+      "18,39": 1,
+      "19,39": 1,
+      "16,40": 1,
+      "26,32": 1,
+      "27,32": 1,
+      "28,32": 1,
+      "29,32": 1,
+      "30,32": 1,
+      "24,33": 1,
+      "25,33": 1,
+      "26,33": 1,
+      "27,33": 1,
+      "28,33": 1,
+      "29,33": 1,
+      "30,33": 1,
+      "24,34": 1,
+      "25,34": 1,
+      "26,34": 1,
+      "27,34": 1,
+      "28,34": 1,
+      "29,34": 1,
+      "30,34": 1,
+      "31,34": 1,
+      "24,35": 1,
+      "25,35": 1,
+      "26,35": 1,
+      "27,35": 1,
+      "28,35": 1,
+      "29,35": 1,
+      "30,35": 1,
+      "31,35": 1,
+      "24,36": 1,
+      "25,36": 1,
+      "26,36": 1,
+      "27,36": 1,
+      "28,36": 1,
+      "29,36": 1,
+      "30,36": 1,
+      "31,36": 1,
+      "24,37": 1,
+      "25,37": 1,
+      "26,37": 1,
+      "27,37": 1,
+      "28,37": 1,
+      "29,37": 1,
+      "30,37": 1,
+      "31,37": 1,
+      "24,38": 1,
+      "25,38": 1,
+      "26,38": 1,
+      "27,38": 1,
+      "28,38": 1,
+      "29,38": 1,
+      "30,38": 1,
+      "31,38": 1,
+      "25,39": 1,
+      "26,39": 1,
+      "27,39": 1,
+      "28,39": 1,
+      "29,39": 1,
+      "30,39": 1,
+      "24,44": 1,
+      "25,44": 1,
+      "26,44": 1,
+      "27,44": 1,
+      "28,44": 1,
+      "29,44": 1,
+      "30,44": 1,
+      "31,44": 1,
+      "24,45": 1,
+      "25,45": 1,
+      "26,45": 1,
+      "27,45": 1,
+      "28,45": 1,
+      "29,45": 1,
+      "30,45": 1,
+      "31,45": 1,
+      "24,46": 1,
+      "25,46": 1,
+      "26,46": 1,
+      "27,46": 1,
+      "28,46": 1,
+      "29,46": 1,
+      "30,46": 1,
+      "31,46": 1,
+      "24,47": 1,
+      "25,47": 1,
+      "26,47": 1,
+      "27,47": 1,
+      "28,47": 1,
+      "29,47": 1,
+      "30,47": 1,
+      "31,47": 1,
+      "24,48": 1,
+      "25,48": 1,
+      "26,48": 1,
+      "27,48": 1,
+      "28,48": 1,
+      "29,48": 1,
+      "30,48": 1,
+      "31,48": 1,
+      "24,49": 1,
+      "25,49": 1,
+      "26,49": 1,
+      "27,49": 1,
+      "28,49": 1,
+      "29,49": 1,
+      "30,49": 1,
+      "31,49": 1,
+      "24,50": 1,
+      "25,50": 1,
+      "26,50": 1,
+      "27,50": 1,
+      "28,50": 1,
+      "29,50": 1,
+      "30,50": 1,
+      "31,50": 1,
+      "24,51": 1,
+      "25,51": 1,
+      "26,51": 1,
+      "27,51": 1,
+      "28,51": 1,
+      "29,51": 1,
+      "30,51": 1,
+      "31,51": 1,
+      "14,44": 1,
+      "15,44": 1,
+      "16,44": 1,
+      "17,44": 1,
+      "18,44": 1,
+      "12,45": 1,
+      "13,45": 1,
+      "14,45": 1,
+      "15,45": 1,
+      "16,45": 1,
+      "17,45": 1,
+      "18,45": 1,
+      "19,45": 1,
+      "12,46": 1,
+      "13,46": 1,
+      "14,46": 1,
+      "15,46": 1,
+      "16,46": 1,
+      "17,46": 1,
+      "18,46": 1,
+      "19,46": 1,
+      "12,47": 1,
+      "13,47": 1,
+      "14,47": 1,
+      "15,47": 1,
+      "16,47": 1,
+      "17,47": 1,
+      "18,47": 1,
+      "19,47": 1,
+      "12,48": 1,
+      "13,48": 1,
+      "14,48": 1,
+      "15,48": 1,
+      "16,48": 1,
+      "17,48": 1,
+      "18,48": 1,
+      "19,48": 1,
+      "12,49": 1,
+      "13,49": 1,
+      "14,49": 1,
+      "15,49": 1,
+      "16,49": 1,
+      "17,49": 1,
+      "18,49": 1,
+      "19,49": 1,
+      "12,50": 1,
+      "13,50": 1,
+      "14,50": 1,
+      "15,50": 1,
+      "16,50": 1,
+      "17,50": 1,
+      "18,50": 1,
+      "19,50": 1,
+      "13,51": 1,
+      "14,51": 1,
+      "15,51": 1,
+      "16,51": 1,
+      "17,51": 1,
+      "18,51": 1,
+      "37,44": 1,
+      "38,44": 1,
+      "39,44": 1,
+      "40,44": 1,
+      "41,44": 1,
+      "42,44": 1,
+      "43,44": 1,
+      "37,45": 1,
+      "38,45": 1,
+      "39,45": 1,
+      "40,45": 1,
+      "41,45": 1,
+      "42,45": 1,
+      "43,45": 1,
+      "37,46": 1,
+      "38,46": 1,
+      "39,46": 1,
+      "40,46": 1,
+      "41,46": 1,
+      "42,46": 1,
+      "43,46": 1,
+      "37,47": 1,
+      "38,47": 1,
+      "39,47": 1,
+      "40,47": 1,
+      "41,47": 1,
+      "42,47": 1,
+      "43,47": 1,
+      "37,48": 1,
+      "38,48": 1,
+      "39,48": 1,
+      "40,48": 1,
+      "41,48": 1,
+      "42,48": 1,
+      "43,48": 1,
+      "36,49": 1,
+      "37,49": 1,
+      "38,49": 1,
+      "39,49": 1,
+      "40,49": 1,
+      "41,49": 1,
+      "42,49": 1,
+      "43,49": 1,
+      "36,50": 1,
+      "37,50": 1,
+      "38,50": 1,
+      "39,50": 1,
+      "40,50": 1,
+      "41,50": 1,
+      "42,50": 1,
+      "43,50": 1,
+      "36,51": 1,
+      "37,51": 1,
+      "38,51": 1,
+      "39,51": 1,
+      "40,51": 1,
+      "41,51": 1,
+      "42,51": 1,
+      "43,51": 1,
+      "36,52": 1,
+      "37,52": 1,
+      "38,52": 1,
+      "39,52": 1,
+      "40,52": 1,
+      "41,52": 1,
+      "42,52": 1,
+      "43,52": 1,
+      "36,53": 1,
+      "37,53": 1,
+      "38,53": 1,
+      "39,53": 1,
+      "40,53": 1,
+      "41,53": 1,
+      "42,53": 1,
+      "43,53": 1,
+      "36,54": 1,
+      "37,54": 1,
+      "38,54": 1,
+      "39,54": 1,
+      "40,54": 1,
+      "41,54": 1,
+      "42,54": 1,
+      "43,54": 1,
+      "36,55": 1,
+      "37,55": 1,
+      "38,55": 1,
+      "39,55": 1,
+      "40,55": 1,
+      "41,55": 1,
+      "42,55": 1,
+      "36,56": 1,
+      "37,56": 1,
+      "38,56": 1,
+      "39,56": 1,
+      "40,56": 1,
+      "41,56": 1,
+      "42,56": 1,
+      "36,57": 1,
+      "37,57": 1,
+      "38,57": 1,
+      "39,57": 1,
+      "40,57": 1,
+      "41,57": 1,
+      "42,57": 1,
+      "36,58": 1,
+      "37,58": 1,
+      "38,58": 1,
+      "39,58": 1,
+      "40,58": 1,
+      "41,58": 1,
+      "42,58": 1,
+      "36,59": 1,
+      "37,59": 1,
+      "38,59": 1,
+      "39,59": 1,
+      "40,59": 1,
+      "41,59": 1,
+      "58,44": 1,
+      "59,44": 1,
+      "60,44": 1,
+      "61,44": 1,
+      "62,44": 1,
+      "56,45": 1,
+      "57,45": 1,
+      "58,45": 1,
+      "59,45": 1,
+      "60,45": 1,
+      "61,45": 1,
+      "62,45": 1,
+      "63,45": 1,
+      "56,46": 1,
+      "57,46": 1,
+      "58,46": 1,
+      "59,46": 1,
+      "60,46": 1,
+      "61,46": 1,
+      "62,46": 1,
+      "63,46": 1,
+      "56,47": 1,
+      "57,47": 1,
+      "58,47": 1,
+      "59,47": 1,
+      "60,47": 1,
+      "61,47": 1,
+      "62,47": 1,
+      "63,47": 1,
+      "56,48": 1,
+      "57,48": 1,
+      "58,48": 1,
+      "59,48": 1,
+      "60,48": 1,
+      "61,48": 1,
+      "62,48": 1,
+      "63,48": 1,
+      "56,49": 1,
+      "57,49": 1,
+      "58,49": 1,
+      "59,49": 1,
+      "60,49": 1,
+      "61,49": 1,
+      "62,49": 1,
+      "63,49": 1,
+      "56,50": 1,
+      "57,50": 1,
+      "58,50": 1,
+      "59,50": 1,
+      "60,50": 1,
+      "61,50": 1,
+      "62,50": 1,
+      "63,50": 1,
+      "57,51": 1,
+      "58,51": 1,
+      "59,51": 1,
+      "60,51": 1,
+      "61,51": 1,
+      "62,51": 1,
+      "139,57": 1,
+      "138,58": 1,
+      "139,58": 1,
+      "140,58": 1,
+      "137,59": 1,
+      "138,59": 1,
+      "139,59": 1,
+      "140,59": 1,
+      "141,59": 1,
+      "138,60": 1,
+      "139,60": 1,
+      "140,60": 1,
+      "141,60": 1,
+      "142,60": 1,
+      "139,61": 1,
+      "140,61": 1,
+      "141,61": 1,
+      "142,61": 1,
+      "141,62": 1,
+      "107,46": 1,
+      "106,47": 1,
+      "107,47": 1,
+      "108,47": 1,
+      "109,47": 1,
+      "110,47": 1,
+      "106,48": 1,
+      "107,48": 1,
+      "108,48": 1,
+      "109,48": 1,
+      "110,48": 1,
+      "108,49": 1,
+      "109,49": 1,
+      "6,72": 1,
+      "7,72": 1,
+      "8,72": 1,
+      "9,72": 1,
+      "10,72": 1,
+      "11,72": 1,
+      "12,72": 1,
+      "13,72": 1,
+      "6,73": 1,
+      "7,73": 1,
+      "8,73": 1,
+      "9,73": 1,
+      "10,73": 1,
+      "11,73": 1,
+      "12,73": 1,
+      "13,73": 1,
+      "4,74": 1,
+      "5,74": 1,
+      "6,74": 1,
+      "7,74": 1,
+      "8,74": 1,
+      "9,74": 1,
+      "10,74": 1,
+      "11,74": 1,
+      "12,74": 1,
+      "13,74": 1,
+      "14,74": 1,
+      "15,74": 1,
+      "4,75": 1,
+      "5,75": 1,
+      "6,75": 1,
+      "7,75": 1,
+      "8,75": 1,
+      "9,75": 1,
+      "10,75": 1,
+      "11,75": 1,
+      "12,75": 1,
+      "13,75": 1,
+      "14,75": 1,
+      "15,75": 1,
+      "4,76": 1,
+      "5,76": 1,
+      "6,76": 1,
+      "7,76": 1,
+      "8,76": 1,
+      "9,76": 1,
+      "10,76": 1,
+      "11,76": 1,
+      "12,76": 1,
+      "13,76": 1,
+      "14,76": 1,
+      "15,76": 1,
+      "4,77": 1,
+      "5,77": 1,
+      "6,77": 1,
+      "7,77": 1,
+      "8,77": 1,
+      "9,77": 1,
+      "10,77": 1,
+      "11,77": 1,
+      "12,77": 1,
+      "13,77": 1,
+      "14,77": 1,
+      "15,77": 1,
+      "4,78": 1,
+      "5,78": 1,
+      "6,78": 1,
+      "7,78": 1,
+      "8,78": 1,
+      "9,78": 1,
+      "10,78": 1,
+      "11,78": 1,
+      "12,78": 1,
+      "13,78": 1,
+      "14,78": 1,
+      "15,78": 1,
+      "4,79": 1,
+      "5,79": 1,
+      "6,79": 1,
+      "7,79": 1,
+      "8,79": 1,
+      "9,79": 1,
+      "10,79": 1,
+      "11,79": 1,
+      "12,79": 1,
+      "13,79": 1,
+      "14,79": 1,
+      "15,79": 1,
+      "13,12": 2,
+      "11,13": 2,
+      "12,13": 2,
+      "13,13": 2,
+      "14,13": 2,
+      "15,13": 2,
+      "11,14": 2,
+      "12,14": 2,
+      "13,14": 2,
+      "14,14": 2,
+      "15,14": 2,
+      "10,15": 2,
+      "11,15": 2,
+      "12,15": 2,
+      "13,15": 2,
+      "14,15": 2,
+      "15,15": 2,
+      "10,16": 2,
+      "11,16": 2,
+      "12,16": 2,
+      "13,16": 2,
+      "14,16": 2,
+      "15,16": 2,
+      "9,17": 2,
+      "10,17": 2,
+      "11,17": 2,
+      "12,17": 2,
+      "13,17": 2,
+      "14,17": 2,
+      "15,17": 2,
+      "8,18": 2,
+      "9,18": 2,
+      "10,18": 2,
+      "11,18": 2,
+      "12,18": 2,
+      "13,18": 2,
+      "14,18": 2,
+      "15,18": 2,
+      "8,19": 2,
+      "9,19": 2,
+      "10,19": 2,
+      "11,19": 2,
+      "12,19": 2,
+      "13,19": 2,
+      "14,19": 2,
+      "15,19": 2,
+      "8,20": 2,
+      "9,20": 2,
+      "10,20": 2,
+      "11,20": 2,
+      "12,20": 2,
+      "13,20": 2,
+      "14,20": 2,
+      "15,20": 2,
+      "8,21": 2,
+      "9,21": 2,
+      "10,21": 2,
+      "11,21": 2,
+      "12,21": 2,
+      "13,21": 2,
+      "8,22": 2,
+      "9,22": 2,
+      "10,22": 2,
+      "11,22": 2,
+      "13,0": 1,
+      "14,0": 1,
+      "15,0": 1,
+      "12,1": 1,
+      "13,1": 1,
+      "14,1": 1,
+      "15,1": 1,
+      "12,2": 1,
+      "13,2": 1,
+      "14,2": 1,
+      "15,2": 1,
+      "12,3": 1,
+      "13,3": 1,
+      "14,3": 1,
+      "15,3": 1,
+      "68,64": 1,
+      "69,64": 1,
+      "70,64": 1,
+      "71,64": 1,
+      "68,65": 1,
+      "69,65": 1,
+      "70,65": 1,
+      "71,65": 1,
+      "68,66": 1,
+      "69,66": 1,
+      "70,66": 1,
+      "71,66": 1,
+      "68,67": 1,
+      "69,67": 1,
+      "70,67": 1,
+      "71,67": 1,
+      "5,4": 1,
+      "6,4": 1,
+      "7,4": 1,
+      "4,5": 1,
+      "5,5": 1,
+      "6,5": 1,
+      "7,5": 1,
+      "4,6": 1,
+      "5,6": 1,
+      "6,6": 1,
+      "7,6": 1,
+      "5,7": 1,
+      "6,7": 1,
+      "7,7": 1,
+      "4,16": 1,
+      "5,16": 1,
+      "6,16": 1,
+      "7,16": 1,
+      "4,17": 1,
+      "5,17": 1,
+      "6,17": 1,
+      "7,17": 1,
+      "4,18": 1,
+      "5,18": 1,
+      "6,18": 1,
+      "7,18": 1,
+      "4,19": 1,
+      "5,19": 1,
+      "6,19": 1,
+      "7,19": 1,
+      "20,14": 1,
+      "21,14": 1,
+      "22,14": 1,
+      "20,15": 1,
+      "21,15": 1,
+      "22,15": 1,
+      "23,15": 1,
+      "24,15": 1,
+      "25,15": 1,
+      "26,15": 1,
+      "27,15": 1,
+      "20,16": 1,
+      "21,16": 1,
+      "22,16": 1,
+      "23,16": 1,
+      "24,16": 1,
+      "25,16": 1,
+      "26,16": 1,
+      "27,16": 1,
+      "23,17": 1,
+      "24,17": 1,
+      "25,17": 1,
+      "26,17": 1,
+      "27,17": 1,
+      "39,29": 1,
+      "40,29": 1,
+      "41,29": 1,
+      "38,30": 1,
+      "39,30": 1,
+      "40,30": 1,
+      "41,30": 1,
+      "38,31": 1,
+      "39,31": 1,
+      "40,31": 1,
+      "41,31": 1,
+      "39,32": 1,
+      "40,32": 1,
+      "41,32": 1,
+      "38,33": 1,
+      "39,33": 1,
+      "40,33": 1,
+      "41,33": 1,
+      "38,34": 1,
+      "39,34": 1,
+      "40,34": 1,
+      "41,34": 1,
+      "38,32": 1,
+      "44,8": 1,
+      "45,8": 1,
+      "46,8": 1,
+      "47,8": 1,
+      "48,8": 1,
+      "49,8": 1,
+      "50,8": 1,
+      "51,8": 1,
+      "44,9": 1,
+      "45,9": 1,
+      "46,9": 1,
+      "47,9": 1,
+      "48,9": 1,
+      "49,9": 1,
+      "50,9": 1,
+      "51,9": 1,
+      "44,10": 1,
+      "45,10": 1,
+      "46,10": 1,
+      "47,10": 1,
+      "48,10": 1,
+      "49,10": 1,
+      "50,10": 1,
+      "51,10": 1,
+      "44,11": 1,
+      "45,11": 1,
+      "46,11": 1,
+      "47,11": 1,
+      "48,11": 1,
+      "49,11": 1,
+      "50,11": 1,
+      "51,11": 1,
+      "44,12": 1,
+      "45,12": 1,
+      "46,12": 1,
+      "47,12": 1,
+      "48,12": 1,
+      "49,12": 1,
+      "50,12": 1,
+      "44,13": 1,
+      "45,13": 1,
+      "46,13": 1,
+      "47,13": 1,
+      "48,13": 1,
+      "49,13": 1,
+      "60,4": 1,
+      "61,4": 1,
+      "62,4": 1,
+      "63,4": 1,
+      "60,5": 1,
+      "61,5": 1,
+      "62,5": 1,
+      "63,5": 1,
+      "60,6": 1,
+      "61,6": 1,
+      "62,6": 1,
+      "63,6": 1,
+      "60,7": 1,
+      "61,7": 1,
+      "62,7": 1,
+      "63,7": 1,
+      "60,8": 1,
+      "61,8": 1,
+      "62,8": 1,
+      "63,8": 1,
+      "60,9": 1,
+      "61,9": 1,
+      "62,9": 1,
+      "63,9": 1,
+      "60,10": 1,
+      "61,10": 1,
+      "62,10": 1,
+      "63,10": 1,
+      "60,11": 1,
+      "61,11": 1,
+      "63,11": 1,
+      "62,11": 1,
+      "76,8": 1,
+      "77,8": 1,
+      "78,8": 1,
+      "79,8": 1,
+      "80,8": 1,
+      "81,8": 1,
+      "82,8": 1,
+      "83,8": 1,
+      "84,8": 1,
+      "85,8": 1,
+      "86,8": 1,
+      "87,8": 1,
+      "88,8": 1,
+      "89,8": 1,
+      "90,8": 1,
+      "91,8": 1,
+      "76,9": 1,
+      "77,9": 1,
+      "78,9": 1,
+      "79,9": 1,
+      "80,9": 1,
+      "81,9": 1,
+      "82,9": 1,
+      "83,9": 1,
+      "84,9": 1,
+      "85,9": 1,
+      "86,9": 1,
+      "87,9": 1,
+      "88,9": 1,
+      "89,9": 1,
+      "90,9": 1,
+      "91,9": 1,
+      "76,10": 1,
+      "77,10": 1,
+      "78,10": 1,
+      "79,10": 1,
+      "80,10": 1,
+      "81,10": 1,
+      "82,10": 1,
+      "83,10": 1,
+      "84,10": 1,
+      "85,10": 1,
+      "86,10": 1,
+      "87,10": 1,
+      "88,10": 1,
+      "89,10": 1,
+      "90,10": 1,
+      "91,10": 1,
+      "76,11": 1,
+      "77,11": 1,
+      "78,11": 1,
+      "79,11": 1,
+      "80,11": 1,
+      "81,11": 1,
+      "82,11": 1,
+      "83,11": 1,
+      "84,11": 1,
+      "85,11": 1,
+      "86,11": 1,
+      "87,11": 1,
+      "88,11": 1,
+      "89,11": 1,
+      "90,11": 1,
+      "91,11": 1,
+      "76,12": 1,
+      "77,12": 1,
+      "78,12": 1,
+      "79,12": 1,
+      "80,12": 1,
+      "81,12": 1,
+      "82,12": 1,
+      "83,12": 1,
+      "84,12": 1,
+      "85,12": 1,
+      "86,12": 1,
+      "87,12": 1,
+      "88,12": 1,
+      "89,12": 1,
+      "90,12": 1,
+      "91,12": 1,
+      "76,13": 1,
+      "77,13": 1,
+      "78,13": 1,
+      "79,13": 1,
+      "80,13": 1,
+      "81,13": 1,
+      "82,13": 1,
+      "83,13": 1,
+      "84,13": 1,
+      "85,13": 1,
+      "86,13": 1,
+      "87,13": 1,
+      "88,13": 1,
+      "89,13": 1,
+      "90,13": 1,
+      "91,13": 1,
+      "76,14": 1,
+      "77,14": 1,
+      "78,14": 1,
+      "79,14": 1,
+      "80,14": 1,
+      "81,14": 1,
+      "82,14": 1,
+      "83,14": 1,
+      "84,14": 1,
+      "85,14": 1,
+      "86,14": 1,
+      "87,14": 1,
+      "88,14": 1,
+      "89,14": 1,
+      "90,14": 1,
+      "91,14": 1,
+      "76,15": 1,
+      "77,15": 1,
+      "78,15": 1,
+      "79,15": 1,
+      "80,15": 1,
+      "81,15": 1,
+      "82,15": 1,
+      "83,15": 1,
+      "84,15": 1,
+      "85,15": 1,
+      "86,15": 1,
+      "87,15": 1,
+      "88,15": 1,
+      "89,15": 1,
+      "90,15": 1,
+      "91,15": 1,
+      "100,8": 1,
+      "101,8": 1,
+      "102,8": 1,
+      "103,8": 1,
+      "104,8": 1,
+      "105,8": 1,
+      "106,8": 1,
+      "107,8": 1,
+      "108,8": 1,
+      "109,8": 1,
+      "110,8": 1,
+      "111,8": 1,
+      "112,8": 1,
+      "113,8": 1,
+      "114,8": 1,
+      "115,8": 1,
+      "100,9": 1,
+      "101,9": 1,
+      "102,9": 1,
+      "103,9": 1,
+      "104,9": 1,
+      "105,9": 1,
+      "106,9": 1,
+      "107,9": 1,
+      "108,9": 1,
+      "109,9": 1,
+      "110,9": 1,
+      "111,9": 1,
+      "112,9": 1,
+      "113,9": 1,
+      "114,9": 1,
+      "115,9": 1,
+      "100,10": 1,
+      "101,10": 1,
+      "102,10": 1,
+      "103,10": 1,
+      "104,10": 1,
+      "105,10": 1,
+      "106,10": 1,
+      "107,10": 1,
+      "108,10": 1,
+      "109,10": 1,
+      "110,10": 1,
+      "111,10": 1,
+      "112,10": 1,
+      "113,10": 1,
+      "114,10": 1,
+      "115,10": 1,
+      "100,11": 1,
+      "101,11": 1,
+      "102,11": 1,
+      "103,11": 1,
+      "104,11": 1,
+      "105,11": 1,
+      "106,11": 1,
+      "107,11": 1,
+      "108,11": 1,
+      "109,11": 1,
+      "110,11": 1,
+      "111,11": 1,
+      "112,11": 1,
+      "113,11": 1,
+      "114,11": 1,
+      "115,11": 1,
+      "100,12": 1,
+      "101,12": 1,
+      "102,12": 1,
+      "103,12": 1,
+      "104,12": 1,
+      "105,12": 1,
+      "106,12": 1,
+      "107,12": 1,
+      "108,12": 1,
+      "109,12": 1,
+      "110,12": 1,
+      "111,12": 1,
+      "112,12": 1,
+      "113,12": 1,
+      "114,12": 1,
+      "115,12": 1,
+      "100,13": 1,
+      "101,13": 1,
+      "102,13": 1,
+      "103,13": 1,
+      "104,13": 1,
+      "105,13": 1,
+      "106,13": 1,
+      "107,13": 1,
+      "108,13": 1,
+      "109,13": 1,
+      "110,13": 1,
+      "111,13": 1,
+      "112,13": 1,
+      "113,13": 1,
+      "114,13": 1,
+      "115,13": 1,
+      "100,14": 1,
+      "101,14": 1,
+      "102,14": 1,
+      "103,14": 1,
+      "104,14": 1,
+      "105,14": 1,
+      "106,14": 1,
+      "107,14": 1,
+      "108,14": 1,
+      "109,14": 1,
+      "110,14": 1,
+      "111,14": 1,
+      "112,14": 1,
+      "113,14": 1,
+      "114,14": 1,
+      "115,14": 1,
+      "100,15": 1,
+      "101,15": 1,
+      "102,15": 1,
+      "103,15": 1,
+      "104,15": 1,
+      "105,15": 1,
+      "106,15": 1,
+      "107,15": 1,
+      "108,15": 1,
+      "109,15": 1,
+      "110,15": 1,
+      "111,15": 1,
+      "112,15": 1,
+      "113,15": 1,
+      "114,15": 1,
+      "115,15": 1,
+      "43,56": 1,
+      "43,57": 1,
+      "43,58": 1,
+      "42,59": 1,
+      "43,59": 1,
+      "40,76": 1,
+      "41,76": 1,
+      "42,76": 1,
+      "43,76": 1,
+      "40,77": 1,
+      "41,77": 1,
+      "42,77": 1,
+      "43,77": 1,
+      "40,78": 1,
+      "41,78": 1,
+      "42,78": 1,
+      "43,78": 1,
+      "40,79": 1,
+      "41,79": 1,
+      "42,79": 1,
+      "43,79": 1,
+      "51,72": 2,
+      "52,72": 2,
+      "53,72": 2,
+      "54,72": 2,
+      "49,73": 2,
+      "50,73": 2,
+      "51,73": 2,
+      "52,73": 2,
+      "53,73": 2,
+      "54,73": 2,
+      "48,74": 2,
+      "49,74": 2,
+      "50,74": 2,
+      "51,74": 2,
+      "52,74": 2,
+      "53,74": 2,
+      "54,74": 2,
+      "55,74": 2,
+      "48,75": 2,
+      "49,75": 2,
+      "50,75": 2,
+      "51,75": 2,
+      "52,75": 2,
+      "53,75": 2,
+      "54,75": 2,
+      "55,75": 2,
+      "48,76": 2,
+      "49,76": 2,
+      "50,76": 2,
+      "51,76": 2,
+      "52,76": 2,
+      "53,76": 2,
+      "54,76": 2,
+      "55,76": 2,
+      "49,77": 2,
+      "50,77": 2,
+      "51,77": 2,
+      "52,77": 2,
+      "53,77": 2,
+      "54,77": 2,
+      "55,77": 2,
+      "49,78": 2,
+      "50,78": 2,
+      "51,78": 2,
+      "52,78": 2,
+      "53,78": 2,
+      "54,78": 2,
+      "55,78": 2,
+      "50,79": 2,
+      "51,79": 2,
+      "52,79": 2,
+      "53,79": 2,
+      "54,79": 2,
+      "57,80": 2,
+      "58,80": 2,
+      "59,80": 2,
+      "56,81": 2,
+      "57,81": 2,
+      "58,81": 2,
+      "59,81": 2,
+      "56,82": 2,
+      "57,82": 2,
+      "58,82": 2,
+      "59,82": 2,
+      "56,83": 2,
+      "57,83": 2,
+      "58,83": 2,
+      "59,83": 2,
+      "50,60": 2,
+      "51,60": 2,
+      "52,60": 2,
+      "50,61": 2,
+      "51,61": 2,
+      "52,61": 2,
+      "53,61": 2,
+      "49,62": 2,
+      "50,62": 2,
+      "51,62": 2,
+      "52,62": 2,
+      "53,62": 2,
+      "54,62": 2,
+      "55,62": 2,
+      "48,63": 2,
+      "49,63": 2,
+      "50,63": 2,
+      "51,63": 2,
+      "52,63": 2,
+      "53,63": 2,
+      "54,63": 2,
+      "55,63": 2,
+      "48,64": 2,
+      "49,64": 2,
+      "50,64": 2,
+      "51,64": 2,
+      "52,64": 2,
+      "53,64": 2,
+      "54,64": 2,
+      "55,64": 2,
+      "48,65": 2,
+      "49,65": 2,
+      "50,65": 2,
+      "51,65": 2,
+      "52,65": 2,
+      "53,65": 2,
+      "54,65": 2,
+      "55,65": 2,
+      "48,66": 2,
+      "49,66": 2,
+      "50,66": 2,
+      "51,66": 2,
+      "52,66": 2,
+      "53,66": 2,
+      "54,66": 2,
+      "50,67": 2,
+      "51,67": 2,
+      "52,67": 2,
+      "53,67": 2,
+      "61,68": 1,
+      "62,68": 1,
+      "63,68": 1,
+      "64,68": 1,
+      "65,68": 1,
+      "60,69": 1,
+      "61,69": 1,
+      "62,69": 1,
+      "63,69": 1,
+      "64,69": 1,
+      "65,69": 1,
+      "66,69": 1,
+      "67,69": 1,
+      "60,70": 1,
+      "61,70": 1,
+      "62,70": 1,
+      "63,70": 1,
+      "64,70": 1,
+      "65,70": 1,
+      "66,70": 1,
+      "67,70": 1,
+      "60,71": 1,
+      "61,71": 1,
+      "62,71": 1,
+      "63,71": 1,
+      "64,71": 1,
+      "65,71": 1,
+      "66,71": 1,
+      "67,71": 1,
+      "67,80": 1,
+      "68,80": 1,
+      "69,80": 1,
+      "70,80": 1,
+      "71,80": 1,
+      "65,81": 1,
+      "67,81": 1,
+      "68,81": 1,
+      "69,81": 1,
+      "70,81": 1,
+      "71,81": 1,
+      "65,82": 1,
+      "66,82": 1,
+      "67,82": 1,
+      "68,82": 1,
+      "69,82": 1,
+      "70,82": 1,
+      "71,82": 1,
+      "64,83": 1,
+      "65,83": 1,
+      "66,83": 1,
+      "67,83": 1,
+      "68,83": 1,
+      "69,83": 1,
+      "70,83": 1,
+      "71,83": 1,
+      "64,84": 1,
+      "65,84": 1,
+      "66,84": 1,
+      "67,84": 1,
+      "68,84": 1,
+      "69,84": 1,
+      "70,84": 1,
+      "71,84": 1,
+      "64,85": 1,
+      "65,85": 1,
+      "66,85": 1,
+      "67,85": 1,
+      "68,85": 1,
+      "69,85": 1,
+      "70,85": 1,
+      "71,85": 1,
+      "64,86": 1,
+      "65,86": 1,
+      "66,86": 1,
+      "67,86": 1,
+      "68,86": 1,
+      "69,86": 1,
+      "70,86": 1,
+      "71,86": 1,
+      "64,87": 1,
+      "65,87": 1,
+      "66,87": 1,
+      "67,87": 1,
+      "68,87": 1,
+      "69,87": 1,
+      "70,87": 1,
+      "71,87": 1,
+      "64,88": 1,
+      "65,88": 1,
+      "66,88": 1,
+      "67,88": 1,
+      "68,88": 1,
+      "69,88": 1,
+      "70,88": 1,
+      "71,88": 1,
+      "64,89": 1,
+      "65,89": 1,
+      "66,89": 1,
+      "67,89": 1,
+      "68,89": 1,
+      "69,89": 1,
+      "70,89": 1,
+      "71,89": 1,
+      "65,90": 1,
+      "66,90": 1,
+      "67,90": 1,
+      "68,90": 1,
+      "69,90": 1,
+      "70,90": 1,
+      "71,90": 1,
+      "64,91": 1,
+      "65,91": 1,
+      "66,91": 1,
+      "67,91": 1,
+      "68,91": 1,
+      "69,91": 1,
+      "70,91": 1,
+      "66,81": 1,
+      "64,90": 1,
+      "76,80": 1,
+      "77,80": 1,
+      "78,80": 1,
+      "79,80": 1,
+      "80,80": 1,
+      "81,80": 1,
+      "82,80": 1,
+      "83,80": 1,
+      "76,81": 1,
+      "77,81": 1,
+      "78,81": 1,
+      "79,81": 1,
+      "80,81": 1,
+      "81,81": 1,
+      "82,81": 1,
+      "83,81": 1,
+      "76,82": 1,
+      "77,82": 1,
+      "78,82": 1,
+      "79,82": 1,
+      "80,82": 1,
+      "81,82": 1,
+      "82,82": 1,
+      "83,82": 1,
+      "76,83": 1,
+      "77,83": 1,
+      "78,83": 1,
+      "79,83": 1,
+      "80,83": 1,
+      "81,83": 1,
+      "82,83": 1,
+      "83,83": 1,
+      "76,84": 1,
+      "77,84": 1,
+      "78,84": 1,
+      "79,84": 1,
+      "80,84": 1,
+      "81,84": 1,
+      "82,84": 1,
+      "83,84": 1,
+      "76,85": 1,
+      "77,85": 1,
+      "78,85": 1,
+      "79,85": 1,
+      "80,85": 1,
+      "81,85": 1,
+      "82,85": 1,
+      "83,85": 1,
+      "120,84": 1,
+      "121,84": 1,
+      "122,84": 1,
+      "123,84": 1,
+      "124,84": 1,
+      "125,84": 1,
+      "126,84": 1,
+      "127,84": 1,
+      "128,84": 1,
+      "129,84": 1,
+      "130,84": 1,
+      "131,84": 1,
+      "132,84": 1,
+      "133,84": 1,
+      "134,84": 1,
+      "135,84": 1,
+      "120,85": 1,
+      "121,85": 1,
+      "122,85": 1,
+      "123,85": 1,
+      "124,85": 1,
+      "125,85": 1,
+      "126,85": 1,
+      "127,85": 1,
+      "128,85": 1,
+      "129,85": 1,
+      "130,85": 1,
+      "131,85": 1,
+      "132,85": 1,
+      "133,85": 1,
+      "134,85": 1,
+      "135,85": 1,
+      "120,86": 1,
+      "121,86": 1,
+      "122,86": 1,
+      "123,86": 1,
+      "124,86": 1,
+      "125,86": 1,
+      "126,86": 1,
+      "127,86": 1,
+      "128,86": 1,
+      "129,86": 1,
+      "130,86": 1,
+      "131,86": 1,
+      "132,86": 1,
+      "133,86": 1,
+      "134,86": 1,
+      "135,86": 1,
+      "120,87": 1,
+      "121,87": 1,
+      "122,87": 1,
+      "123,87": 1,
+      "124,87": 1,
+      "125,87": 1,
+      "126,87": 1,
+      "127,87": 1,
+      "128,87": 1,
+      "129,87": 1,
+      "130,87": 1,
+      "131,87": 1,
+      "132,87": 1,
+      "133,87": 1,
+      "134,87": 1,
+      "135,87": 1,
+      "120,88": 1,
+      "121,88": 1,
+      "122,88": 1,
+      "123,88": 1,
+      "124,88": 1,
+      "125,88": 1,
+      "126,88": 1,
+      "127,88": 1,
+      "128,88": 1,
+      "129,88": 1,
+      "130,88": 1,
+      "131,88": 1,
+      "132,88": 1,
+      "133,88": 1,
+      "134,88": 1,
+      "135,88": 1,
+      "120,89": 1,
+      "121,89": 1,
+      "122,89": 1,
+      "123,89": 1,
+      "124,89": 1,
+      "125,89": 1,
+      "126,89": 1,
+      "127,89": 1,
+      "128,89": 1,
+      "129,89": 1,
+      "130,89": 1,
+      "131,89": 1,
+      "132,89": 1,
+      "133,89": 1,
+      "134,89": 1,
+      "135,89": 1,
+      "120,90": 1,
+      "121,90": 1,
+      "122,90": 1,
+      "123,90": 1,
+      "124,90": 1,
+      "125,90": 1,
+      "126,90": 1,
+      "127,90": 1,
+      "128,90": 1,
+      "129,90": 1,
+      "130,90": 1,
+      "131,90": 1,
+      "132,90": 1,
+      "133,90": 1,
+      "134,90": 1,
+      "135,90": 1,
+      "120,91": 1,
+      "121,91": 1,
+      "122,91": 1,
+      "123,91": 1,
+      "124,91": 1,
+      "125,91": 1,
+      "126,91": 1,
+      "127,91": 1,
+      "128,91": 1,
+      "129,91": 1,
+      "130,91": 1,
+      "131,91": 1,
+      "132,91": 1,
+      "133,91": 1,
+      "134,91": 1,
+      "135,91": 1,
+      "137,88": 2,
+      "138,88": 2,
+      "139,88": 2,
+      "136,89": 2,
+      "137,89": 2,
+      "138,89": 2,
+      "139,89": 2,
+      "136,90": 2,
+      "137,90": 2,
+      "138,90": 2,
+      "139,90": 2,
+      "136,91": 2,
+      "137,91": 2,
+      "138,91": 2,
+      "139,91": 2,
+      "137,84": 2,
+      "138,84": 2,
+      "139,84": 2,
+      "136,85": 2,
+      "137,85": 2,
+      "138,85": 2,
+      "139,85": 2,
+      "136,86": 2,
+      "137,86": 2,
+      "138,86": 2,
+      "139,86": 2,
+      "136,87": 2,
+      "137,87": 2,
+      "138,87": 2,
+      "139,87": 2,
+      "55,66": 1,
+      "48,67": 1,
+      "49,67": 1,
+      "54,67": 1,
+      "55,67": 1,
+      "48,68": 1,
+      "49,68": 1,
+      "50,68": 1,
+      "51,68": 1,
+      "52,68": 1,
+      "53,68": 1,
+      "54,68": 1,
+      "55,68": 1,
+      "48,69": 1,
+      "49,69": 1,
+      "50,69": 1,
+      "51,69": 1,
+      "52,69": 1,
+      "53,69": 1,
+      "54,69": 1,
+      "55,69": 1,
+      "48,70": 1,
+      "49,70": 1,
+      "50,70": 1,
+      "51,70": 1,
+      "52,70": 1,
+      "53,70": 1,
+      "54,70": 1,
+      "55,70": 1,
+      "48,71": 1,
+      "49,71": 1,
+      "50,71": 1,
+      "51,71": 1,
+      "52,71": 1,
+      "53,71": 1,
+      "54,71": 1,
+      "55,71": 1,
+      "66,68": 1,
+      "67,68": 1,
+      "68,68": 1,
+      "69,68": 1,
+      "70,68": 1,
+      "71,68": 1,
+      "72,68": 1,
+      "73,68": 1,
+      "74,68": 1,
+      "75,68": 1,
+      "68,69": 1,
+      "69,69": 1,
+      "70,69": 1,
+      "71,69": 1,
+      "72,69": 1,
+      "73,69": 1,
+      "74,69": 1,
+      "75,69": 1,
+      "68,70": 1,
+      "69,70": 1,
+      "70,70": 1,
+      "71,70": 1,
+      "72,70": 1,
+      "73,70": 1,
+      "74,70": 1,
+      "75,70": 1,
+      "68,71": 1,
+      "69,71": 1,
+      "70,71": 1,
+      "71,71": 1,
+      "72,71": 1,
+      "73,71": 1,
+      "74,71": 1,
+      "75,71": 1,
+      "64,72": 1,
+      "65,72": 1,
+      "66,72": 1,
+      "67,72": 1,
+      "68,72": 1,
+      "69,72": 1,
+      "70,72": 1,
+      "71,72": 1,
+      "72,72": 1,
+      "73,72": 1,
+      "74,72": 1,
+      "75,72": 1,
+      "64,73": 1,
+      "65,73": 1,
+      "66,73": 1,
+      "67,73": 1,
+      "68,73": 1,
+      "69,73": 1,
+      "70,73": 1,
+      "71,73": 1,
+      "72,73": 1,
+      "73,73": 1,
+      "74,73": 1,
+      "75,73": 1,
+      "64,74": 1,
+      "65,74": 1,
+      "66,74": 1,
+      "67,74": 1,
+      "68,74": 1,
+      "69,74": 1,
+      "70,74": 1,
+      "71,74": 1,
+      "72,74": 1,
+      "73,74": 1,
+      "74,74": 1,
+      "75,74": 1,
+      "64,75": 1,
+      "65,75": 1,
+      "66,75": 1,
+      "67,75": 1,
+      "68,75": 1,
+      "69,75": 1,
+      "70,75": 1,
+      "71,75": 1,
+      "72,75": 1,
+      "73,75": 1,
+      "74,75": 1,
+      "75,75": 1,
+      "109,68": 1,
+      "110,68": 1,
+      "111,68": 1,
+      "112,68": 1,
+      "113,68": 1,
+      "114,68": 1,
+      "108,69": 1,
+      "109,69": 1,
+      "110,69": 1,
+      "111,69": 1,
+      "112,69": 1,
+      "113,69": 1,
+      "114,69": 1,
+      "115,69": 1,
+      "108,70": 1,
+      "109,70": 1,
+      "110,70": 1,
+      "111,70": 1,
+      "112,70": 1,
+      "113,70": 1,
+      "114,70": 1,
+      "115,70": 1,
+      "108,71": 1,
+      "109,71": 1,
+      "110,71": 1,
+      "111,71": 1,
+      "112,71": 1,
+      "113,71": 1,
+      "114,71": 1,
+      "115,71": 1,
+      "108,72": 1,
+      "109,72": 1,
+      "110,72": 1,
+      "111,72": 1,
+      "112,72": 1,
+      "113,72": 1,
+      "114,72": 1,
+      "115,72": 1,
+      "108,73": 1,
+      "109,73": 1,
+      "110,73": 1,
+      "111,73": 1,
+      "112,73": 1,
+      "113,73": 1,
+      "114,73": 1,
+      "115,73": 1,
+      "108,74": 1,
+      "109,74": 1,
+      "110,74": 1,
+      "111,74": 1,
+      "112,74": 1,
+      "113,74": 1,
+      "114,74": 1,
+      "115,74": 1,
+      "108,75": 1,
+      "109,75": 1,
+      "110,75": 1,
+      "111,75": 1,
+      "112,75": 1,
+      "113,75": 1,
+      "114,75": 1,
+      "115,75": 1,
+      "102,68": 2,
+      "103,68": 2,
+      "104,68": 2,
+      "101,69": 2,
+      "102,69": 2,
+      "103,69": 2,
+      "104,69": 2,
+      "105,69": 2,
+      "106,69": 2,
+      "100,70": 2,
+      "101,70": 2,
+      "102,70": 2,
+      "103,70": 2,
+      "104,70": 2,
+      "105,70": 2,
+      "106,70": 2,
+      "107,70": 2,
+      "100,71": 2,
+      "101,71": 2,
+      "102,71": 2,
+      "103,71": 2,
+      "104,71": 2,
+      "105,71": 2,
+      "106,71": 2,
+      "107,71": 2,
+      "100,72": 2,
+      "101,72": 2,
+      "102,72": 2,
+      "103,72": 2,
+      "104,72": 2,
+      "105,72": 2,
+      "106,72": 2,
+      "107,72": 2,
+      "100,73": 2,
+      "101,73": 2,
+      "102,73": 2,
+      "103,73": 2,
+      "104,73": 2,
+      "105,73": 2,
+      "106,73": 2,
+      "107,73": 2,
+      "101,74": 2,
+      "102,74": 2,
+      "103,74": 2,
+      "104,74": 2,
+      "105,74": 2,
+      "106,74": 2,
+      "101,75": 2,
+      "102,75": 2,
+      "103,75": 2,
+      "104,75": 2,
+      "105,75": 2,
+      "104,56": 1,
+      "105,56": 1,
+      "106,56": 1,
+      "107,56": 1,
+      "104,57": 1,
+      "105,57": 1,
+      "106,57": 1,
+      "107,57": 1,
+      "104,58": 1,
+      "105,58": 1,
+      "106,58": 1,
+      "107,58": 1,
+      "104,59": 1,
+      "105,59": 1,
+      "106,59": 1,
+      "107,59": 1,
+      "124,56": 2,
+      "125,56": 2,
+      "126,56": 2,
+      "127,56": 2,
+      "122,57": 2,
+      "123,57": 2,
+      "124,57": 2,
+      "125,57": 2,
+      "126,57": 2,
+      "127,57": 2,
+      "128,57": 2,
+      "129,57": 2,
+      "130,57": 2,
+      "122,58": 2,
+      "123,58": 2,
+      "124,58": 2,
+      "125,58": 2,
+      "126,58": 2,
+      "127,58": 2,
+      "128,58": 2,
+      "129,58": 2,
+      "130,58": 2,
+      "131,58": 2,
+      "121,59": 2,
+      "122,59": 2,
+      "123,59": 2,
+      "124,59": 2,
+      "125,59": 2,
+      "126,59": 2,
+      "127,59": 2,
+      "128,59": 2,
+      "129,59": 2,
+      "130,59": 2,
+      "131,59": 2,
+      "120,60": 2,
+      "121,60": 2,
+      "122,60": 2,
+      "123,60": 2,
+      "124,60": 2,
+      "125,60": 2,
+      "126,60": 2,
+      "127,60": 2,
+      "128,60": 2,
+      "129,60": 2,
+      "130,60": 2,
+      "131,60": 2,
+      "120,61": 2,
+      "121,61": 2,
+      "122,61": 2,
+      "123,61": 2,
+      "124,61": 2,
+      "125,61": 2,
+      "126,61": 2,
+      "127,61": 2,
+      "128,61": 2,
+      "129,61": 2,
+      "130,61": 2,
+      "131,61": 2,
+      "120,62": 2,
+      "121,62": 2,
+      "122,62": 2,
+      "123,62": 2,
+      "124,62": 2,
+      "125,62": 2,
+      "126,62": 2,
+      "127,62": 2,
+      "128,62": 2,
+      "129,62": 2,
+      "130,62": 2,
+      "121,63": 2,
+      "122,63": 2,
+      "123,63": 2,
+      "124,63": 2,
+      "125,63": 2,
+      "93,8": 2,
+      "94,8": 2,
+      "95,8": 2,
+      "92,9": 2,
+      "93,9": 2,
+      "94,9": 2,
+      "95,9": 2,
+      "92,10": 2,
+      "93,10": 2,
+      "94,10": 2,
+      "95,10": 2,
+      "93,11": 2,
+      "94,11": 2,
+      "95,11": 2,
+      "93,12": 2,
+      "94,12": 2,
+      "95,12": 2,
+      "92,13": 2,
+      "93,13": 2,
+      "94,13": 2,
+      "95,13": 2,
+      "92,14": 2,
+      "93,14": 2,
+      "94,14": 2,
+      "95,14": 2,
+      "93,15": 2,
+      "94,15": 2,
+      "95,15": 2,
+      "68,20": 1,
+      "69,20": 1,
+      "70,20": 1,
+      "71,20": 1,
+      "72,20": 1,
+      "73,20": 1,
+      "74,20": 1,
+      "75,20": 1,
+      "76,20": 1,
+      "77,20": 1,
+      "78,20": 1,
+      "79,20": 1,
+      "80,20": 1,
+      "81,20": 1,
+      "82,20": 1,
+      "83,20": 1,
+      "84,20": 1,
+      "85,20": 1,
+      "86,20": 1,
+      "87,20": 1,
+      "68,21": 1,
+      "69,21": 1,
+      "70,21": 1,
+      "71,21": 1,
+      "72,21": 1,
+      "73,21": 1,
+      "74,21": 1,
+      "75,21": 1,
+      "76,21": 1,
+      "77,21": 1,
+      "78,21": 1,
+      "79,21": 1,
+      "80,21": 1,
+      "81,21": 1,
+      "82,21": 1,
+      "83,21": 1,
+      "84,21": 1,
+      "85,21": 1,
+      "86,21": 1,
+      "87,21": 1,
+      "68,22": 1,
+      "69,22": 1,
+      "70,22": 1,
+      "71,22": 1,
+      "72,22": 1,
+      "73,22": 1,
+      "74,22": 1,
+      "75,22": 1,
+      "76,22": 1,
+      "77,22": 1,
+      "78,22": 1,
+      "79,22": 1,
+      "80,22": 1,
+      "81,22": 1,
+      "82,22": 1,
+      "83,22": 1,
+      "84,22": 1,
+      "85,22": 1,
+      "86,22": 1,
+      "87,22": 1,
+      "68,23": 1,
+      "69,23": 1,
+      "70,23": 1,
+      "71,23": 1,
+      "72,23": 1,
+      "73,23": 1,
+      "74,23": 1,
+      "75,23": 1,
+      "76,23": 1,
+      "77,23": 1,
+      "78,23": 1,
+      "79,23": 1,
+      "80,23": 1,
+      "81,23": 1,
+      "82,23": 1,
+      "83,23": 1,
+      "84,23": 1,
+      "85,23": 1,
+      "86,23": 1,
+      "87,23": 1,
+      "68,24": 1,
+      "69,24": 1,
+      "70,24": 1,
+      "71,24": 1,
+      "72,24": 1,
+      "73,24": 1,
+      "74,24": 1,
+      "75,24": 1,
+      "76,24": 1,
+      "77,24": 1,
+      "78,24": 1,
+      "79,24": 1,
+      "80,24": 1,
+      "81,24": 1,
+      "82,24": 1,
+      "83,24": 1,
+      "84,24": 1,
+      "85,24": 1,
+      "86,24": 1,
+      "87,24": 1,
+      "68,25": 1,
+      "69,25": 1,
+      "70,25": 1,
+      "71,25": 1,
+      "72,25": 1,
+      "73,25": 1,
+      "74,25": 1,
+      "75,25": 1,
+      "76,25": 1,
+      "77,25": 1,
+      "78,25": 1,
+      "79,25": 1,
+      "80,25": 1,
+      "81,25": 1,
+      "82,25": 1,
+      "83,25": 1,
+      "84,25": 1,
+      "85,25": 1,
+      "86,25": 1,
+      "87,25": 1,
+      "68,26": 1,
+      "69,26": 1,
+      "70,26": 1,
+      "71,26": 1,
+      "72,26": 1,
+      "73,26": 1,
+      "74,26": 1,
+      "75,26": 1,
+      "76,26": 1,
+      "77,26": 1,
+      "78,26": 1,
+      "79,26": 1,
+      "80,26": 1,
+      "81,26": 1,
+      "82,26": 1,
+      "83,26": 1,
+      "84,26": 1,
+      "85,26": 1,
+      "86,26": 1,
+      "87,26": 1,
+      "68,27": 1,
+      "69,27": 1,
+      "70,27": 1,
+      "71,27": 1,
+      "72,27": 1,
+      "73,27": 1,
+      "74,27": 1,
+      "75,27": 1,
+      "76,27": 1,
+      "77,27": 1,
+      "78,27": 1,
+      "79,27": 1,
+      "80,27": 1,
+      "81,27": 1,
+      "82,27": 1,
+      "83,27": 1,
+      "84,27": 1,
+      "85,27": 1,
+      "86,27": 1,
+      "87,27": 1,
+      "84,28": 1,
+      "85,28": 1,
+      "86,28": 1,
+      "87,28": 1,
+      "84,29": 1,
+      "85,29": 1,
+      "86,29": 1,
+      "87,29": 1,
+      "84,30": 1,
+      "85,30": 1,
+      "86,30": 1,
+      "87,30": 1,
+      "84,31": 1,
+      "85,31": 1,
+      "86,31": 1,
+      "87,31": 1,
+      "84,32": 1,
+      "85,32": 1,
+      "86,32": 1,
+      "84,33": 1,
+      "85,33": 1,
+      "97,32": 1,
+      "98,32": 1,
+      "99,32": 1,
+      "96,33": 1,
+      "97,33": 1,
+      "98,33": 1,
+      "99,33": 1,
+      "100,33": 1,
+      "101,33": 1,
+      "96,35": 1,
+      "97,35": 1,
+      "98,35": 1,
+      "99,35": 1,
+      "100,35": 1,
+      "101,35": 1,
+      "96,36": 1,
+      "97,36": 1,
+      "98,36": 1,
+      "99,36": 1,
+      "100,36": 1,
+      "101,36": 1,
+      "96,38": 1,
+      "97,38": 1,
+      "98,38": 1,
+      "99,38": 1,
+      "100,38": 1,
+      "101,38": 1,
+      "96,39": 1,
+      "97,39": 1,
+      "100,39": 1,
+      "101,39": 1,
+      "104,32": 1,
+      "105,32": 1,
+      "106,32": 1,
+      "107,32": 1,
+      "108,32": 1,
+      "109,32": 1,
+      "110,32": 1,
+      "111,32": 1,
+      "104,33": 1,
+      "105,33": 1,
+      "106,33": 1,
+      "107,33": 1,
+      "108,33": 1,
+      "109,33": 1,
+      "110,33": 1,
+      "111,33": 1,
+      "104,34": 1,
+      "105,34": 1,
+      "106,34": 1,
+      "107,34": 1,
+      "108,34": 1,
+      "109,34": 1,
+      "110,34": 1,
+      "111,34": 1,
+      "104,35": 1,
+      "105,35": 1,
+      "106,35": 1,
+      "107,35": 1,
+      "108,35": 1,
+      "109,35": 1,
+      "110,35": 1,
+      "111,35": 1,
+      "104,36": 1,
+      "105,36": 1,
+      "106,36": 1,
+      "107,36": 1,
+      "108,36": 1,
+      "109,36": 1,
+      "110,36": 1,
+      "111,36": 1,
+      "104,37": 1,
+      "105,37": 1,
+      "106,37": 1,
+      "107,37": 1,
+      "108,37": 1,
+      "109,37": 1,
+      "110,37": 1,
+      "111,37": 1,
+      "104,38": 1,
+      "105,38": 1,
+      "106,38": 1,
+      "107,38": 1,
+      "108,38": 1,
+      "109,38": 1,
+      "110,38": 1,
+      "111,38": 1,
+      "104,39": 1,
+      "105,39": 1,
+      "106,39": 1,
+      "107,39": 1,
+      "108,39": 1,
+      "109,39": 1,
+      "110,39": 1,
+      "111,39": 1,
+      "97,24": 1,
+      "98,24": 1,
+      "99,24": 1,
+      "96,25": 1,
+      "97,25": 1,
+      "98,25": 1,
+      "99,25": 1,
+      "96,26": 1,
+      "97,26": 1,
+      "98,26": 1,
+      "99,26": 1,
+      "96,27": 1,
+      "97,27": 1,
+      "98,27": 1,
+      "99,27": 1,
+      "96,28": 1,
+      "97,28": 1,
+      "98,28": 1,
+      "99,28": 1,
+      "96,29": 1,
+      "97,29": 1,
+      "98,29": 1,
+      "99,29": 1,
+      "96,30": 1,
+      "97,30": 1,
+      "98,30": 1,
+      "99,30": 1,
+      "96,31": 1,
+      "97,31": 1,
+      "98,31": 1,
+      "99,31": 1,
+      "80,4": 1,
+      "81,4": 1,
+      "82,4": 1,
+      "83,4": 1,
+      "80,5": 1,
+      "81,5": 1,
+      "82,5": 1,
+      "83,5": 1,
+      "80,6": 1,
+      "81,6": 1,
+      "82,6": 1,
+      "83,6": 1,
+      "80,7": 1,
+      "81,7": 1,
+      "82,7": 1,
+      "83,7": 1,
+      "110,40": 1,
+      "109,41": 1,
+      "110,41": 1,
+      "111,41": 1,
+      "109,42": 1,
+      "110,42": 1,
+      "111,42": 1,
+      "112,42": 1,
+      "110,43": 1,
+      "111,43": 1,
+      "112,43": 1,
+      "113,43": 1,
+      "111,44": 1,
+      "112,44": 1,
+      "113,44": 1,
+      "114,44": 1,
+      "111,45": 1,
+      "112,45": 1,
+      "113,45": 1,
+      "114,45": 1,
+      "112,46": 1,
+      "113,46": 1,
+      "114,46": 1,
+      "113,47": 1,
+      "114,47": 1,
+      "109,45": 2,
+      "110,45": 2,
+      "115,45": 2,
+      "108,46": 2,
+      "109,46": 2,
+      "110,46": 2,
+      "111,46": 2,
+      "115,46": 2,
+      "111,47": 2,
+      "112,47": 2,
+      "115,47": 2,
+      "111,48": 2,
+      "112,48": 2,
+      "113,48": 2,
+      "114,48": 2,
+      "115,48": 2,
+      "110,49": 2,
+      "111,49": 2,
+      "112,49": 2,
+      "113,49": 2,
+      "114,49": 2,
+      "115,49": 2,
+      "109,50": 2,
+      "110,50": 2,
+      "111,50": 2,
+      "112,50": 2,
+      "113,50": 2,
+      "114,50": 2,
+      "109,51": 2,
+      "110,51": 2,
+      "111,51": 2,
+      "112,51": 2,
+      "113,51": 2,
+      "101,16": 2,
+      "102,16": 2,
+      "103,16": 2,
+      "100,17": 2,
+      "101,17": 2,
+      "102,17": 2,
+      "103,17": 2,
+      "100,18": 2,
+      "101,18": 2,
+      "102,18": 2,
+      "103,18": 2,
+      "100,19": 2,
+      "101,19": 2,
+      "102,19": 2,
+      "103,19": 2,
+      "113,16": 2,
+      "114,16": 2,
+      "115,16": 2,
+      "112,17": 2,
+      "113,17": 2,
+      "114,17": 2,
+      "115,17": 2,
+      "112,18": 2,
+      "113,18": 2,
+      "114,18": 2,
+      "115,18": 2,
+      "112,19": 2,
+      "113,19": 2,
+      "114,19": 2,
+      "115,19": 2,
+      "108,24": 1,
+      "109,24": 1,
+      "110,24": 1,
+      "111,24": 1,
+      "112,24": 1,
+      "113,24": 1,
+      "114,24": 1,
+      "115,24": 1,
+      "108,25": 1,
+      "109,25": 1,
+      "110,25": 1,
+      "111,25": 1,
+      "112,25": 1,
+      "113,25": 1,
+      "114,25": 1,
+      "115,25": 1,
+      "108,26": 1,
+      "109,26": 1,
+      "110,26": 1,
+      "111,26": 1,
+      "112,26": 1,
+      "113,26": 1,
+      "114,26": 1,
+      "115,26": 1,
+      "108,27": 1,
+      "109,27": 1,
+      "110,27": 1,
+      "111,27": 1,
+      "112,27": 1,
+      "113,27": 1,
+      "114,27": 1,
+      "115,27": 1,
+      "108,28": 1,
+      "109,28": 1,
+      "110,28": 1,
+      "111,28": 1,
+      "112,28": 1,
+      "113,28": 1,
+      "114,28": 1,
+      "115,28": 1,
+      "108,29": 1,
+      "109,29": 1,
+      "110,29": 1,
+      "111,29": 1,
+      "112,29": 1,
+      "113,29": 1,
+      "114,29": 1,
+      "115,29": 1,
+      "132,44": 1,
+      "133,44": 1,
+      "134,44": 1,
+      "135,44": 1,
+      "136,44": 1,
+      "137,44": 1,
+      "138,44": 1,
+      "139,44": 1,
+      "140,44": 1,
+      "141,44": 1,
+      "142,44": 1,
+      "143,44": 1,
+      "132,45": 1,
+      "133,45": 1,
+      "134,45": 1,
+      "135,45": 1,
+      "136,45": 1,
+      "137,45": 1,
+      "138,45": 1,
+      "139,45": 1,
+      "140,45": 1,
+      "141,45": 1,
+      "142,45": 1,
+      "143,45": 1,
+      "132,46": 1,
+      "133,46": 1,
+      "134,46": 1,
+      "135,46": 1,
+      "136,46": 1,
+      "137,46": 1,
+      "138,46": 1,
+      "139,46": 1,
+      "140,46": 1,
+      "141,46": 1,
+      "142,46": 1,
+      "143,46": 1,
+      "132,47": 1,
+      "133,47": 1,
+      "134,47": 1,
+      "135,47": 1,
+      "136,47": 1,
+      "137,47": 1,
+      "138,47": 1,
+      "139,47": 1,
+      "140,47": 1,
+      "141,47": 1,
+      "142,47": 1,
+      "143,47": 1,
+      "132,48": 1,
+      "133,48": 1,
+      "134,48": 1,
+      "135,48": 1,
+      "136,48": 1,
+      "137,48": 1,
+      "138,48": 1,
+      "139,48": 1,
+      "140,48": 1,
+      "141,48": 1,
+      "142,48": 1,
+      "143,48": 1,
+      "132,49": 1,
+      "133,49": 1,
+      "134,49": 1,
+      "135,49": 1,
+      "136,49": 1,
+      "137,49": 1,
+      "138,49": 1,
+      "139,49": 1,
+      "140,49": 1,
+      "141,49": 1,
+      "142,49": 1,
+      "143,49": 1,
+      "132,50": 1,
+      "133,50": 1,
+      "134,50": 1,
+      "135,50": 1,
+      "136,50": 1,
+      "137,50": 1,
+      "138,50": 1,
+      "139,50": 1,
+      "140,50": 1,
+      "141,50": 1,
+      "142,50": 1,
+      "143,50": 1,
+      "132,51": 1,
+      "133,51": 1,
+      "134,51": 1,
+      "135,51": 1,
+      "136,51": 1,
+      "137,51": 1,
+      "138,51": 1,
+      "139,51": 1,
+      "140,51": 1,
+      "141,51": 1,
+      "142,51": 1,
+      "143,51": 1,
+      "128,28": 1,
+      "129,28": 1,
+      "130,28": 1,
+      "131,28": 1,
+      "132,28": 1,
+      "133,28": 1,
+      "134,28": 1,
+      "135,28": 1,
+      "128,29": 1,
+      "129,29": 1,
+      "130,29": 1,
+      "131,29": 1,
+      "132,29": 1,
+      "133,29": 1,
+      "134,29": 1,
+      "135,29": 1,
+      "128,30": 1,
+      "129,30": 1,
+      "130,30": 1,
+      "131,30": 1,
+      "132,30": 1,
+      "133,30": 1,
+      "134,30": 1,
+      "135,30": 1,
+      "128,31": 1,
+      "129,31": 1,
+      "130,31": 1,
+      "131,31": 1,
+      "132,31": 1,
+      "133,31": 1,
+      "134,31": 1,
+      "135,31": 1,
+      "128,32": 1,
+      "129,32": 1,
+      "130,32": 1,
+      "131,32": 1,
+      "132,32": 1,
+      "133,32": 1,
+      "134,32": 1,
+      "135,32": 1,
+      "128,33": 1,
+      "129,33": 1,
+      "130,33": 1,
+      "131,33": 1,
+      "132,33": 1,
+      "133,33": 1,
+      "134,33": 1,
+      "135,33": 1,
+      "128,34": 1,
+      "129,34": 1,
+      "130,34": 1,
+      "131,34": 1,
+      "132,34": 1,
+      "133,34": 1,
+      "134,34": 1,
+      "135,34": 1,
+      "128,35": 1,
+      "129,35": 1,
+      "130,35": 1,
+      "131,35": 1,
+      "132,35": 1,
+      "133,35": 1,
+      "134,35": 1,
+      "135,35": 1,
+      "128,36": 1,
+      "129,36": 1,
+      "130,36": 1,
+      "131,36": 1,
+      "132,36": 1,
+      "133,36": 1,
+      "134,36": 1,
+      "135,36": 1,
+      "128,37": 1,
+      "129,37": 1,
+      "130,37": 1,
+      "131,37": 1,
+      "132,37": 1,
+      "133,37": 1,
+      "134,37": 1,
+      "135,37": 1,
+      "128,38": 1,
+      "129,38": 1,
+      "130,38": 1,
+      "131,38": 1,
+      "132,38": 1,
+      "133,38": 1,
+      "134,38": 1,
+      "135,38": 1,
+      "128,39": 1,
+      "129,39": 1,
+      "130,39": 1,
+      "131,39": 1,
+      "132,39": 1,
+      "133,39": 1,
+      "134,39": 1,
+      "135,39": 1,
+      "124,20": 1,
+      "125,20": 1,
+      "126,20": 1,
+      "127,20": 1,
+      "124,21": 1,
+      "125,21": 1,
+      "126,21": 1,
+      "127,21": 1,
+      "124,22": 1,
+      "125,22": 1,
+      "126,22": 1,
+      "127,22": 1,
+      "124,23": 1,
+      "125,23": 1,
+      "126,23": 1,
+      "127,23": 1,
+      "131,20": 2,
+      "132,20": 2,
+      "133,20": 2,
+      "134,20": 2,
+      "129,21": 2,
+      "130,21": 2,
+      "131,21": 2,
+      "132,21": 2,
+      "133,21": 2,
+      "134,21": 2,
+      "135,21": 2,
+      "128,22": 2,
+      "129,22": 2,
+      "130,22": 2,
+      "131,22": 2,
+      "132,22": 2,
+      "133,22": 2,
+      "134,22": 2,
+      "135,22": 2,
+      "128,23": 2,
+      "129,23": 2,
+      "130,23": 2,
+      "131,23": 2,
+      "132,23": 2,
+      "133,23": 2,
+      "134,23": 2,
+      "135,23": 2,
+      "128,24": 2,
+      "129,24": 2,
+      "130,24": 2,
+      "131,24": 2,
+      "132,24": 2,
+      "133,24": 2,
+      "134,24": 2,
+      "135,24": 2,
+      "128,25": 2,
+      "129,25": 2,
+      "130,25": 2,
+      "131,25": 2,
+      "132,25": 2,
+      "133,25": 2,
+      "134,25": 2,
+      "135,25": 2,
+      "129,26": 2,
+      "130,26": 2,
+      "131,26": 2,
+      "132,26": 2,
+      "133,26": 2,
+      "134,26": 2,
+      "129,27": 2,
+      "130,27": 2,
+      "131,27": 2,
+      "132,27": 2,
+      "133,27": 2,
+      "85,4": 2,
+      "86,4": 2,
+      "87,4": 2,
+      "84,5": 2,
+      "85,5": 2,
+      "86,5": 2,
+      "87,5": 2,
+      "84,6": 2,
+      "85,6": 2,
+      "86,6": 2,
+      "87,6": 2,
+      "84,7": 2,
+      "85,7": 2,
+      "86,7": 2,
+      "87,7": 2,
+      "89,4": 2,
+      "90,4": 2,
+      "91,4": 2,
+      "88,5": 2,
+      "89,5": 2,
+      "90,5": 2,
+      "91,5": 2,
+      "88,6": 2,
+      "89,6": 2,
+      "90,6": 2,
+      "91,6": 2,
+      "88,7": 2,
+      "89,7": 2,
+      "90,7": 2,
+      "91,7": 2,
+      "93,4": 2,
+      "94,4": 2,
+      "95,4": 2,
+      "92,5": 2,
+      "93,5": 2,
+      "94,5": 2,
+      "95,5": 2,
+      "92,6": 2,
+      "93,6": 2,
+      "94,6": 2,
+      "95,6": 2,
+      "93,7": 2,
+      "94,7": 2,
+      "95,7": 2,
+      "43,66": 1,
+      "42,67": 1,
+      "43,67": 1,
+      "40,68": 1,
+      "41,68": 1,
+      "42,68": 1,
+      "43,68": 1,
+      "39,69": 1,
+      "40,69": 1,
+      "41,69": 1,
+      "42,69": 1,
+      "43,69": 1,
+      "38,70": 1,
+      "39,70": 1,
+      "40,70": 1,
+      "41,70": 1,
+      "42,70": 1,
+      "43,70": 1,
+      "37,71": 1,
+      "38,71": 1,
+      "39,71": 1,
+      "40,71": 1,
+      "41,71": 1,
+      "42,71": 1,
+      "43,71": 1,
+      "36,72": 1,
+      "37,72": 1,
+      "38,72": 1,
+      "39,72": 1,
+      "40,72": 1,
+      "41,72": 1,
+      "42,72": 1,
+      "43,72": 1,
+      "36,73": 1,
+      "37,73": 1,
+      "38,73": 1,
+      "39,73": 1,
+      "40,73": 1,
+      "41,73": 1,
+      "42,73": 1,
+      "43,73": 1,
+      "36,74": 1,
+      "37,74": 1,
+      "38,74": 1,
+      "39,74": 1,
+      "40,74": 1,
+      "41,74": 1,
+      "42,74": 1,
+      "43,74": 1,
+      "36,75": 1,
+      "37,75": 1,
+      "38,75": 1,
+      "39,75": 1,
+      "40,75": 1,
+      "41,75": 1,
+      "42,75": 1,
+      "43,75": 1,
+      "36,76": 1,
+      "37,76": 1,
+      "38,76": 1,
+      "39,76": 1,
+      "36,77": 1,
+      "37,77": 1,
+      "38,77": 1,
+      "39,77": 1,
+      "36,78": 1,
+      "37,78": 1,
+      "38,78": 1,
+      "39,78": 1,
+      "36,79": 1,
+      "37,79": 1,
+      "38,79": 1,
+      "39,79": 1,
+      "36,80": 1,
+      "37,80": 1,
+      "38,80": 1,
+      "36,81": 1,
+      "37,81": 1,
+      "128,44": 3,
+      "129,44": 3,
+      "128,45": 3,
+      "129,45": 3,
+      "130,45": 3,
+      "129,46": 3,
+      "130,46": 3,
+      "131,46": 3,
+      "130,47": 3,
+      "131,47": 3,
+      "121,45": 3,
+      "122,45": 3,
+      "121,46": 3,
+      "122,46": 3,
+      "121,47": 3,
+      "122,47": 3,
+      "121,48": 3,
+      "122,48": 3,
+      "121,49": 3,
+      "122,49": 3,
+      "121,50": 3,
+      "122,50": 3,
+      "125,40": 2,
+      "126,40": 2,
+      "127,40": 2,
+      "124,41": 2,
+      "125,41": 2,
+      "126,41": 2,
+      "127,41": 2,
+      "124,42": 2,
+      "125,42": 2,
+      "126,42": 2,
+      "127,42": 2,
+      "124,43": 2,
+      "125,43": 2,
+      "126,43": 2,
+      "127,43": 2,
+      "124,70": 1,
+      "125,70": 1,
+      "122,71": 1,
+      "123,71": 1,
+      "124,71": 1,
+      "125,71": 1,
+      "126,71": 1,
+      "122,72": 1,
+      "123,72": 1,
+      "124,72": 1,
+      "125,72": 1,
+      "126,72": 1,
+      "122,73": 1,
+      "123,73": 1,
+      "124,73": 1,
+      "89,48": 2,
+      "90,48": 2,
+      "91,48": 2,
+      "88,49": 2,
+      "89,49": 2,
+      "90,49": 2,
+      "91,49": 2,
+      "88,50": 2,
+      "89,50": 2,
+      "90,50": 2,
+      "91,50": 2,
+      "88,51": 2,
+      "89,51": 2,
+      "90,51": 2,
+      "91,51": 2,
+      "90,36": 3,
+      "91,36": 3,
+      "90,37": 3,
+      "91,37": 3,
+      "92,37": 3,
+      "91,38": 3,
+      "92,38": 3,
+      "93,38": 3,
+      "92,39": 3,
+      "93,39": 3,
+      "95,36": 1,
+      "93,37": 1,
+      "95,37": 1,
+      "96,37": 1,
+      "97,37": 1,
+      "98,37": 1,
+      "99,37": 1,
+      "94,38": 1,
+      "95,38": 1,
+      "94,39": 1,
+      "95,39": 1,
+      "98,39": 1,
+      "99,39": 1,
+      "92,40": 1,
+      "93,40": 1,
+      "94,40": 1,
+      "95,40": 1,
+      "96,40": 1,
+      "97,40": 1,
+      "98,40": 1,
+      "99,40": 1,
+      "92,41": 1,
+      "93,41": 1,
+      "94,41": 1,
+      "95,41": 1,
+      "96,41": 1,
+      "97,41": 1,
+      "98,41": 1,
+      "99,41": 1,
+      "92,42": 1,
+      "93,42": 1,
+      "94,42": 1,
+      "95,42": 1,
+      "96,42": 1,
+      "97,42": 1,
+      "98,42": 1,
+      "99,42": 1,
+      "92,43": 1,
+      "93,43": 1,
+      "94,43": 1,
+      "95,43": 1,
+      "96,43": 1,
+      "97,43": 1,
+      "98,43": 1,
+      "99,43": 1,
+      "92,44": 1,
+      "93,44": 1,
+      "94,44": 1,
+      "95,44": 1,
+      "96,44": 1,
+      "97,44": 1,
+      "98,44": 1,
+      "99,44": 1,
+      "92,45": 1,
+      "93,45": 1,
+      "94,45": 1,
+      "95,45": 1,
+      "96,45": 1,
+      "97,45": 1,
+      "98,45": 1,
+      "99,45": 1,
+      "93,46": 1,
+      "94,46": 1,
+      "95,46": 1,
+      "96,46": 1,
+      "97,46": 1,
+      "98,46": 1,
+      "99,46": 1,
+      "92,47": 1,
+      "93,47": 1,
+      "94,47": 1,
+      "95,47": 1,
+      "96,47": 1,
+      "97,47": 1,
+      "98,47": 1,
+      "94,37": 1,
+      "92,46": 1,
+      "69,57": 3,
+      "70,57": 3,
+      "69,58": 3,
+      "70,58": 3,
+      "69,59": 3,
+      "70,59": 3,
+      "69,60": 3,
+      "70,60": 3,
+      "69,61": 3,
+      "70,61": 3,
+      "69,62": 3,
+      "70,62": 3,
+      "68,52": 3,
+      "69,52": 3,
+      "68,53": 3,
+      "69,53": 3,
+      "70,53": 3,
+      "69,54": 3,
+      "70,54": 3,
+      "71,54": 3,
+      "70,55": 3,
+      "71,55": 3,
+      "106,60": 1,
+      "107,60": 1,
+      "108,60": 1,
+      "109,60": 1,
+      "110,60": 1,
+      "111,60": 1,
+      "106,61": 1,
+      "107,61": 1,
+      "108,61": 1,
+      "109,61": 1,
+      "110,61": 1,
+      "111,61": 1,
+      "105,62": 1,
+      "106,62": 1,
+      "107,62": 1,
+      "108,62": 1,
+      "109,62": 1,
+      "110,62": 1,
+      "111,62": 1,
+      "105,63": 1,
+      "106,63": 1,
+      "107,63": 1,
+      "108,63": 1,
+      "109,63": 1,
+      "110,63": 1,
+      "111,63": 1,
+      "105,64": 1,
+      "106,64": 1,
+      "107,64": 1,
+      "108,64": 1,
+      "109,64": 1,
+      "110,64": 1,
+      "111,64": 1,
+      "105,65": 1,
+      "106,65": 1,
+      "107,65": 1,
+      "108,65": 1,
+      "109,65": 1,
+      "110,65": 1,
+      "111,65": 1,
+      "105,66": 1,
+      "106,66": 1,
+      "107,66": 1,
+      "108,66": 1,
+      "109,66": 1,
+      "110,66": 1,
+      "111,66": 1,
+      "104,67": 1,
+      "105,67": 1,
+      "106,67": 1,
+      "107,67": 1,
+      "108,67": 1,
+      "109,67": 1,
+      "110,67": 1,
+      "111,67": 1,
+      "105,68": 1,
+      "106,68": 1,
+      "107,68": 1,
+      "108,68": 1,
+      "107,69": 1,
+      "107,74": 1,
+      "106,75": 1,
+      "107,75": 1,
+      "104,76": 1,
+      "105,76": 1,
+      "106,76": 1,
+      "107,76": 1,
+      "108,76": 1,
+      "109,76": 1,
+      "110,76": 1,
+      "104,77": 1,
+      "105,77": 1,
+      "106,77": 1,
+      "107,77": 1,
+      "108,77": 1,
+      "109,77": 1,
+      "104,78": 1,
+      "105,78": 1,
+      "106,78": 1,
+      "107,78": 1,
+      "108,78": 1,
+      "109,78": 1,
+      "104,79": 1,
+      "105,79": 1,
+      "106,79": 1,
+      "107,79": 1,
+      "108,79": 1,
+      "109,79": 1,
+      "76,28": 3,
+      "77,28": 3,
+      "76,29": 3,
+      "77,29": 3,
+      "78,29": 3,
+      "77,30": 3,
+      "78,30": 3,
+      "79,30": 3,
+      "78,31": 3,
+      "79,31": 3,
+      "78,37": 1,
+      "79,37": 1,
+      "77,38": 1,
+      "78,38": 1,
+      "79,38": 1,
+      "76,39": 1,
+      "77,39": 1,
+      "78,39": 1,
+      "79,39": 1,
+      "74,40": 1,
+      "75,40": 1,
+      "76,40": 1,
+      "77,40": 1,
+      "78,40": 1,
+      "79,40": 1,
+      "73,41": 1,
+      "74,41": 1,
+      "75,41": 1,
+      "76,41": 1,
+      "77,41": 1,
+      "78,41": 1,
+      "79,41": 1,
+      "72,42": 1,
+      "73,42": 1,
+      "74,42": 1,
+      "75,42": 1,
+      "76,42": 1,
+      "77,42": 1,
+      "78,42": 1,
+      "79,42": 1,
+      "72,43": 1,
+      "73,43": 1,
+      "74,43": 1,
+      "75,43": 1,
+      "76,43": 1,
+      "77,43": 1,
+      "78,43": 1,
+      "79,43": 1,
+      "72,44": 1,
+      "73,44": 1,
+      "74,44": 1,
+      "75,44": 1,
+      "76,44": 1,
+      "77,44": 1,
+      "78,44": 1,
+      "79,44": 1,
+      "72,45": 1,
+      "73,45": 1,
+      "74,45": 1,
+      "75,45": 1,
+      "76,45": 1,
+      "77,45": 1,
+      "78,45": 1,
+      "79,45": 1,
+      "72,46": 1,
+      "73,46": 1,
+      "74,46": 1,
+      "75,46": 1,
+      "76,46": 1,
+      "77,46": 1,
+      "78,46": 1,
+      "79,46": 1,
+      "72,47": 1,
+      "73,47": 1,
+      "74,47": 1,
+      "75,47": 1,
+      "76,47": 1,
+      "77,47": 1,
+      "78,47": 1,
+      "72,48": 1,
+      "73,48": 1,
+      "74,48": 1,
+      "75,48": 1,
+      "76,48": 1,
+      "77,48": 1,
+      "72,49": 1,
+      "73,49": 1,
+      "74,49": 1,
+      "75,49": 1,
+      "72,50": 1,
+      "73,50": 1,
+      "74,50": 1,
+      "72,51": 1,
+      "73,51": 1,
+      "109,4": 3,
+      "110,4": 3,
+      "109,5": 3,
+      "110,5": 3,
+      "109,6": 3,
+      "110,6": 3,
+      "109,7": 3,
+      "110,7": 3,
+      "118,32": 3,
+      "119,32": 3,
+      "118,33": 3,
+      "119,33": 3,
+      "120,33": 3,
+      "119,34": 3,
+      "120,34": 3,
+      "121,34": 3,
+      "120,35": 3,
+      "121,35": 3,
+      "123,28": 1,
+      "122,29": 1,
+      "123,29": 1,
+      "121,30": 1,
+      "122,30": 1,
+      "123,30": 1,
+      "120,31": 1,
+      "121,31": 1,
+      "122,31": 1,
+      "123,31": 1,
+      "120,32": 1,
+      "121,32": 1,
+      "122,32": 1,
+      "123,32": 1,
+      "117,33": 1,
+      "121,33": 1,
+      "122,33": 1,
+      "123,33": 1,
+      "116,34": 1,
+      "117,34": 1,
+      "118,34": 1,
+      "122,34": 1,
+      "123,34": 1,
+      "116,35": 1,
+      "117,35": 1,
+      "118,35": 1,
+      "119,35": 1,
+      "122,35": 1,
+      "123,35": 1,
+      "116,36": 1,
+      "117,36": 1,
+      "118,36": 1,
+      "119,36": 1,
+      "120,36": 1,
+      "121,36": 1,
+      "122,36": 1,
+      "123,36": 1,
+      "116,37": 1,
+      "117,37": 1,
+      "118,37": 1,
+      "119,37": 1,
+      "120,37": 1,
+      "121,37": 1,
+      "122,37": 1,
+      "123,37": 1,
+      "116,38": 1,
+      "117,38": 1,
+      "118,38": 1,
+      "119,38": 1,
+      "120,38": 1,
+      "121,38": 1,
+      "122,38": 1,
+      "123,38": 1,
+      "116,39": 1,
+      "117,39": 1,
+      "118,39": 1,
+      "119,39": 1,
+      "120,39": 1,
+      "121,39": 1,
+      "122,39": 1,
+      "116,40": 1,
+      "117,40": 1,
+      "118,40": 1,
+      "119,40": 1,
+      "120,40": 1,
+      "116,41": 1,
+      "117,41": 1,
+      "118,41": 1,
+      "119,41": 1,
+      "116,42": 1,
+      "117,42": 1,
+      "118,42": 1,
+      "116,43": 1,
+      "117,43": 1,
+      "29,52": 2,
+      "30,52": 2,
+      "31,52": 2,
+      "28,53": 2,
+      "29,53": 2,
+      "30,53": 2,
+      "31,53": 2,
+      "28,54": 2,
+      "29,54": 2,
+      "30,54": 2,
+      "31,54": 2,
+      "28,55": 2,
+      "29,55": 2,
+      "30,55": 2,
+      "31,55": 2,
+      "33,40": 2,
+      "34,40": 2,
+      "35,40": 2,
+      "32,41": 2,
+      "33,41": 2,
+      "34,41": 2,
+      "35,41": 2,
+      "32,42": 2,
+      "33,42": 2,
+      "34,42": 2,
+      "35,42": 2,
+      "32,43": 2,
+      "33,43": 2,
+      "34,43": 2,
+      "35,43": 2,
+      "17,22": 3,
+      "18,22": 3,
+      "17,23": 3,
+      "18,23": 3,
+      "17,24": 3,
+      "18,24": 3,
+      "17,25": 3,
+      "18,25": 3,
+      "17,26": 3,
+      "18,26": 3,
+      "17,27": 3,
+      "18,27": 3,
+      "17,28": 3,
+      "18,28": 3,
+      "17,29": 3,
+      "18,29": 3,
+      "17,30": 3,
+      "18,30": 3,
+      "41,14": 3,
+      "42,14": 3,
+      "41,15": 3,
+      "42,15": 3,
+      "41,16": 3,
+      "42,16": 3,
+      "41,17": 3,
+      "42,17": 3,
+      "41,18": 3,
+      "42,18": 3,
+      "41,19": 3,
+      "42,19": 3,
+      "41,20": 3,
+      "42,20": 3,
+      "41,21": 3,
+      "42,21": 3,
+      "41,22": 3,
+      "42,22": 3,
+      "41,23": 3,
+      "42,23": 3,
+      "41,24": 3,
+      "42,24": 3,
+      "41,25": 3,
+      "42,25": 3,
+      "33,4": 1,
+      "34,4": 1,
+      "35,4": 1,
+      "32,5": 1,
+      "33,5": 1,
+      "34,5": 1,
+      "35,5": 1,
+      "32,7": 1,
+      "33,7": 1,
+      "34,7": 1,
+      "35,7": 1,
+      "36,7": 1,
+      "37,7": 1,
+      "32,8": 1,
+      "33,8": 1,
+      "34,8": 1,
+      "35,8": 1,
+      "36,8": 1,
+      "37,8": 1,
+      "32,10": 1,
+      "33,10": 1,
+      "34,10": 1,
+      "35,10": 1,
+      "36,10": 1,
+      "37,10": 1,
+      "32,11": 1,
+      "33,11": 1,
+      "36,11": 1,
+      "37,11": 1,
+      "48,28": 1,
+      "49,28": 1,
+      "50,28": 1,
+      "51,28": 1,
+      "48,29": 1,
+      "49,29": 1,
+      "50,29": 1,
+      "51,29": 1,
+      "48,30": 1,
+      "49,30": 1,
+      "50,30": 1,
+      "51,30": 1,
+      "48,31": 1,
+      "49,31": 1,
+      "50,31": 1,
+      "51,31": 1,
+      "129,76": 3,
+      "130,76": 3,
+      "129,77": 3,
+      "130,77": 3,
+      "129,78": 3,
+      "130,78": 3,
+      "129,79": 3,
+      "130,79": 3,
+      "101,49": 3,
+      "102,49": 3,
+      "101,50": 3,
+      "102,50": 3,
+      "103,50": 3,
+      "102,51": 3,
+      "38,8": 1,
+      "39,8": 1,
+      "33,9": 1,
+      "35,9": 1,
+      "36,9": 1,
+      "37,9": 1,
+      "38,9": 1,
+      "39,9": 1,
+      "38,10": 1,
+      "39,10": 1,
+      "34,11": 1,
+      "35,11": 1,
+      "38,11": 1,
+      "39,11": 1,
+      "32,12": 1,
+      "33,12": 1,
+      "34,12": 1,
+      "35,12": 1,
+      "36,12": 1,
+      "37,12": 1,
+      "38,12": 1,
+      "39,12": 1,
+      "32,13": 1,
+      "33,13": 1,
+      "34,13": 1,
+      "35,13": 1,
+      "36,13": 1,
+      "37,13": 1,
+      "38,13": 1,
+      "39,13": 1,
+      "32,14": 1,
+      "33,14": 1,
+      "34,14": 1,
+      "35,14": 1,
+      "36,14": 1,
+      "37,14": 1,
+      "38,14": 1,
+      "39,14": 1,
+      "32,15": 1,
+      "33,15": 1,
+      "34,15": 1,
+      "35,15": 1,
+      "36,15": 1,
+      "37,15": 1,
+      "38,15": 1,
+      "39,15": 1,
+      "32,16": 1,
+      "33,16": 1,
+      "34,16": 1,
+      "35,16": 1,
+      "36,16": 1,
+      "37,16": 1,
+      "38,16": 1,
+      "39,16": 1,
+      "32,17": 1,
+      "33,17": 1,
+      "34,17": 1,
+      "35,17": 1,
+      "36,17": 1,
+      "37,17": 1,
+      "38,17": 1,
+      "39,17": 1,
+      "33,18": 1,
+      "34,18": 1,
+      "35,18": 1,
+      "36,18": 1,
+      "37,18": 1,
+      "38,18": 1,
+      "39,18": 1,
+      "32,19": 1,
+      "33,19": 1,
+      "34,19": 1,
+      "35,19": 1,
+      "36,19": 1,
+      "37,19": 1,
+      "38,19": 1,
+      "34,9": 1,
+      "32,18": 1,
+      "29,64": 3,
+      "30,64": 3,
+      "29,65": 3,
+      "30,65": 3,
+      "29,66": 3,
+      "30,66": 3,
+      "29,67": 3,
+      "30,67": 3,
+      "29,92": 3,
+      "30,92": 3,
+      "29,93": 3,
+      "30,93": 3,
+      "29,94": 3,
+      "30,94": 3,
+      "29,95": 3,
+      "30,95": 3,
+      "20,6": 1,
+      "21,6": 1,
+      "22,6": 1,
+      "17,7": 1,
+      "18,7": 1,
+      "19,7": 1,
+      "20,7": 1,
+      "21,7": 1,
+      "22,7": 1,
+      "17,8": 1,
+      "18,8": 1,
+      "19,8": 1,
+      "20,8": 1,
+      "21,8": 1,
+      "22,8": 1,
+      "18,9": 1,
+      "19,9": 1,
+      "20,9": 1,
+      "18,10": 1,
+      "22,0": 2,
+      "23,0": 2,
+      "24,0": 2,
+      "22,1": 2,
+      "23,1": 2,
+      "24,1": 2,
+      "25,1": 2,
+      "21,2": 2,
+      "22,2": 2,
+      "23,2": 2,
+      "24,2": 2,
+      "25,2": 2,
+      "26,2": 2,
+      "27,2": 2,
+      "20,3": 2,
+      "21,3": 2,
+      "22,3": 2,
+      "23,3": 2,
+      "24,3": 2,
+      "25,3": 2,
+      "26,3": 2,
+      "27,3": 2,
+      "20,4": 2,
+      "21,4": 2,
+      "22,4": 2,
+      "23,4": 2,
+      "24,4": 2,
+      "25,4": 2,
+      "26,4": 2,
+      "27,4": 2,
+      "20,5": 2,
+      "21,5": 2,
+      "22,5": 2,
+      "23,5": 2,
+      "24,5": 2,
+      "25,5": 2,
+      "26,5": 2,
+      "27,5": 2,
+      "23,6": 2,
+      "24,6": 2,
+      "25,6": 2,
+      "26,6": 2,
+      "23,7": 2,
+      "24,7": 2,
+      "25,7": 2,
+      "103,88": 2,
+      "104,88": 2,
+      "105,88": 2,
+      "102,89": 2,
+      "103,89": 2,
+      "104,89": 2,
+      "105,89": 2,
+      "106,89": 2,
+      "102,90": 2,
+      "103,90": 2,
+      "104,90": 2,
+      "105,90": 2,
+      "106,90": 2,
+      "101,91": 2,
+      "102,91": 2,
+      "103,91": 2,
+      "104,91": 2,
+      "105,91": 2,
+      "106,91": 2,
+      "100,92": 2,
+      "101,92": 2,
+      "102,92": 2,
+      "103,92": 2,
+      "104,92": 2,
+      "105,92": 2,
+      "106,92": 2,
+      "100,93": 2,
+      "101,93": 2,
+      "102,93": 2,
+      "103,93": 2,
+      "104,93": 2,
+      "105,93": 2,
+      "106,93": 2,
+      "100,94": 2,
+      "101,94": 2,
+      "102,94": 2,
+      "103,94": 2,
+      "104,94": 2,
+      "105,94": 2,
+      "106,94": 2,
+      "100,95": 2,
+      "101,95": 2,
+      "102,95": 2,
+      "103,95": 2,
+      "104,95": 2,
+      "105,95": 2,
+      "106,95": 2,
+      "100,96": 2,
+      "101,96": 2,
+      "102,96": 2,
+      "103,96": 2,
+      "104,96": 2,
+      "105,96": 2,
+      "106,96": 2,
+      "107,96": 2,
+      "101,97": 2,
+      "102,97": 2,
+      "103,97": 2,
+      "104,97": 2,
+      "105,97": 2,
+      "106,97": 2,
+      "107,97": 2,
+      "102,98": 2,
+      "103,98": 2,
+      "104,98": 2,
+      "105,98": 2,
+      "106,98": 2,
+      "102,99": 2,
+      "103,99": 2,
+      "104,99": 2,
+      "105,99": 2,
+      "107,84": 2,
+      "108,84": 2,
+      "109,84": 2,
+      "110,84": 2,
+      "105,85": 2,
+      "106,85": 2,
+      "107,85": 2,
+      "108,85": 2,
+      "109,85": 2,
+      "110,85": 2,
+      "111,85": 2,
+      "104,86": 2,
+      "105,86": 2,
+      "106,86": 2,
+      "107,86": 2,
+      "108,86": 2,
+      "109,86": 2,
+      "110,86": 2,
+      "111,86": 2,
+      "104,87": 2,
+      "105,87": 2,
+      "106,87": 2,
+      "107,87": 2,
+      "108,87": 2,
+      "109,87": 2,
+      "110,87": 2,
+      "111,87": 2,
+      "106,88": 2,
+      "107,88": 2,
+      "108,88": 2,
+      "109,88": 2,
+      "110,88": 2,
+      "111,88": 2,
+      "107,89": 2,
+      "108,89": 2,
+      "109,89": 2,
+      "110,89": 2,
+      "111,89": 2,
+      "107,90": 2,
+      "108,90": 2,
+      "109,90": 2,
+      "110,90": 2,
+      "107,91": 2,
+      "108,91": 2,
+      "109,91": 2,
+      "100,0": 1,
+      "101,0": 1,
+      "102,0": 1,
+      "103,0": 1,
+      "100,1": 1,
+      "101,1": 1,
+      "102,1": 1,
+      "103,1": 1,
+      "100,2": 1,
+      "101,2": 1,
+      "102,2": 1,
+      "103,2": 1,
+      "100,3": 1,
+      "101,3": 1,
+      "102,3": 1,
+      "103,3": 1,
+      "142,24": 3,
+      "143,24": 3,
+      "142,25": 3,
+      "143,25": 3,
+      "144,25": 3,
+      "143,26": 3,
+      "144,26": 3,
+      "145,26": 3,
+      "144,27": 3,
+      "145,27": 3
+    },
+    [
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 248,
+            "y": 220
+          },
+          {
+            "x": 248,
+            "y": 220
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 344,
+            "y": 232
+          },
+          {
+            "x": 344,
+            "y": 280
+          },
+          {
+            "x": 368,
+            "y": 280
+          },
+          {
+            "x": 368,
+            "y": 272
+          },
+          {
+            "x": 376,
+            "y": 272
+          },
+          {
+            "x": 376,
+            "y": 240
+          },
+          {
+            "x": 368,
+            "y": 240
+          },
+          {
+            "x": 368,
+            "y": 232
+          },
+          {
+            "x": 368,
+            "y": 232
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 552,
+            "y": 252
+          },
+          {
+            "x": 552,
+            "y": 260
+          },
+          {
+            "x": 568,
+            "y": 260
+          },
+          {
+            "x": 568,
+            "y": 260
+          },
+          {
+            "x": 568,
+            "y": 252
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 552,
+            "y": 236
+          },
+          {
+            "x": 552,
+            "y": 244
+          },
+          {
+            "x": 568,
+            "y": 244
+          },
+          {
+            "x": 568,
+            "y": 236
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 96,
+            "y": 288
+          },
+          {
+            "x": 143,
+            "y": 288
+          },
+          {
+            "x": 143,
+            "y": 318
+          },
+          {
+            "x": 96,
+            "y": 318
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 144,
+            "y": 176
+          },
+          {
+            "x": 208,
+            "y": 176
+          },
+          {
+            "x": 208,
+            "y": 208
+          },
+          {
+            "x": 144,
+            "y": 208
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 248,
+            "y": 140
+          },
+          {
+            "x": 248,
+            "y": 148
+          },
+          {
+            "x": 264,
+            "y": 148
+          },
+          {
+            "x": 264,
+            "y": 140
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 156,
+            "y": 120
+          },
+          {
+            "x": 164,
+            "y": 120
+          },
+          {
+            "x": 164,
+            "y": 140
+          },
+          {
+            "x": 156,
+            "y": 140
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 92,
+            "y": 48
+          },
+          {
+            "x": 100,
+            "y": 48
+          },
+          {
+            "x": 100,
+            "y": 80
+          },
+          {
+            "x": 92,
+            "y": 80
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 272,
+            "y": 0
+          },
+          {
+            "x": 272,
+            "y": 16
+          },
+          {
+            "x": 288,
+            "y": 16
+          },
+          {
+            "x": 288,
+            "y": 0
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 272,
+            "y": 80
+          },
+          {
+            "x": 368,
+            "y": 80
+          },
+          {
+            "x": 368,
+            "y": 80
+          },
+          {
+            "x": 368,
+            "y": 128
+          },
+          {
+            "x": 352,
+            "y": 128
+          },
+          {
+            "x": 352,
+            "y": 112
+          },
+          {
+            "x": 272,
+            "y": 112
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 384,
+            "y": 96
+          },
+          {
+            "x": 384,
+            "y": 112
+          },
+          {
+            "x": 416,
+            "y": 112
+          },
+          {
+            "x": 416,
+            "y": 96
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 432,
+            "y": 96
+          },
+          {
+            "x": 432,
+            "y": 116
+          },
+          {
+            "x": 464,
+            "y": 116
+          },
+          {
+            "x": 464,
+            "y": 96
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 240,
+            "y": 16
+          },
+          {
+            "x": 240,
+            "y": 48
+          },
+          {
+            "x": 256,
+            "y": 48
+          },
+          {
+            "x": 256,
+            "y": 16
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 16,
+            "y": 296
+          },
+          {
+            "x": 24,
+            "y": 296
+          },
+          {
+            "x": 24,
+            "y": 288
+          },
+          {
+            "x": 56,
+            "y": 288
+          },
+          {
+            "x": 56,
+            "y": 296
+          },
+          {
+            "x": 64,
+            "y": 296
+          },
+          {
+            "x": 64,
+            "y": 320
+          },
+          {
+            "x": 16,
+            "y": 320
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 320,
+            "y": 368
+          },
+          {
+            "x": 320,
+            "y": 384
+          },
+          {
+            "x": 336,
+            "y": 384
+          },
+          {
+            "x": 336,
+            "y": 368
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 480,
+            "y": 336
+          },
+          {
+            "x": 544,
+            "y": 336
+          },
+          {
+            "x": 544,
+            "y": 368
+          },
+          {
+            "x": 480,
+            "y": 368
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 460,
+            "y": 328
+          },
+          {
+            "x": 468,
+            "y": 328
+          },
+          {
+            "x": 468,
+            "y": 344
+          },
+          {
+            "x": 460,
+            "y": 344
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 488,
+            "y": 284
+          },
+          {
+            "x": 488,
+            "y": 292
+          },
+          {
+            "x": 504,
+            "y": 292
+          },
+          {
+            "x": 504,
+            "y": 284
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 16,
+            "y": 64
+          },
+          {
+            "x": 16,
+            "y": 64
+          },
+          {
+            "x": 16,
+            "y": 80
+          },
+          {
+            "x": 32,
+            "y": 80
+          },
+          {
+            "x": 32,
+            "y": 64
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 16,
+            "y": 16
+          },
+          {
+            "x": 16,
+            "y": 32
+          },
+          {
+            "x": 32,
+            "y": 32
+          },
+          {
+            "x": 32,
+            "y": 16
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 48,
+            "y": 0
+          },
+          {
+            "x": 48,
+            "y": 16
+          },
+          {
+            "x": 64,
+            "y": 16
+          },
+          {
+            "x": 64,
+            "y": 0
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 256,
+            "y": 176
+          },
+          {
+            "x": 256,
+            "y": 208
+          },
+          {
+            "x": 224,
+            "y": 208
+          },
+          {
+            "x": 224,
+            "y": 176
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 368,
+            "y": 144
+          },
+          {
+            "x": 384,
+            "y": 144
+          },
+          {
+            "x": 384,
+            "y": 128
+          },
+          {
+            "x": 448,
+            "y": 128
+          },
+          {
+            "x": 448,
+            "y": 160
+          },
+          {
+            "x": 416,
+            "y": 160
+          },
+          {
+            "x": 416,
+            "y": 168
+          },
+          {
+            "x": 408,
+            "y": 168
+          },
+          {
+            "x": 408,
+            "y": 176
+          },
+          {
+            "x": 376,
+            "y": 176
+          },
+          {
+            "x": 376,
+            "y": 168
+          },
+          {
+            "x": 368,
+            "y": 168
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 576,
+            "y": 176
+          },
+          {
+            "x": 576,
+            "y": 208
+          },
+          {
+            "x": 528,
+            "y": 208
+          },
+          {
+            "x": 528,
+            "y": 176
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 128,
+            "y": 160
+          },
+          {
+            "x": 128,
+            "y": 176
+          },
+          {
+            "x": 144,
+            "y": 176
+          },
+          {
+            "x": 144,
+            "y": 160
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 52,
+            "y": 112
+          },
+          {
+            "x": 64,
+            "y": 128
+          },
+          {
+            "x": 56,
+            "y": 144
+          },
+          {
+            "x": 64,
+            "y": 152
+          },
+          {
+            "x": 60,
+            "y": 160
+          },
+          {
+            "x": 48,
+            "y": 156
+          },
+          {
+            "x": 48,
+            "y": 148
+          },
+          {
+            "x": 32,
+            "y": 132
+          },
+          {
+            "x": 36,
+            "y": 120
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 96,
+            "y": 160
+          },
+          {
+            "x": 96,
+            "y": 176
+          },
+          {
+            "x": 64,
+            "y": 176
+          },
+          {
+            "x": 64,
+            "y": 160
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 48,
+            "y": 176
+          },
+          {
+            "x": 80,
+            "y": 176
+          },
+          {
+            "x": 80,
+            "y": 208
+          },
+          {
+            "x": 80,
+            "y": 208
+          },
+          {
+            "x": 48,
+            "y": 208
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 64,
+            "y": 128
+          },
+          {
+            "x": 128,
+            "y": 128
+          },
+          {
+            "x": 128,
+            "y": 160
+          },
+          {
+            "x": 64,
+            "y": 160
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 0,
+            "y": 112
+          },
+          {
+            "x": 32,
+            "y": 112
+          },
+          {
+            "x": 32,
+            "y": 144
+          },
+          {
+            "x": 0,
+            "y": 144
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 96,
+            "y": 176
+          },
+          {
+            "x": 128,
+            "y": 176
+          },
+          {
+            "x": 128,
+            "y": 208
+          },
+          {
+            "x": 100,
+            "y": 208
+          },
+          {
+            "x": 96,
+            "y": 208
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 52,
+            "y": 40
+          },
+          {
+            "x": 40,
+            "y": 48
+          },
+          {
+            "x": 48,
+            "y": 84
+          },
+          {
+            "x": 60,
+            "y": 88
+          },
+          {
+            "x": 68,
+            "y": 76
+          },
+          {
+            "x": 64,
+            "y": 72
+          },
+          {
+            "x": 64,
+            "y": 72
+          },
+          {
+            "x": 72,
+            "y": 68
+          },
+          {
+            "x": 68,
+            "y": 48
+          },
+          {
+            "x": 60,
+            "y": 48
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 100,
+            "y": 0
+          },
+          {
+            "x": 92,
+            "y": 0
+          },
+          {
+            "x": 88,
+            "y": 8
+          },
+          {
+            "x": 84,
+            "y": 8
+          },
+          {
+            "x": 80,
+            "y": 16
+          },
+          {
+            "x": 84,
+            "y": 28
+          },
+          {
+            "x": 92,
+            "y": 28
+          },
+          {
+            "x": 96,
+            "y": 32
+          },
+          {
+            "x": 104,
+            "y": 28
+          },
+          {
+            "x": 108,
+            "y": 24
+          },
+          {
+            "x": 112,
+            "y": 16
+          },
+          {
+            "x": 108,
+            "y": 8
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 72,
+            "y": 28
+          },
+          {
+            "x": 72,
+            "y": 36
+          },
+          {
+            "x": 88,
+            "y": 36
+          },
+          {
+            "x": 88,
+            "y": 28
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 196,
+            "y": 56
+          },
+          {
+            "x": 208,
+            "y": 52
+          },
+          {
+            "x": 212,
+            "y": 56
+          },
+          {
+            "x": 224,
+            "y": 48
+          },
+          {
+            "x": 228,
+            "y": 48
+          },
+          {
+            "x": 232,
+            "y": 48
+          },
+          {
+            "x": 240,
+            "y": 60
+          },
+          {
+            "x": 240,
+            "y": 64
+          },
+          {
+            "x": 232,
+            "y": 68
+          },
+          {
+            "x": 232,
+            "y": 72
+          },
+          {
+            "x": 216,
+            "y": 80
+          },
+          {
+            "x": 212,
+            "y": 80
+          },
+          {
+            "x": 208,
+            "y": 76
+          },
+          {
+            "x": 208,
+            "y": 76
+          },
+          {
+            "x": 204,
+            "y": 76
+          },
+          {
+            "x": 196,
+            "y": 72
+          },
+          {
+            "x": 192,
+            "y": 68
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 112,
+            "y": 32
+          },
+          {
+            "x": 112,
+            "y": 48
+          },
+          {
+            "x": 128,
+            "y": 48
+          },
+          {
+            "x": 128,
+            "y": 56
+          },
+          {
+            "x": 136,
+            "y": 56
+          },
+          {
+            "x": 136,
+            "y": 64
+          },
+          {
+            "x": 168,
+            "y": 64
+          },
+          {
+            "x": 168,
+            "y": 56
+          },
+          {
+            "x": 176,
+            "y": 56
+          },
+          {
+            "x": 176,
+            "y": 52
+          },
+          {
+            "x": 208,
+            "y": 52
+          },
+          {
+            "x": 208,
+            "y": 32
+          },
+          {
+            "x": 156,
+            "y": 32
+          },
+          {
+            "x": 156,
+            "y": 12
+          },
+          {
+            "x": 132,
+            "y": 12
+          },
+          {
+            "x": 132,
+            "y": 32
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 192,
+            "y": 80
+          },
+          {
+            "x": 192,
+            "y": 128
+          },
+          {
+            "x": 208,
+            "y": 128
+          },
+          {
+            "x": 208,
+            "y": 112
+          },
+          {
+            "x": 256,
+            "y": 112
+          },
+          {
+            "x": 256,
+            "y": 80
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 336,
+            "y": 16
+          },
+          {
+            "x": 384,
+            "y": 16
+          },
+          {
+            "x": 384,
+            "y": 64
+          },
+          {
+            "x": 368,
+            "y": 64
+          },
+          {
+            "x": 368,
+            "y": 32
+          },
+          {
+            "x": 336,
+            "y": 32
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 304,
+            "y": 32
+          },
+          {
+            "x": 320,
+            "y": 32
+          },
+          {
+            "x": 320,
+            "y": 16
+          },
+          {
+            "x": 336,
+            "y": 16
+          },
+          {
+            "x": 336,
+            "y": 32
+          },
+          {
+            "x": 368,
+            "y": 32
+          },
+          {
+            "x": 368,
+            "y": 64
+          },
+          {
+            "x": 304,
+            "y": 64
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 400,
+            "y": 64
+          },
+          {
+            "x": 400,
+            "y": 80
+          },
+          {
+            "x": 416,
+            "y": 80
+          },
+          {
+            "x": 416,
+            "y": 68
+          },
+          {
+            "x": 416,
+            "y": 64
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 448,
+            "y": 64
+          },
+          {
+            "x": 448,
+            "y": 64
+          },
+          {
+            "x": 448,
+            "y": 80
+          },
+          {
+            "x": 464,
+            "y": 80
+          },
+          {
+            "x": 464,
+            "y": 64
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 452,
+            "y": 176
+          },
+          {
+            "x": 460,
+            "y": 184
+          },
+          {
+            "x": 464,
+            "y": 192
+          },
+          {
+            "x": 464,
+            "y": 196
+          },
+          {
+            "x": 456,
+            "y": 204
+          },
+          {
+            "x": 456,
+            "y": 204
+          },
+          {
+            "x": 448,
+            "y": 208
+          },
+          {
+            "x": 444,
+            "y": 208
+          },
+          {
+            "x": 436,
+            "y": 204
+          },
+          {
+            "x": 432,
+            "y": 192
+          },
+          {
+            "x": 436,
+            "y": 188
+          },
+          {
+            "x": 436,
+            "y": 184
+          },
+          {
+            "x": 436,
+            "y": 180
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 428,
+            "y": 200
+          },
+          {
+            "x": 436,
+            "y": 200
+          },
+          {
+            "x": 436,
+            "y": 180
+          },
+          {
+            "x": 460,
+            "y": 180
+          },
+          {
+            "x": 460,
+            "y": 172
+          },
+          {
+            "x": 432,
+            "y": 172
+          },
+          {
+            "x": 432,
+            "y": 180
+          },
+          {
+            "x": 428,
+            "y": 180
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 496,
+            "y": 160
+          },
+          {
+            "x": 496,
+            "y": 176
+          },
+          {
+            "x": 512,
+            "y": 176
+          },
+          {
+            "x": 512,
+            "y": 160
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 384,
+            "y": 192
+          },
+          {
+            "x": 352,
+            "y": 192
+          },
+          {
+            "x": 352,
+            "y": 208
+          },
+          {
+            "x": 320,
+            "y": 208
+          },
+          {
+            "x": 320,
+            "y": 208
+          },
+          {
+            "x": 320,
+            "y": 304
+          },
+          {
+            "x": 336,
+            "y": 304
+          },
+          {
+            "x": 336,
+            "y": 336
+          },
+          {
+            "x": 368,
+            "y": 336
+          },
+          {
+            "x": 368,
+            "y": 352
+          },
+          {
+            "x": 384,
+            "y": 352
+          },
+          {
+            "x": 384,
+            "y": 320
+          },
+          {
+            "x": 352,
+            "y": 320
+          },
+          {
+            "x": 352,
+            "y": 288
+          },
+          {
+            "x": 336,
+            "y": 288
+          },
+          {
+            "x": 336,
+            "y": 224
+          },
+          {
+            "x": 368,
+            "y": 224
+          },
+          {
+            "x": 368,
+            "y": 208
+          },
+          {
+            "x": 384,
+            "y": 208
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 364,
+            "y": 292
+          },
+          {
+            "x": 372,
+            "y": 292
+          },
+          {
+            "x": 372,
+            "y": 320
+          },
+          {
+            "x": 364,
+            "y": 320
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 256,
+            "y": 320
+          },
+          {
+            "x": 256,
+            "y": 344
+          },
+          {
+            "x": 264,
+            "y": 344
+          },
+          {
+            "x": 264,
+            "y": 352
+          },
+          {
+            "x": 296,
+            "y": 352
+          },
+          {
+            "x": 296,
+            "y": 344
+          },
+          {
+            "x": 304,
+            "y": 344
+          },
+          {
+            "x": 304,
+            "y": 340
+          },
+          {
+            "x": 336,
+            "y": 340
+          },
+          {
+            "x": 336,
+            "y": 320
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 400,
+            "y": 284
+          },
+          {
+            "x": 400,
+            "y": 292
+          },
+          {
+            "x": 404,
+            "y": 296
+          },
+          {
+            "x": 404,
+            "y": 300
+          },
+          {
+            "x": 412,
+            "y": 304
+          },
+          {
+            "x": 416,
+            "y": 304
+          },
+          {
+            "x": 424,
+            "y": 300
+          },
+          {
+            "x": 424,
+            "y": 296
+          },
+          {
+            "x": 432,
+            "y": 292
+          },
+          {
+            "x": 432,
+            "y": 284
+          },
+          {
+            "x": 424,
+            "y": 280
+          },
+          {
+            "x": 420,
+            "y": 276
+          },
+          {
+            "x": 416,
+            "y": 272
+          },
+          {
+            "x": 412,
+            "y": 272
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 576,
+            "y": 272
+          },
+          {
+            "x": 576,
+            "y": 288
+          },
+          {
+            "x": 544,
+            "y": 288
+          },
+          {
+            "x": 544,
+            "y": 272
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 544,
+            "y": 224
+          },
+          {
+            "x": 544,
+            "y": 256
+          },
+          {
+            "x": 528,
+            "y": 256
+          },
+          {
+            "x": 528,
+            "y": 248
+          },
+          {
+            "x": 520,
+            "y": 248
+          },
+          {
+            "x": 508,
+            "y": 248
+          },
+          {
+            "x": 500,
+            "y": 256
+          },
+          {
+            "x": 496,
+            "y": 256
+          },
+          {
+            "x": 492,
+            "y": 252
+          },
+          {
+            "x": 480,
+            "y": 244
+          },
+          {
+            "x": 480,
+            "y": 240
+          },
+          {
+            "x": 484,
+            "y": 236
+          },
+          {
+            "x": 488,
+            "y": 232
+          },
+          {
+            "x": 492,
+            "y": 228
+          },
+          {
+            "x": 496,
+            "y": 224
+          },
+          {
+            "x": 504,
+            "y": 224
+          },
+          {
+            "x": 512,
+            "y": 224
+          },
+          {
+            "x": 512,
+            "y": 228
+          },
+          {
+            "x": 516,
+            "y": 228
+          },
+          {
+            "x": 520,
+            "y": 228
+          },
+          {
+            "x": 524,
+            "y": 232
+          },
+          {
+            "x": 524,
+            "y": 232
+          },
+          {
+            "x": 528,
+            "y": 228
+          },
+          {
+            "x": 532,
+            "y": 228
+          },
+          {
+            "x": 532,
+            "y": 224
+          },
+          {
+            "x": 532,
+            "y": 224
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 496,
+            "y": 240
+          },
+          {
+            "x": 496,
+            "y": 272
+          },
+          {
+            "x": 464,
+            "y": 272
+          },
+          {
+            "x": 464,
+            "y": 304
+          },
+          {
+            "x": 432,
+            "y": 304
+          },
+          {
+            "x": 432,
+            "y": 272
+          },
+          {
+            "x": 416,
+            "y": 272
+          },
+          {
+            "x": 416,
+            "y": 224
+          },
+          {
+            "x": 432,
+            "y": 224
+          },
+          {
+            "x": 432,
+            "y": 240
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 544,
+            "y": 336
+          },
+          {
+            "x": 544,
+            "y": 368
+          },
+          {
+            "x": 560,
+            "y": 368
+          },
+          {
+            "x": 560,
+            "y": 336
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 440,
+            "y": 320
+          },
+          {
+            "x": 440,
+            "y": 320
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 432,
+            "y": 336
+          },
+          {
+            "x": 440,
+            "y": 336
+          },
+          {
+            "x": 444,
+            "y": 340
+          },
+          {
+            "x": 444,
+            "y": 344
+          },
+          {
+            "x": 448,
+            "y": 348
+          },
+          {
+            "x": 448,
+            "y": 356
+          },
+          {
+            "x": 444,
+            "y": 360
+          },
+          {
+            "x": 448,
+            "y": 364
+          },
+          {
+            "x": 448,
+            "y": 368
+          },
+          {
+            "x": 444,
+            "y": 372
+          },
+          {
+            "x": 440,
+            "y": 372
+          },
+          {
+            "x": 440,
+            "y": 376
+          },
+          {
+            "x": 432,
+            "y": 380
+          },
+          {
+            "x": 428,
+            "y": 384
+          },
+          {
+            "x": 424,
+            "y": 384
+          },
+          {
+            "x": 420,
+            "y": 384
+          },
+          {
+            "x": 416,
+            "y": 380
+          },
+          {
+            "x": 412,
+            "y": 380
+          },
+          {
+            "x": 404,
+            "y": 376
+          },
+          {
+            "x": 400,
+            "y": 376
+          },
+          {
+            "x": 400,
+            "y": 368
+          },
+          {
+            "x": 404,
+            "y": 364
+          },
+          {
+            "x": 404,
+            "y": 360
+          },
+          {
+            "x": 408,
+            "y": 360
+          },
+          {
+            "x": 412,
+            "y": 360
+          },
+          {
+            "x": 416,
+            "y": 356
+          },
+          {
+            "x": 416,
+            "y": 356
+          },
+          {
+            "x": 416,
+            "y": 348
+          },
+          {
+            "x": 420,
+            "y": 344
+          },
+          {
+            "x": 420,
+            "y": 340
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 48,
+            "y": 256
+          },
+          {
+            "x": 52,
+            "y": 264
+          },
+          {
+            "x": 52,
+            "y": 268
+          },
+          {
+            "x": 64,
+            "y": 272
+          },
+          {
+            "x": 72,
+            "y": 268
+          },
+          {
+            "x": 72,
+            "y": 264
+          },
+          {
+            "x": 76,
+            "y": 260
+          },
+          {
+            "x": 80,
+            "y": 260
+          },
+          {
+            "x": 80,
+            "y": 252
+          },
+          {
+            "x": 76,
+            "y": 248
+          },
+          {
+            "x": 80,
+            "y": 240
+          },
+          {
+            "x": 80,
+            "y": 236
+          },
+          {
+            "x": 76,
+            "y": 232
+          },
+          {
+            "x": 68,
+            "y": 228
+          },
+          {
+            "x": 64,
+            "y": 228
+          },
+          {
+            "x": 60,
+            "y": 224
+          },
+          {
+            "x": 52,
+            "y": 224
+          },
+          {
+            "x": 44,
+            "y": 228
+          },
+          {
+            "x": 40,
+            "y": 232
+          },
+          {
+            "x": 40,
+            "y": 236
+          },
+          {
+            "x": 32,
+            "y": 240
+          },
+          {
+            "x": 32,
+            "y": 244
+          },
+          {
+            "x": 36,
+            "y": 252
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 112,
+            "y": 208
+          },
+          {
+            "x": 112,
+            "y": 224
+          },
+          {
+            "x": 128,
+            "y": 224
+          },
+          {
+            "x": 128,
+            "y": 208
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 200,
+            "y": 288
+          },
+          {
+            "x": 200,
+            "y": 312
+          },
+          {
+            "x": 204,
+            "y": 316
+          },
+          {
+            "x": 208,
+            "y": 320
+          },
+          {
+            "x": 212,
+            "y": 320
+          },
+          {
+            "x": 216,
+            "y": 316
+          },
+          {
+            "x": 216,
+            "y": 312
+          },
+          {
+            "x": 220,
+            "y": 308
+          },
+          {
+            "x": 224,
+            "y": 304
+          },
+          {
+            "x": 224,
+            "y": 300
+          },
+          {
+            "x": 216,
+            "y": 296
+          },
+          {
+            "x": 216,
+            "y": 292
+          },
+          {
+            "x": 212,
+            "y": 288
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 224,
+            "y": 252
+          },
+          {
+            "x": 224,
+            "y": 256
+          },
+          {
+            "x": 200,
+            "y": 256
+          },
+          {
+            "x": 200,
+            "y": 244
+          },
+          {
+            "x": 204,
+            "y": 240
+          },
+          {
+            "x": 208,
+            "y": 240
+          },
+          {
+            "x": 216,
+            "y": 244
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 236,
+            "y": 336
+          },
+          {
+            "x": 240,
+            "y": 328
+          },
+          {
+            "x": 240,
+            "y": 324
+          },
+          {
+            "x": 236,
+            "y": 320
+          },
+          {
+            "x": 228,
+            "y": 320
+          },
+          {
+            "x": 224,
+            "y": 328
+          },
+          {
+            "x": 224,
+            "y": 332
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 168,
+            "y": 240
+          },
+          {
+            "x": 160,
+            "y": 240
+          },
+          {
+            "x": 160,
+            "y": 224
+          },
+          {
+            "x": 176,
+            "y": 224
+          },
+          {
+            "x": 176,
+            "y": 232
+          },
+          {
+            "x": 200,
+            "y": 232
+          },
+          {
+            "x": 200,
+            "y": 256
+          },
+          {
+            "x": 224,
+            "y": 256
+          },
+          {
+            "x": 224,
+            "y": 288
+          },
+          {
+            "x": 200,
+            "y": 288
+          },
+          {
+            "x": 200,
+            "y": 312
+          },
+          {
+            "x": 176,
+            "y": 312
+          },
+          {
+            "x": 176,
+            "y": 320
+          },
+          {
+            "x": 160,
+            "y": 320
+          },
+          {
+            "x": 160,
+            "y": 304
+          },
+          {
+            "x": 168,
+            "y": 304
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 168,
+            "y": 100
+          },
+          {
+            "x": 168,
+            "y": 64
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 248,
+            "y": 232
+          },
+          {
+            "x": 248,
+            "y": 232
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 280,
+            "y": 256
+          },
+          {
+            "x": 280,
+            "y": 232
+          },
+          {
+            "x": 248,
+            "y": 232
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 240,
+            "y": 272
+          },
+          {
+            "x": 272,
+            "y": 272
+          },
+          {
+            "x": 272,
+            "y": 256
+          },
+          {
+            "x": 288,
+            "y": 256
+          },
+          {
+            "x": 288,
+            "y": 272
+          },
+          {
+            "x": 304,
+            "y": 272
+          },
+          {
+            "x": 304,
+            "y": 304
+          },
+          {
+            "x": 240,
+            "y": 304
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 280,
+            "y": 136
+          },
+          {
+            "x": 308,
+            "y": 136
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 304,
+            "y": 128
+          },
+          {
+            "x": 304,
+            "y": 192
+          },
+          {
+            "x": 336,
+            "y": 192
+          },
+          {
+            "x": 336,
+            "y": 128
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 368,
+            "y": 160
+          },
+          {
+            "x": 348,
+            "y": 160
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 560,
+            "y": 304
+          },
+          {
+            "x": 520,
+            "y": 304
+          },
+          {
+            "x": 520,
+            "y": 304
+          },
+          {
+            "x": 520,
+            "y": 316
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 416,
+            "y": 200
+          },
+          {
+            "x": 400,
+            "y": 200
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 488,
+            "y": 180
+          },
+          {
+            "x": 488,
+            "y": 200
+          },
+          {
+            "x": 520,
+            "y": 200
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 72,
+            "y": 88
+          },
+          {
+            "x": 72,
+            "y": 120
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 120,
+            "y": 268
+          },
+          {
+            "x": 120,
+            "y": 256
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 96,
+            "y": 224
+          },
+          {
+            "x": 128,
+            "y": 224
+          },
+          {
+            "x": 128,
+            "y": 256
+          },
+          {
+            "x": 100,
+            "y": 256
+          },
+          {
+            "x": 96,
+            "y": 256
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 160,
+            "y": 336
+          },
+          {
+            "x": 160,
+            "y": 368
+          },
+          {
+            "x": 240,
+            "y": 368
+          },
+          {
+            "x": 240,
+            "y": 336
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 120,
+            "y": 368
+          },
+          {
+            "x": 120,
+            "y": 384
+          },
+          {
+            "x": 124,
+            "y": 384
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 484,
+            "y": 144
+          },
+          {
+            "x": 460,
+            "y": 144
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 440,
+            "y": 16
+          },
+          {
+            "x": 440,
+            "y": 32
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 400,
+            "y": 32
+          },
+          {
+            "x": 464,
+            "y": 32
+          },
+          {
+            "x": 464,
+            "y": 64
+          },
+          {
+            "x": 400,
+            "y": 64
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 400,
+            "y": 0
+          },
+          {
+            "x": 416,
+            "y": 0
+          },
+          {
+            "x": 416,
+            "y": 16
+          },
+          {
+            "x": 400,
+            "y": 16
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      null,
+      null,
+      null,
+      {
+        "type": "poly",
+        "tag": "boundary_bush",
+        "points": [
+          {
+            "x": 512,
+            "y": 92
+          },
+          {
+            "x": 528,
+            "y": 80
+          },
+          {
+            "x": 536,
+            "y": 80
+          },
+          {
+            "x": 544,
+            "y": 92
+          },
+          {
+            "x": 544,
+            "y": 96
+          },
+          {
+            "x": 540,
+            "y": 104
+          },
+          {
+            "x": 528,
+            "y": 112
+          },
+          {
+            "x": 524,
+            "y": 112
+          },
+          {
+            "x": 520,
+            "y": 108
+          },
+          {
+            "x": 516,
+            "y": 104
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_wall",
+        "points": [
+          {
+            "x": 480,
+            "y": 160
+          },
+          {
+            "x": 544,
+            "y": 160
+          },
+          {
+            "x": 544,
+            "y": 112
+          },
+          {
+            "x": 512,
+            "y": 112
+          },
+          {
+            "x": 512,
+            "y": 80
+          },
+          {
+            "x": 496,
+            "y": 80
+          },
+          {
+            "x": 496,
+            "y": 96
+          },
+          {
+            "x": 480,
+            "y": 96
+          }
+        ],
+        "closed": true,
+        "rot": 0
+      },
+      {
+        "type": "poly",
+        "tag": "boundary_cover",
+        "points": [
+          {
+            "x": 580,
+            "y": 112
+          },
+          {
+            "x": 556,
+            "y": 112
+          }
+        ],
+        "closed": false,
+        "rot": 0
+      }
+    ],
+    {
+      "1,21": {
+        "spawnType": 5
+      },
+      "3,21": {
+        "spawnType": 5
+      },
+      "5,21": {
+        "spawnType": 5
+      },
+      "2,22": {
+        "spawnType": 5
+      },
+      "4,22": {
+        "spawnType": 5
+      },
+      "7,21": {
+        "spawnType": 5
+      },
+      "6,22": {
+        "spawnType": 5
+      },
+      "3,23": {
+        "spawnType": 5
+      },
+      "5,23": {
+        "spawnType": 5
+      },
+      "1,23": {
+        "spawnType": 5
+      },
+      "0,22": {
+        "spawnType": 5
+      },
+      "2,20": {
+        "spawnType": 5
+      },
+      "4,20": {
+        "spawnType": 5
+      },
+      "6,20": {
+        "spawnType": 5
+      },
+      "0,20": {
+        "spawnType": 5
+      },
+      "30,1": {
+        "spawnType": 6
+      },
+      "32,1": {
+        "spawnType": 6
+      },
+      "34,1": {
+        "spawnType": 6
+      },
+      "33,2": {
+        "spawnType": 6
+      },
+      "35,2": {
+        "spawnType": 6
+      },
+      "31,2": {
+        "spawnType": 6
+      },
+      "29,2": {
+        "spawnType": 6
+      },
+      "30,3": {
+        "spawnType": 6
+      },
+      "32,3": {
+        "spawnType": 6
+      },
+      "34,3": {
+        "spawnType": 6
+      },
+      "31,0": {
+        "spawnType": 6
+      },
+      "33,0": {
+        "spawnType": 6
+      }
+    }
+  ]
+}

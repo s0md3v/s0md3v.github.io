@@ -1,0 +1,7 @@
+export const THOUGHT_IDLE = 'IDLE';
+export const THOUGHT_COMBAT = 'COMBAT';
+export const THOUGHT_SURVIVAL = 'SURVIVAL';
+export const THOUGHT_SCAVANGE = 'SCAVANGE';
+export const THOUGHT_SOCIAL = 'SOCIAL';
+export const THOUGHT_HOLD_COVER = 'HOLD_COVER';
+export const THOUGHT_REPOSITION = 'REPOSITION';

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red is pain</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="simulation-container" style="position: relative;">
+        <!-- Empty Space Hint (Only shown in HUMAN mode, handled by JS later if needed, but here it's static UI we toggle) -->
+        <div id="empty-space-hint" style="display: none; position: absolute; bottom: 20px; left: 20px; color: rgba(255,255,255,0.2); font-family: monospace; font-size: 0.8rem; pointer-events: none; max-width: 250px;">
+            Blank space around the map is intentional. Use mouse wheel or D-Pad to zoom.
+        </div>
+
+        <canvas id="sim-canvas"></canvas>
+        <div id="inspector-sidebar">
+            <!-- PANEL 1: SIGNAL STATUS -->
+            <div id="signal-header" class="sidebar-panel">
+                <div class="placeholder-text">
+                    <div class="hologram-effect"></div>
+                    <div class="glitch-signal">NO SIGNAL</div>
+                    <div style="font-size: 0.7em; opacity: 0.5; margin-top: 10px; letter-spacing: 2px;">
+                        <span style="color: var(--accent);">[ STATUS: STANDBY ]</span><br>
+                        SELECT UNIT TO INTERFACE
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 2: BIOMETRIC INTEL -->
+            <div id="biometric-stats" class="sidebar-panel" style="display: none;">
+                <div id="stats-hud"></div>
+                <div id="personality-chart-container">
+                    <canvas id="personality-canvas"></canvas>
+                </div>
+                <div id="status-badges-container"></div>
+            </div>
+
+            <div id="system-controls" class="sidebar-panel">
+                <h3>FIELD OVERLAYS</h3>
+                <div class="controls-grid">
+                    <label class="debug-option"><input type="checkbox" id="toggle-vision"> Vision Cones</label>
+                    <label class="debug-option"><input type="checkbox" id="toggle-trust"> Squad Cohesion</label>
+                    <label class="debug-option"><input type="checkbox" id="toggle-heatmap"> Awareness Grid</label>
+                    <label class="debug-option"><input type="checkbox" id="toggle-targets" checked> Intent Lines</label>
+                </div>
+            </div>
+            <div id="human-controls" class="sidebar-panel" style="display:none;">
+                <h3>CONTROLS</h3>
+                <div style="font-family: monospace; font-size: 0.8rem; color: #ccc;">
+                    <p style="margin: 5px 0;"><strong>WASD / Left Stick:</strong> Move</p>
+                    <p style="margin: 5px 0;"><strong>Mouse / Right Stick:</strong> Aim</p>
+                    <p style="margin: 5px 0;"><strong>Left Click / RB / RT:</strong> Fire Weapon</p>
+                    <p style="margin: 5px 0;"><strong>Hold Shift / LT:</strong> Sprint</p>
+                    <p style="margin: 5px 0;"><strong>Scroll / D-Pad Up-Down:</strong> Zoom</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ui-layer">
+        <div id="unit-card" class="panel">
+            <!-- Details extracted via JS -->
+                 UNIT #009 <span style="float:right; color:#ff4444">BRAVO</span>
+                 <br><br>
+                 <div id="unit-status">...</div>
+        </div>
+    </div>
+    
+    <!-- Start Menu Overlay -->
+    <div id="start-menu" style="display:none; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="scanline"></div>
+        <h1 style="font-size: 3rem; margin-bottom: 5px;">RED IS PAIN</h1>
+        <p style="color: var(--text-muted); font-family: monospace; font-size: 1rem; margin-bottom: 40px;">Tactical AI Combat Simulation</p>
+        
+        <div style="display:flex; flex-direction:column; gap:20px; align-items:center; width: 300px;">
+            <button id="btn-start-ai" class="menu-button" style="width: 100%; font-size: 1.2rem; padding: 15px;">AI vs AI</button>
+            <button id="btn-start-human" class="menu-button" style="width: 100%; font-size: 1.2rem; padding: 15px;">Human vs AI</button>
+            <button id="btn-info" class="menu-button" style="width: 100%; font-size: 1.2rem; padding: 15px; border-color: rgba(255,255,255,0.2); color: #ccc;">WHAT IS THIS?</button>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10,10,12,0.95); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="panel" style="max-width: 600px; padding: 30px; border-color: var(--accent);">
+            <h2 style="color: var(--accent); margin-bottom: 20px;">PROJECT: RED IS PAIN</h2>
+            <div style="font-family: monospace; font-size: 0.9rem; line-height: 1.6; color: #ddd;">
+                <p style="margin-bottom: 1em;">You have consumed enough opinions from your favorite websites and echo chambers that nothing I can say about machines and intelligence will be seen as is. So, I will not do that. You are very smart and your biases are correct!</p>
+                
+                <p style="margin-bottom: 1em;">Anyways, the idea behind this experiment is simple; can we fake intelligence and emotions?</p>
+                
+                <p style="margin-bottom: 0.5em;">This simulation has characters controlled completely by simple code. Each character has:</p>
+                <ol style="margin-top: 5px; margin-bottom: 15px; padding-left: 20px;">
+                    <li style="margin-bottom: 5px;"><strong>Big-5 disposition:</strong> Basically, randomly generated personality traits. They are one of the factors for the character's reaction to a given event.</li>
+                    <li style="margin-bottom: 5px;"><strong>Mental state:</strong> Characters remember death of their allies and heated areas.</li>
+                    <li style="margin-bottom: 5px;"><strong>Memory:</strong> They remember deaths, danger zones, bad spots to be in and such. A lightweight 'learning' simulation and necessary to fake PTSD.</li>
+                    <li style="margin-bottom: 5px;"><strong>Relationships:</strong> Characters bond over time. Watching a friend die causes more stress than losing a stranger.</li>
+                    <li style="margin-bottom: 5px;"><strong>Senses:</strong> Characters don't cheat. They only know what they can directly see, hear, or get told by their allies.</li>
+                    <li style="margin-bottom: 5px;"><strong>Panic:</strong> Bullets flying nearby cause stress. Panicked characters lose accuracy and run for cover.</li>
+                    <li style="margin-bottom: 5px;"><strong>Code:</strong> There is no machine learning. Tactical choices and fear all emerge from simple math and rules.</li>
+                </ol>
+                <p style="margin-bottom: 0.5em;">PS: I am still working on this, it's far from perfect. Don't expect much.</p>
+            </div>
+            <button id="btn-close-info" class="menu-button" style="margin-top: 25px; width: 100%;">ACKNOWLEDGED</button>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="game-over-screen" style="display:none;">
+        <div class="scanline"></div>
+        <h1 id="victory-text">TEAM WINS!</h1>
+        <button id="btn-restart" class="menu-button" style="padding: 15px 40px; border-color: var(--accent); color: var(--accent);">RE-INITIALIZE</button>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
