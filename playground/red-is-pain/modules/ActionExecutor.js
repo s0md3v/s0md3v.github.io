@@ -221,8 +221,8 @@ export class ActionExecutor {
                     y: action.target.y + Math.sin(errorAngle) * errorDist
                 };
 
-                const handForwardOffset = 10;
-                const handSideOffset = 8;
+                const handForwardOffset = 7.0;
+                const handSideOffset = 4.0;
                 const throwX = this.agent.pos.x + Math.cos(this.agent.angle) * handForwardOffset - Math.sin(this.agent.angle) * handSideOffset;
                 const throwY = this.agent.pos.y + Math.sin(this.agent.angle) * handForwardOffset + Math.cos(this.agent.angle) * handSideOffset;
 

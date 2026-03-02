@@ -66,6 +66,39 @@ export class Utils {
         }
         return inside;
     }
+
+    static rasterizePolygon(grid, points, value, gridSize) {
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        points.forEach(p => {
+            minX = Math.min(minX, p.x);
+            maxX = Math.max(maxX, p.x);
+            minY = Math.min(minY, p.y);
+            maxY = Math.max(maxY, p.y);
+        });
+
+        const gMinX = Math.floor(minX / gridSize);
+        const gMaxX = Math.ceil(maxX / gridSize);
+        const gMinY = Math.floor(minY / gridSize);
+        const gMaxY = Math.ceil(maxY / gridSize);
+
+        for (let y = gMinY; y < gMaxY; y++) {
+            for (let x = gMinX; x < gMaxX; x++) {
+                if (y < 0 || y >= grid.length || x < 0 || x >= grid[0].length) continue;
+                
+                const wx = x * gridSize + gridSize/2;
+                const wy = y * gridSize + gridSize/2;
+                
+                const q = gridSize * 0.4;
+                if (Utils.pointInPolygon(wx, wy, points) ||
+                    Utils.pointInPolygon(wx - q, wy - q, points) ||
+                    Utils.pointInPolygon(wx + q, wy - q, points) ||
+                    Utils.pointInPolygon(wx - q, wy + q, points) ||
+                    Utils.pointInPolygon(wx + q, wy + q, points)) {
+                    grid[y][x] = value;
+                }
+            }
+        }
+    }
 }
 
 export class PriorityQueue {

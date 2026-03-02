@@ -214,8 +214,8 @@ export class WeaponSystem {
         
         const shootAngle = this.agent.angle + (Math.random() - 0.5) * totalInaccuracy;
         
-        const forwardOffset = 8;
-        const sideOffset = 4;
+        const forwardOffset = 5.5;
+        const sideOffset = 2.2;
         const startX = this.agent.pos.x + Math.cos(this.agent.angle) * forwardOffset - Math.sin(this.agent.angle) * sideOffset;
         const startY = this.agent.pos.y + Math.sin(this.agent.angle) * forwardOffset + Math.cos(this.agent.angle) * sideOffset;
 

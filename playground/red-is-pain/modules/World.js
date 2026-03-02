@@ -110,10 +110,6 @@ export class World {
         }
     }
 
-    rasterizePolygon(grid, points, value, gridSize) {
-        Utils.rasterizePolygon(grid, points, value, gridSize);
-    }
-
     generateCovers() {
         const hubX = this.width / 2;
         const hubY = this.height / 2;

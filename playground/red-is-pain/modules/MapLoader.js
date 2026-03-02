@@ -1,5 +1,6 @@
 
 import { Config } from './Config.js';
+import { Utils } from './Utils.js';
 
 export class MapLoader {
     constructor() {
@@ -56,20 +57,20 @@ export class MapLoader {
                 
                 if (tag.includes('wall')) {
                     result.walls.push(v);
-                    this.rasterizePolygon(result.grid, v.points, 1, gridSize); // 1 = Wall/Block
+                    Utils.rasterizePolygon(result.grid, v.points, 1, gridSize); // 1 = Wall/Block
                 } else if (tag.includes('cover')) {
                     result.covers.push({
                         ...v,
                         hp: Config.PHYSICS.COVER_HP_STONE,
                         maxHp: Config.PHYSICS.COVER_HP_STONE
                     });
-                    this.rasterizePolygon(result.grid, v.points, 3, gridSize); // 3 = Cover
+                    Utils.rasterizePolygon(result.grid, v.points, 3, gridSize); // 3 = Cover
                 } else if (tag.includes('bush')) {
                     result.bushes.push(v);
                     // Bushes don't block movement (0), but block vision? 
                     // Verify grid logic. Usually bushes are handled separately.
                     // If grid value 2 is "Vision Block but Walkable", use that.
-                    this.rasterizePolygon(result.grid, v.points, 2, gridSize); 
+                    Utils.rasterizePolygon(result.grid, v.points, 2, gridSize); 
                 }
             });
         }
@@ -100,57 +101,5 @@ export class MapLoader {
         }
 
         return result;
-    }
-
-    rasterizePolygon(grid, points, value, gridSize) {
-        // Simple bounding box rasterization for now (or scanline if needed)
-        // Since we have 4px grid, high res.
-        
-        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-        points.forEach(p => {
-            minX = Math.min(minX, p.x);
-            maxX = Math.max(maxX, p.x);
-            minY = Math.min(minY, p.y);
-            maxY = Math.max(maxY, p.y);
-        });
-
-        // Convert to grid coords
-        const gMinX = Math.floor(minX / gridSize);
-        const gMaxX = Math.ceil(maxX / gridSize);
-        const gMinY = Math.floor(minY / gridSize);
-        const gMaxY = Math.ceil(maxY / gridSize);
-
-        // Point-in-polygon test for every cell in bbox
-        for (let y = gMinY; y < gMaxY; y++) {
-            for (let x = gMinX; x < gMaxX; x++) {
-                if (y < 0 || y >= grid.length || x < 0 || x >= grid[0].length) continue;
-                
-                const wx = x * gridSize + gridSize/2;
-                const wy = y * gridSize + gridSize/2;
-                
-                // Super-sampled point-in-polygon check for thin walls
-                const q = gridSize * 0.4;
-                if (this.pointInPolygon(wx, wy, points) ||
-                    this.pointInPolygon(wx - q, wy - q, points) ||
-                    this.pointInPolygon(wx + q, wy - q, points) ||
-                    this.pointInPolygon(wx - q, wy + q, points) ||
-                    this.pointInPolygon(wx + q, wy + q, points)) {
-                    grid[y][x] = value;
-                }
-            }
-        }
-    }
-
-    pointInPolygon(x, y, points) {
-        let inside = false;
-        for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-            const xi = points[i].x, yi = points[i].y;
-            const xj = points[j].x, yj = points[j].y;
-            
-            const intersect = ((yi > y) !== (yj > y))
-                && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-            if (intersect) inside = !inside;
-        }
-        return inside;
     }
 }
