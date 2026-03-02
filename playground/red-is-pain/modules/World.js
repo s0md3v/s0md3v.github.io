@@ -749,10 +749,13 @@ export class World {
                 if (gx >= 0 && gy >= 0 && gy < this.grid.length && gx < this.grid[0].length) {
                     if (gx === startGx && gy === startGy) { traveled += 2; continue; }
                     const cell = this.grid[gy][gx];
+                    
+                    // Ignore target cell for ALL vision blockers (Player might overlap cover/wall slightly)
+                    if (gx === targetGx && gy === targetGy) { traveled += 2; continue; }
+
                     if (cell === 1 || cell === 3 || cell === 4) return false;
                     
                     if (checkCovers && cell === 2) {
-                        if (ignoreTargetBush && gx === targetGx && gy === targetGy) { traveled += 2; continue; }
                         if (traveled < 25) { traveled += 2; continue; } // Near-field transparency
                         return false;
                     }

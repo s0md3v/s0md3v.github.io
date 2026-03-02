@@ -148,9 +148,15 @@ export class WeaponSystem {
                 
                 const hasFriendly = friends.some(f => {
                     if (f.team !== this.agent.team || f.id === this.agent.id || f.isCover) return false;
+
+                    // Barrel Clearance: Teammates very close to the shooter's center are ignored
+                    // This prevents "clumping paralysis" where a squad refuses to fire because they overlap
+                    const distFromMe = Utils.distance(this.agent.pos, f.pos);
+                    if (distFromMe < 18) return false; 
+
                     // Precise Phase: Distance to line of fire
                     const distToLine = Utils.distanceToSegment(f.pos, this.agent.pos, {x: checkX, y: checkY}); 
-                    return distToLine < (f.radius + 4); // 4px margin
+                    return distToLine < (f.radius + 1.5); // Reduced 4px margin to 1.5px
                 });
                 
                 if (hasFriendly) {

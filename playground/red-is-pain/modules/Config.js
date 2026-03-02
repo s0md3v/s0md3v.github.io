@@ -8,7 +8,7 @@ export const Config = {
         SPATIAL_GRID_SIZE: 100, 
         WIDTH: 0, // Set at runtime
         HEIGHT: 0, // Set at runtime
-        COMMAND_CHAOS_DURATION: 10000, // 10 seconds of chaos after leader death
+        COMMAND_CHAOS_DURATION: 1500, // 1.5 seconds of chaos after leader death (was 10s)
         INTEL_GRID_SIZE: 16 // Matches TILE_SIZE for per-tile awareness grid
     },
     
