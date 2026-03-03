@@ -6,14 +6,133 @@ permalink: /projects
 order: 1
 ---
 
-<div class="wrapper">
+<style>
+.projects-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+.proj-card {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+.proj-card:hover {
+  border-color: var(--accent-color);
+  background-color: rgba(0,0,0,0.015);
+  transform: translateY(-2px);
+}
+html.dark-mode .proj-card:hover {
+  background-color: rgba(255,255,255,0.02);
+}
+.proj-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none !important;
+  color: inherit;
+  padding: 25px;
+}
+.proj-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.proj-title {
+  color: var(--accent-color);
+  font-weight: bold;
+  font-family: "Comfortaa", sans-serif;
+  font-size: 2.2rem;
+  text-transform: lowercase;
+  margin: 0 !important;
+}
+.proj-stars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--blog-font-family);
+  font-size: 1.1rem;
+  color: var(--muted-color);
+  border: 1px solid var(--border-color);
+  padding: 4px 10px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+.proj-card:hover .proj-stars {
+  border-color: var(--accent-color);
+  color: var(--foreground-color);
+}
+.proj-stars svg {
+  color: #e3b341;
+}
+.proj-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 800px) {
+  .proj-summary {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+  }
+}
+.summary-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.summary-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent-color);
+  font-weight: bold;
+  font-family: "Comfortaa", sans-serif;
+  opacity: 0.8;
+}
+.summary-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--foreground-color);
+  margin: 0 !important;
+  font-family: var(--blog-font-family);
+}
+</style>
+
+<div class="wrapper wide">
   <h1>projects</h1>
-  {% for project in site.data.projects %}
-  <div class="project-item">
-    <a href="{{ project.href }}" class="project-link">
-      <h2 class="project-title">{{ project.title }}</h2>
-      <p class="project-desc">{{ project.desc }}</p>
-    </a>
+  <div class="projects-container">
+    {% for project in site.data.projects %}
+    <div class="proj-card">
+      <a href="{{ project.href }}" class="proj-link">
+        <div class="proj-header">
+          <h2 class="proj-title">{{ project.title }}</h2>
+          <div class="proj-stars">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star">
+              <path fill="currentColor" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
+            </svg>
+            <span>{{ project.stars }}</span>
+          </div>
+        </div>
+        <div class="proj-summary">
+          <div class="summary-block">
+            <span class="summary-label">What</span>
+            <p class="summary-text">{{ project.what }}</p>
+          </div>
+          <div class="summary-block">
+            <span class="summary-label">Why</span>
+            <p class="summary-text">{{ project.why }}</p>
+          </div>
+          <div class="summary-block">
+            <span class="summary-label">How</span>
+            <p class="summary-text">{{ project.how }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>

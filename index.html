@@ -15,10 +15,25 @@ layout_style: "homepage"
         "There is time for work and time for love. That leaves no other time."
       </div>
       <div class="corner-annotation top-right">
-        <div style="transform: rotate(3deg); color: var(--link-visited); margin-bottom: 0.5rem;">#1756a9</div>
-        <div id="mode-switch" role="button" tabindex="0"
-          style="cursor: pointer; text-decoration: underline; transform: rotate(-1deg); pointer-events: auto;">light
-          mode
+        <div id="mode-switch" style="transform: rotate(-1deg); pointer-events: auto; display: flex; gap: 15px; align-items: center; justify-content: flex-end;">
+          <div class="mode-icon" data-mode="light" role="button" tabindex="0" aria-label="Light Mode" style="cursor: pointer; opacity: 0.3; transition: opacity 0.3s ease;">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 14.5c-1.2 2.5-4.5 3.2-6.5 1.5s-2.8-4.8-1.2-6.8 4.2-2.5 6.2-1.2 2.5 4.5 1.5 6.5z" />
+              <path d="M12 2.5c0.2 1.5-0.5 2.5-0.2 4M11.5 18c0.2 1.8 0.5 3 0.8 4.5M4 4.5l2.2 2.8M17.5 17.5l3 3.5M2 12.5c1.5-0.2 3 0.5 4.5 0.2M18.5 11c1.8 0.5 3.2-0.2 4.8-0.5M4.5 19.5l2.8-2.2M19.5 4.5l-2.8 3" />
+            </svg>
+          </div>
+          <div class="mode-icon" data-mode="dark" role="button" tabindex="0" aria-label="Dark Mode" style="cursor: pointer; opacity: 0.3; transition: opacity 0.3s ease;">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19.5 13c-0.5 4.5-4.2 7.8-8.8 7.5s-8.2-3.8-7.8-8.2c0.2-4.2 3.8-7.8 8.5-7.5c0.5 0 1.2 0.2 1.8 0.3-2.5 1.8-4.2 4.8-3.8 8s1.8 5.8 4.2 7.2c2.2-1.2 3.8-3.2 4.5-5.5 0.5-1.2 0.8-2 1.4-2.8z" />
+            </svg>
+          </div>
+          <div class="mode-icon" data-mode="cream" role="button" tabindex="0" aria-label="Cream Mode" style="cursor: pointer; opacity: 0.3; transition: opacity 0.3s ease;">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.5 10c2.5 0.2 3.8 2 3.2 4s-2.8 3-5 2.5l-0.5-0.2" />
+              <path d="M4.5 10.5c-0.5-1.5 0.8-3 2.5-3h9c1.8 0 2.5 1.2 2.2 3l-1.2 6c-0.5 2.5-2.2 4-4.8 4h-2.2c-2.5 0-4.2-1.5-4.8-4l-1.5-6.5z" />
+              <path d="M9 3c0.5 0.8-0.2 1.5-0.5 2.5M12.5 2c0.8 1.2-0.5 2.2-0.8 3.5M16 3c0.5 0.8-0.2 1.5-0.5 2.5" />
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -154,33 +169,33 @@ layout_style: "homepage"
     document.addEventListener('DOMContentLoaded', function () {
       const modeSwitch = document.getElementById('mode-switch');
       if (modeSwitch) {
-        const themeNames = {
-          'light': 'light mode',
-          'dark': 'dark mode',
-          'cream': 'cream mode'
-        };
-
-        function updateModeText() {
+        function updateModeIcons() {
           const current = getPreferredTheme();
-          modeSwitch.textContent = themeNames[current] || 'light mode';
+          document.querySelectorAll('#mode-switch .mode-icon').forEach(icon => {
+            if (icon.dataset.mode === current) {
+              icon.style.opacity = '1';
+            } else {
+              icon.style.opacity = '0.3';
+            }
+          });
         }
 
-        updateModeText();
+        updateModeIcons();
 
-        modeSwitch.addEventListener('click', () => {
-          const current = getPreferredTheme();
-          let nextIndex = (themes.indexOf(current) + 1) % themes.length;
-          const nextTheme = themes[nextIndex];
-          applyTheme(nextTheme);
-          updateModeText();
-        });
+        document.querySelectorAll('#mode-switch .mode-icon').forEach(icon => {
+          icon.addEventListener('click', () => {
+            applyTheme(icon.dataset.mode);
+            updateModeIcons();
+          });
 
-        // Keyboard accessibility for mode switch
-        modeSwitch.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            modeSwitch.click();
-          }
+          // Keyboard accessibility for each icon
+          icon.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              applyTheme(icon.dataset.mode);
+              updateModeIcons();
+            }
+          });
         });
       }
 
@@ -213,7 +228,7 @@ layout_style: "homepage"
           '/philosophy': 'i write essays',
           'https://github.com/s0md3v': 'sponsor me ^_^',
           'https://twitter.com/s0md3v': 'quality posting only',
-          'https://instagram.com/s0md3v': 'strictly non-professional',
+          'https://www.instagram.com/s0md3v': 'strictly non-professional',
           'mailto:s0md3v[at]gmail.com': 'need a pgp key?',
           'https://www.linkedin.com/in/s0md3v': '"lets connect" :D',
           '/playground': 'random experiments',
