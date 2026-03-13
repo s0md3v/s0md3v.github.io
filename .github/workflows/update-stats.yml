@@ -1,0 +1,38 @@
+name: Update Stats
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # Run at 00:00 on day 1 of every month
+  workflow_dispatch: # Allow manual run
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pyyaml
+
+      - name: Run update script
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/fetch_stats.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add _data/stats.json _data/projects.yaml
+          git diff-index --quiet HEAD || git commit -m "Update stats [skip ci]"
+          git push
