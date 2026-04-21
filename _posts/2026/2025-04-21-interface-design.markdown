@@ -9,8 +9,6 @@ permalink: /blog/interface-design
 description: "Designing interfaces that real users love."
 ---
 
-# Thoughts on Interface Design
-
 > tldr: if you are building an app, a machine, a website, a toy or any system that has a user - you will find something useful here. There's also a checklist in the end because I love you.
 
 At the time of writing this, I have been programming for 9 years and studying epistemology for 2 years. Naturally, first we must think about:
