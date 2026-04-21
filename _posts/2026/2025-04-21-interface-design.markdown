@@ -69,24 +69,23 @@ If a blue underlined word opens a new page in one place, downloads a file in ano
 
 If one dropdown opens on click, don't make another open on hover. If one destructive action is red, don't make another look harmless. Similar things should look similar. Different things should look different.
 
-Try to reuse what the user has already seen. Not just on your interface, but in the world.
+Try to reuse what the user has already seen. Not just on your interface but the interfaces they might have already used.
 
 An average user knows what a save icon looks like. Don't use a basket icon for "save" just because it fits your recipe app theme. Yes, I know, that example is cute. But every new concept you teach the user is extra work for them.
 
 If your app is really, really good and people love it and you are pure-hearted, then maybe you can get away with teaching new patterns. Otherwise, no, your clever little metaphor is probably not helping.
 
 Here's the gist:
-
-Don't go against common patterns unless you have a very good reason and you have tested it with real people.
-Make the user learn as few new things as possible.
-Reuse your patterns. Let the user predict right.
+- Don't go against common patterns unless you have a very good reason and you have tested it with real people.
+- Make the user learn as few new things as possible.
+- Reuse your patterns. Let the user predict right.
 
 ### Mistakes
 The best error message is the one the user never sees because the interface prevented the error in the first place.
 
 If a username is taken, say it before the user submits the whole form. If you reject files above a certain size, say that before the user picks one.
 
-Good design prevents mistakes, even if you think no one would make them. They will. Be serious.
+Good design prevents mistakes, even if you think no one would make them. Those mistakes will be made, be real.
 
 Reality means slow internet, old phones, tired people, autofill doing insane things, long names, small screens, color blindness, noisy rooms, shaky hands, low literacy, interrupted attention, and people who are already annoyed before they even reach your product.
 
