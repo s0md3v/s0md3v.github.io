@@ -137,23 +137,24 @@ I don't know what else to say, I think it's a good place to end. If this helps y
 
 <details>
 <summary>Here's the checklist:</summary>
-
-- Can the user tell what is clickable?
-- Does the button say what it actually does?
-- Can the user predict what will happen before they click?
-- Is it obvious what state the system is in?
-- If something fails, does the user know what happened?
-- Does the user know if they messed up or your system messed up?
-- Are dangerous actions hard to do by accident?
-- Are common mistakes prevented early?
-- Are limits and constraints disclosed before the user runs into them?
-- Can the user undo, cancel, go back, restore, edit, or change their mind?
-- Are similar things behaving similarly?
-- Does the interface guide attention to the right thing first?
-- Are frequent actions easy to do repeatedly?
-- Are uncommon actions tucked away but still easy to find?
-- Does it work on slow internet, old phones, small screens and keyboard alone?
-- Is the text readable in bad conditions?
-- Is the beauty helping the interface or just decorating confusion?
-- Does the interface get in the way less than it helps?
+<ul>
+  <li>Can the user tell what is clickable?</li>
+  <li>Does the button say what it actually does?</li>
+  <li>Can the user predict what will happen before they click?</li>
+  <li>Is it obvious what state the system is in?</li>
+  <li>If something fails, does the user know what happened?</li>
+  <li>Does the user know if they messed up or your system messed up?</li>
+  <li>Are dangerous actions hard to do by accident?</li>
+  <li>Are common mistakes prevented early?</li>
+  <li>Are limits and constraints disclosed before the user runs into them?</li>
+  <li>Can the user undo, cancel, go back, restore, edit, or change their mind?</li>
+  <li>Are similar things behaving similarly?</li>
+  <li>Does the interface guide attention to the right thing first?</li>
+  <li>Are frequent actions easy to do repeatedly?</li>
+  <li>Are uncommon actions tucked away but still easy to find?</li>
+  <li>Does it work on slow internet, old phones, small screens and keyboard alone?</li>
+  <li>Is the text readable in bad conditions?</li>
+  <li>Is the beauty helping the interface or just decorating confusion?</li>
+  <li>Does the interface get in the way less than it helps?</li>
+</ul>
 </details>
