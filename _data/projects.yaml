@@ -1,6 +1,6 @@
 - title: XSStrike
   href: https://github.com/s0md3v/XSStrike
-  stars: 14853
+  stars: 14927
   what: Most advanced XSS detection suite.
   why: Scanners usually just inject a list of payloads and see what sticks, missing
     context-aware vulnerabilities.
@@ -8,7 +8,7 @@
     working payloads on the fly.
 - title: Arjun
   href: https://github.com/s0md3v/Arjun
-  stars: 6169
+  stars: 6213
   what: HTTP parameter discovery suite.
   why: Web apps often have hidden parameters that are vulnerable to attacks, but they
     aren't linked anywhere in the UI.
@@ -16,7 +16,7 @@
     the server accepts, while bypassing rate limits.
 - title: Photon
   href: https://github.com/s0md3v/Photon
-  stars: 12777
+  stars: 12847
   what: Incredibly fast crawler designed for OSINT.
   why: Extracting intelligence from a target manually is painful, and standard web
     crawlers aren't built for reconnaissance.
@@ -24,7 +24,7 @@
     accounts, and keys into a neat structure.
 - title: Smap
   href: https://github.com/s0md3v/Smap
-  stars: 3204
+  stars: 3218
   what: A drop-in nmap replacement powered by shodan.io.
   why: Active port scanning is inherently noisy and gets your IP address blocked by
     firewalls.
@@ -39,7 +39,7 @@
     processes, and caches vulnerability info.
 - title: uro
   href: https://github.com/s0md3v/uro
-  stars: 1541
+  stars: 1551
   what: Declutters URL lists for crawling and pentesting.
   why: Wayback machine and crawlers give you huge lists of URLs, but most of them
     are basically duplicates with different parameter values.
@@ -63,7 +63,7 @@
     relationship graph between addresses.
 - title: huepy
   href: https://github.com/s0md3v/huepy
-  stars: 1488
+  stars: 1482
   what: Python library to print awesomely in terminals.
   why: Adding colored text in CLI tools shouldn't require memorizing ugly ANSI escape
     codes and writing boilerplate.
@@ -71,7 +71,7 @@
     and markers to your script's output.
 - title: Be-a-hacker
   href: https://github.com/s0md3v/be-a-hacker
-  stars: 2651
+  stars: 2665
   what: Roadmap for a self-taught hacker.
   why: Information security is overwhelming for beginners without a clear, structured
     learning path.
