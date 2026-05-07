@@ -3,61 +3,134 @@ import json
 import requests
 import yaml
 import time
+from email.utils import parsedate_to_datetime
 
 # Use GitHub Token from environment
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 USERNAME = "s0md3v"
+REQUEST_TIMEOUT = 20
+REQUEST_RETRIES = 4
+PYPI_REQUEST_DELAY = 2
 
-# Projects on PyPI to track downloads for
+# Projects published by/associated with the s0md3v PyPI profile.
 PYPI_PROJECTS = [
-    "arjun", "wappalyzer", "xsstrike", "uro", "parth", "fonetic", 
-    "esprima2", "rewise", "ote", "ifnude", "hardocdes", "json2paths", 
-    "huepy", "photon"
+    "antar",
+    "arjun",
+    "ctxpy",
+    "esprima2",
+    "fonetic",
+    "goop",
+    "hardcodes",
+    "huepy",
+    "ifnude",
+    "json2paths",
+    "ote",
+    "parth",
+    "photon",
+    "proxify",
+    "r-quests",
+    "regxy",
+    "rewise",
+    "subgpt",
+    "tt",
+    "tuff",
+    "uro",
+    "velocity",
+    "wappalyzer",
+    "xsstrike",
+    "zetanize",
 ]
 
 HEADERS = {
-    "Authorization": f"token {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github.v3+json",
+    "Authorization": f"Bearer {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28"
 } if GITHUB_TOKEN else {
-    "Accept": "application/vnd.github.v3+json",
+    "Accept": "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28"
 }
+
+session = requests.Session()
+
+
+def parse_retry_after(value):
+    if not value:
+        return None
+    try:
+        return max(0, int(value))
+    except ValueError:
+        try:
+            return max(0, (parsedate_to_datetime(value).timestamp() - time.time()))
+        except (TypeError, ValueError):
+            return None
+
+
+def describe_response(response):
+    try:
+        message = response.json().get("message")
+    except ValueError:
+        message = response.text[:200].strip()
+    return f"{response.status_code} {response.reason}" + (f": {message}" if message else "")
+
+
+def get_json(url, headers=None):
+    last_error = None
+
+    for attempt in range(REQUEST_RETRIES):
+        try:
+            response = session.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+        except requests.RequestException as exc:
+            last_error = str(exc)
+        else:
+            if response.status_code == 200:
+                return response.json()
+
+            last_error = describe_response(response)
+            if response.status_code == 429:
+                retry_after = parse_retry_after(response.headers.get("Retry-After"))
+                sleep_for = retry_after if retry_after is not None else 2 ** attempt
+                time.sleep(sleep_for)
+                continue
+
+            if response.status_code not in (500, 502, 503, 504):
+                break
+
+        time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"Failed to fetch {url}: {last_error}")
+
 
 def get_repos(username):
     repos = []
     page = 1
     while True:
         url = f"https://api.github.com/users/{username}/repos?per_page=100&page={page}"
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            break
-        data = response.json()
+        data = get_json(url, headers=HEADERS)
         if not data:
             break
         repos.extend(data)
         page += 1
     return repos
 
+
 def get_repo_clones(full_name):
     # GitHub API only returns clone traffic for the last 14 days.
     url = f"https://api.github.com/repos/{full_name}/traffic/clones"
-    response = requests.get(url, headers=HEADERS)
-    if response.status_code != 200:
-        return 0
-    return response.json().get("count", 0)
+    return get_json(url, headers=HEADERS).get("count", 0)
+
 
 def get_pypi_downloads(project):
     url = f"https://pypistats.org/api/packages/{project}/recent"
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json().get("data", {}).get("last_month", 0)
-    except Exception:
-        pass
-    return 0
+    return get_json(url).get("data", {}).get("last_month", 0)
+
 
 def main():
+    if not GITHUB_TOKEN:
+        raise RuntimeError(
+            "GITHUB_TOKEN must be a PAT with read access to repository traffic. "
+            "Using no token would undercount GitHub clones."
+        )
+
     print(f"Fetching GitHub repositories for {USERNAME}...")
     repos = get_repos(USERNAME)
     
@@ -80,7 +153,8 @@ def main():
     for project in PYPI_PROJECTS:
         downloads = get_pypi_downloads(project)
         total_pypi_downloads += downloads
-        time.sleep(0.1)
+        print(f"  {project}: {downloads}")
+        time.sleep(PYPI_REQUEST_DELAY)
         
     print(f"PyPI Downloads (Monthly): {total_pypi_downloads}")
     
