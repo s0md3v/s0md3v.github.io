@@ -169,9 +169,13 @@ def main():
             return f"{n // 1000}k+"
         return str(n)
 
+    def format_downloads(n):
+        rounded = ((n + 9999) // 10000) * 10000
+        return format_number(rounded)
+
     stats = {
         "total_stars": format_number(total_stars),
-        "monthly_downloads": format_number(monthly_impact),
+        "monthly_downloads": format_downloads(monthly_impact),
         "total_projects": len([r for r in repos if not r['fork'] and r['stargazers_count'] > 100]),
         "last_updated": time.strftime("%d %b %Y")
     }
