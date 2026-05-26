@@ -29,14 +29,14 @@
   why: Active port scanning is inherently noisy and gets your IP address blocked by
     firewalls.
   how: It queries Shodan's API and perfectly mimics nmap's CLI arguments and output.
-- title: Silver
-  href: https://github.com/s0md3v/Silver
-  stars: 1048
-  what: Mass vulnerability scanner.
-  why: Running nmap and masscan manually against huge networks gets messy and is hard
-    to scale efficiently.
-  how: Acts as a frontend wrapper that parses target data, spawns parallel scanning
-    processes, and caches vulnerability info.
+- title: overthink
+  href: https://github.com/s0md3v/overthink
+  stars: 6
+  what: Skill that makes coding agents think thoroughly.
+  why: Agents often jump to answers when a task is ambiguous, risky, or needs real
+    judgment.
+  how: Adds thinking modes for modeling, creating, diagnosing, verifying, evaluating,
+    deciding, tasting, and synthesizing before the agent answers.
 - title: uro
   href: https://github.com/s0md3v/uro
   stars: 1551
