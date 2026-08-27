@@ -49,7 +49,7 @@
 }
 
 .menuheader {
-  font-family: "Biro Script US Plus", monospace;
+  font-family: "Reenie Beanie", cursive;
   color: var(--link-visited);
   font-size: 2.4rem;
   padding-right: 5%;
@@ -105,7 +105,7 @@
     text-align: center;
     font-size: 1.44rem;
     color: var(--link-visited);
-    font-family: "Biro Script US Plus", monospace;
+    font-family: "Reenie Beanie", cursive;
     opacity: 0.8;
     pointer-events: auto;
   }

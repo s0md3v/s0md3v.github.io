@@ -43,7 +43,7 @@ a:hover {
 
 .corner-annotation {
   position: absolute;
-  font-family: "Biro Script US Plus", monospace;
+  font-family: "Reenie Beanie", cursive;
   color: var(--link-visited);
   opacity: 0.8;
   font-size: 1.62rem;
@@ -93,7 +93,7 @@ a:hover {
 .sketch-note {
   position: absolute;
   pointer-events: none;
-  font-family: "Biro Script US Plus", monospace;
+  font-family: "Reenie Beanie", cursive;
   color: var(--link-visited);
   opacity: 0.8;
   font-size: 1.56rem;
