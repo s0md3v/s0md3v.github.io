@@ -76,3 +76,4 @@ Once changes are confirmed to work, review the changes to:
 - See if something can be named better, collapsed (e.g. abstractions with no benefit), or split (e.g. unrelated responsibilities)
 - Simplify conditionals and data flow
 ```
+That's all. If you want to be a better interface designer, I recommend reading [Thoughts on Interface Design](https://somdev.in/blog/interface-design).
