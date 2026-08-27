@@ -5,7 +5,7 @@ date:   2026-08-27 20:01:00 +0530
 author: Somdev Sangwan
 type:   tech
 image: /assets/thumbs/code-quality.png
-permalink: /blog/interface-design
+permalink: /blog/code-quality
 description: "Code quality and vibe coding."
 ---
 
