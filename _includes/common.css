@@ -926,7 +926,7 @@ li {
   text-decoration: none;
   border: 2px solid var(--accent-color);
   border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   font-size: 1.2rem;
 }
 
@@ -935,7 +935,6 @@ li {
   color: #fff;
   /* or contrast color */
   text-decoration: none;
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
