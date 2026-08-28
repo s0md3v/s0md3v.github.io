@@ -82,6 +82,7 @@ a:hover {
 .checkbox {
   display: inline-block;
   width: 1.2rem;
+  margin-right: 0.5rem;
 }
 
 /* 2. Anchored Notes */
