@@ -1,5 +1,5 @@
-import { Utils } from '../Utils.js';
-import { Config } from '../Config.js';
+import { Utils } from '../Utils.js?v=field-console-14';
+import { Config } from '../Config.js?v=field-console-14';
 
 export class Amygdala {
     constructor(agent) {
@@ -131,7 +131,7 @@ export class Amygdala {
                     type: 'MOVE', 
                     target: escapeVector, 
                     movementMode: 'BOUNDING', // SPRINT!
-                    description: 'DODGE GRENADE' 
+                    description: 'escaping a grenade'
                 }
             };
         }
@@ -158,7 +158,7 @@ export class Amygdala {
                                 y: this.agent.pos.y + Math.sin(runAngle) * runDist
                             },
                             movementMode: 'BOUNDING',
-                            description: 'PANIC RUN'
+                            description: 'fleeing in panic'
                         }
                     };
                 }
@@ -175,18 +175,44 @@ export class Amygdala {
                 // Stay down!
                 return {
                     priority: 70 + (isOutnumbered ? 10 : 0),
-                    action: { type: 'HOLD', duration: 1000, description: 'COWER' }
+                    action: { type: 'HOLD', duration: 1000, description: 'staying behind cover' }
                 };
             } else {
-                // In open and pinned/outnumbered -> DIVE! (Find nearest cover instantly)
-                // We boost priority for running to cover and smoke usage
                 const survivalBoost = isOutnumbered ? 20 : 0;
-                
-                // Amygdala proposes high priority for "survival behavior"
-                // Cortex will handle the actual choice of cover/smoke but Amygdala sets the urgency
-                return { 
-                    priority: 85 + survivalBoost, 
-                    action: { type: 'IDLE', score: 0, description: 'URGENT SURVIVAL' } 
+                const cortex = this.agent.brain.cortex;
+                let target = cortex.findNearestCover(world, 500);
+
+                // If no usable cover is known, at least break contact instead of
+                // winning arbitration with a high-priority IDLE action.
+                if (!target) {
+                    const threat = cortex.identifyThreat(world, true);
+                    if (threat?.pos) {
+                        const away = Utils.angle(threat.pos, this.agent.pos);
+                        target = cortex.tactical.findNearestValidPoint(
+                            world,
+                            this.agent.pos.x + Math.cos(away) * 180,
+                            this.agent.pos.y + Math.sin(away) * 180,
+                            140
+                        );
+                    }
+                }
+
+                if (!target) {
+                    return {
+                        priority: 70 + survivalBoost,
+                        action: { type: 'HOLD', duration: 300, description: 'pinned down' }
+                    };
+                }
+
+                return {
+                    priority: 85 + survivalBoost,
+                    action: {
+                        type: 'MOVE',
+                        target,
+                        movementMode: 'BOUNDING',
+                        speedMultiplier: 1.25,
+                        description: 'running to cover'
+                    }
                 };
             }
         }

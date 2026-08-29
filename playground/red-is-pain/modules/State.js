@@ -1,5 +1,5 @@
-import { Config } from './Config.js';
-import { Utils } from './Utils.js';
+import { Config } from './Config.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
 
 export class State {
     constructor(role = 'RIFLEMAN') {
@@ -25,16 +25,15 @@ export class State {
                 ...primaryWeapon,
                 ammo: primaryWeapon.capacity,
                 maxAmmo: primaryWeapon.capacity,
-                carriedAmmo: loadout.ammo[primaryWeapon.name] || 0
+                carriedAmmo: loadout.ammo[loadout.primary] || 0
             },
             secondary: { 
                 ...secondaryWeapon,
                 ammo: secondaryWeapon.capacity,
                 maxAmmo: secondaryWeapon.capacity,
-                carriedAmmo: loadout.ammo[secondaryWeapon.name] || 0
+                carriedAmmo: loadout.ammo[loadout.secondary] || 0
             },
             currentEntry: 'primary',
-            ammo: { ...loadout.ammo }, // Shared ammo pool by name
             utility: loadout.utility.map(u => ({ ...u }))
         };
         
@@ -44,6 +43,8 @@ export class State {
         });
         this.lastFireTime = 0;
         this.reloadingUntil = 0;
+        this.busyStartedAt = 0;
+        this.busyReason = null;
         this.isDead = false;
         this.isFrozenUntil = 0;
         this.fatigue = 0; // Cumulative permanent stress impact

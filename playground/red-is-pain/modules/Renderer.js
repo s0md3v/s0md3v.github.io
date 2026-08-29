@@ -1,6 +1,6 @@
-import { Config } from './Config.js';
-import { Utils } from './Utils.js';
-import { AssetManifest } from '../assets/AssetManifest.js';
+import { Config } from './Config.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
+import { AssetManifest } from '../assets/AssetManifest.js?v=field-console-14';
 
 export class Renderer {
     constructor(ctx, world) {
@@ -26,6 +26,8 @@ export class Renderer {
         this.exploredCanvas = null; // Permanent record of explored areas
         this.exploredCtx = null;
         this.playerVisionPoly = []; // Current frame's vision polygon
+        this.playerPeripheralRadius = Config.SENSORY.PERIPHERAL_DIST;
+        this.playerVisionRange = Config.AGENT.VISION_RADIUS;
         
         // Performance Tracking
         this.fps = 0;
@@ -129,6 +131,10 @@ export class Renderer {
         this.ctx.imageSmoothingEnabled = false; 
         this.drawVisualLayers(); 
         this.ctx.imageSmoothingEnabled = true; // Re-enable for smooth agents/particles
+
+        // Human visibility is calculated before dynamic objects are drawn so
+        // enemies and supplies never flash through the fog for a frame.
+        if (this.gameMode === 'HUMAN') this._computePlayerVisionPoly();
 
         // Debug layers (Not baked)
         if (this.debugOptions.showVision) {
@@ -241,7 +247,7 @@ export class Renderer {
 
         this.ctx = originalCtx;
 
-        // CRITICAL: Only stop re-baking once all assets are verified loaded
+        // Only stop re-baking once every asset is available.
         if (allTilesLoaded && this.world.visualLayers.length > 0) {
             this.mapBaked = true;
         }
@@ -417,6 +423,7 @@ export class Renderer {
 
     drawSmokes() {
         for (const s of this.world.smokes) {
+            if (this.gameMode === 'HUMAN' && !this._isInPlayerVision(s)) continue;
             const lifeRatio = s.life / Config.PHYSICS.SMOKE_DURATION;
             const alpha = Math.min(0.6, lifeRatio * 1.5);
             
@@ -453,6 +460,7 @@ export class Renderer {
 
     drawLoot() {
         for (const item of this.world.loot) {
+            if (this.gameMode === 'HUMAN' && !this._isInPlayerVision(item)) continue;
             let img = null;
             if (item.type === 'Medkit' && this.sprites.icon_hp.complete) img = this.sprites.icon_hp;
             else if ((item.type === 'AmmoCrate' || item.type === 'WeaponCrate') && this.sprites.icon_ammo.complete) img = this.sprites.icon_ammo;
@@ -478,11 +486,7 @@ export class Renderer {
         const now = Date.now();
         this.barOffsetMap.clear();
 
-        // Pre-compute player vision polygon for enemy visibility test
         const isHumanMode = this.gameMode === 'HUMAN';
-        if (isHumanMode) {
-            this._computePlayerVisionPoly();
-        }
 
         // Pass 1: Draw Bodies & Legs
         for (const agent of this.world.agents) {
@@ -598,6 +602,7 @@ export class Renderer {
     drawCorpses() {
         const now = Date.now();
         for (const corpse of this.world.corpses) {
+            if (this.gameMode === 'HUMAN' && corpse.team !== 0 && !this._isInPlayerVision(corpse.pos)) continue;
             this.ctx.save();
             this.ctx.translate(corpse.pos.x, corpse.pos.y);
 
@@ -634,6 +639,7 @@ export class Renderer {
 
     drawProjectiles() {
         for (const p of this.world.projectiles) {
+            if (this.gameMode === 'HUMAN' && p.team !== 0 && !this._isInPlayerVision(p.pos)) continue;
             this.ctx.save();
             this.ctx.translate(p.pos.x, p.pos.y);
             
@@ -783,6 +789,7 @@ export class Renderer {
     drawEffects() {
         this.ctx.fillStyle = 'rgba(255, 100, 50, 0.6)';
         for (const e of this.world.effects) {
+            if (this.gameMode === 'HUMAN' && !this._isInPlayerVision(e)) continue;
             if (e.type === 'EXPLOSION') {
                  const totalLife = 600; 
                  const lifeRatio = e.life / totalLife; 
@@ -1016,7 +1023,8 @@ export class Renderer {
         range = range || 400; 
         const rayCount = 30; 
         
-        let cache = agentId ? this.visionCache.get(agentId) : null;
+        const hasAgentId = agentId !== null && agentId !== undefined;
+        let cache = hasAgentId ? this.visionCache.get(agentId) : null;
         const nowFrame = Math.floor(performance.now() / 16.6); // Crude frame counter
 
         // --- CACHE VALIDATION ---
@@ -1046,7 +1054,7 @@ export class Renderer {
                 lastAngle: angle,
                 frameCounter: nowFrame
             };
-            if (agentId) this.visionCache.set(agentId, cache);
+            if (hasAgentId) this.visionCache.set(agentId, cache);
         }
 
         // --- RENDERING (Every Frame) ---
@@ -1107,8 +1115,8 @@ export class Renderer {
     /**
      * Update fog of war each frame.
      * Vision cone = fully clear.
-     * Previously explored = dimmed (0.6 alpha black).
-     * Never seen = fully black.
+     * Previously explored = lightly dimmed.
+     * Never seen = strongly dimmed, while the physical map remains readable.
      */
     _updateFog() {
         const player = this.world.playerAgent;
@@ -1130,18 +1138,24 @@ export class Renderer {
             }
             eCtx.closePath();
             eCtx.fill();
+
+            eCtx.beginPath();
+            eCtx.arc(player.pos.x, player.pos.y, this.playerPeripheralRadius, 0, Math.PI * 2);
+            eCtx.fill();
         }
 
         // 2. Build the fog overlay
-        // Start with full black
+        // Keep fixed terrain, walls, and buildings readable. Dynamic enemies
+        // and supplies are separately withheld until they are actually visible.
         fCtx.globalCompositeOperation = 'source-over';
-        fCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+        fCtx.clearRect(0, 0, w, h);
+        fCtx.fillStyle = 'rgba(3, 6, 8, 0.58)';
         fCtx.fillRect(0, 0, w, h);
 
         // 3. Cut out explored areas — make them semi-transparent (dimmed)
         // Draw explored mask with destination-out to create holes
         fCtx.globalCompositeOperation = 'destination-out';
-        fCtx.globalAlpha = 0.4; // Only partially remove = 60% fog remains on explored areas
+        fCtx.globalAlpha = 0.52;
         fCtx.drawImage(this.exploredCanvas, 0, 0);
         fCtx.globalAlpha = 1.0;
 
@@ -1155,6 +1169,18 @@ export class Renderer {
                 fCtx.lineTo(poly[i].x, poly[i].y);
             }
             fCtx.closePath();
+            fCtx.fill();
+
+            // Close-range peripheral awareness matches the actual sensory model.
+            const peripheralGradient = fCtx.createRadialGradient(
+                player.pos.x, player.pos.y, this.playerPeripheralRadius * 0.72,
+                player.pos.x, player.pos.y, this.playerPeripheralRadius
+            );
+            peripheralGradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            peripheralGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            fCtx.fillStyle = peripheralGradient;
+            fCtx.beginPath();
+            fCtx.arc(player.pos.x, player.pos.y, this.playerPeripheralRadius, 0, Math.PI * 2);
             fCtx.fill();
         }
 
@@ -1175,9 +1201,10 @@ export class Renderer {
 
         const pos = player.pos;
         const angle = player.angle;
-        const fov = Config.AGENT.FOV;
-        const range = player.state.inventory.weapon.range;
-        const rayCount = 60; // Higher resolution for FOW accuracy
+        const fov = player.state.inBush ? Config.AGENT.FOV * 0.7 : Config.AGENT.FOV;
+        const range = Math.max(Config.AGENT.VISION_RADIUS, player.traits.visionRadius || 0);
+        this.playerVisionRange = range;
+        const rayCount = 90;
 
         const points = [{ x: pos.x, y: pos.y }]; // Start from player
 
@@ -1198,6 +1225,12 @@ export class Renderer {
      * Uses ray-casting algorithm.
      */
     _isInPlayerVision(testPos) {
+        const player = this.world.playerAgent;
+        if (!player || player.state.isDead) return false;
+        if (Utils.distance(player.pos, testPos) <= this.playerPeripheralRadius) {
+            return this.world.hasVisualLine(player.pos, testPos, this.playerPeripheralRadius);
+        }
+
         const poly = this.playerVisionPoly;
         if (!poly || poly.length < 3) return false;
 
@@ -1213,6 +1246,6 @@ export class Renderer {
                 (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
             if (intersect) inside = !inside;
         }
-        return inside;
+        return inside && this.world.hasVisualLine(player.pos, testPos, this.playerVisionRange);
     }
 }

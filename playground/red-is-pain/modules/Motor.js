@@ -1,5 +1,5 @@
-import { Config } from './Config.js';
-import { Utils } from './Utils.js';
+import { Config } from './Config.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
 
 export class Motor {
     constructor(agent) {
@@ -8,7 +8,7 @@ export class Motor {
         this._lastPathCheckTime = 0;
     }
 
-    rotateTowards(angle, dt, speedMult = 1.0, snap = false) {
+    rotateTowards(angle, dt, turnRate = Config.AGENT.TURN_SPEED, snap = false) {
         if (snap) {
             this.agent.angle = angle;
             this.agent.targetAngle = angle;
@@ -19,7 +19,7 @@ export class Motor {
         while (diff <= -Math.PI) diff += Math.PI * 2;
         while (diff > Math.PI) diff -= Math.PI * 2;
 
-        const maxTurn = Config.AGENT.TURN_SPEED * (dt / 1000) * speedMult;
+        const maxTurn = turnRate * (dt / 1000);
         
         if (Math.abs(diff) < maxTurn) {
             this.agent.angle = angle;
@@ -85,7 +85,8 @@ export class Motor {
         // Reduced threshold from 40 to 15 to be more responsive to leader movement
         const targetMoved = !this.agent.lastPathTarget || Utils.distance(this.agent.lastPathTarget, targetPos) > 15;
         const periodicCheck = now - this._lastPathCheckTime > 1000;
-        const pathEmptyButNotThere = (!this.agent.path || this.agent.path.length === 0) && distToFinalTarget > 20;
+        const pathEmptyButNotThere = (!this.agent.path || this.agent.path.length === 0) &&
+            distToFinalTarget > 20 && now - this._lastPathCheckTime > 500;
 
         if (targetMoved || periodicCheck || pathEmptyButNotThere) {
             this._lastPathCheckTime = now;
@@ -215,13 +216,17 @@ export class Motor {
         }
         
         // --- REALISTIC VISION/MOVEMENT COUPLING ---
-        let currentSpeed = this.calculateCurrentSpeed(world);
+        let currentSpeed = this.calculateCurrentSpeed(world) * (Number.isFinite(speedMultiplier) ? speedMultiplier : 1.0);
         const mode = this.agent.movementMode;
         
         if (mode === 'BOUNDING') {
             // SPRINTS: Vision is locked to movement (no strafing)
             this.agent.targetAngle = moveAngle;
-            this.rotateTowards(moveAngle, dt, Config.AGENT.MODES.BOUNDING.TURN_MULT);
+            this.rotateTowards(
+                moveAngle,
+                dt,
+                Config.AGENT.TURN_SPEED * Config.AGENT.MODES.BOUNDING.TURN_MULT
+            );
         } else {
             // TACTICAL/SNEAKING/COVERING: Can strafe/walk backwards
             let actualLookAngle = moveAngle;

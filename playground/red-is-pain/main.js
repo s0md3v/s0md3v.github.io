@@ -1,547 +1,903 @@
-import { World } from './modules/World.js';
-import { Renderer } from './modules/Renderer.js';
-import { Utils } from './modules/Utils.js';
-import { AudioController } from './modules/AudioController.js';
-import { PlayerInput } from './modules/PlayerInput.js';
-import { mapData } from './assets/maps/map.js';
+import { World } from './modules/World.js?v=field-console-14';
+import { Renderer } from './modules/Renderer.js?v=field-console-14';
+import { Utils } from './modules/Utils.js?v=field-console-14';
+import { AudioController } from './modules/AudioController.js?v=field-console-14';
+import { PlayerInput } from './modules/PlayerInput.js?v=field-console-14';
 
-let selectedAgent = null;
-let gameMode = 'AI_VS_AI';
-let playerInput = null;
-const audioController = new AudioController();
-
-const resumeAudio = () => {
-    if (audioController.context && audioController.context.state === 'suspended') {
-        audioController.context.resume().then(() => {
-            console.log("AudioContext resumed successfully.");
-        }).catch(err => console.warn("AudioContext resume failed:", err));
-    }
+const byId = id => document.getElementById(id);
+const elements = {
+    simulation: byId('simulation-container'),
+    canvas: byId('sim-canvas'),
+    startMenu: byId('start-menu'),
+    startDescription: byId('start-description'),
+    startAi: byId('btn-start-ai'),
+    startHuman: byId('btn-start-human'),
+    info: byId('info-modal'),
+    infoOpen: byId('btn-info'),
+    infoClose: byId('btn-close-info'),
+    pauseScreen: byId('pause-screen'),
+    gameOverScreen: byId('game-over-screen'),
+    victoryText: byId('victory-text'),
+    gameOverSummary: byId('game-over-summary'),
+    pause: byId('btn-pause'),
+    fit: byId('btn-fit'),
+    mute: byId('btn-mute'),
+    menu: byId('btn-menu'),
+    inspectorButton: byId('btn-inspector'),
+    inspector: byId('inspector-sidebar'),
+    resume: byId('btn-resume'),
+    pauseRestart: byId('btn-pause-restart'),
+    pauseMenu: byId('btn-pause-menu'),
+    restart: byId('btn-restart'),
+    gameOverMenu: byId('btn-game-over-menu'),
+    matchMode: byId('match-mode'),
+    alphaCount: byId('alpha-count'),
+    bravoCount: byId('bravo-count'),
+    matchTimer: byId('match-timer'),
+    canvasSummary: byId('canvas-summary'),
+    observerHint: byId('observer-hint'),
+    eventFeed: byId('event-feed'),
+    playerHud: byId('player-hud'),
+    playerHp: byId('player-hp'),
+    playerAmmo: byId('player-ammo'),
+    playerReserve: byId('player-reserve'),
+    touchControls: byId('touch-controls'),
+    emptySpaceHint: byId('empty-space-hint'),
+    signalHeader: byId('signal-header'),
+    biometricStats: byId('biometric-stats'),
+    statsHud: byId('stats-hud'),
+    personalityChart: byId('personality-chart'),
+    badges: byId('status-badges-container')
 };
 
-window.addEventListener('click', resumeAudio, { once: true });
-window.addEventListener('keydown', resumeAudio, { once: true });
-window.addEventListener('touchstart', resumeAudio, { once: true });
+const ctx = elements.canvas.getContext('2d');
+const audioController = new AudioController();
+const coarsePointer = window.matchMedia('(pointer: coarse)');
 
-const canvas = document.getElementById('sim-canvas');
-const ctx = canvas.getContext('2d');
-let world, renderer;
-let animationId;
+let mapData = null;
+let mapPromise = null;
+let world = null;
+let renderer = null;
+let playerInput = null;
+let selectedAgent = null;
+let gameMode = 'AI_VS_AI';
+let animationId = null;
+let isPaused = false;
+let isGameOver = false;
+let lastTime = performance.now();
+let matchElapsed = 0;
+let lastUiUpdate = 0;
+let lastInspectorUpdate = 0;
+let lastSummaryUpdate = 0;
+let cameraIsFitted = true;
+let observerHintTimer = null;
+let previousDialogFocus = null;
+let lastTraitAgentId = null;
+
+const defaultDescription = elements.startDescription.textContent;
+
+function setStartButtonsEnabled(enabled) {
+    [elements.startAi, elements.startHuman].forEach(button => {
+        button.disabled = !enabled;
+        button.setAttribute('aria-disabled', String(!enabled));
+    });
+}
+
+async function loadMap() {
+    if (mapData) return mapData;
+    if (mapPromise) return mapPromise;
+
+    setStartButtonsEnabled(false);
+    elements.startDescription.textContent = 'Loading the map and unit behavior…';
+    mapPromise = fetch('./assets/maps/map.json', { cache: 'no-cache' })
+        .then(response => {
+            if (!response.ok) throw new Error(`Map request failed (${response.status})`);
+            return response.json();
+        })
+        .then(data => {
+            if (!data || !Array.isArray(data.layers)) throw new Error('Map data is malformed.');
+            mapData = data;
+            elements.startDescription.textContent = defaultDescription;
+            setStartButtonsEnabled(true);
+            return data;
+        })
+        .catch(error => {
+            console.error('Unable to initialize Red Is Pain:', error);
+            elements.startDescription.textContent = 'The field map could not be loaded. Refresh the page to try again.';
+            setStartButtonsEnabled(false);
+            mapPromise = null;
+            throw error;
+        });
+    return mapPromise;
+}
+
+function resumeAudio() {
+    if (audioController.context?.state === 'suspended') {
+        audioController.context.resume().catch(error => console.warn('Audio resume failed:', error));
+    }
+}
+
+window.addEventListener('pointerdown', resumeAudio, { once: true });
+window.addEventListener('keydown', resumeAudio, { once: true });
 
 function resizeCanvas() {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    const width = Math.max(1, Math.round(elements.canvas.clientWidth));
+    const height = Math.max(1, Math.round(elements.canvas.clientHeight));
+    syncInspectorAccessibility();
+    if (elements.canvas.width === width && elements.canvas.height === height) return;
+    elements.canvas.width = width;
+    elements.canvas.height = height;
+    if (renderer?.mapBaked) renderer.mapBaked = false;
+    if (world && renderer && cameraIsFitted && gameMode === 'AI_VS_AI') fitCamera();
 }
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-let isGameOver = false;
-let lastTime = performance.now();
-
-// --- MODE SELECTION ---
-function startGame(mapData = null) {
-
-    world = new World(canvas.width, canvas.height, audioController, mapData, gameMode);
-    renderer = new Renderer(ctx, world);
-
-    // Set game mode on renderer for fog of war
-    renderer.gameMode = gameMode;
-
-    // Initial Zoom: Scale to ensure a consistent view regardless of screen resolution
-    const zoomX = canvas.width / world.width;
-    const zoomY = canvas.height / world.height;
-    
-    // Fit the map with a small buffer
-    const idealZoom = Math.min(zoomX, zoomY) * 0.95;
-    renderer.camera.zoom = Math.max(0.2, Math.min(3.0, idealZoom));
-    
-    renderer.camera.x = world.width / 2;
-    renderer.camera.y = world.height / 2;
-
-    // --- HUMAN MODE SETUP ---
-    if (gameMode === 'HUMAN' && world.playerAgent) {
-        playerInput = new PlayerInput(canvas);
-        selectedAgent = world.playerAgent;
-        renderer.setSelectedAgent(selectedAgent);
-
-        // Camera starts centered on player
-        renderer.camera.x = world.playerAgent.pos.x;
-        renderer.camera.y = world.playerAgent.pos.y;
-        renderer.camera.zoom = 2.0; // Closer zoom for player mode
-
-        // Initialize fog of war canvas
-        renderer.initFogOfWar(world.width, world.height);
-
-        // Show the sidebar in player mode so stats can be viewed there
-        const sidebar = document.getElementById('inspector-sidebar');
-        if (sidebar) sidebar.style.display = '';
-
-        const humanControls = document.getElementById('human-controls');
-        if (humanControls) humanControls.style.display = 'block';
-        
-        const spaceHint = document.getElementById('empty-space-hint');
-        if (spaceHint) spaceHint.style.display = 'block';
-    } else {
-        playerInput = null;
-        const sidebar = document.getElementById('inspector-sidebar');
-        if (sidebar) sidebar.style.display = '';
-        
-        const humanControls = document.getElementById('human-controls');
-        if (humanControls) humanControls.style.display = 'none';
-        
-        const spaceHint = document.getElementById('empty-space-hint');
-        if (spaceHint) spaceHint.style.display = 'none';
-    }
-    
-    const updateDebug = () => {
-        renderer.debugOptions.showVision = document.getElementById('toggle-vision').checked;
-        renderer.debugOptions.showTrust = document.getElementById('toggle-trust').checked;
-        renderer.debugOptions.showHeatmap = document.getElementById('toggle-heatmap').checked;
-        renderer.debugOptions.showTargets = document.getElementById('toggle-targets').checked;
-    };
-    
-    document.getElementById('toggle-vision').onchange = updateDebug;
-    document.getElementById('toggle-trust').onchange = updateDebug;
-    document.getElementById('toggle-heatmap').onchange = updateDebug;
-    document.getElementById('toggle-targets').onchange = updateDebug;
-    updateDebug();
-
-    const menu = document.getElementById('start-menu');
-    if (menu) menu.style.display = 'none';
-
-    isGameOver = false;
-    lastTime = performance.now();
-    loop(lastTime);
+function cancelLoop() {
+    if (animationId !== null) cancelAnimationFrame(animationId);
+    animationId = null;
 }
 
-// --- WAIT FOR USER TO START ---
-const startMenu = document.getElementById('start-menu');
-if (startMenu) startMenu.style.display = 'flex'; // Show menu on load
+function destroyPlayerInput() {
+    playerInput?.destroy();
+    playerInput = null;
+}
 
-document.getElementById('btn-start-ai').onclick = () => {
-    gameMode = 'AI_VS_AI';
-    startGame(mapData);
-};
+function fitCamera() {
+    if (!world || !renderer) return;
+    resizeCanvas();
+    const zoomX = elements.canvas.width / world.width;
+    const zoomY = elements.canvas.height / world.height;
+    renderer.camera.zoom = Utils.clamp(Math.min(zoomX, zoomY) * 0.94, 0.15, 5);
+    renderer.camera.x = world.width / 2;
+    renderer.camera.y = world.height / 2;
+    cameraIsFitted = true;
+}
 
-document.getElementById('btn-start-human').onclick = () => {
-    gameMode = 'HUMAN';
-    startGame(mapData);
-};
+function setInspectorOpen(open) {
+    elements.inspector.classList.toggle('is-open', open);
+    elements.inspector.dataset.open = String(open);
+    elements.inspectorButton.setAttribute('aria-expanded', String(open));
+    elements.inspectorButton.setAttribute('aria-label', open ? 'Close unit details' : 'Open unit details');
+    syncInspectorAccessibility();
+}
 
-document.getElementById('btn-info').onclick = () => {
-    document.getElementById('info-modal').style.display = 'flex';
-};
+function syncInspectorAccessibility() {
+    const inspectorUnavailable = elements.inspector.hidden
+        || elements.simulation.classList.contains('is-human-mode');
+    const isClosedDrawer = inspectorUnavailable || (
+        window.innerWidth <= 800
+        && elements.inspectorButton.getAttribute('aria-expanded') !== 'true'
+    );
+    elements.inspector.toggleAttribute('inert', isClosedDrawer);
+    if (isClosedDrawer) elements.inspector.setAttribute('aria-hidden', 'true');
+    else elements.inspector.removeAttribute('aria-hidden');
+}
 
-document.getElementById('btn-close-info').onclick = () => {
-    document.getElementById('info-modal').style.display = 'none';
-};
+function resetMatchSurfaces() {
+    elements.pauseScreen.hidden = true;
+    elements.gameOverScreen.hidden = true;
+    elements.eventFeed.hidden = true;
+    elements.eventFeed.replaceChildren();
+    elements.playerHud.hidden = true;
+    elements.touchControls.hidden = true;
+    elements.observerHint.hidden = true;
+    elements.emptySpaceHint.style.display = 'none';
+    elements.simulation.classList.remove('is-human-mode');
+    elements.inspector.hidden = false;
+    elements.inspectorButton.hidden = false;
+    elements.alphaCount.textContent = '—';
+    elements.bravoCount.textContent = '—';
+    elements.matchTimer.textContent = '00:00';
+    elements.matchTimer.dateTime = 'PT0S';
+    elements.matchMode.textContent = 'READY';
+    elements.canvasSummary.textContent = 'Ready. Choose a mode to begin.';
+    setInspectorOpen(false);
+    clearTimeout(observerHintTimer);
+    observerHintTimer = null;
+}
 
-let isDragging = false;
-let lastMouseX = 0;
-let lastMouseY = 0;
+function showMainMenu() {
+    cancelLoop();
+    destroyPlayerInput();
+    clearTimeout(observerHintTimer);
+    observerHintTimer = null;
+    world = null;
+    renderer = null;
+    selectedAgent = null;
+    isPaused = false;
+    isGameOver = false;
+    lastTraitAgentId = null;
+    resetMatchSurfaces();
+    elements.info.hidden = true;
+    elements.startMenu.hidden = false;
+    elements.startMenu.inert = false;
+    elements.simulation.setAttribute('inert', '');
+    elements.canvas.style.cursor = 'default';
+    ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+    elements.startAi.focus({ preventScroll: true });
+}
 
-canvas.addEventListener('mousedown', (e) => {
-    if (!renderer) return;
-    
-    // In HUMAN mode, left click is handled by PlayerInput (shooting)
-    if (gameMode === 'HUMAN' && e.button === 0 && !e.altKey) return;
+function setupDebugControls() {
+    const controls = [
+        ['toggle-vision', 'showVision'],
+        ['toggle-trust', 'showTrust'],
+        ['toggle-heatmap', 'showHeatmap'],
+        ['toggle-targets', 'showTargets']
+    ];
+    const update = () => {
+        if (!renderer) return;
+        controls.forEach(([id, option]) => {
+            renderer.debugOptions[option] = byId(id).checked;
+        });
+    };
+    controls.forEach(([id]) => { byId(id).onchange = update; });
+    update();
+}
 
-    if (e.button === 1 || (e.button === 0 && e.altKey)) {
-        isDragging = true;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-        e.preventDefault();
+function teamLabel(team) {
+    return team === 0 ? 'Alpha' : 'Bravo';
+}
+
+function roleLabel(role) {
+    return String(role || 'unit')
+        .toLowerCase()
+        .replace(/(^|_)\w/g, match => match.replace('_', ' ').toUpperCase());
+}
+
+function addEvent(message) {
+    const item = document.createElement('li');
+    item.textContent = message;
+    elements.eventFeed.prepend(item);
+    while (elements.eventFeed.children.length > 4) elements.eventFeed.lastElementChild.remove();
+}
+
+function bindWorldEvents() {
+    world.events.on('death', ({ agent }) => {
+        const rank = agent.rank === 1 ? ' captain' : '';
+        addEvent(`${teamLabel(agent.team)}${rank} #${String(agent.id).padStart(3, '0')} is down`);
+    });
+    world.events.on('leaderDeath', ({ team }) => addEvent(`${teamLabel(team)} lost its squad leader`));
+    world.events.on('explosion', () => addEvent('A fragmentation grenade exploded'));
+    world.events.on('coverDestroyed', () => addEvent('Cover was destroyed'));
+    world.events.on('areaFire', ({ agent, description }) => {
+        const message = `${teamLabel(agent.team)} #${String(agent.id).padStart(3, '0')} ${description}`;
+        const alreadyVisible = [...elements.eventFeed.children]
+            .some(item => item.textContent === message);
+        if (!alreadyVisible) addEvent(message);
+    });
+}
+
+async function startGame(mode = gameMode) {
+    const data = await loadMap().catch(() => null);
+    if (!data) return;
+
+    cancelLoop();
+    destroyPlayerInput();
+    clearTimeout(observerHintTimer);
+    gameMode = mode;
+    elements.simulation.classList.toggle('is-human-mode', gameMode === 'HUMAN');
+    elements.inspector.hidden = gameMode === 'HUMAN';
+    elements.inspectorButton.hidden = gameMode === 'HUMAN';
+    resizeCanvas();
+
+    selectedAgent = null;
+    isPaused = false;
+    isGameOver = false;
+    setPauseButton(false);
+    matchElapsed = 0;
+    lastUiUpdate = 0;
+    lastInspectorUpdate = 0;
+    lastSummaryUpdate = 0;
+    lastTraitAgentId = null;
+    elements.eventFeed.replaceChildren();
+
+    try {
+        world = new World(elements.canvas.width, elements.canvas.height, audioController, data, gameMode);
+        renderer = new Renderer(ctx, world);
+    } catch (error) {
+        console.error('Unable to start the match:', error);
+        elements.startDescription.textContent = 'The simulation failed to initialize. Refresh the page to try again.';
+        showMainMenu();
         return;
     }
 
-    if (!world) return;
-    const rect = canvas.getBoundingClientRect();
-    
-    const screenX = ((e.clientX - rect.left) / rect.width) * canvas.width;
-    const screenY = ((e.clientY - rect.top) / rect.height) * canvas.height;
-    
-    const cam = renderer.camera;
-    const worldX = (screenX - canvas.width / 2) / cam.zoom + cam.x;
-    const worldY = (screenY - canvas.height / 2) / cam.zoom + cam.y;
-    
-    selectedAgent = world.agents.find(a => Utils.distance(a.pos, { x: worldX, y: worldY }) < a.radius + 15);
-    if (renderer) renderer.setSelectedAgent(selectedAgent);
-});
+    renderer.gameMode = gameMode;
+    bindWorldEvents();
+    setupDebugControls();
+    fitCamera();
 
-// Track mouse position for player aim
-canvas.addEventListener('mousemove', (e) => {
-    if (isDragging && renderer && gameMode !== 'HUMAN') {
-        const dx = e.clientX - lastMouseX;
-        const dy = e.clientY - lastMouseY;
-        
-        renderer.camera.x -= dx / renderer.camera.zoom;
-        renderer.camera.y -= dy / renderer.camera.zoom;
-        
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-    }
-
-    // Update player aim world position
-    if (playerInput && renderer) {
-        const rect = canvas.getBoundingClientRect();
-        const screenX = ((e.clientX - rect.left) / rect.width) * canvas.width;
-        const screenY = ((e.clientY - rect.top) / rect.height) * canvas.height;
-        const cam = renderer.camera;
-        const wx = (screenX - canvas.width / 2) / cam.zoom + cam.x;
-        const wy = (screenY - canvas.height / 2) / cam.zoom + cam.y;
-        playerInput.setMouseWorldPos(wx, wy);
-    }
-});
-
-window.addEventListener('mouseup', () => {
-    isDragging = false;
-});
-
-canvas.addEventListener('wheel', (e) => {
-    if (!renderer) return;
-    e.preventDefault();
-    
-    const zoomSpeed = 0.002;
-    renderer.camera.zoom -= e.deltaY * zoomSpeed;
-    renderer.camera.zoom = Math.max(0.1, Math.min(5.0, renderer.camera.zoom));
-}, { passive: false });
-
-function updateInspector() {
-    if (!world) return;
-
-    const signalPanel = document.getElementById('signal-header');
-    const biometricPanel = document.getElementById('biometric-stats');
-    const statsHud = document.getElementById('stats-hud');
-    const badgeContainer = document.getElementById('status-badges-container');
-    const agent = selectedAgent;
-
-    if (agent && !agent.state.isDead) {
-        biometricPanel.style.display = 'block';
-
-        const weapon = agent.state.inventory.weapon;
-        const hpPercent = (agent.state.hp / agent.state.maxHp) * 100;
-        const stressPercent = agent.state.stress;
-        const moralePercent = agent.state.morale;
-        const staminaPercent = (agent.state.stamina / 100) * 100;
-
-        const roleIcon = agent.role === 'MEDIC' ? '✚' : agent.role === 'MARKSMAN' ? '⌖' : '⚔';
-        signalPanel.innerHTML = `
-            <div class="identity-header">
-                <div>
-                    <div class="agent-id" style="color: ${agent.team === 0 ? '#3b7ad6' : '#d63b3b'}">UNIT #${agent.id.toString().padStart(3, '0')}</div>
-                    <div class="role-info" style="margin-bottom: 5px;">
-                        ${agent.rank === 1 ? '<span class="captain-star">★</span>' : ''}
-                        <span>${roleIcon} ${agent.role}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="intent-text" style="font-size: 0.9rem; opacity: 0.8; font-family: 'Courier New', monospace; margin-top: 5px;">
-                💭 <span>${getActionDescription(agent)}</span>
-            </div>
-        `;
-
-        statsHud.innerHTML = `
-            <div class="hud-container">
-                <div class="hud-combat-grid" style="display: flex; gap: 10px; align-items: stretch;">
-                    <div class="hud-vitals-group" style="background: #16161a; padding: 10px; border-radius: 4px; border: 1px solid #222; flex: 1; height: 75px; display: flex; flex-direction: column; justify-content: center;">
-                        <div class="hud-label-row">
-                            <span>HP</span>
-                            <span class="hud-value-text">${Math.ceil(agent.state.hp)} / ${agent.state.maxHp}</span>
-                        </div>
-                        <div class="hud-bar-track" style="margin-top: 5px;">
-                            <div class="hud-bar-fill fill-hp" style="width: ${hpPercent}%"></div>
-                        </div>
-                    </div>
-
-                    <div class="hud-ammo-block" style="align-items: center; background: #16161a; padding: 10px; border-radius: 4px; border: 1px solid #222; flex: 1; height: 75px; display: flex; flex-direction: column; justify-content: center;">
-                        <div class="hud-ammo-value" style="font-size: 1.8rem; line-height: 1;">${weapon.ammo}</div>
-                        <div class="hud-ammo-meta" style="margin-top: 2px;">
-                            <span>/ ${weapon.carriedAmmo}</span>
-                            <span>${weapon.name.toUpperCase()}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="speedo-row">
-                    <div class="speedo-container">
-                        <div class="speedo-label">STAMINA</div>
-                        <div class="speedo-gauge">
-                            <div class="speedo-bg speedo-bg-good"></div>
-                            <div class="speedo-mask"></div>
-                            <div class="speedo-needle" style="transform: rotate(${staminaPercent * 1.8}deg);"></div>
-                            <div class="speedo-center"></div>
-                        </div>
-                        <div class="speedo-val">${Math.ceil(agent.state.stamina)}</div>
-                    </div>
-                    
-                    <div class="speedo-container">
-                        <div class="speedo-label">MORALE</div>
-                        <div class="speedo-gauge">
-                            <div class="speedo-bg speedo-bg-good"></div>
-                            <div class="speedo-mask"></div>
-                            <div class="speedo-needle" style="transform: rotate(${moralePercent * 1.8}deg);"></div>
-                            <div class="speedo-center"></div>
-                        </div>
-                        <div class="speedo-val">${Math.ceil(agent.state.morale)}</div>
-                    </div>
-
-                    <div class="speedo-container">
-                        <div class="speedo-label">STRESS</div>
-                        <div class="speedo-gauge">
-                            <div class="speedo-bg speedo-bg-stress"></div>
-                            <div class="speedo-mask"></div>
-                            <div class="speedo-needle" style="transform: rotate(${stressPercent * 1.8}deg);"></div>
-                            <div class="speedo-center"></div>
-                        </div>
-                        <div class="speedo-val">${Math.ceil(agent.state.stress)}</div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        const badges = [];
-        if (agent.rank === 1) badges.push('<span class="status-badge active buff">SQUAD LEADER</span>');
-        if (agent.state.isDowned) badges.push('<span class="status-badge active">CRITICAL</span>');
-        if (agent.state.isPinned) badges.push('<span class="status-badge active">PINNED</span>');
-        else if (agent.state.suppression > 50) badges.push('<span class="status-badge active">SUPPRESSED</span>');
-        
-        if (agent.state.reloadingUntil > Date.now()) badges.push('<span class="status-badge active buff">RELOADING</span>');
-        if (agent.state.stress > 80) badges.push('<span class="status-badge active">PANIC</span>');
-        if (agent.state.fatigue > 50) badges.push('<span class="status-badge active">EXHAUSTED</span>');
-
-        badgeContainer.innerHTML = `<div class="status-grid">${badges.join('')}</div>`;
-        
-        drawPersonalityPentagon(agent.traits);
+    if (gameMode === 'HUMAN' && world.playerAgent) {
+        playerInput = new PlayerInput(elements.canvas);
+        selectedAgent = world.playerAgent;
+        renderer.setSelectedAgent(selectedAgent);
+        renderer.camera.x = selectedAgent.pos.x;
+        renderer.camera.y = selectedAgent.pos.y;
+        renderer.camera.zoom = coarsePointer.matches ? 1.55 : 2;
+        renderer.initFogOfWar(world.width, world.height);
+        elements.playerHud.hidden = false;
+        elements.touchControls.hidden = !coarsePointer.matches;
+        elements.emptySpaceHint.style.display = 'none';
+        elements.canvas.style.cursor = 'none';
+        elements.matchMode.textContent = 'PLAYING';
     } else {
-        biometricPanel.style.display = 'none';
-        signalPanel.innerHTML = `
-            <div class="placeholder-text">
-                <div class="hologram-effect"></div>
-                <div class="glitch-signal">NO SIGNAL</div>
-                <div style="font-size: 0.7em; opacity: 0.5; margin-top: 10px; letter-spacing: 2px;">
-                    <span style="color: var(--accent);">[ STATUS: STANDBY ]</span><br>
-                    SELECT UNIT TO INTERFACE
-                </div>
-            </div>
-        `;
+        selectedAgent = world.agents.find(agent => agent.team === 0 && agent.rank === 1) || world.agents[0] || null;
+        renderer.setSelectedAgent(selectedAgent);
+        elements.observerHint.hidden = false;
+        observerHintTimer = setTimeout(() => { elements.observerHint.hidden = true; }, 7000);
+        elements.canvas.style.cursor = 'crosshair';
+        elements.matchMode.textContent = 'WATCHING';
+    }
+
+    elements.startMenu.hidden = true;
+    elements.startMenu.inert = true;
+    elements.pauseScreen.hidden = true;
+    elements.gameOverScreen.hidden = true;
+    elements.eventFeed.hidden = false;
+    elements.simulation.removeAttribute('inert');
+    addEvent(gameMode === 'HUMAN' ? 'You joined Alpha squad' : 'AI battle started');
+
+    lastTime = performance.now();
+    updateMatchUi(true);
+    updateInspector(true);
+    animationId = requestAnimationFrame(loop);
+    elements.canvas.focus({ preventScroll: true });
+}
+
+function setPauseButton(paused) {
+    const icon = elements.pause.querySelector('.command-button__icon');
+    const label = elements.pause.querySelector('.command-button__label');
+    if (icon) icon.textContent = paused ? '▶' : 'Ⅱ';
+    if (label) label.textContent = paused ? 'Resume' : 'Pause';
+    elements.pause.setAttribute('aria-label', paused ? 'Resume simulation' : 'Pause simulation');
+    elements.pause.title = paused ? 'Resume simulation' : 'Pause simulation';
+}
+
+function pauseGame() {
+    if (!world || isPaused || isGameOver) return;
+    isPaused = true;
+    cancelLoop();
+    elements.simulation.setAttribute('inert', '');
+    elements.pauseScreen.hidden = false;
+    setPauseButton(true);
+    previousDialogFocus = document.activeElement;
+    elements.resume.focus({ preventScroll: true });
+}
+
+function resumeGame() {
+    if (!world || !isPaused || isGameOver) return;
+    isPaused = false;
+    elements.pauseScreen.hidden = true;
+    elements.simulation.removeAttribute('inert');
+    setPauseButton(false);
+    lastTime = performance.now();
+    animationId = requestAnimationFrame(loop);
+    (previousDialogFocus || elements.canvas).focus({ preventScroll: true });
+    previousDialogFocus = null;
+}
+
+function togglePause() {
+    if (isPaused) resumeGame();
+    else pauseGame();
+}
+
+function formatTime(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function updateMatchUi(force = false) {
+    if (!world) return;
+    const now = performance.now();
+    if (!force && now - lastUiUpdate < 125) return;
+    lastUiUpdate = now;
+
+    const alpha = world.agents.filter(agent => agent.team === 0 && !agent.state.isDead).length;
+    const bravo = world.agents.filter(agent => agent.team === 1 && !agent.state.isDead).length;
+    elements.alphaCount.textContent = String(alpha);
+    elements.bravoCount.textContent = String(bravo);
+    elements.matchTimer.textContent = formatTime(matchElapsed);
+    elements.matchTimer.dateTime = `PT${Math.floor(matchElapsed / 1000)}S`;
+
+    if (gameMode === 'HUMAN' && world.playerAgent) {
+        const player = world.playerAgent;
+        const weapon = player.state.inventory.weapon;
+        elements.playerHp.textContent = `${Math.ceil(player.state.hp)} / ${player.state.maxHp}`;
+        elements.playerAmmo.textContent = String(weapon.ammo);
+        elements.playerReserve.textContent = String(weapon.carriedAmmo);
+    }
+
+    if (force || now - lastSummaryUpdate > 2000) {
+        const selection = gameMode === 'AI_VS_AI' && selectedAgent && !selectedAgent.state.isDead
+            ? ` Selected ${teamLabel(selectedAgent.team)} unit ${selectedAgent.id} is ${getActionDescription(selectedAgent)}.`
+            : '';
+        elements.canvasSummary.textContent = `Alpha ${alpha} active. Bravo ${bravo} active. Match time ${formatTime(matchElapsed)}.${selection}`;
+        lastSummaryUpdate = now;
     }
 }
 
-function drawPersonalityPentagon(traits) {
-    const pCanvas = document.getElementById('personality-canvas');
-    if (!pCanvas) return;
-    const pCtx = pCanvas.getContext('2d');
-    
-    pCanvas.width = 180;
-    pCanvas.height = 150;
-    const centerX = 90;
-    const centerY = 75;
-    const radius = 45;
-    
-    const traitKeys = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism'];
-    const labels = ['OPN', 'CON', 'EXT', 'AGR', 'NEU'];
-    
-    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-    
-    pCtx.strokeStyle = '#333';
-    pCtx.lineWidth = 1;
-    for (let r = 1; r <= 4; r++) {
-        pCtx.beginPath();
-        const subRadius = radius * (r / 4);
-        for (let i = 0; i < 5; i++) {
-            const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
-            const x = centerX + Math.cos(angle) * subRadius;
-            const y = centerY + Math.sin(angle) * subRadius;
-            if (i === 0) pCtx.moveTo(x, y);
-            else pCtx.lineTo(x, y);
-        }
-        pCtx.closePath();
-        pCtx.stroke();
+function speedometer(label, value, stress = false) {
+    const safeValue = Utils.clamp(Number(value) || 0, 0, 100);
+    return `<div class="speedo-container">
+        <div class="speedo-label">${label}</div>
+        <div class="speedo-gauge" aria-hidden="true">
+            <div class="speedo-bg ${stress ? 'speedo-bg-stress' : 'speedo-bg-good'}"></div>
+            <div class="speedo-mask"></div>
+            <div class="speedo-needle" style="transform: rotate(${safeValue * 1.8}deg)"></div>
+            <div class="speedo-center"></div>
+        </div>
+        <div class="speedo-val">${Math.round(safeValue)}</div>
+    </div>`;
+}
+
+function updateInspector(force = false) {
+    if (!world) return;
+    if (gameMode === 'HUMAN') return;
+    const now = performance.now();
+    if (!force && now - lastInspectorUpdate < 125) return;
+    lastInspectorUpdate = now;
+    const agent = selectedAgent;
+
+    if (!agent || agent.state.isDead) {
+        elements.biometricStats.style.display = 'none';
+        elements.signalHeader.innerHTML = `<div class="placeholder-text">
+            <div class="hologram-effect" aria-hidden="true"></div>
+            <div class="glitch-signal">${agent?.state.isDead ? 'Unit lost' : 'No unit selected'}</div>
+            <p>${agent?.state.isDead ? 'Select a living unit to continue.' : 'Select a unit on the map to see its details.'}</p>
+        </div>`;
+        lastTraitAgentId = null;
+        return;
     }
-    
-    for (let i = 0; i < 5; i++) {
-        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
-        pCtx.beginPath();
-        pCtx.moveTo(centerX, centerY);
-        pCtx.lineTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
-        pCtx.strokeStyle = '#2a2a30';
-        pCtx.stroke();
-        
-        pCtx.fillStyle = '#888';
-        pCtx.font = 'bold 9px monospace';
-        const lx = centerX + Math.cos(angle) * (radius + 15);
-        const ly = centerY + Math.sin(angle) * (radius + 15);
-        pCtx.fillText(labels[i], lx, ly + 3);
+
+    const weapon = agent.state.inventory.weapon;
+    const hpPercent = Utils.clamp(agent.state.hp / agent.state.maxHp * 100, 0, 100);
+    const ammoPercent = Utils.clamp(weapon.ammo / Math.max(1, weapon.maxAmmo) * 100, 0, 100);
+    const teamClass = agent.team === 0 ? 'team-blue' : 'team-red';
+    const roleIcon = agent.role === 'MEDIC' ? '✚' : agent.role === 'MARKSMAN' ? '⌖' : '◆';
+    elements.signalHeader.innerHTML = `<div class="identity-header">
+        <div>
+            <div class="agent-id">Unit ${String(agent.id).padStart(3, '0')}</div>
+            <div class="role-info">${agent.rank === 1 ? '<span class="captain-star">★</span>' : ''}<span>${roleIcon} ${roleLabel(agent.role)}</span></div>
+        </div>
+        <span class="squad-badge ${teamClass}">${teamLabel(agent.team)}</span>
+    </div>
+    <div class="intent-text">${getActionDescription(agent)}</div>`;
+
+    elements.biometricStats.style.display = 'block';
+    elements.statsHud.innerHTML = `<div class="hud-container">
+        <div class="hud-combat-grid">
+            <div class="hud-vitals-group">
+                <div class="hud-label-row"><span>Health</span><span class="hud-value-text">${Math.ceil(agent.state.hp)} / ${agent.state.maxHp}</span></div>
+                <div class="hud-bar-track"><div class="hud-bar-fill fill-hp" style="width:${hpPercent}%"></div></div>
+            </div>
+            <div class="hud-vitals-group">
+                <div class="hud-label-row"><span>Ammo</span><span class="hud-value-text">${weapon.ammo} / ${weapon.carriedAmmo}</span></div>
+                <div class="hud-bar-track"><div class="hud-bar-fill fill-ammo" style="width:${ammoPercent}%"></div></div>
+            </div>
+        </div>
+        <div class="speedo-row">
+            ${speedometer('Stamina', agent.state.stamina)}
+            ${speedometer('Morale', agent.state.morale)}
+            ${speedometer('Stress', agent.state.stress, true)}
+        </div>
+    </div>`;
+
+    const badges = [];
+    if (agent.state.busyReason === 'reload') badges.push('<span class="status-badge active buff">Reloading</span>');
+    if (agent.state.inBush) badges.push('<span class="status-badge active buff">Concealed</span>');
+    if (agent.state.inSmoke) badges.push('<span class="status-badge active">In smoke</span>');
+    if (agent.state.isPinned) badges.push('<span class="status-badge active">Pinned</span>');
+    else if (agent.state.suppression > 50) badges.push('<span class="status-badge active">Suppressed</span>');
+    if (agent.state.stress > 80) badges.push('<span class="status-badge active">Panicked</span>');
+    if (agent.state.isHeroic) badges.push('<span class="status-badge active buff">Heroic</span>');
+    if (agent.state.isBroken) badges.push('<span class="status-badge active">Broken</span>');
+    elements.badges.innerHTML = badges.length ? `<div class="status-grid">${badges.join('')}</div>` : '';
+
+    if (force || lastTraitAgentId !== agent.id) {
+        renderPersonalityTraits(agent.traits);
+        lastTraitAgentId = agent.id;
     }
-    
-    pCtx.fillStyle = 'rgba(212, 175, 55, 0.2)'; 
-    pCtx.strokeStyle = '#d4af37';
-    pCtx.lineWidth = 2;
-    pCtx.beginPath();
-    
-    for (let i = 0; i < 5; i++) {
-        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
-        const val = traits[traitKeys[i]];
-        const x = centerX + Math.cos(angle) * (radius * val);
-        const y = centerY + Math.sin(angle) * (radius * val);
-        if (i === 0) pCtx.moveTo(x, y);
-        else pCtx.lineTo(x, y);
+}
+
+function renderPersonalityTraits(traits) {
+    const definitions = [
+        ['openness', 'Openness'],
+        ['conscientiousness', 'Conscientiousness'],
+        ['extraversion', 'Extraversion'],
+        ['agreeableness', 'Agreeableness'],
+        ['neuroticism', 'Neuroticism']
+    ];
+    const values = definitions.map(([key, label]) => ({
+        label,
+        value: Utils.clamp(traits[key], 0, 1)
+    }));
+    const chart = elements.personalityChart;
+    const chartCtx = chart.getContext('2d');
+    const center = { x: chart.width / 2, y: 126 };
+    const radius = 78;
+    const angles = values.map((_, index) => -Math.PI / 2 + index * Math.PI * 2 / values.length);
+    const pointAt = (angle, distance) => ({
+        x: center.x + Math.cos(angle) * distance,
+        y: center.y + Math.sin(angle) * distance
+    });
+
+    chartCtx.clearRect(0, 0, chart.width, chart.height);
+    chartCtx.lineJoin = 'round';
+
+    for (let level = 1; level <= 4; level++) {
+        chartCtx.beginPath();
+        angles.forEach((angle, index) => {
+            const point = pointAt(angle, radius * level / 4);
+            if (index === 0) chartCtx.moveTo(point.x, point.y);
+            else chartCtx.lineTo(point.x, point.y);
+        });
+        chartCtx.closePath();
+        chartCtx.strokeStyle = level === 4 ? 'rgba(214, 180, 90, 0.34)' : 'rgba(255, 255, 255, 0.11)';
+        chartCtx.lineWidth = 1;
+        chartCtx.stroke();
     }
-    
-    pCtx.closePath();
-    pCtx.fill();
-    pCtx.stroke();
-    
-    pCtx.fillStyle = '#fff';
-    for (let i = 0; i < 5; i++) {
-        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
-        const val = traits[traitKeys[i]];
-        pCtx.beginPath();
-        pCtx.arc(centerX + Math.cos(angle) * (radius * val), centerY + Math.sin(angle) * (radius * val), 2, 0, Math.PI * 2);
-        pCtx.fill();
-    }
+
+    angles.forEach(angle => {
+        const point = pointAt(angle, radius);
+        chartCtx.beginPath();
+        chartCtx.moveTo(center.x, center.y);
+        chartCtx.lineTo(point.x, point.y);
+        chartCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        chartCtx.stroke();
+    });
+
+    chartCtx.beginPath();
+    values.forEach(({ value }, index) => {
+        const point = pointAt(angles[index], Math.max(3, radius * value));
+        if (index === 0) chartCtx.moveTo(point.x, point.y);
+        else chartCtx.lineTo(point.x, point.y);
+    });
+    chartCtx.closePath();
+    chartCtx.fillStyle = 'rgba(214, 180, 90, 0.22)';
+    chartCtx.strokeStyle = '#d6b45a';
+    chartCtx.lineWidth = 2;
+    chartCtx.fill();
+    chartCtx.stroke();
+
+    values.forEach(({ value }, index) => {
+        const point = pointAt(angles[index], Math.max(3, radius * value));
+        chartCtx.beginPath();
+        chartCtx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        chartCtx.fillStyle = '#f2d98e';
+        chartCtx.fill();
+    });
+
+    const labels = [
+        { x: center.x, y: 18, align: 'center' },
+        { x: chart.width - 10, y: 84, align: 'right' },
+        { x: chart.width - 10, y: 224, align: 'right' },
+        { x: 10, y: 224, align: 'left' },
+        { x: 10, y: 84, align: 'left' }
+    ];
+    chartCtx.font = '700 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+    chartCtx.textBaseline = 'middle';
+    values.forEach(({ label }, index) => {
+        const position = labels[index];
+        chartCtx.textAlign = position.align;
+        chartCtx.fillStyle = '#d9dee2';
+        chartCtx.fillText(label, position.x, position.y);
+    });
+
+    const summary = values.map(({ label, value }) => `${label}: ${Math.round(value * 100)} percent`).join('. ');
+    chart.setAttribute('aria-label', `Personality distribution. ${summary}.`);
 }
 
 function getActionDescription(agent) {
-    if (!agent) return "OFFLINE";
-    if (agent.state.isDowned) return "CRITICAL_FAILURE";
-    if (agent.state.reloadingUntil > Date.now()) return "ERROR_AMMO_DEPLETED";
-    
+    if (!agent) return 'offline';
+    if (agent.state.isDead) return 'unit lost';
+    if (agent.state.busyReason === 'reload') return 'reloading';
+    if (agent.state.busyReason === 'switch') return 'switching weapon';
+    if (agent.isPlayer) return 'under direct control';
     const action = agent.currentAction;
-    if (!action) return "AWAITING_INSTRUCTION";
-    
-    if (action.description) return action.description.toUpperCase().replace(/ /g, "_");
-
-    switch(action.type) {
-        case 'IDLE': return "SCANNING_SECTOR";
-        case 'MOVE': return "RELOCATING";
-        case 'ATTACK': return "ENGAGING_TARGET";
-        case 'SUPPRESS': return "SUPPRESSING_FIRE";
-        case 'RETREAT': return "TACTICAL_RETREAT";
-        case 'LOOT': return "SECURING_ASSETS";
-        case 'THROW': return "DEPLOYING_ORDNANCE";
-        case 'RESUPPLY': return "RESUPPLYING_ALLY";
-        default: return action.type.toUpperCase();
-    }
+    if (!action) return 'scanning sector';
+    if (action.description) return String(action.description).toLowerCase();
+    const descriptions = {
+        IDLE: 'scanning the area',
+        HOLD: 'holding position',
+        MOVE: 'relocating',
+        ATTACK: 'firing at an enemy',
+        SUPPRESS: 'firing at a suspected enemy position',
+        RETREAT: 'retreating',
+        LOOT: 'collecting supplies',
+        THROW: 'throwing a grenade',
+        RESUPPLY: 'resupplying ally',
+        HEAL: 'treating ally',
+        SELF_HEAL: 'self aid'
+    };
+    return descriptions[action.type] || String(action.type || 'scanning').toLowerCase();
 }
 
-// --- PLAYER HUD (Minimal overlay for HUMAN mode) ---
-function drawPlayerHUD() {
-    if (!world || !world.playerAgent || gameMode !== 'HUMAN') return;
+function drawPlayerOverlay() {
+    if (!world?.playerAgent || !playerInput || gameMode !== 'HUMAN') return;
     const agent = world.playerAgent;
     if (agent.state.isDead) return;
-
-    const w = canvas.width;
-    const h = canvas.height;
-    const weapon = agent.state.inventory.weapon;
+    const aim = playerInput.getAimScreenPosition(agent, renderer.camera);
+    const spread = 6 + agent.state.stress * 0.055 + agent.state.suppression * 0.04;
 
     ctx.save();
-    // Reset transform to screen space
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-    // Reloading indicator
-    if (agent.state.reloadingUntil > Date.now()) {
-        ctx.font = 'bold 16px monospace';
-        ctx.fillStyle = '#ff69b4';
-        ctx.textAlign = 'center';
-        ctx.fillText('RELOADING', w / 2, h - 30);
+    if (agent.state.hp < agent.state.maxHp || agent.state.suppression > 25) {
+        const intensity = Utils.clamp((1 - agent.state.hp / agent.state.maxHp) * 0.45 + agent.state.suppression / 500, 0, 0.48);
+        const vignette = ctx.createRadialGradient(
+            elements.canvas.width / 2,
+            elements.canvas.height / 2,
+            Math.min(elements.canvas.width, elements.canvas.height) * 0.18,
+            elements.canvas.width / 2,
+            elements.canvas.height / 2,
+            Math.max(elements.canvas.width, elements.canvas.height) * 0.7
+        );
+        vignette.addColorStop(0, 'rgba(120, 0, 0, 0)');
+        vignette.addColorStop(1, `rgba(120, 0, 0, ${intensity})`);
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
     }
 
-    // --- Crosshair (center) ---
-    const cx = w / 2;
-    const cy = h / 2;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.strokeStyle = agent.state.busyReason === 'reload' ? 'rgba(214, 180, 90, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+    ctx.fillStyle = ctx.strokeStyle;
     ctx.lineWidth = 1;
-    const gap = 6;
-    const len = 12;
     ctx.beginPath();
-    ctx.moveTo(cx - gap - len, cy); ctx.lineTo(cx - gap, cy);
-    ctx.moveTo(cx + gap, cy); ctx.lineTo(cx + gap + len, cy);
-    ctx.moveTo(cx, cy - gap - len); ctx.lineTo(cx, cy - gap);
-    ctx.moveTo(cx, cy + gap); ctx.lineTo(cx, cy + gap + len);
+    ctx.moveTo(aim.x - spread - 9, aim.y); ctx.lineTo(aim.x - spread, aim.y);
+    ctx.moveTo(aim.x + spread, aim.y); ctx.lineTo(aim.x + spread + 9, aim.y);
+    ctx.moveTo(aim.x, aim.y - spread - 9); ctx.lineTo(aim.x, aim.y - spread);
+    ctx.moveTo(aim.x, aim.y + spread); ctx.lineTo(aim.x, aim.y + spread + 9);
     ctx.stroke();
-    // Center dot
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     ctx.beginPath();
-    ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
+    ctx.arc(aim.x, aim.y, 1.5, 0, Math.PI * 2);
     ctx.fill();
 
+    if (agent.state.busyReason === 'reload' && agent.state.reloadingUntil > Date.now()) {
+        const duration = Math.max(1, agent.state.reloadingUntil - agent.state.busyStartedAt);
+        const progress = Utils.clamp((Date.now() - agent.state.busyStartedAt) / duration, 0, 1);
+        ctx.beginPath();
+        ctx.arc(aim.x, aim.y, spread + 15, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+        ctx.strokeStyle = '#d6b45a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
     ctx.restore();
 }
 
-function loop(timestamp) {
-    if (!world || isGameOver) return;
-    
-    const dt = Math.min(100, timestamp - lastTime);
-    lastTime = timestamp;
+function checkWinCondition() {
+    if (!world || isGameOver) return false;
+    const alpha = world.agents.some(agent => agent.team === 0 && !agent.state.isDead);
+    const bravo = world.agents.some(agent => agent.team === 1 && !agent.state.isDead);
+    if (alpha && bravo) return false;
 
-    // --- PLAYER INPUT (before world update) ---
+    isGameOver = true;
+    cancelLoop();
+    updateMatchUi(true);
+    elements.simulation.setAttribute('inert', '');
+    let title;
+    if (!alpha && !bravo) title = 'MUTUAL ANNIHILATION';
+    else if (alpha) title = gameMode === 'HUMAN' ? 'YOU WIN' : 'ALPHA WINS';
+    else title = gameMode === 'HUMAN' ? 'YOU WERE DEFEATED' : 'BRAVO WINS';
+
+    const casualties = [...world.corpses, ...world.agents.filter(agent => agent.state.isDead)];
+    const alphaLosses = casualties.filter(agent => agent.team === 0).length;
+    const bravoLosses = casualties.filter(agent => agent.team === 1).length;
+    elements.victoryText.textContent = title;
+    elements.gameOverSummary.textContent = `${formatTime(matchElapsed)} elapsed · Alpha lost ${alphaLosses} · Bravo lost ${bravoLosses}`;
+    elements.gameOverScreen.hidden = false;
+    previousDialogFocus = document.activeElement;
+    elements.restart.focus({ preventScroll: true });
+    return true;
+}
+
+function loop(timestamp) {
+    animationId = null;
+    if (!world || isPaused || isGameOver) return;
+
+    const dt = Math.min(75, Math.max(0, timestamp - lastTime));
+    lastTime = timestamp;
+    matchElapsed += dt;
+
     if (gameMode === 'HUMAN' && playerInput && world.playerAgent && !world.playerAgent.state.isDead) {
         playerInput.applyToAgent(world.playerAgent, dt, world, renderer.camera);
     }
 
     world.update(dt);
-    renderer.render();
-    updateInspector();
-
-    // --- PLAYER CAMERA FOLLOW ---
     if (gameMode === 'HUMAN' && world.playerAgent) {
-        const p = world.playerAgent;
-        // Smooth camera follow
-        renderer.camera.x += (p.pos.x - renderer.camera.x) * 0.1;
-        renderer.camera.y += (p.pos.y - renderer.camera.y) * 0.1;
+        renderer.camera.x += (world.playerAgent.pos.x - renderer.camera.x) * 0.12;
+        renderer.camera.y += (world.playerAgent.pos.y - renderer.camera.y) * 0.12;
     }
-
-    checkWinCondition();
-
-    animationId = requestAnimationFrame(loop);
+    renderer.render();
+    drawPlayerOverlay();
+    updateMatchUi();
+    updateInspector();
+    if (!checkWinCondition()) animationId = requestAnimationFrame(loop);
 }
 
-function checkWinCondition() {
-    let alphaAlive = false;
-    let bravoAlive = false;
-    
-    for (const agent of world.agents) {
-        if (!agent.state.isDead) {
-            if (agent.team === 0) alphaAlive = true;
-            if (agent.team === 1) bravoAlive = true;
-        }
+function canvasPoint(event) {
+    const rect = elements.canvas.getBoundingClientRect();
+    return {
+        x: (event.clientX - rect.left) / rect.width * elements.canvas.width,
+        y: (event.clientY - rect.top) / rect.height * elements.canvas.height
+    };
+}
+
+function worldPoint(event) {
+    const point = canvasPoint(event);
+    return {
+        x: (point.x - elements.canvas.width / 2) / renderer.camera.zoom + renderer.camera.x,
+        y: (point.y - elements.canvas.height / 2) / renderer.camera.zoom + renderer.camera.y
+    };
+}
+
+function selectAt(event) {
+    if (!world || !renderer || gameMode === 'HUMAN') return;
+    const point = worldPoint(event);
+    selectedAgent = world.agents
+        .filter(agent => !agent.state.isDead)
+        .sort((a, b) => Utils.distance(a.pos, point) - Utils.distance(b.pos, point))
+        .find(agent => Utils.distance(agent.pos, point) < agent.radius + 14) || null;
+    renderer.setSelectedAgent(selectedAgent);
+    updateInspector(true);
+    updateMatchUi(true);
+    if (selectedAgent && window.innerWidth <= 800) setInspectorOpen(true);
+}
+
+let dragState = null;
+elements.canvas.addEventListener('pointerdown', event => {
+    if (!renderer || isPaused || isGameOver || gameMode === 'HUMAN') return;
+    const canPan = event.button === 1 || (event.button === 0 && event.altKey) || event.pointerType === 'touch';
+    if (canPan) {
+        dragState = { id: event.pointerId, x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, moved: false };
+        elements.canvas.setPointerCapture?.(event.pointerId);
+        elements.canvas.style.cursor = 'grabbing';
+        event.preventDefault();
+    } else if (event.button === 0) {
+        selectAt(event);
     }
-    
-    if (!alphaAlive || !bravoAlive) {
-        isGameOver = true;
-        
-        const gameOverScreen = document.getElementById('game-over-screen');
-        const victoryText = document.getElementById('victory-text');
-        
-        if (!alphaAlive && !bravoAlive) {
-            victoryText.innerText = "MUTUAL ANNIHILATION";
-            victoryText.style.color = "white";
-        } else if (alphaAlive) {
-            if (gameMode === 'HUMAN') {
-                victoryText.innerText = "MISSION COMPLETE";
-                victoryText.style.color = "#4ae24a";
-            } else {
-                victoryText.innerText = "ALPHA TEAM WINS";
-                victoryText.style.color = "#4a90e2";
-            }
-        } else {
-            if (gameMode === 'HUMAN') {
-                victoryText.innerText = "KIA — MISSION FAILED";
-                victoryText.style.color = "#e24a4a";
-            } else {
-                victoryText.innerText = "BRAVO TEAM WINS";
-                victoryText.style.color = "#e24a4a";
-            }
-        }
-        
-        gameOverScreen.style.display = 'flex';
+});
+
+elements.canvas.addEventListener('pointermove', event => {
+    const rect = elements.canvas.getBoundingClientRect();
+    if (playerInput) playerInput.setMouseScreenPos(event.clientX - rect.left, event.clientY - rect.top);
+    if (!dragState || dragState.id !== event.pointerId || !renderer) return;
+
+    const dx = (event.clientX - dragState.x) * elements.canvas.width / rect.width;
+    const dy = (event.clientY - dragState.y) * elements.canvas.height / rect.height;
+    renderer.camera.x -= dx / renderer.camera.zoom;
+    renderer.camera.y -= dy / renderer.camera.zoom;
+    dragState.x = event.clientX;
+    dragState.y = event.clientY;
+    dragState.moved ||= Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY) > 5;
+    cameraIsFitted = false;
+    event.preventDefault();
+});
+
+function endDrag(event) {
+    if (!dragState || dragState.id !== event.pointerId) return;
+    const shouldSelect = event.pointerType === 'touch' && !dragState.moved;
+    dragState = null;
+    elements.canvas.style.cursor = gameMode === 'HUMAN' ? 'none' : 'crosshair';
+    if (shouldSelect) selectAt(event);
+}
+
+elements.canvas.addEventListener('pointerup', endDrag);
+elements.canvas.addEventListener('pointercancel', endDrag);
+
+elements.canvas.addEventListener('wheel', event => {
+    if (!renderer || isPaused || isGameOver) return;
+    event.preventDefault();
+    const point = canvasPoint(event);
+    const before = {
+        x: (point.x - elements.canvas.width / 2) / renderer.camera.zoom + renderer.camera.x,
+        y: (point.y - elements.canvas.height / 2) / renderer.camera.zoom + renderer.camera.y
+    };
+    const factor = Math.exp(-event.deltaY * 0.0015);
+    renderer.camera.zoom = Utils.clamp(renderer.camera.zoom * factor, 0.15, 5);
+    renderer.camera.x = before.x - (point.x - elements.canvas.width / 2) / renderer.camera.zoom;
+    renderer.camera.y = before.y - (point.y - elements.canvas.height / 2) / renderer.camera.zoom;
+    cameraIsFitted = false;
+}, { passive: false });
+
+function openInfo() {
+    previousDialogFocus = document.activeElement;
+    elements.startMenu.inert = true;
+    elements.info.hidden = false;
+    elements.infoClose.focus({ preventScroll: true });
+}
+
+function closeInfo() {
+    elements.info.hidden = true;
+    elements.startMenu.inert = false;
+    (previousDialogFocus || elements.infoOpen).focus({ preventScroll: true });
+    previousDialogFocus = null;
+}
+
+function trapDialogFocus(event, dialog) {
+    const focusable = [...dialog.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+        .filter(element => !element.hidden && element.getClientRects().length > 0);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
     }
 }
 
-document.getElementById('btn-restart').onclick = () => {
-    document.getElementById('game-over-screen').style.display = 'none';
-    isGameOver = false;
-    selectedAgent = null;
-    startGame(mapData);
-};
+document.addEventListener('keydown', event => {
+    const openDialog = !elements.info.hidden
+        ? elements.info
+        : !elements.pauseScreen.hidden
+            ? elements.pauseScreen
+            : !elements.gameOverScreen.hidden
+                ? elements.gameOverScreen
+                : null;
+    if (event.key === 'Tab' && openDialog) {
+        trapDialogFocus(event, openDialog);
+        return;
+    }
+    if (event.key === 'Escape') {
+        if (!elements.info.hidden) closeInfo();
+        else if (world && !isGameOver) togglePause();
+        return;
+    }
+    if (!world || isGameOver || !elements.pauseScreen.hidden) return;
+    if ((event.code === 'Space' && gameMode === 'AI_VS_AI') || event.code === 'KeyP') {
+        if (!['INPUT', 'BUTTON', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+            event.preventDefault();
+            togglePause();
+        }
+    } else if (event.code === 'KeyF') {
+        fitCamera();
+    } else if (event.code === 'KeyI') {
+        setInspectorOpen(elements.inspectorButton.getAttribute('aria-expanded') !== 'true');
+    }
+});
+
+elements.startAi.addEventListener('click', () => startGame('AI_VS_AI'));
+elements.startHuman.addEventListener('click', () => startGame('HUMAN'));
+elements.infoOpen.addEventListener('click', openInfo);
+elements.infoClose.addEventListener('click', closeInfo);
+elements.info.addEventListener('pointerdown', event => {
+    if (event.target === elements.info) closeInfo();
+});
+elements.pause.addEventListener('click', togglePause);
+elements.fit.addEventListener('click', fitCamera);
+elements.mute.addEventListener('click', () => {
+    audioController.muted = !audioController.muted;
+    elements.mute.setAttribute('aria-pressed', String(audioController.muted));
+    elements.mute.setAttribute('aria-label', audioController.muted ? 'Unmute audio' : 'Mute audio');
+    elements.mute.title = audioController.muted ? 'Unmute audio' : 'Mute audio';
+    const label = elements.mute.querySelector('.command-button__label');
+    if (label) label.textContent = audioController.muted ? 'Muted' : 'Audio';
+});
+elements.menu.addEventListener('click', showMainMenu);
+elements.inspectorButton.addEventListener('click', () => {
+    setInspectorOpen(elements.inspectorButton.getAttribute('aria-expanded') !== 'true');
+});
+elements.resume.addEventListener('click', resumeGame);
+elements.pauseRestart.addEventListener('click', () => startGame(gameMode));
+elements.pauseMenu.addEventListener('click', showMainMenu);
+elements.restart.addEventListener('click', () => startGame(gameMode));
+elements.gameOverMenu.addEventListener('click', showMainMenu);
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && world && !isPaused && !isGameOver) pauseGame();
+});
+
+coarsePointer.addEventListener?.('change', () => {
+    if (world && gameMode === 'HUMAN') elements.touchControls.hidden = !coarsePointer.matches;
+});
+
+resetMatchSurfaces();
+elements.info.hidden = true;
+elements.gameOverScreen.hidden = true;
+elements.startMenu.hidden = false;
+elements.simulation.setAttribute('inert', '');
+setPauseButton(false);
+loadMap().catch(() => {});

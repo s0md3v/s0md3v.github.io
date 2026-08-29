@@ -3,7 +3,7 @@ import os
 import json
 from PIL import Image
 
-ROOT_DIR = '/home/som/git/s0md3v.github.io/playground/red-is-pain'
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = 'assets/tileset'
 OUTPUT_FILE = os.path.join(ROOT_DIR, 'assets/AssetManifest.js')
 

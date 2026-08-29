@@ -1,5 +1,5 @@
-import { Config } from './Config.js';
-import { PriorityQueue, Utils } from './Utils.js';
+import { Config } from './Config.js?v=field-console-14';
+import { PriorityQueue, Utils } from './Utils.js?v=field-console-14';
 
 export class Pathfinder {
     constructor(world) {
@@ -16,13 +16,11 @@ export class Pathfinder {
 
         const startNodeX = Math.floor(startPos.x / step);
         const startNodeY = Math.floor(startPos.y / step);
-        const endNodeX = Math.floor(endPos.x / step);
-        const endNodeY = Math.floor(endPos.y / step);
+        let endNodeX = Math.floor(endPos.x / step);
+        let endNodeY = Math.floor(endPos.y / step);
 
         if (startNodeX < 0 || startNodeX >= cols || startNodeY < 0 || startNodeY >= rows) return [];
         if (endNodeX < 0 || endNodeX >= cols || endNodeY < 0 || endNodeY >= rows) return [];
-        if (startNodeX === endNodeX && startNodeY === endNodeY) return [endPos];
-        
         // Ensure destination is actually reachable
         if (this.world.isWallAt(endPos.x, endPos.y)) {
              // Try to find nearest walkable neighbor
@@ -35,9 +33,13 @@ export class Pathfinder {
                  }
              }
              if (walkables.length === 0) return [];
-             // Just use the first one for now
+             walkables.sort((a, b) => Utils.distance(a, endPos) - Utils.distance(b, endPos));
              endPos = walkables[0];
+             endNodeX = Math.floor(endPos.x / step);
+             endNodeY = Math.floor(endPos.y / step);
         }
+
+        if (startNodeX === endNodeX && startNodeY === endNodeY) return [endPos];
 
         const cameFrom = new Int32Array(size).fill(-1);
         const gScore = new Float32Array(size).fill(Infinity);
@@ -136,7 +138,7 @@ export class Pathfinder {
                     const hx = Math.floor((wx / width) * hCols);
                     const hy = Math.floor((wy / height) * hRows);
                     if (hx >= 0 && hx < hCols && hy >= 0 && hy < hRows) {
-                         extraCost += heatmap[hy][hx] * 40;
+                         extraCost += heatmap[hy][hx] * (preferStealth ? 40 : 10);
                     }
                 }
                 
@@ -161,9 +163,6 @@ export class Pathfinder {
             }
         }
 
-        if (closestIndex !== startIndex && iterations > 1) {
-            return this.reconstructPathFlat(cameFrom, closestIndex, cols, step);
-        }
         return [];
     }
 
@@ -185,7 +184,7 @@ export class Pathfinder {
             for (let i = 1; i < path.length; i++) {
                 const p1 = path[bookmark];
                 const p2 = path[i];
-                if (!this.world.hasLineOfSight(p1, p2)) {
+                if (!this.world.hasMovementLine(p1, p2)) {
                     newPath.push(path[i-1]);
                     bookmark = i - 1;
                 } else {
@@ -199,7 +198,7 @@ export class Pathfinder {
                         const p1R = { x: p1.x - Math.cos(perp)*r, y: p1.y - Math.sin(perp)*r };
                         const p2R = { x: p2.x - Math.cos(perp)*r, y: p2.y - Math.sin(perp)*r };
                         
-                         if (!this.world.hasLineOfSight(p1L, p2L) || !this.world.hasLineOfSight(p1R, p2R)) {
+                         if (!this.world.hasMovementLine(p1L, p2L) || !this.world.hasMovementLine(p1R, p2R)) {
                             newPath.push(path[i-1]);
                             bookmark = i - 1;
                          }
@@ -215,6 +214,6 @@ export class Pathfinder {
     heuristic(x1, y1, x2, y2) {
         const dx = Math.abs(x2 - x1);
         const dy = Math.abs(y2 - y1);
-        return (dx + dy) + (0.414) * Math.min(dx, dy); 
+        return Math.max(dx, dy) + 0.414 * Math.min(dx, dy);
     }
 }

@@ -1,11 +1,11 @@
-import { ActionExecutor } from '../ActionExecutor.js'; 
-import { CombatEvaluator } from '../CombatEvaluator.js';
-import { TacticalEvaluator } from '../TacticalEvaluator.js';
-import { SupportEvaluator } from '../SupportEvaluator.js';
-import { BackgroundEvaluator } from '../BackgroundEvaluator.js';
-import { CoverEvaluator } from '../CoverEvaluator.js';
-import { Utils } from '../Utils.js';
-import { Config } from '../Config.js';
+import { ActionExecutor } from '../ActionExecutor.js?v=field-console-14';
+import { CombatEvaluator } from '../CombatEvaluator.js?v=field-console-14';
+import { TacticalEvaluator } from '../TacticalEvaluator.js?v=field-console-14';
+import { SupportEvaluator } from '../SupportEvaluator.js?v=field-console-14';
+import { BackgroundEvaluator } from '../BackgroundEvaluator.js?v=field-console-14';
+import { CoverEvaluator } from '../CoverEvaluator.js?v=field-console-14';
+import { Utils } from '../Utils.js?v=field-console-14';
+import { Config } from '../Config.js?v=field-console-14';
 
 export class Cortex {
     constructor(agent) {
@@ -48,13 +48,13 @@ export class Cortex {
             if (isBerserk) {
                 candidates.push({
                     priority: 95,
-                    action: { type: 'ATTACK', target: enemyPos, score: 10.0, speedMultiplier: 1.5, movementMode: 'BOUNDING', description: 'BERSERK' },
+                    action: { type: 'ATTACK', target: enemyPos, score: 10.0, speedMultiplier: 1.5, movementMode: 'BOUNDING', description: 'attacking recklessly' },
                     type: 'COMBAT'
                 });
             } else if (isHeroic) {
                 candidates.push({
                     priority: 90,
-                    action: { type: 'ATTACK', target: enemyPos, score: 8.0, speedMultiplier: 1.2, movementMode: 'BOUNDING', description: 'HEROIC PUSH' },
+                    action: { type: 'ATTACK', target: enemyPos, score: 8.0, speedMultiplier: 1.2, movementMode: 'BOUNDING', description: 'advancing aggressively' },
                     type: 'COMBAT'
                 });
             }
@@ -81,6 +81,7 @@ export class Cortex {
                 const existingAction = { ...this.currentPlan.action };
                 candidates.push({ 
                     priority: this.currentPlan.priority + 10, // Persistence Bonus
+                    persistenceBasePriority: this.currentPlan.priority,
                     action: existingAction, 
                     type: this.currentPlan.type 
                 });
@@ -112,23 +113,12 @@ export class Cortex {
                     if (flankSpot) {
                         candidates.push({ 
                             priority: 60 + (this.agent.traits.openness * 10) + (moraleCombatBonus * 0.5),
-                            action: { type: 'MOVE', target: flankSpot, movementMode: 'TACTICAL', description: 'FLANK' },
+                            action: { type: 'MOVE', target: flankSpot, movementMode: 'TACTICAL', description: 'moving around the enemy' },
                             type: 'TACTICAL'
                         });
                     }
                 }
             }
-
-            // ... (rest of combat actions)
-            // Suppress
-            const suppressAction = this.combat.scoreSuppress(world);
-             if (suppressAction.score > 0) {
-                 candidates.push({ 
-                     priority: (suppressAction.score * 30) + (moraleCombatBonus * 0.5), // Score 2.0 -> 60
-                     action: suppressAction, 
-                     type: 'SUPPRESS' 
-                 });
-             }
 
             // Frag Grenades
             const fragAction = this.combat.scoreFrag(world);
@@ -159,6 +149,17 @@ export class Cortex {
                      type: 'TACTICAL'
                  });
             }
+        }
+
+        // Area fire can originate from a hostile sound, incoming-fire bearing, or
+        // shared sector report even before stress or a remembered person exists.
+        const suppressAction = this.combat.scoreSuppress(world);
+        if (suppressAction.score > 0) {
+            candidates.push({
+                priority: (suppressAction.score * 30) + (moraleCombatBonus * 0.5),
+                action: suppressAction,
+                type: 'SUPPRESS'
+            });
         }
 
         // G. INTERCEPT CONTACT (Radio intel response)
@@ -227,7 +228,7 @@ export class Cortex {
             candidates.forEach(c => {
                  if (c.type === 'COVER') c.priority += 50; 
                  if (c.type === 'THROW' && c.action.grenadeType === 'SmokeGrenade') c.priority += 40;
-                 if (c.type === 'TACTICAL' && c.action.description === 'Retreat Smoke') c.priority += 40;
+                 if (c.type === 'TACTICAL' && c.action.description === 'throwing smoke to retreat') c.priority += 40;
             });
             this.currentPlan = null; // Panic clears the mind
         }
@@ -243,15 +244,20 @@ export class Cortex {
         // For debugging/state display
         if (best) {
             this.agent.brain.currentFocus = best.type;
+            const storedBest = {
+                ...best,
+                priority: best.persistenceBasePriority ?? best.priority
+            };
+            delete storedBest.persistenceBasePriority;
             
             // COMMIT TO PLAN
             if (!this.currentPlan || this.currentPlan.type !== best.type) {
                  // New plan adopted
-                 this.currentPlan = { ...best };
+                 this.currentPlan = storedBest;
                  this.planTimestamp = Date.now();
             } else {
                  // Update the current plan with new action/priority (e.g. updated target)
-                 this.currentPlan = { ...best };
+                 this.currentPlan = storedBest;
             }
         } else {
              this.currentPlan = null;
@@ -264,7 +270,7 @@ export class Cortex {
         return best;
     }
 
-    identifyThreat(world, includeSuspected = true) {
+    identifyThreat(world, includeSuspected = false) {
         const enemies = this.agent.sensory.scan(world).filter(a => a.team !== this.agent.team);
         if (enemies.length > 0) {
             const myPos = this.agent.pos;
@@ -273,12 +279,15 @@ export class Cortex {
         }
         
         if (includeSuspected && this.agent.memory.knownHostiles.length > 0) {
-             const memoryParams = this.agent.memory.knownHostiles[0];
+             const memoryParams = this.agent.memory.knownHostiles.reduce((latest, hostile) => {
+                 return !latest || hostile.timestamp > latest.timestamp ? hostile : latest;
+             }, null);
              return { 
                  pos: memoryParams.lastKnownPosition, 
                  lastKnownPosition: memoryParams.lastKnownPosition,
                  id: memoryParams.id, 
                  isMemory: true,
+                 isSuspected: true,
                  team: 'HOSTILE' 
              };
         }
@@ -298,7 +307,7 @@ export class Cortex {
         const nearCover = this.tactical.findNearestCover(world, 40) !== null;
         if (!nearCover) return false;
         
-        const isExposed = world.hasLineOfSight(this.agent.pos, threat.pos, Infinity, true);
+        const isExposed = world.hasClearShot(this.agent.pos, threat.pos);
         return !isExposed;
     }
 

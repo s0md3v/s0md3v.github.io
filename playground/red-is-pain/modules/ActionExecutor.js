@@ -1,23 +1,65 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
-import { Projectile } from './Projectile.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
+import { Projectile } from './Projectile.js?v=field-console-14';
 
 export class ActionExecutor {
     constructor(agent) {
         this.agent = agent;
+        this.lastSelfHealTime = 0;
+        this.lastHealTime = 0;
+        this.lastResupplyTime = 0;
+        this.suppressionFireControl = {
+            key: null,
+            evidenceTimestamp: 0,
+            burstsFired: 0,
+            roundsRemaining: 0,
+            nextBurstAt: 0,
+            aimPoint: null,
+            announced: false,
+            lastAnnouncementKey: null,
+            lastAnnouncementAt: 0
+        };
     }
 
     execute(action, dt, world) {
         if (!action) return;
         let turnSpeed = Config.AGENT.TURN_SPEED;
+        const now = Date.now();
+
+        // Pulling a pin is a committed action. Keep executing the captured throw
+        // instead of allowing the next 100 ms decision tick to orphan the grenade.
+        if (this.agent.armingUntil > 0 && this.agent.armingAction) {
+            action = this.agent.armingAction;
+        }
 
         // Pinned/Arming Effect: Cannot Move
-        if (this.agent.state.isPinned || this.agent.armingUntil > Date.now()) {
+        if (this.agent.state.isPinned || this.agent.armingUntil > now) {
             turnSpeed *= 0.5;
             if (Math.random() < 0.05) this.agent.state.modifyStress(5); // Panic while pinned
             
             // If pinned, we might blind fire (SUPPRESS) instead of aimed fire
-            if (action.type === 'ATTACK') action.type = 'SUPPRESS'; 
+            if (this.agent.state.isPinned && action.type === 'ATTACK') {
+                const memoryContact = action.targetId !== undefined
+                    ? this.agent.memory.knownHostiles.find(hostile => hostile.id === action.targetId)
+                    : null;
+                const memoryTarget = memoryContact?.lastKnownPosition;
+                const target = action.target || memoryTarget;
+                action = {
+                    ...action,
+                    type: 'SUPPRESS',
+                    target,
+                    blindFire: true,
+                    reason: 'PINNED_CONTACT',
+                    description: 'returning fire while pinned',
+                    callout: 'RETURNING FIRE!',
+                    confidence: 0.8,
+                    evidenceTimestamp: memoryContact?.timestamp || 0,
+                    areaKey: target ? `area:${Math.round(target.x / 40)}:${Math.round(target.y / 40)}` : null,
+                    maxBursts: this.agent.state.inventory.weapon.type === 'LMG' ? 3 : 2,
+                    sweepRadius: 30,
+                    spreadMultiplier: 2.8
+                };
+            }
         }
 
         // Systematic Reflexive Behavior
@@ -31,13 +73,10 @@ export class ActionExecutor {
                 this.executeIdle(dt, world);
                 break;
             case 'HOLD':
-                // Hold Position (Stay in cover, maybe reload/peek)
-                // Just idle but with intention
                 this.agent.isMoving = false;
-                if (action.target) {
-                    // Face threat if we have one, otherwise scan
-                    // Actually, if holding cover, we might want to face OUT from the wall
-                }
+                this.agent.path = [];
+                this.agent.lastPathTarget = null;
+                this.executeIdle(dt, world);
                 break;
             case 'MOVE':
             case 'SUPPORT':
@@ -48,7 +87,7 @@ export class ActionExecutor {
                          speedMod = 0.6; // Disorientation
                     }
 
-                    // CRITICAL: Update agent movement mode from the action proposal
+                    // Apply the movement mode chosen with this action.
                     if (action.movementMode) {
                         this.agent.movementMode = action.movementMode;
                     }
@@ -114,7 +153,7 @@ export class ActionExecutor {
             // Add slight randomness so they don't look like robots
             this.agent.targetAngle = tacticalAngle + (Math.random() - 0.5) * 0.3;
         }
-        this.agent.rotateTowards(this.agent.targetAngle, dt, 0.5); 
+        this.agent.rotateTowards(this.agent.targetAngle, dt, Config.AGENT.TURN_SPEED * 0.5);
     }
 
     executeLoot(action, dt, world, turnSpeed) {
@@ -200,7 +239,7 @@ export class ActionExecutor {
 
                 // --- CALCUALTE THROW INACCURACY ---
                 const dist = Utils.distance(this.agent.pos, action.target);
-                const hasLOS = world.hasLineOfSight(this.agent.pos, action.target);
+                const hasLOS = world.hasVisualLine(this.agent.pos, action.target);
                 
                 // Base error: 10% of distance + fixed minimum
                 let errorRadius = (dist * 0.1) + 5;
@@ -251,8 +290,12 @@ export class ActionExecutor {
     }
 
     executeSelfHeal() {
+        const now = Date.now();
+        if (now - this.lastSelfHealTime < 1000 || this.agent.state.hp >= this.agent.state.maxHp) return;
+
         const medkitIdx = this.agent.state.inventory.utility.findIndex(u => u.type === 'Medkit' && u.count > 0);
         if (medkitIdx > -1) {
+            this.lastSelfHealTime = now;
             this.agent.state.inventory.utility[medkitIdx].count--;
             const healingAmount = this.agent.role === 'MEDIC' ? this.agent.state.maxHp : this.agent.state.maxHp * 0.5;
             this.agent.state.hp = Math.min(this.agent.state.maxHp, this.agent.state.hp + healingAmount);
@@ -266,8 +309,11 @@ export class ActionExecutor {
 
         const patient = world.agents.find(a => a.id === action.targetId);
         if (patient && Utils.distance(this.agent.pos, patient.pos) < 35) {
+            const now = Date.now();
+            if (now - this.lastHealTime < 1000 || patient.state.hp >= patient.state.maxHp) return;
             const medkitIdx = this.agent.state.inventory.utility.findIndex(u => u.type === 'Medkit' && u.count > 0);
             if (medkitIdx > -1) {
+                this.lastHealTime = now;
                 this.agent.state.inventory.utility[medkitIdx].count--;
 
                 const isMedic = this.agent.role === 'MEDIC';
@@ -304,11 +350,14 @@ export class ActionExecutor {
         
         const source = world.agents.find(a => a.id === action.targetId);
         if (source && Utils.distance(this.agent.pos, source.pos) < 30) {
+            const now = Date.now();
+            if (now - this.lastResupplyTime < 1000) return;
             const myWeapon = this.agent.state.inventory.weapon;
             const sourceWeapon = source.state.inventory.weapon;
             
             const transferAmount = myWeapon.maxAmmo * 2;
-            if (sourceWeapon.carriedAmmo > 0) {
+            if (sourceWeapon.name === myWeapon.name && sourceWeapon.carriedAmmo > 0) {
+                this.lastResupplyTime = now;
                 const actualTransfer = Math.min(sourceWeapon.carriedAmmo, transferAmount);
                 sourceWeapon.carriedAmmo -= actualTransfer;
                 myWeapon.carriedAmmo += actualTransfer;
@@ -321,17 +370,35 @@ export class ActionExecutor {
     executeAttack(action, dt, world, turnSpeed, canSnap) {
         let finalTargetPos = null;
         if (action.targetId !== undefined) {
-            const target = world.agents.find(a => a.id === action.targetId);
-            const memoryTarget = this.agent.memory.knownHostiles.find(h => h.id === action.targetId);
-            finalTargetPos = target ? target.pos : (memoryTarget ? memoryTarget.lastKnownPosition : null);
+            const target = world.agents.find(a => a.id === action.targetId && a.team !== this.agent.team);
+            const isVisible = target
+                && this.agent.sensory.scan(world).includes(target)
+                && world.hasVisualLine(this.agent.pos, target.pos, this.agent.traits.visionRadius);
+            finalTargetPos = isVisible ? target.pos : null;
         } else if (action.target) {
-            finalTargetPos = action.target;
+            const visibleTarget = this.agent.sensory.scan(world).find(target =>
+                target.team !== this.agent.team &&
+                Utils.distance(target.pos, action.target) < 60 &&
+                world.hasVisualLine(this.agent.pos, target.pos, this.agent.traits.visionRadius)
+            );
+            finalTargetPos = visibleTarget?.pos || null;
+        }
+
+        if (!finalTargetPos) {
+            const movementObjective = action.moveTarget
+                || (action.movementMode === 'BOUNDING' ? action.target : null);
+            if (movementObjective && !this.agent.state.isPinned) {
+                this.agent.moveTo(movementObjective, dt, world, turnSpeed, action.speedMultiplier || 1.0);
+            }
+            return;
         }
 
         if (finalTargetPos) {
+            if (action.movementMode) this.agent.movementMode = action.movementMode;
+            const speedMultiplier = Number.isFinite(action.speedMultiplier) ? action.speedMultiplier : 1.0;
             const dist = Utils.distance(this.agent.pos, finalTargetPos);
-            const hasLOS = world.hasLineOfSight(this.agent.pos, finalTargetPos); 
-            const hasClearShot = world.hasLineOfSight(this.agent.pos, finalTargetPos, Infinity, true);
+            const hasLOS = world.hasVisualLine(this.agent.pos, finalTargetPos);
+            const hasClearShot = world.hasClearShot(this.agent.pos, finalTargetPos);
             const inRange = dist <= this.agent.state.inventory.weapon.range;
 
             // Target Tracking
@@ -355,12 +422,12 @@ export class ActionExecutor {
             // 3. If no LOS, move to regain it tactilely.
 
             if (action.moveTarget) {
-                this.agent.moveTo(action.moveTarget, dt, world, turnSpeed, 1.0, finalTargetPos);
+                this.agent.moveTo(action.moveTarget, dt, world, turnSpeed, speedMultiplier, finalTargetPos);
             } else if (!hasLOS) {
                  // Hunt: Move towards target but use cover if possible
                  // We rely on Decision to give us a moveTarget if flanking is needed.
                  // Otherwise, reckless advance
-                 this.agent.moveTo(finalTargetPos, dt, world, turnSpeed);
+                 this.agent.moveTo(finalTargetPos, dt, world, turnSpeed, speedMultiplier);
             } else if (hasLOS && !hasClearShot) {
                  // We see them but something is blocking our gun (e.g. low cover or corner)
                  // Shift slightly perpendicular to target line
@@ -369,14 +436,14 @@ export class ActionExecutor {
                      const shiftX = this.agent.pos.x + Math.cos(rightAngle) * 20;
                      const shiftY = this.agent.pos.y + Math.sin(rightAngle) * 20;
                      if (world.isPositionClear(shiftX, shiftY, this.agent.radius)) {
-                         this.agent.moveTo({x: shiftX, y: shiftY}, dt, world, turnSpeed, 1.0, finalTargetPos);
+                         this.agent.moveTo({x: shiftX, y: shiftY}, dt, world, turnSpeed, speedMultiplier, finalTargetPos);
                      }
                  }
             } else {
                  // We have clear shot. Hold position to maintain accuracy? 
                  // Unless we are too far
                  if (dist > 300 && action.movementMode === 'BOUNDING') {
-                      this.agent.moveTo(finalTargetPos, dt, world, turnSpeed, 1.0, finalTargetPos);
+                      this.agent.moveTo(finalTargetPos, dt, world, turnSpeed, speedMultiplier, finalTargetPos);
                  }
             }
         }
@@ -385,25 +452,111 @@ export class ActionExecutor {
     executeSuppress(action, dt, world, turnSpeed, canSnap) {
         if (!action.target) return;
 
-        const dist = Utils.distance(this.agent.pos, action.target);
-        const hasClearShot = world.hasLineOfSight(this.agent.pos, action.target, Infinity, true);
+        const now = Date.now();
+        const weapon = this.agent.state.inventory.weapon;
+        const control = this.suppressionFireControl;
+        const key = action.areaKey || `area:${Math.round(action.target.x / 40)}:${Math.round(action.target.y / 40)}`;
+        const evidenceTimestamp = action.evidenceTimestamp || 0;
+        const refreshed = control.key !== key || evidenceTimestamp > control.evidenceTimestamp + 800;
 
-        if (dist > 150) {
-            this.agent.moveTo(action.target, dt, world, turnSpeed, 1.0, action.target);
-        } else if (!hasClearShot && !action.blindFire && !this.agent.state.isPinned) {
-            const angleToTarget = Utils.angle(this.agent.pos, action.target);
-            const peekAngle = angleToTarget + (Math.random() > 0.5 ? Math.PI/2 : -Math.PI/2);
-            this.agent.moveTo({
-                x: this.agent.pos.x + Math.cos(peekAngle) * 40,
-                y: this.agent.pos.y + Math.sin(peekAngle) * 40
-            }, dt, world, turnSpeed, 1.0, action.target);
+        if (refreshed) {
+            Object.assign(control, {
+                key,
+                evidenceTimestamp,
+                burstsFired: 0,
+                roundsRemaining: 0,
+                nextBurstAt: 0,
+                aimPoint: null,
+                announced: false
+            });
         } else {
-            const targetAngle = Utils.angle(this.agent.pos, action.target);
-            this.agent.rotateTowards(targetAngle, dt, turnSpeed, canSnap);
+            control.evidenceTimestamp = Math.max(control.evidenceTimestamp, evidenceTimestamp);
         }
 
-        if (hasClearShot || action.blindFire) {
-            this.agent.shootAt(action.target, world, 4.0); 
+        this.agent.movementMode = action.movementMode || 'COVERING';
+        const dist = Utils.distance(this.agent.pos, action.target);
+        const inRange = dist <= weapon.range;
+        const hasClearShot = inRange && world.hasClearShot(this.agent.pos, action.target, weapon.range);
+        const targetAngle = Utils.angle(this.agent.pos, action.target);
+
+        if (!inRange) {
+            if (!this.agent.state.isPinned) {
+                this.agent.moveTo(action.target, dt, world, turnSpeed, 1.0, action.target);
+            }
+            return;
+        }
+
+        if (!hasClearShot) {
+            this.agent.rotateTowards(targetAngle, dt, turnSpeed, canSnap);
+            if (!this.agent.state.isPinned) {
+                const peekSide = this.agent.id % 2 === 0 ? 1 : -1;
+                const peekAngle = targetAngle + peekSide * Math.PI / 2;
+                const peek = {
+                    x: this.agent.pos.x + Math.cos(peekAngle) * 32,
+                    y: this.agent.pos.y + Math.sin(peekAngle) * 32
+                };
+                if (world.isPositionClear(peek.x, peek.y, this.agent.radius)) {
+                    this.agent.moveTo(peek, dt, world, turnSpeed, 0.8, action.target);
+                }
+            }
+            return;
+        }
+
+        this.agent.isMoving = false;
+        const maxBursts = Math.max(1, action.maxBursts || 1);
+        if (control.roundsRemaining <= 0) {
+            this.agent.rotateTowards(targetAngle, dt, turnSpeed, canSnap);
+            if (control.burstsFired >= maxBursts || now < control.nextBurstAt) return;
+            if (Math.abs(Utils.angleDiff(this.agent.angle, targetAngle)) > 0.18) return;
+
+            if (weapon.type === 'LMG') control.roundsRemaining = 5 + Math.floor(Math.random() * 4);
+            else if (weapon.type === 'Rifle') control.roundsRemaining = 2 + Math.floor(Math.random() * 3);
+            else if (weapon.type === 'Pistol') control.roundsRemaining = 2;
+            else control.roundsRemaining = 1;
+
+            const sweepRadius = Math.max(0, action.sweepRadius || 0);
+            const sweepAngle = Math.random() * Math.PI * 2;
+            const sweepDistance = Math.sqrt(Math.random()) * sweepRadius;
+            const sweptTarget = {
+                x: Utils.clamp(action.target.x + Math.cos(sweepAngle) * sweepDistance, 0, world.width),
+                y: Utils.clamp(action.target.y + Math.sin(sweepAngle) * sweepDistance, 0, world.height)
+            };
+            control.aimPoint = Utils.distance(this.agent.pos, sweptTarget) <= weapon.range
+                && world.hasClearShot(this.agent.pos, sweptTarget, weapon.range)
+                ? sweptTarget
+                : action.target;
+
+            if (!control.announced) {
+                control.announced = true;
+                if (control.lastAnnouncementKey !== key || now - control.lastAnnouncementAt > 6000) {
+                    control.lastAnnouncementKey = key;
+                    control.lastAnnouncementAt = now;
+                    this.agent.addBark(action.callout || 'SUPPRESSING!');
+                    world.events.emit('areaFire', {
+                        agent: this.agent,
+                        target: action.target,
+                        reason: action.reason,
+                        description: action.description || 'suppressing suspected sector',
+                        confidence: action.confidence || 0
+                    });
+                }
+            }
+        }
+
+        const aimPoint = control.aimPoint || action.target;
+        const aimAngle = Utils.angle(this.agent.pos, aimPoint);
+        this.agent.rotateTowards(aimAngle, dt, turnSpeed, canSnap);
+        if (Math.abs(Utils.angleDiff(this.agent.angle, aimAngle)) > 0.22) return;
+        if (!world.hasClearShot(this.agent.pos, aimPoint, weapon.range)) return;
+
+        const fired = this.agent.shootAt(aimPoint, world, action.spreadMultiplier || 2.5);
+        if (!fired) return;
+
+        control.roundsRemaining--;
+        if (control.roundsRemaining <= 0) {
+            control.burstsFired++;
+            control.nextBurstAt = now + (weapon.type === 'LMG' ? 750 : 850) + Math.random() * 450;
+            control.aimPoint = null;
         }
     }
 

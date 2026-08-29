@@ -1,5 +1,5 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
 
 export class SupportEvaluator {
     constructor(decisionModule) {
@@ -84,7 +84,7 @@ export class SupportEvaluator {
         if (!threat) isSafe = true;
         else {
              const threatPos = threat.pos || threat.lastKnownPosition;
-             if (threatPos && !world.hasLineOfSight(this.agent.pos, threatPos)) isSafe = true;
+             if (threatPos && !world.hasClearShot(this.agent.pos, threatPos)) isSafe = true;
         }
 
         if (isSafe) {
@@ -101,7 +101,7 @@ export class SupportEvaluator {
     }
 
     scoreRescue(world) {
-        // ... (existing scoreRescue logic)
+        return { score: 0 };
     }
 
     scoreProvideCover(world) {
@@ -131,7 +131,7 @@ export class SupportEvaluator {
                 type: 'MOVE', 
                 target: bestTarget, 
                 score: bestScore, 
-                description: 'Providing Cover Support',
+                description: 'covering a teammate',
                 movementMode: 'BOUNDING' 
             };
         }
@@ -153,7 +153,7 @@ export class SupportEvaluator {
                 if (dist > 300) return;
 
                 const theirWeapon = a.state.inventory.weapon;
-                if (theirWeapon.carriedAmmo > theirWeapon.maxAmmo) { // They have spare
+                if (theirWeapon.name === weapon.name && theirWeapon.carriedAmmo > theirWeapon.maxAmmo) { // They have compatible spare magazines
                      let score = (1.0 - dist / 300) * 2.0;
                      if (score > bestScore) {
                          bestScore = score;

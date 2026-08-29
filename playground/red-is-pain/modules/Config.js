@@ -15,6 +15,8 @@ export const Config = {
     // Agent Settings
     AGENT: {
         RADIUS: 6,
+        PLAYER_COLLISION_RADIUS: 4,
+        PLAYER_COVER_COLLISION_RADIUS: 2,
         VISION_RADIUS: 250,
         FOV: Math.PI * 2 / 3, // 120 degrees
         TURN_SPEED: 2.8, // Reduced for "weight" (was 3.5)

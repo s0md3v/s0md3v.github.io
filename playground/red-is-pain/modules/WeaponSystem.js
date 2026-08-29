@@ -1,14 +1,63 @@
-import { Config } from './Config.js';
-import { Utils } from './Utils.js';
-import { Projectile } from './Projectile.js';
+import { Config } from './Config.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Projectile } from './Projectile.js?v=field-console-14';
 
 export class WeaponSystem {
     constructor(agent) {
         this.agent = agent;
+        this.pendingReload = null;
+    }
+
+    update(now = Date.now()) {
+        const state = this.agent.state;
+
+        if (this.pendingReload && now >= this.pendingReload.completeAt) {
+            const { weapon, rounds } = this.pendingReload;
+            const missing = Math.max(0, weapon.capacity - weapon.ammo);
+            const loaded = Math.min(rounds, missing, weapon.carriedAmmo);
+            weapon.ammo += loaded;
+            weapon.carriedAmmo -= loaded;
+            this.pendingReload = null;
+        }
+
+        if (state.reloadingUntil > 0 && now >= state.reloadingUntil) {
+            state.reloadingUntil = 0;
+            state.busyStartedAt = 0;
+            state.busyReason = null;
+        }
+    }
+
+    cancelReload() {
+        this.pendingReload = null;
+    }
+
+    reload(now = Date.now()) {
+        this.update(now);
+
+        const state = this.agent.state;
+        const weapon = state.inventory.weapon;
+        if (state.reloadingUntil > now || this.pendingReload) return false;
+
+        const missing = Math.max(0, weapon.capacity - weapon.ammo);
+        const rounds = Math.min(missing, weapon.carriedAmmo);
+        if (rounds <= 0) return false;
+
+        const stressPenalty = 1.0 + (state.stress / 100) * (Config.AGENT.STRESS_RELOAD_MULT - 1.0);
+        const reloadTime = weapon.reloadTime * stressPenalty;
+        const completeAt = now + reloadTime;
+
+        this.pendingReload = { weapon, rounds, completeAt };
+        state.busyStartedAt = now;
+        state.busyReason = 'reload';
+        state.reloadingUntil = completeAt;
+        this.agent.addBark("RELOADING!");
+        return true;
     }
 
     switchWeapon(slot, now) {
         if (this.agent.state.inventory.currentEntry === slot) return;
+
+        this.cancelReload();
 
         // 1.5s switch time (modified by handling)
         const newWeapon = this.agent.state.inventory[slot];
@@ -16,14 +65,18 @@ export class WeaponSystem {
         const switchTime = 1500 * (1.5 - handling); 
         
         this.agent.state.inventory.currentEntry = slot;
+        this.agent.state.busyStartedAt = now;
+        this.agent.state.busyReason = 'switch';
         this.agent.state.reloadingUntil = now + switchTime;
         this.agent.addBark(slot === 'primary' ? "RIFLE UP!" : "PISTOL!");
     }
 
     shootAt(targetPos, world, inaccuracyMultiplier = 1.0) {
-        // Access via getter
-        const weapon = this.agent.state.inventory.weapon;
         const now = Date.now();
+        this.update(now);
+
+        // Access via getter after update, as a completed switch/reload may change state.
+        const weapon = this.agent.state.inventory.weapon;
 
         // 0. Auto-Switch Logic
         const distToTarget = Utils.distance(this.agent.pos, targetPos);
@@ -70,38 +123,7 @@ export class WeaponSystem {
         
         if (weapon.ammo <= 0) {
             if (weapon.carriedAmmo <= 0) return false; // Out of ammo completely
-
-            // STRESS PENALTY: Reloading is slower when panicked
-            const stressPenalty = 1.0 + (this.agent.state.stress / 100) * (Config.AGENT.STRESS_RELOAD_MULT - 1.0);
-            this.agent.state.reloadingUntil = now + (weapon.reloadTime * stressPenalty);
-            
-            const refillAmount = Math.min(weapon.capacity, weapon.carriedAmmo);
-            weapon.ammo = refillAmount;
-            
-            // Check for shared ammo (unlikely in this model but good practice)
-            // Actually config uses shared keys, but State initializes separate objects.
-            // Wait, State.js copies values. 
-            // FIXED: Config now defines shared `inventory.ammo` pool.
-            const ammoType = weapon.name;
-            const pool = this.agent.state.inventory.ammo;
-            
-            // Simple string matching or direct decrement?
-            // Let's assume the pool key matches weapon name for now (Config refactor needed?)
-            // The Config update used: ammo: { 'M4A1': 120 }
-            
-            // Fallback for legacy ID reuse
-            let available = weapon.carriedAmmo; 
-            if (pool && pool[weapon.name] !== undefined) {
-                 available = pool[weapon.name];
-                 const take = Math.min(weapon.capacity, available);
-                 pool[weapon.name] -= take;
-                 weapon.ammo = take;
-            } else {
-                // Fallback (Unlimited/Legacy)
-                 weapon.carriedAmmo -= refillAmount;
-            }
-            
-            this.agent.addBark("RELOADING!");
+            this.reload(now);
             return false;
         }
 
@@ -117,52 +139,35 @@ export class WeaponSystem {
         const negligenceChance = (1.0 - this.agent.traits.conscientiousness);
         const isNegligent = this.agent.state.stress > Config.AGENT.FRIENDLY_FIRE_NEGLIGENCE_THRESHOLD && Math.random() < negligenceChance;
         
-        // TRIGGER DISCIPLINE (Ambush Logic)
-        if (this.agent.state.inBush && !isNegligent) {
-            // Only shoot if:
-            // 1. Enemy is close (Ambush range)
-            // 2. OR We are already compromised (High stress/suppression)
-            // 3. OR We are a Gunner (No discipline)
-            const weapon = this.agent.state.inventory.weapon; // Re-fetch active
-            const ambushRange = weapon.optimalRange * 0.4; // 80m for Rifle, 20m for Shotgun
-            const compromised = this.agent.state.stress > 30 || this.agent.state.suppression > 10;
-            
-            if (distToTarget > ambushRange && !compromised && weapon.capacity < 60) {
-                return false; // Hold fire!
-            }
-        }
-
-        const checkStep = 20;
-        const steps = Math.min(10, Math.ceil(distToTarget / checkStep)); // Check first 200px or so
         const fireAngle = Utils.angle(this.agent.pos, targetPos);
 
         // Only perform safety check if NOT negligent
         if (!isNegligent) {
-            // Optimization: Spatial query once
-            const checkRadius = steps * checkStep;
-            const friends = world.spatial.query(this.agent.pos.x, this.agent.pos.y, checkRadius);
-            
-            for (let i = 1; i <= steps; i++) {
-                const checkX = this.agent.pos.x + Math.cos(fireAngle) * (i * checkStep);
-                const checkY = this.agent.pos.y + Math.sin(fireAngle) * (i * checkStep);
-                
-                const hasFriendly = friends.some(f => {
-                    if (f.team !== this.agent.team || f.id === this.agent.id || f.isCover) return false;
+            const cos = Math.cos(fireAngle);
+            const sin = Math.sin(fireAngle);
+            const clearDistance = Math.min(
+                weapon.range,
+                world.getClearShotDistance(this.agent.pos, fireAngle, weapon.range)
+            );
+            const suppressionHalfAngle = inaccuracyMultiplier > 1.5
+                ? Math.min(0.16, Math.max(0.035, (weapon.spread || 0.05) * inaccuracyMultiplier * 0.5))
+                : 0;
+            const hasFriendly = world.agents.some(friend => {
+                if (friend.team !== this.agent.team || friend.id === this.agent.id || friend.state.isDead) return false;
 
-                    // Barrel Clearance: Teammates very close to the shooter's center are ignored
-                    // This prevents "clumping paralysis" where a squad refuses to fire because they overlap
-                    const distFromMe = Utils.distance(this.agent.pos, f.pos);
-                    if (distFromMe < 18) return false; 
+                const dx = friend.pos.x - this.agent.pos.x;
+                const dy = friend.pos.y - this.agent.pos.y;
+                const along = dx * cos + dy * sin;
+                if (along < 18 || along > clearDistance) return false;
 
-                    // Precise Phase: Distance to line of fire
-                    const distToLine = Utils.distanceToSegment(f.pos, this.agent.pos, {x: checkX, y: checkY}); 
-                    return distToLine < (f.radius + 1.5); // Reduced 4px margin to 1.5px
-                });
-                
-                if (hasFriendly) {
-                   if (Math.random() < 0.1) this.agent.addBark("CHECK FIRE!");
-                   return false;
-                }
+                const lateral = Math.abs(-dx * sin + dy * cos);
+                const spreadMargin = Math.tan(suppressionHalfAngle) * along;
+                return lateral < friend.radius + 1.5 + spreadMargin;
+            });
+
+            if (hasFriendly) {
+                if (Math.random() < 0.1) this.agent.addBark("CHECK FIRE!");
+                return false;
             }
         } else if (Math.random() < 0.05) {
              this.agent.addBark("OUT OF MY WAY!");
@@ -240,6 +245,7 @@ export class WeaponSystem {
             null,
             weapon.visualType
         );
+        projectile.maxDistance = weapon.range;
         world.projectiles.push(projectile);
         
         world.addSoundEvent(startX, startY, Config.PHYSICS.SOUND_RADIUS_GUNSHOT, 'GUNSHOT', this.agent.id, this.agent.team, null, null);

@@ -43,7 +43,7 @@ export class SpatialGrid {
     // Query entities within radius of x,y
     // Returning an array for compatibility but we could optimize this further later
     query(x, y, radius) {
-        if (!isFinite(x) || !isFinite(y)) return [];
+        if (!isFinite(x) || !isFinite(y) || !isFinite(radius) || radius < 0) return [];
         const startX = Math.floor((x - radius) / this.cellSize);
         const startY = Math.floor((y - radius) / this.cellSize);
         const endX = Math.floor((x + radius) / this.cellSize);

@@ -1,12 +1,12 @@
-import { Agent } from './Agent.js';
-import { Utils } from './Utils.js';
-import { Projectile } from './Projectile.js';
-import { Config } from './Config.js';
-import { SpatialGrid } from './SpatialGrid.js';
-import { EventBus } from './EventBus.js';
-import { Pathfinder } from './Pathfinder.js';
-import { MapLoader } from './MapLoader.js';
-import { Squad } from './Squad.js';
+import { Agent } from './Agent.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Projectile } from './Projectile.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
+import { SpatialGrid } from './SpatialGrid.js?v=field-console-14';
+import { EventBus } from './EventBus.js?v=field-console-14';
+import { Pathfinder } from './Pathfinder.js?v=field-console-14';
+import { MapLoader } from './MapLoader.js?v=field-console-14';
+import { Squad } from './Squad.js?v=field-console-14';
 
 export class World {
     constructor(width, height, audioController, mapData = null, gameMode = 'AI_VS_AI') {
@@ -54,10 +54,6 @@ export class World {
              this.visualLayers = loaded.visualLayers;
 
              this.spatial = new SpatialGrid(this.width, this.height, Config.WORLD.SPATIAL_GRID_SIZE);
-
-             // --- SDF OPTIMIZATION ---
-             this.sdfCellSize = 8;
-             this.generateSDF();
 
              this.spawnAgentsFromMap();
              this.spawnLoot();
@@ -184,15 +180,15 @@ export class World {
         }
     }
 
-    markGrid(rect, val) {
+    markGrid(rect, val, grid = this.grid) {
         const startGx = Math.floor(rect.x / this.gridSize);
         const startGy = Math.floor(rect.y / this.gridSize);
         const endGx = Math.floor((rect.x + rect.w - 0.01) / this.gridSize);
         const endGy = Math.floor((rect.y + rect.h - 0.01) / this.gridSize);
         for (let y = startGy; y <= endGy; y++) {
             for (let x = startGx; x <= endGx; x++) {
-                if (y >= 0 && y < this.grid.length && x >= 0 && x < this.grid[0].length) {
-                    this.grid[y][x] = val;
+                if (y >= 0 && y < grid.length && x >= 0 && x < grid[0].length) {
+                    grid[y][x] = val;
                 }
             }
         }
@@ -395,26 +391,16 @@ export class World {
             this.spatial.add({ pos: { x: cx, y: cy }, radius: radius, isCover: true, ref: c });
         });
         
-        const deadAgents = this.agents.filter(a => a.state.isDead);
-        if (deadAgents.length > 0) {
-            this.agents = this.agents.filter(a => !a.state.isDead);
-            deadAgents.forEach(dead => {
-                dead.bloodSplatter = [];
-                for (let i = 0; i < 15; i++) {
-                    dead.bloodSplatter.push({
-                        angle: Math.random() * Math.PI * 2,
-                        dist: Math.random() * 20,
-                        radius: Math.random() * 5 + 1
-                    });
-                }
-                this.corpses.push(dead);
-                this.events.emit('death', { agent: dead });
-            });
-        }
+        this.collectDeadAgents();
 
         this.agents.forEach(agent => {
+            const gx = Math.floor(agent.pos.x / this.gridSize);
+            const gy = Math.floor(agent.pos.y / this.gridSize);
+            agent.state.inBush = this.grid[gy]?.[gx] === 2;
+            agent.state.inSmoke = this.smokes.some(smoke => Utils.distance(agent.pos, smoke) < smoke.radius);
+
             if (agent.rank === 1) {
-                const nearbyEntities = this.spatial.query(agent.pos.x, agent.pos.y, Config.WORLD.LEADERSHIP_RANGE);
+                const nearbyEntities = this.spatial.query(agent.pos.x, agent.pos.y, Config.AGENT.LEADERSHIP_RANGE);
                 nearbyEntities.forEach(entity => {
                     if (!entity.isCover && entity.team === agent.team && entity !== agent) entity.buffs.leader = true; 
                 });
@@ -445,8 +431,8 @@ export class World {
                          if (dist < Config.PHYSICS.SUPPRESSION_RADIUS) {
                              // --- LOS CHECK FOR SUPPRESSION ---
                              // Only suppress if the bullet isn't behind a wall relative to the agent
-                             if (this.hasLineOfSight(p.pos, e.pos, Config.PHYSICS.SUPPRESSION_RADIUS, true)) {
-                                 e.suppress(Config.PHYSICS.SUPPRESSION_STRESS * (dt/100), this); 
+                             if (this.hasClearShot(p.pos, e.pos, Config.PHYSICS.SUPPRESSION_RADIUS)) {
+                                 e.suppress(Config.PHYSICS.SUPPRESSION_STRESS * (dt/100), this, p.startPos);
                              }
                          }
                      }
@@ -454,6 +440,9 @@ export class World {
              }
         });
         this.projectiles = this.projectiles.filter(p => p.active);
+        // A projectile can kill the final survivor during this phase. Finalize it
+        // before the UI evaluates victory so corpses, squads, and death events agree.
+        this.collectDeadAgents();
         this.effects.forEach(e => e.life -= dt);
         this.effects = this.effects.filter(e => e.life > 0);
         this.smokes.forEach(s => s.life -= dt);
@@ -486,6 +475,15 @@ export class World {
                             if (report.type === 'HEAT') {
                                 // Add fuzzy 'suspected' intel to agent's mental map
                                 agent.memory.updateHeat(report.x, report.y, this, report.intensity, true);
+                                agent.memory.recordDangerZone({
+                                    x: report.x,
+                                    y: report.y,
+                                    intensity: report.intensity,
+                                    confidence: 0.5,
+                                    timestamp: report.timestamp,
+                                    type: 'RADIO',
+                                    reportedByTeam: team
+                                });
                             } else if (report.type === 'DISTRESS') {
                                 // Share distress signals (MEDIC/NEED_COVER) across the team
                                 agent.memory.updateDistressSignal(report.sourceId, report.distressType, {x: report.x, y: report.y}, report.timestamp);
@@ -515,6 +513,25 @@ export class World {
         }
     }
 
+    collectDeadAgents() {
+        const deadAgents = this.agents.filter(agent => agent.state.isDead);
+        if (deadAgents.length === 0) return;
+
+        this.agents = this.agents.filter(agent => !agent.state.isDead);
+        deadAgents.forEach(dead => {
+            dead.bloodSplatter = [];
+            for (let i = 0; i < 15; i++) {
+                dead.bloodSplatter.push({
+                    angle: Math.random() * Math.PI * 2,
+                    dist: Math.random() * 20,
+                    radius: Math.random() * 5 + 1
+                });
+            }
+            this.corpses.push(dead);
+            this.events.emit('death', { agent: dead });
+        });
+    }
+
     handleDeath(data) {
         const dead = data.agent;
         const range = dead.rank === 1 ? 9999 : 400; 
@@ -527,15 +544,15 @@ export class World {
             if (other.team === dead.team) {
                 const dist = Utils.distance(other.pos, dead.pos);
                 if (dist > range) return;
-                let stressImpact = dead.rank === 1 ? Config.WORLD.LEADER_DEATH_PENALTY : 25;
+                let stressImpact = dead.rank === 1 ? Config.AGENT.LEADER_DEATH_PENALTY : 25;
                 let moraleImpact = dead.rank === 1 ? 40 : 15;
                 other.state.modifyStress(stressImpact);
                 other.state.modifyMorale(-moraleImpact);
                 other.memory.traumaLevel += 10 * (1 - dist/range);
-                if (dead.rank === 0) other.memory.modifyLeaderApproval(-Config.WORLD.APPROVAL_LOSS_DEATH);
+                if (dead.rank === 0) other.memory.modifyLeaderApproval(-Config.AGENT.APPROVAL_LOSS_DEATH);
                 other.react(this);
             } else {
-                other.memory.modifyLeaderApproval(Config.WORLD.APPROVAL_GAIN_KILL);
+                other.memory.modifyLeaderApproval(Config.AGENT.APPROVAL_GAIN_KILL);
                 other.state.modifyMorale(5);
             }
         });
@@ -568,8 +585,9 @@ export class World {
         this.addSoundEvent(x, y, radius * 2, 'EXPLOSION');
         const victims = this.spatial.query(x, y, radius);
         victims.forEach(v => {
-            if (!v.isCover && Utils.distance({x, y}, v.pos) < radius) {
-                const dmg = Config.PHYSICS.FRAG_DAMAGE * (1 - Utils.distance({x, y}, v.pos) / radius);
+            const distance = !v.isCover ? Utils.distance({x, y}, v.pos) : Infinity;
+            if (!v.isCover && distance < radius && this.hasClearShot({ x, y }, v.pos, radius)) {
+                const dmg = Config.PHYSICS.FRAG_DAMAGE * (1 - distance / radius);
                 v.takeDamage(dmg, this, sourceId);
                 v.state.modifyStress(50); v.suppress(100, this);
             }
@@ -587,7 +605,6 @@ export class World {
         });
         this.effects.push({ x, y, radius, type: 'EXPLOSION', life: 600 });
         this.events.emit('explosion', { x, y, radius });
-        this.addSoundEvent(x, y, radius * 1.5, 'EXPLOSION');
     }
 
     addSmoke(x, y, radius) {
@@ -603,10 +620,46 @@ export class World {
             if (idx > -1) {
                 this.covers.splice(idx, 1);
                 this.events.emit('coverDestroyed', cover);
-                if (cover.points) Utils.rasterizePolygon(this.grid, cover.points, 0, this.gridSize);
-                else this.markGrid(cover, 0); 
+                // Re-rasterize all survivors so overlapping geometry remains solid.
+                this.rebuildCollisionGrid();
             }
         }
+    }
+
+    rebuildCollisionGrid() {
+        const rows = Math.ceil(this.height / this.gridSize);
+        const cols = Math.ceil(this.width / this.gridSize);
+        const grid = Array.from({ length: rows }, () => new Array(cols).fill(0));
+
+        const rasterize = (shape, value) => {
+            if (shape.points?.length >= 2) {
+                if (shape.closed) Utils.rasterizePolygon(grid, shape.points, value, this.gridSize);
+                else Utils.rasterizePolyline(grid, shape.points, value, this.gridSize, shape.thickness);
+                return;
+            }
+            if (Number.isFinite(shape.radius)) {
+                const minX = Math.floor((shape.x - shape.radius) / this.gridSize);
+                const maxX = Math.ceil((shape.x + shape.radius) / this.gridSize);
+                const minY = Math.floor((shape.y - shape.radius) / this.gridSize);
+                const maxY = Math.ceil((shape.y + shape.radius) / this.gridSize);
+                for (let gy = minY; gy <= maxY; gy++) {
+                    for (let gx = minX; gx <= maxX; gx++) {
+                        if (!grid[gy]?.[gx] && Utils.distance(
+                            { x: gx * this.gridSize + this.gridSize / 2, y: gy * this.gridSize + this.gridSize / 2 },
+                            shape
+                        ) <= shape.radius + this.gridSize / 2) grid[gy][gx] = value;
+                    }
+                }
+                return;
+            }
+            this.markGrid(shape, value, grid);
+        };
+
+        // Higher-priority physical blockers are applied last.
+        this.bushes.forEach(shape => rasterize(shape, 2));
+        this.covers.forEach(shape => rasterize(shape, 3));
+        this.walls.forEach(shape => rasterize(shape, 1));
+        this.grid = grid;
     }
 
     isWallAt(x, y) {
@@ -649,10 +702,13 @@ export class World {
         return true;
     }
 
-    resolveCollision(x, y, radius) {
+    resolveCollision(x, y, radius, options = {}) {
         if (!isFinite(x) || !isFinite(y)) return { x: 0, y: 0 }; 
         let px = Utils.clamp(x, radius, this.width - radius); 
         let py = Utils.clamp(y, radius, this.height - radius); 
+        const coverRadius = Number.isFinite(options.coverRadius)
+            ? Math.max(0.5, Math.min(radius, options.coverRadius))
+            : radius;
         const step = this.gridSize;
         for(let iter = 0; iter < 8; iter++) {
              const startGx = Math.max(0, Math.floor((px - radius) / step));
@@ -664,20 +720,21 @@ export class World {
                 for (let gx = startGx; gx <= endGx; gx++) {
                     const cell = this.grid[gy][gx];
                     if (cell === 1 || cell === 3 || cell === 4) {
+                        const effectiveRadius = cell === 3 ? coverRadius : radius;
                         const rectX = gx * step; const rectY = gy * step;
                         const closestX = Math.max(rectX, Math.min(px, rectX + step));
                         const closestY = Math.max(rectY, Math.min(py, rectY + step));
                         const dx = px - closestX; const dy = py - closestY;
                         const dist = Math.sqrt(dx*dx + dy*dy);
                         if (dist > 0.001) {
-                            if (dist < radius) {
-                                const pen = radius - dist;
+                            if (dist < effectiveRadius) {
+                                const pen = effectiveRadius - dist;
                                 if (pen > maxPen) { maxPen = pen; pushX = (dx / dist) * pen; pushY = (dy / dist) * pen; hit = true; }
                             }
                         } else {
                             const dl = px - rectX; const dr = (rectX + step) - px; const dt = py - rectY; const db = (rectY + step) - py;
                             const min = Math.min(dl, dr, dt, db);
-                            let nx = 0, ny = 0, pen = radius;
+                            let nx = 0, ny = 0, pen = effectiveRadius;
                             if (min === dl) { nx = -1; pen += dl; } else if (min === dr) { nx = 1; pen += dr; } else if (min === dt) { ny = -1; pen += dt; } else { ny = 1; pen += db; }
                             if (pen > maxPen) { maxPen = pen; pushX = nx * pen; pushY = ny * pen; hit = true; }
                         }
@@ -714,129 +771,133 @@ export class World {
         return this.pathfinder.findPath(startPos, endPos, heatmap, preferStealth, hazardMap);
     }
     
-    hasLineOfSight(p1, p2, maxDist = Infinity, checkCovers = true, ignoreTargetBush = true) {
-        if (!p1 || !p2) return false;
-        const totalDist = Utils.distance(p1, p2);
-        if (totalDist > maxDist) return false;
+    _gridRayDistance(startPos, angle, maxDist, blocksCell, targetPos = null) {
+        if (!startPos || !Number.isFinite(startPos.x) || !Number.isFinite(startPos.y)
+            || !Number.isFinite(angle) || !(maxDist >= 0)) return 0;
 
-        const dirX = (p2.x - p1.x) / totalDist;
-        const dirY = (p2.y - p1.y) / totalDist;
-        
-        let traveled = 0;
-        const startGx = Math.floor(p1.x / this.gridSize);
-        const startGy = Math.floor(p1.y / this.gridSize);
-        const targetGx = Math.floor(p2.x / this.gridSize);
-        const targetGy = Math.floor(p2.y / this.gridSize);
-
-        // --- RAY MARCHING (Walls/Obstacles) ---
-        while (traveled < totalDist - 2) {
-            const curX = p1.x + dirX * traveled;
-            const curY = p1.y + dirY * traveled;
-            
-            // SDF lookup
-            const sx = Math.floor(curX / this.sdfCellSize);
-            const sy = Math.floor(curY / this.sdfCellSize);
-            
-            if (sy < 0 || sx < 0 || sy >= this.sdfGrid.length || sx >= this.sdfGrid[0].length) break;
-            
-            const distToNearest = this.sdfGrid[sy][sx];
-            
-            if (distToNearest < 4) { 
-                // Close to a wall, do a fine-grained grid check
-                const gx = Math.floor(curX / this.gridSize);
-                const gy = Math.floor(curY / this.gridSize);
-                
-                if (gx >= 0 && gy >= 0 && gy < this.grid.length && gx < this.grid[0].length) {
-                    if (gx === startGx && gy === startGy) { traveled += 2; continue; }
-                    const cell = this.grid[gy][gx];
-                    
-                    // Ignore target cell for ALL vision blockers (Player might overlap cover/wall slightly)
-                    if (gx === targetGx && gy === targetGy) { traveled += 2; continue; }
-
-                    if (cell === 1 || cell === 3 || cell === 4) return false;
-                    
-                    if (checkCovers && cell === 2) {
-                        if (traveled < 25) { traveled += 2; continue; } // Near-field transparency
-                        return false;
-                    }
-                }
-                traveled += 2; // Fine step
-            } else {
-                // Safe to jump!
-                traveled += Math.max(2, distToNearest * 0.8);
-            }
-
-            // DYNAMIC: Smoke Check (Every step)
-            if (this.smokes.length > 0) {
-                for (const s of this.smokes) {
-                    const dx = curX - s.x;
-                    const dy = curY - s.y;
-                    if (dx*dx + dy*dy < s.radius*s.radius) return false;
-                }
-            }
-        }
-        return true;
-    }
-    
-    getRayDistance(startPos, angle, maxDist, ignoreCovers = false) {
         const dirX = Math.cos(angle);
         const dirY = Math.sin(angle);
-
-        // --- DYNAMIC SMOKE CHECK (Ray-Circle Intersection) ---
-        for (const s of this.smokes) {
-            const vx = startPos.x - s.x;
-            const vy = startPos.y - s.y;
-            const b = 2 * (vx * dirX + vy * dirY);
-            const c = (vx * vx + vy * vy) - s.radius * s.radius;
-            const disc = b * b - 4 * c;
-            
-            if (disc > 0) {
-                const t1 = (-b - Math.sqrt(disc)) / 2;
-                const t2 = (-b + Math.sqrt(disc)) / 2;
-                if (t1 > 0 && t1 < maxDist) {
-                    // Ray hits smoke from outside - can only see 10px into it
-                    maxDist = t1 + 10;
-                } else if (t1 <= 0 && t2 > 0) {
-                    // Ray starts inside smoke - vision severely limited
-                    maxDist = Math.min(maxDist, 40);
-                }
-            }
-        }
-        
+        let gx = Math.floor(startPos.x / this.gridSize);
+        let gy = Math.floor(startPos.y / this.gridSize);
+        const startGx = gx;
+        const startGy = gy;
+        const targetGx = targetPos ? Math.floor(targetPos.x / this.gridSize) : null;
+        const targetGy = targetPos ? Math.floor(targetPos.y / this.gridSize) : null;
+        const stepX = dirX > 0 ? 1 : -1;
+        const stepY = dirY > 0 ? 1 : -1;
+        const nextBoundaryX = (gx + (dirX > 0 ? 1 : 0)) * this.gridSize;
+        const nextBoundaryY = (gy + (dirY > 0 ? 1 : 0)) * this.gridSize;
+        let tMaxX = Math.abs(dirX) < 1e-10 ? Infinity : (nextBoundaryX - startPos.x) / dirX;
+        let tMaxY = Math.abs(dirY) < 1e-10 ? Infinity : (nextBoundaryY - startPos.y) / dirY;
+        const tDeltaX = Math.abs(dirX) < 1e-10 ? Infinity : this.gridSize / Math.abs(dirX);
+        const tDeltaY = Math.abs(dirY) < 1e-10 ? Infinity : this.gridSize / Math.abs(dirY);
         let traveled = 0;
-        const startGx = Math.floor(startPos.x / this.gridSize);
-        const startGy = Math.floor(startPos.y / this.gridSize);
 
-        while (traveled < maxDist) {
-            const curX = startPos.x + dirX * traveled;
-            const curY = startPos.y + dirY * traveled;
-            
-            const sx = Math.floor(curX / this.sdfCellSize);
-            const sy = Math.floor(curY / this.sdfCellSize);
-            
-            if (sy < 0 || sx < 0 || sy >= this.sdfGrid.length || sx >= this.sdfGrid[0].length) return traveled;
-            
-            const distToNearest = this.sdfGrid[sy][sx];
-            
-            if (distToNearest < 4) {
-                const gx = Math.floor(curX / this.gridSize);
-                const gy = Math.floor(curY / this.gridSize);
-                
-                if (gx >= 0 && gy >= 0 && gy < this.grid.length && gx < this.grid[0].length) {
-                    if (gx === startGx && gy === startGy) { traveled += 2; continue; }
-                    const cell = this.grid[gy][gx];
-                    // 1 = Wall, 4 = Crates
-                    if (cell === 1 || cell === 4) return Math.min(maxDist, traveled + 15);
-                    // 3 = Cover. Should block AI vision, but players can see over it (ignoreCovers = true)
-                    if (!ignoreCovers && cell === 3) return Math.min(maxDist, traveled + 15);
-                    // 2 = Bush. Blocks vision after near-field transparency
-                    if (cell === 2 && traveled >= 25) return Math.min(maxDist, traveled + 15);
-                }
-                traveled += 2;
+        while (traveled <= maxDist) {
+            if (gx < 0 || gy < 0 || gy >= this.grid.length || gx >= this.grid[0].length) return traveled;
+            const isStart = gx === startGx && gy === startGy;
+            const isTarget = gx === targetGx && gy === targetGy;
+            if (!isStart && !isTarget && blocksCell(this.grid[gy][gx], traveled)) return traveled;
+
+            if (tMaxX < tMaxY) {
+                traveled = tMaxX;
+                tMaxX += tDeltaX;
+                gx += stepX;
+            } else if (tMaxY < tMaxX) {
+                traveled = tMaxY;
+                tMaxY += tDeltaY;
+                gy += stepY;
             } else {
-                traveled += Math.max(2, distToNearest * 0.8);
+                traveled = tMaxX;
+                tMaxX += tDeltaX;
+                tMaxY += tDeltaY;
+                gx += stepX;
+                gy += stepY;
             }
         }
         return maxDist;
+    }
+
+    _smokeVisionLimit(startPos, angle, maxDist) {
+        const dirX = Math.cos(angle);
+        const dirY = Math.sin(angle);
+        let limit = maxDist;
+        for (const smoke of this.smokes) {
+            const vx = startPos.x - smoke.x;
+            const vy = startPos.y - smoke.y;
+            const b = 2 * (vx * dirX + vy * dirY);
+            const c = vx * vx + vy * vy - smoke.radius * smoke.radius;
+            const discriminant = b * b - 4 * c;
+            if (discriminant < 0) continue;
+            const root = Math.sqrt(discriminant);
+            const entry = (-b - root) / 2;
+            const exit = (-b + root) / 2;
+            if (entry > 0 && entry < limit) limit = Math.min(limit, entry + 10);
+            else if (entry <= 0 && exit > 0) limit = Math.min(limit, 40);
+        }
+        return limit;
+    }
+
+    hasVisualLine(p1, p2, maxDist = Infinity) {
+        if (!p1 || !p2 || ![p1.x, p1.y, p2.x, p2.y].every(Number.isFinite)) return false;
+        const totalDist = Utils.distance(p1, p2);
+        if (totalDist > maxDist) return false;
+        if (totalDist < 1e-6) return true;
+        const angle = Utils.angle(p1, p2);
+        const smokeLimit = this._smokeVisionLimit(p1, angle, totalDist);
+        if (smokeLimit < totalDist - 1e-6) return false;
+        const hitDistance = this._gridRayDistance(
+            p1,
+            angle,
+            totalDist,
+            (cell, traveled) => cell === 1 || cell === 4 || (cell === 2 && traveled >= 25),
+            p2
+        );
+        return hitDistance >= totalDist - 1e-6;
+    }
+
+    hasClearShot(p1, p2, maxDist = Infinity) {
+        if (!p1 || !p2 || ![p1.x, p1.y, p2.x, p2.y].every(Number.isFinite)) return false;
+        const totalDist = Utils.distance(p1, p2);
+        if (totalDist > maxDist) return false;
+        if (totalDist < 1e-6) return true;
+        const hitDistance = this._gridRayDistance(
+            p1,
+            Utils.angle(p1, p2),
+            totalDist,
+            cell => cell === 1 || cell === 3 || cell === 4,
+            p2
+        );
+        return hitDistance >= totalDist - 1e-6;
+    }
+
+    hasMovementLine(p1, p2, maxDist = Infinity) {
+        return this.hasClearShot(p1, p2, maxDist);
+    }
+
+    // Compatibility for extensions: line-of-sight always means visual perception.
+    hasLineOfSight(p1, p2, maxDist = Infinity) {
+        return this.hasVisualLine(p1, p2, maxDist);
+    }
+
+    getRayDistance(startPos, angle, maxDist, ignoreCovers = true) {
+        const smokeLimit = this._smokeVisionLimit(startPos, angle, maxDist);
+        return this._gridRayDistance(
+            startPos,
+            angle,
+            smokeLimit,
+            (cell, traveled) => cell === 1 || cell === 4
+                || (!ignoreCovers && cell === 3)
+                || (cell === 2 && traveled >= 25)
+        );
+    }
+
+    getClearShotDistance(startPos, angle, maxDist) {
+        return this._gridRayDistance(
+            startPos,
+            angle,
+            maxDist,
+            cell => cell === 1 || cell === 3 || cell === 4
+        );
     }
 }

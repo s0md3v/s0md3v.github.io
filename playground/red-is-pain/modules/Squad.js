@@ -1,5 +1,5 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
 
 export class Squad {
     constructor(id, team) {
@@ -58,7 +58,7 @@ export class Squad {
 
         // Manage Bounding Overwatch
         if (this.status === 'ATTACK' || this.status === 'ENGAGE') {
-             if (!this.activeBounderId || Date.now() - this.lastBoundSwitchTime > 4000) {
+             if (this.activeBounderId === null || Date.now() - this.lastBoundSwitchTime > 4000) {
                  this.rotateBounder();
              }
         } else {
@@ -234,6 +234,7 @@ export class Squad {
         const now = Date.now();
         let bestTarget = null;
         let lowestUtility = Infinity; // Using amnesia as utility: lower timestamp = higher priority
+        const candidates = [];
         
         // 1. Calculate Current Objective Utility (if it exists)
         let currentUtility = now;
@@ -250,11 +251,11 @@ export class Squad {
         }
 
         // 2. Sample candidate points
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 20; i++) {
             const tx = 150 + Math.random() * (world.width - 300);
             const ty = 150 + Math.random() * (world.height - 300);
             
-            if (world.isWallAt(tx, ty)) continue;
+            if (!world.isPositionClear(tx, ty, Config.AGENT.RADIUS + 2)) continue;
 
             let sumObs = 0;
             this.members.forEach(m => {
@@ -265,11 +266,18 @@ export class Squad {
                 }
             });
             const avgObs = sumObs / this.members.length;
+            candidates.push({ target: { x: tx, y: ty }, utility: avgObs });
+        }
 
-            if (avgObs < lowestUtility) {
-                lowestUtility = avgObs;
-                bestTarget = { x: tx, y: ty };
-            }
+        // Check the darkest candidates in order and choose the first one the
+        // squad can actually reach. This avoids repeated expensive path searches.
+        candidates.sort((a, b) => a.utility - b.utility);
+        for (const candidate of candidates.slice(0, 4)) {
+            const path = world.findPath(this.centroid, candidate.target);
+            if (!path || path.length === 0) continue;
+            bestTarget = candidate.target;
+            lowestUtility = candidate.utility;
+            break;
         }
 
         // 3. HYSTERESIS: Only switch if the new target is SIGNIFICANTLY 'darker'

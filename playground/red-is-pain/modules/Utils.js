@@ -99,6 +99,36 @@ export class Utils {
             }
         }
     }
+
+    static rasterizePolyline(grid, points, value, gridSize, thickness = gridSize * 2) {
+        if (!Array.isArray(points) || points.length < 2 || !grid.length || !grid[0]?.length) return;
+
+        const radius = Math.max(gridSize / 2, thickness / 2);
+        for (let i = 1; i < points.length; i++) {
+            const start = points[i - 1];
+            const end = points[i];
+            if (![start.x, start.y, end.x, end.y].every(Number.isFinite)) continue;
+
+            const minX = Math.floor((Math.min(start.x, end.x) - radius) / gridSize);
+            const maxX = Math.ceil((Math.max(start.x, end.x) + radius) / gridSize);
+            const minY = Math.floor((Math.min(start.y, end.y) - radius) / gridSize);
+            const maxY = Math.ceil((Math.max(start.y, end.y) + radius) / gridSize);
+
+            for (let gy = minY; gy <= maxY; gy++) {
+                if (gy < 0 || gy >= grid.length) continue;
+                for (let gx = minX; gx <= maxX; gx++) {
+                    if (gx < 0 || gx >= grid[0].length) continue;
+                    const center = {
+                        x: gx * gridSize + gridSize / 2,
+                        y: gy * gridSize + gridSize / 2
+                    };
+                    if (Utils.distanceToSegment(center, start, end) <= radius) {
+                        grid[gy][gx] = value;
+                    }
+                }
+            }
+        }
+    }
 }
 
 export class PriorityQueue {

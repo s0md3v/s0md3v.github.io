@@ -1,7 +1,7 @@
-import { Cortex } from './Cortex.js';
-import { Amygdala } from './Amygdala.js';
-import { LimbicSystem } from './LimbicSystem.js';
-import { ActionExecutor } from '../ActionExecutor.js';
+import { Cortex } from './Cortex.js?v=field-console-14';
+import { Amygdala } from './Amygdala.js?v=field-console-14';
+import { LimbicSystem } from './LimbicSystem.js?v=field-console-14';
+import { ActionExecutor } from '../ActionExecutor.js?v=field-console-14';
 
 export class Brain {
     constructor(agent) {

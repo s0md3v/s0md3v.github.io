@@ -1,10 +1,13 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
 
 export class Sensory {
     constructor(agent) {
         this.agent = agent;
         this.assignedSector = null; // { start, end }
+        this.lastScanAt = 0;
+        this.lastScanResult = [];
+        this.scanInterval = 200;
     }
 
     calculateTacticalGaze(world) {
@@ -20,6 +23,9 @@ export class Sensory {
             .filter(a => a.team === this.agent.team && a.id !== this.agent.id);
 
         const mem = this.agent.memory;
+        const threat = this.getAverageEnemyPos(world);
+        const nearbyTeammates = world.spatial.query(this.agent.pos.x, this.agent.pos.y, 400)
+            .filter(a => a.team === this.agent.team && a !== this.agent && !a.state.isDead);
         
         // --- SQUAD SECTOR ASSIGNMENT ---
         if (this.agent.squad && !this.assignedSector) {
@@ -74,7 +80,6 @@ export class Sensory {
             }
 
             // 4. Bias: Look towards enemy center if known
-            const threat = this.getAverageEnemyPos(world);
             if (threat) {
                 const angleToThreat = Utils.angle(this.agent.pos, threat);
                 const diff = Math.abs(Utils.angleDiff(angleToThreat, theta));
@@ -95,14 +100,11 @@ export class Sensory {
 
             // 6. Combat Support Bias (NEW)
             // If a teammate is shooting nearby, bias gaze towards their target or them
-            const nearbyTeammates = world.spatial.query(this.agent.pos.x, this.agent.pos.y, 400);
             nearbyTeammates.forEach(a => {
-                if (a.team === this.agent.team && a !== this.agent && !a.state.isDead) {
-                    if (Date.now() - a.state.lastFireTime < 1000) {
-                         const angleToAlly = Utils.angle(this.agent.pos, a.pos);
-                         const diff = Math.abs(Utils.angleDiff(angleToAlly, theta));
-                         if (diff < Math.PI / 3) score += 50; // Look towards the action
-                    }
+                if (Date.now() - a.state.lastFireTime < 1000) {
+                     const angleToAlly = Utils.angle(this.agent.pos, a.pos);
+                     const diff = Math.abs(Utils.angleDiff(angleToAlly, theta));
+                     if (diff < Math.PI / 3) score += 50; // Look towards the action
                 }
             });
 
@@ -126,7 +128,16 @@ export class Sensory {
         return { x: x/enemies.length, y: y/enemies.length };
     }
 
-    scan(world, dt = 16.6) {
+    scan(world, dt = null) {
+        const now = Date.now();
+        if (this.lastScanAt > 0 && now - this.lastScanAt < this.scanInterval) {
+            this.lastScanResult = this.lastScanResult.filter(agent => !agent.state?.isDead && world.agents.includes(agent));
+            return this.lastScanResult;
+        }
+
+        const elapsed = this.lastScanAt > 0 ? now - this.lastScanAt : 16.6;
+        dt = Number.isFinite(dt) ? Math.max(0, Math.min(250, dt)) : Math.max(0, Math.min(250, elapsed));
+        this.lastScanAt = now;
         const seen = [];
         const fov = Config.AGENT.FOV;
         const range = Config.AGENT.VISION_RADIUS;
@@ -143,7 +154,7 @@ export class Sensory {
             const angleTo = Utils.angle(this.agent.pos, other.pos);
             let angleDiff = Math.abs(Utils.angleDiff(this.agent.angle, angleTo));
             
-            // --- NEW REALISTIC DETECTION LOGIC ---
+            // Detection depends on field of view, distance, movement, and concealment.
             // 1. Check if in FOV OR in "Close-Range Awareness" (Peripheral Zone)
             
             // BUSH VISION: If inside a bush, FOV is 30% smaller due to foliage interference
@@ -151,7 +162,7 @@ export class Sensory {
             const inFOV = angleDiff <= effectiveFOV / 2;
             const inPeripheral = dist < Config.SENSORY.PERIPHERAL_DIST;
 
-            if ((inFOV || inPeripheral) && world.hasLineOfSight(this.agent.pos, other.pos)) {
+            if ((inFOV || inPeripheral) && world.hasVisualLine(this.agent.pos, other.pos)) {
                 // Determine Detection Rate based on Fall-offs
                 let detectionRate = Config.SENSORY.DETECTION_RATE_BASE;
 
@@ -225,7 +236,7 @@ export class Sensory {
             while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
 
             if (Math.abs(angleDiff) <= fov / 2 || dist < 60) {
-                if (world.hasLineOfSight(this.agent.pos, coverPos)) {
+                if (world.hasVisualLine(this.agent.pos, coverPos)) {
                     this.agent.memory.discoveredCovers.add(cover);
                 }
             }
@@ -234,7 +245,7 @@ export class Sensory {
         // 3. Update Memory
         seen.forEach(target => {
             if (target.team !== this.agent.team) {
-                this.agent.memory.updateHostile(target.id, target.pos, Date.now());
+                this.agent.memory.updateHostile(target.id, target.pos, now);
                 this.agent.memory.updateHeat(target.pos.x, target.pos.y, world, 3, false); 
                 this.agent.react(world);
             } else {
@@ -247,11 +258,11 @@ export class Sensory {
                 const allyAction = target.currentAction ? target.currentAction.type : 'IDLE';
                 const distToAlly = Utils.distance(this.agent.pos, target.pos);
 
-                if (allyAction === 'SHOOT' || allyAction === 'AIM') {
+                if (allyAction === 'ATTACK' || allyAction === 'SUPPRESS') {
                     // "Look Where I Shoot"
                     // If ally is shooting, there is likely an enemy in that direction.
                     // Project a ray from ally and add heat.
-                    const range = target.state.inventory.weapon.maxRange || 600;
+                    const range = target.state.inventory.weapon.range || 600;
                     const rayEnd = {
                         x: target.pos.x + Math.cos(target.angle) * range,
                         y: target.pos.y + Math.sin(target.angle) * range
@@ -259,7 +270,7 @@ export class Sensory {
                     
                     // Add a "Cone" of suspicion along their line of fire
                     // We step along the ray and add heat (simulating suppression awareness)
-                    const intensity = allyAction === 'SHOOT' ? 2.0 : 0.5; // Shooting is much stronger signal
+                    const intensity = allyAction === 'ATTACK' ? 2.0 : 0.5; // Shooting is much stronger signal
                     this.agent.memory.updateHeat(rayEnd.x, rayEnd.y, world, intensity); 
                     
                     // Also check a point midway
@@ -289,7 +300,7 @@ export class Sensory {
             const inFOV = Math.abs(Utils.angleDiff(this.agent.angle, angleTo)) <= fov / 2;
             const inPeripheral = dist < 60;
 
-            if ((inFOV || inPeripheral) && world.hasLineOfSight(this.agent.pos, item)) {
+            if ((inFOV || inPeripheral) && world.hasVisualLine(this.agent.pos, item)) {
                  const mem = this.agent.memory.knownLoot;
                  const existing = mem.find(l => l.x === item.x && l.y === item.y);
                  if (!existing) {
@@ -310,7 +321,7 @@ export class Sensory {
             const angleTo = Utils.angle(this.agent.pos, known);
             const inFOV = Math.abs(Utils.angleDiff(this.agent.angle, angleTo)) <= fov / 2;
             
-            if (inFOV && world.hasLineOfSight(this.agent.pos, known)) {
+            if (inFOV && world.hasVisualLine(this.agent.pos, known)) {
                 // We are looking right at where it should be. Is it actually there?
                 const stillThere = world.loot.some(l => l.x === known.x && l.y === known.y);
                 if (!stillThere) {
@@ -329,7 +340,7 @@ export class Sensory {
             const angleTo = Utils.angle(this.agent.pos, ghost.lastKnownPosition);
             const inFOV = Math.abs(Utils.angleDiff(this.agent.angle, angleTo)) <= fov / 2;
 
-            if (inFOV && world.hasLineOfSight(this.agent.pos, ghost.lastKnownPosition)) {
+            if (inFOV && world.hasVisualLine(this.agent.pos, ghost.lastKnownPosition)) {
                  // Check if there is ANY enemy near that spot that we successfully spotted
                  // If we spotted someone there, `isGhost` would be false (updated in step 3).
                  // Since `ghost` object is a snapshot, we check the live memory.
@@ -396,7 +407,7 @@ export class Sensory {
                 const aDiff = Math.abs(Utils.angleDiff(this.agent.angle, angleTo));
 
                 if (aDiff <= fov / 2) {
-                    if (world.hasLineOfSight(this.agent.pos, cellPos, range, true)) {
+                    if (world.hasVisualLine(this.agent.pos, cellPos, range)) {
                         // VISION LOCK: Mark this cell as currently being verified
                         memObj.markObserved(gx, gy);
 
@@ -418,7 +429,8 @@ export class Sensory {
             }
         }
 
-        return seen;
+        this.lastScanResult = seen;
+        return this.lastScanResult;
     }
 
     updateObstacleMap(x, y, world, val) {
@@ -432,6 +444,7 @@ export class Sensory {
     }
 
     processSound(soundEvent, world) {
+        const now = Date.now();
         // 1. Calculate Distance Falloff
         const dist = Utils.distance(this.agent.pos, {x: soundEvent.x, y: soundEvent.y});
         if (dist > soundEvent.radius) return; // Too far
@@ -452,6 +465,7 @@ export class Sensory {
         let stressImpact = 0;
         let addHeat = false;
         let isConfirmedAlly = false;
+        const isFriendlySource = soundEvent.sourceTeam === this.agent.team;
 
         if (soundEvent.type === 'GUNSHOT') {
             baseIntensity = 25; // Increased to ensure long-range reactions (was 10)
@@ -479,8 +493,8 @@ export class Sensory {
         // --- AUDITORY SIGHTING (Footsteps) ---
         if (soundEvent.type === 'RUSTLE' || soundEvent.type === 'STEP') {
             // If we hear a footstep from a non-ally, create a Ghost contact in memory
-            if (!isConfirmedAlly && perceivedIntensity > 4) {
-                 this.agent.memory.updateHostile(soundEvent.sourceId, {x: soundEvent.x, y: soundEvent.y}, Date.now(), 0.5); // 0.5 confidence
+            if (!isFriendlySource && perceivedIntensity > 4) {
+                 this.agent.memory.updateHostile(soundEvent.sourceId, {x: soundEvent.x, y: soundEvent.y}, now, 0.5); // 0.5 confidence
             }
         }
 
@@ -490,43 +504,50 @@ export class Sensory {
             this.agent.suppress(Config.SENSORY.HEARING_STARTLE_SUPPRESSION * intensity, world);
         }
 
-        // Filter out obvious allies
-        if (soundEvent.sourceTeam === this.agent.team) {
-             const hasLOS = world.hasLineOfSight(this.agent.pos, { x: soundEvent.x, y: soundEvent.y });
-             
-             // If we see them or are very close/unobstructed, ignore heat
-             if (hasLOS || (dist < 300 && wallCount === 0)) {
-                 addHeat = false;
-                 isConfirmedAlly = true;
-                 
-                 // RECORD DISTRESS SIGNAL
-                 if (soundEvent.distressType) {
-                    this.agent.memory.updateDistressSignal(soundEvent.sourceId, soundEvent.distressType, {x: soundEvent.x, y: soundEvent.y}, Date.now());
-                    
-                    if (soundEvent.distressType === 'MAN_DOWN') {
-                        this.agent.state.modifyStress(Config.AGENT.STRESS_SPIKE_ALLY_DEATH);
-                        this.agent.react(world, true);
-                    }
-                 }
+        // Team metadata is authoritative even when the source is distant or occluded.
+        // Friendly reports can contain enemy coordinates, but the friendly's own
+        // position must never contaminate hostile heat or area-fire evidence.
+        if (isFriendlySource) {
+            addHeat = false;
+            isConfirmedAlly = true;
 
-                 // Stress still applies for loud noises near us (Startle)
-                 if (perceivedStress < 2) stressImpact = 0;
-             }
+            if (soundEvent.distressType) {
+                this.agent.memory.updateDistressSignal(
+                    soundEvent.sourceId,
+                    soundEvent.distressType,
+                    {x: soundEvent.x, y: soundEvent.y},
+                    now
+                );
+
+                if (soundEvent.distressType === 'MAN_DOWN') {
+                    this.agent.state.modifyStress(Config.AGENT.STRESS_SPIKE_ALLY_DEATH);
+                    this.agent.react(world, true);
+                }
+            }
         }
 
-        if (addHeat) {
+        if (isConfirmedAlly && soundEvent.type === 'SHOUT' && soundEvent.targetPos) {
+            this.agent.memory.updateHeat(
+                soundEvent.targetPos.x,
+                soundEvent.targetPos.y,
+                world,
+                perceivedIntensity / 2
+            );
+            this.agent.memory.recordDangerZone({
+                x: soundEvent.targetPos.x,
+                y: soundEvent.targetPos.y,
+                intensity: perceivedIntensity,
+                confidence: 0.7,
+                timestamp: now,
+                type: 'CALLOUT',
+                sourceId: soundEvent.sourceId,
+                reportedByTeam: soundEvent.sourceTeam
+            });
+        } else if (addHeat) {
             this.agent.state.modifyStress(perceivedStress * this.agent.traits.neuroticism);
 
             // AUDITORY INFERENCE (The "Callout")
-            // If this is a friendly SHOUT with a target position, use that pos.
-            // Otherwise use sound source.
-            if (soundEvent.type === 'SHOUT' && soundEvent.targetPos && isConfirmedAlly) {
-                 // "Enemy over there!"
-                 this.agent.memory.updateHeat(soundEvent.targetPos.x, soundEvent.targetPos.y, world, perceivedIntensity / 2);
-            } else {
-                 // Increased from perceivedIntensity / 5 to / 3 for more responsive hearing-based heat
-                 this.agent.memory.updateHeat(soundEvent.x, soundEvent.y, world, perceivedIntensity / 3);
-            }
+            this.agent.memory.updateHeat(soundEvent.x, soundEvent.y, world, perceivedIntensity / 3);
         } else if (isConfirmedAlly && soundEvent.type === 'GUNSHOT') {
             // FRIENDLY FIRE CUE
             // We hear a friend shooting but don't see them or the target.
@@ -543,11 +564,14 @@ export class Sensory {
         }
 
         if (!isConfirmedAlly) {
-            this.agent.memory.dangerZones.push({
+            this.agent.memory.recordDangerZone({
                 x: soundEvent.x,
                 y: soundEvent.y,
                 intensity: perceivedIntensity,
-                timestamp: Date.now()
+                timestamp: now,
+                type: soundEvent.type,
+                sourceId: soundEvent.sourceId,
+                sourceTeam: soundEvent.sourceTeam
             });
         }
 
@@ -579,7 +603,8 @@ export class Sensory {
             lastGy = gy;
 
             if (gx >= 0 && gy >= 0 && gy < world.grid.length && gx < world.grid[0].length) {
-                const isWall = world.grid[gy][gx] === 1; // 1 = Hard Wall
+                const cell = world.grid[gy][gx];
+                const isWall = cell === 1 || cell === 3 || cell === 4;
                 if (isWall && !wasInWall) {
                     walls++; // Just entered a wall
                     wasInWall = true;

@@ -1,14 +1,14 @@
-import { Traits } from './Traits.js';
-import { State } from './State.js';
-import { Memory } from './Memory.js';
-import { Sensory } from './Sensory.js';
-import { Brain } from './brain/Brain.js';
-import { Utils } from './Utils.js';
-import { Projectile } from './Projectile.js';
-import { Config } from './Config.js';
-import { Motor } from './Motor.js';
-import { ActionExecutor } from './ActionExecutor.js';
-import { WeaponSystem } from './WeaponSystem.js';
+import { Traits } from './Traits.js?v=field-console-14';
+import { State } from './State.js?v=field-console-14';
+import { Memory } from './Memory.js?v=field-console-14';
+import { Sensory } from './Sensory.js?v=field-console-14';
+import { Brain } from './brain/Brain.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Projectile } from './Projectile.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
+import { Motor } from './Motor.js?v=field-console-14';
+import { ActionExecutor } from './ActionExecutor.js?v=field-console-14';
+import { WeaponSystem } from './WeaponSystem.js?v=field-console-14';
 
 export class Agent {
     constructor(id, team, x, y, role = 'RIFLEMAN', world) {
@@ -107,37 +107,27 @@ export class Agent {
         return this.sensory.getAverageEnemyPos(world);
     }
 
-    rotateTowards(angle, dt, speedMult = 1.0, snap = false) {
-        this.motor.rotateTowards(angle, dt, speedMult, snap);
-    }
-
-
-
-
-
     update(dt, world) {
         const now = Date.now();
+        this.weaponSystem.update(now);
 
         // --- PLAYER AGENT: Skip AI brain entirely ---
         if (this.isPlayer) {
-            // State update (HP regen and stamina recovery only — no psychology)
+            // The player keeps the same body and stress model as every simulated
+            // unit; only strategic decision-making is replaced by direct input.
             if (now >= this.nextStateUpdateTime) {
                 const stateDt = now - (this.lastStateUpdateTime || (now - 100));
                 this.lastStateUpdateTime = now;
                 this.state.update(stateDt, 0, this._isMovingLastCycle);
-                // Force-neutralize all psychology debuffs
-                this.state.stress = 0;
-                this.state.morale = 100;
-                this.state.suppression = 0;
-                this.state.isPinned = false;
-                this.state.isFrozenUntil = 0;
                 this.nextStateUpdateTime = now + 100;
                 this._isMovingLastCycle = false;
             }
             if (this.isMoving) this._isMovingLastCycle = true;
 
             if (this.state.isDead) return;
-            this.memory.traumaLevel = 0;
+
+            this.barks.forEach(bark => bark.life -= dt);
+            this.barks = this.barks.filter(bark => bark.life > 0);
 
             // Sensory scan (so FOW knows what player sees)
             if (now >= this.nextScanTime) {
@@ -271,7 +261,7 @@ export class Agent {
                  });
 
                  // 1. Reward Killer
-                 if (sourceId) {
+                 if (sourceId !== null && sourceId !== undefined) {
                      const killer = world.agents.find(a => a.id === sourceId);
                      if (killer && killer.team !== this.team) {
                          killer.state.onKill();
@@ -285,7 +275,7 @@ export class Agent {
                   witnesses.forEach(w => {
                       if (w.isCover || w.id === this.id) return;
                       const dist = Utils.distance(this.pos, w.pos);
-                      const canSee = world.hasLineOfSight(this.pos, w.pos, Config.AGENT.VISION_RADIUS, false); 
+                      const canSee = world.hasVisualLine(this.pos, w.pos, Config.AGENT.VISION_RADIUS);
                       
                       if (canSee) {
                         if (w.team === this.team) {
@@ -365,8 +355,8 @@ export class Agent {
         }
     }
 
-    rotateTowards(angle, dt, speedMult = 1.0, snap = false) {
-        this.motor.rotateTowards(angle, dt, speedMult, snap);
+    rotateTowards(angle, dt, turnRate = Config.AGENT.TURN_SPEED, snap = false) {
+        this.motor.rotateTowards(angle, dt, turnRate, snap);
     }
 
     applyJitter(dt) {

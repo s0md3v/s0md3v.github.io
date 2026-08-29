@@ -1,10 +1,11 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
 
 export class TacticalEvaluator {
     constructor(decisionModule) {
         this.decision = decisionModule;
         this.agent = decisionModule.agent;
+        this.orderFallback = null;
     }
 
     findNearestCover(world, range = Config.AGENT.VISION_RADIUS) {
@@ -112,11 +113,10 @@ export class TacticalEvaluator {
                     // (Handled implicitly by LOS check, but good for scoring)
                     
                     // 2. Raycast Check (Crucial)
-                    // Check if we can see the enemy from the safe spot. If yes, it's bad cover.
-                    // We treat Bushes as transparent for "Safety" (we want hard cover)
-                    // So we pass checkCovers=true (block by wall/cover), ignoring bushes/smoke
-                    // If hasLineOfSight returns true, it means we are EXPOSED.
-                    const isExposed = world.hasLineOfSight(safePos, enemyPos, Infinity, true);
+                    // Concealment breaks sight; physical cover breaks the line of fire.
+                    const isExposed = isCircle
+                        ? world.hasVisualLine(safePos, enemyPos)
+                        : world.hasClearShot(safePos, enemyPos);
                     
                     if (isExposed) {
                         tacticalScore += 5000; // Penalize heavily (effectively invalid)
@@ -249,7 +249,7 @@ export class TacticalEvaluator {
                           grenadeType: 'SmokeGrenade', 
                           target: smokeTarget, 
                           score: 3.0, 
-                          description: 'Retreat Smoke',
+                          description: 'throwing smoke to retreat',
                           nextAction: { type: 'RETREAT', target: nearestCover, score: 3.0, movementMode: 'BOUNDING' }
                       };
                  }
@@ -266,17 +266,64 @@ export class TacticalEvaluator {
     }
 
     findNearestValidPoint(world, x, y, range = 100) {
-        if (!world.isWallAt(x, y)) return { x, y };
+        if (world.isPositionClear(x, y, this.agent.radius)) return { x, y };
 
         const spiralStep = 20;
         for (let r = spiralStep; r < range; r += spiralStep) {
             for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
                 const tx = x + Math.cos(a) * r;
                 const ty = y + Math.sin(a) * r;
-                if (!world.isWallAt(tx, ty)) return { x: tx, y: ty };
+                if (world.isPositionClear(tx, ty, this.agent.radius)) return { x: tx, y: ty };
             }
         }
-        return { x, y };
+        return null;
+    }
+
+    scoreOrderFallback(world, orderKey) {
+        if (!this.orderFallback || this.orderFallback.orderKey !== orderKey) {
+            const awayFromOrder = Utils.angle(this.agent.squad.currentOrder.target, this.agent.pos);
+            let fallbackTarget = null;
+
+            // Step aside to a nearby clear position, then observe from there.
+            // The deterministic offset keeps every decision tick from choosing
+            // a different point and creating another oscillation.
+            for (const radius of [35, 55, 75]) {
+                for (let i = 0; i < 8; i++) {
+                    const angle = awayFromOrder + (this.agent.id % 3 - 1) * 0.35 + i * Math.PI / 4;
+                    const candidate = {
+                        x: this.agent.pos.x + Math.cos(angle) * radius,
+                        y: this.agent.pos.y + Math.sin(angle) * radius
+                    };
+                    if (!world.isPositionClear(candidate.x, candidate.y, this.agent.radius)) continue;
+                    if (!world.hasMovementLine(this.agent.pos, candidate, radius + 5)) continue;
+                    fallbackTarget = candidate;
+                    break;
+                }
+                if (fallbackTarget) break;
+            }
+
+            this.orderFallback = { orderKey, target: fallbackTarget };
+        }
+
+        const fallback = this.orderFallback.target;
+        if (!fallback || Utils.distance(this.agent.pos, fallback) < 18) {
+            return {
+                type: 'HOLD',
+                target: fallback || { ...this.agent.pos },
+                score: 1.1,
+                orderKey,
+                description: 'scanning while awaiting a new route'
+            };
+        }
+
+        return {
+            type: 'MOVE',
+            target: fallback,
+            score: 1.1,
+            orderKey,
+            description: 'repositioning to scan',
+            movementMode: 'TACTICAL'
+        };
     }
 
     scoreRegroup(world) {
@@ -306,6 +353,7 @@ export class TacticalEvaluator {
         
         // Ensure formation point is valid
         target = this.findNearestValidPoint(world, target.x, target.y);
+        if (!target) return { type: 'NONE', score: 0 };
 
         // Factors: Squad proximity, low heat at destination, and morale
         // Reduced base score from 2.0 to 1.5 so it doesn't override Objective logic
@@ -324,7 +372,7 @@ export class TacticalEvaluator {
         // ARRIVAL CHECK
         if (distToSquad < 60) score = 0; 
 
-        return { type: 'MOVE', target: target, score: score, description: 'Regrouping' };
+        return { type: 'MOVE', target: target, score: score, description: 'regrouping with the squad' };
     }
 
     isPositionTacticallyValid(targetPos, enemyPos, world) {
@@ -366,23 +414,32 @@ export class TacticalEvaluator {
     }
 
     scoreFollowOrder(world) {
-        const leader = world.agents.find(a => a.team === this.agent.team && a.rank === 1);
-        if (!leader || leader === this.agent) return { type: 'NONE', score: 0 };
+        const leader = this.agent.squad?.leader;
+        const order = this.agent.squad?.currentOrder;
+        if (!leader || leader.state.isDead || !order?.target) return { type: 'NONE', score: 0 };
+        const orderKey = `${order.type}:${Math.round(order.target.x / 16)}:${Math.round(order.target.y / 16)}`;
+
+        // Once a route has failed, keep the stable fallback for this objective
+        // instead of retrying the same bad route every few seconds.
+        if (this.orderFallback?.orderKey === orderKey) {
+            return this.scoreOrderFallback(world, orderKey);
+        }
+        this.orderFallback = null;
 
         // INSUBORDINATION CHECK (REALISM)
         const approvalFactor = this.agent.memory.leaderApproval / 100;
         
         // Check heat at destination
         const mem = this.agent.memory;
-        const gx = Math.floor((leader.pos.x / world.width) * mem.gridCols);
-        const gy = Math.floor((leader.pos.y / world.height) * mem.gridRows);
+        const gx = Math.floor((order.target.x / world.width) * mem.gridCols);
+        const gy = Math.floor((order.target.y / world.height) * mem.gridRows);
         const destinationHeat = (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) 
             ? mem.heatmap[gy][gx] : 0;
             
         // Suicide Order Check: High heat OR known enemy LOS
-        const isSuicidal = destinationHeat > Config.WORLD.SUICIDE_ORDER_THRESHOLD;
+        const isSuicidal = destinationHeat > Config.AGENT.SUICIDE_ORDER_THRESHOLD;
         
-        if (isSuicidal) {
+        if (isSuicidal && leader !== this.agent) {
              // Low agreeable agents refuse suicidal orders immediately
              // High agreeable agents might follow but take a massive stress hit
              const refusalChance = (1.0 - this.agent.traits.agreeableness) * (1.0 - approvalFactor);
@@ -397,29 +454,62 @@ export class TacticalEvaluator {
              }
         }
         
-        if (approvalFactor < 0.2) {
+        if (leader !== this.agent && approvalFactor < 0.2) {
             if (Math.random() < 0.1) this.agent.addBark("Whatever...");
             return { type: 'IDLE', score: 1.0 }; // Passive resistance
         }
 
-        // Formation Offset: Follow slightly behind/around leader
-        const angle = (this.agent.id % 5) * (Math.PI / 2.5) + Math.PI; // Semicircle behind
-        const offsetDist = 40 + (Math.floor(this.agent.id / 3) * 20); // Layers
+        // Move the entire squad toward the issued objective. Followers retain a
+        // small formation offset while the leader owns the exact destination.
+        const angle = (this.agent.id % 6) * (Math.PI * 2 / 6);
+        const offsetDist = leader === this.agent ? 0 : 25 + (this.agent.id % 2) * 15;
         let target = {
-            x: leader.pos.x + Math.cos(angle) * offsetDist,
-            y: leader.pos.y + Math.sin(angle) * offsetDist
+            x: order.target.x + Math.cos(angle) * offsetDist,
+            y: order.target.y + Math.sin(angle) * offsetDist
         };
 
         // Ensure valid
         target = this.findNearestValidPoint(world, target.x, target.y);
+        if (!target) return this.scoreOrderFallback(world, orderKey);
 
-        // STUCK/ARRIVAL PREVENTION
         const dist = Utils.distance(this.agent.pos, target);
-        if (dist < 20 || this.agent.memory.isUnreachable(target)) {
-            return { type: 'IDLE', score: 0.1 }; // Stop moving if arrived or impossible
+        const continuingHold = this.agent.currentAction?.type === 'HOLD'
+            && this.agent.currentAction.orderKey === orderKey;
+        const settleRadius = continuingHold ? 45 : 24;
+
+        if (dist < settleRadius) {
+            return {
+                type: 'HOLD',
+                target,
+                score: 1.2,
+                orderKey,
+                description: 'scanning the assigned area'
+            };
         }
 
-        return { type: 'MOVE', target: target, score: 1, description: 'Following Leader' };
+        if (this.agent.memory.isUnreachable(target)) {
+            return this.scoreOrderFallback(world, orderKey);
+        }
+
+        if (order.type === 'DEFEND' && dist < 70) {
+            return { type: 'HOLD', target, score: 1.2, orderKey, description: 'scanning the assigned area' };
+        }
+
+        const descriptions = {
+            ATTACK: 'Advancing on Contact',
+            RETREAT: 'Squad Withdrawal',
+            REGROUP: 'regrouping with the squad',
+            MOVE: order.description === 'STRATEGIC_EXPLORE' ? 'searching for enemies' : 'following an order'
+        };
+
+        return {
+            type: 'MOVE',
+            target,
+            score: order.type === 'ATTACK' ? 1.5 : 1.2,
+            orderKey,
+            description: descriptions[order.type] || 'following an order',
+            movementMode: order.type === 'RETREAT' ? 'BOUNDING' : 'TACTICAL'
+        };
     }
 
     scoreSmokeTactics(world) {
@@ -447,8 +537,8 @@ export class TacticalEvaluator {
             for (const p of world.projectiles) {
                 // Check if projectile is hostile and inside/near smoke
                 if (p.team !== this.agent.team) {
-                    const dx = p.x - nearestSmoke.x;
-                    const dy = p.y - nearestSmoke.y;
+                    const dx = p.pos.x - nearestSmoke.x;
+                    const dy = p.pos.y - nearestSmoke.y;
                     if ((dx*dx + dy*dy) < nearestSmoke.radius * nearestSmoke.radius) {
                         incomingFire++;
                     }
@@ -462,7 +552,7 @@ export class TacticalEvaluator {
              // Return a 'Wait' or 'Hold' to signify we see the smoke but it's dangerous
              // Use a moderate score so we don't override self-preservation, but we acknowledge the situation
              if (Math.random() < 0.05) this.agent.addBark("SMOKE IS HOT!");
-             return { type: 'IDLE', score: 2.0, description: 'Waiting for Smoke Clear' };
+             return { type: 'IDLE', score: 2.0, description: 'waiting for smoke to clear' };
         }
 
         const inSmoke = minDist < nearestSmoke.radius;
@@ -490,7 +580,7 @@ export class TacticalEvaluator {
                     x: nearestSmoke.x + Math.cos(angleToEnemy) * (nearestSmoke.radius + 30),
                     y: nearestSmoke.y + Math.sin(angleToEnemy) * (nearestSmoke.radius + 30)
                 };
-                 return { type: 'MOVE', target: target, score: 3.0, movementMode: 'BOUNDING', description: 'Assaulting Out' };
+                 return { type: 'MOVE', target: target, score: 3.0, movementMode: 'BOUNDING', description: 'pushing out of the smoke' };
             }
             
             // Defensive: Back out or Side out
@@ -500,7 +590,7 @@ export class TacticalEvaluator {
                 x: nearestSmoke.x + Math.cos(angleFromCenter) * (nearestSmoke.radius + 40),
                 y: nearestSmoke.y + Math.sin(angleFromCenter) * (nearestSmoke.radius + 40)
             };
-            return { type: 'MOVE', target: target, score: 4.0, movementMode: 'TACTICAL', description: 'Clearing Smoke' };
+            return { type: 'MOVE', target: target, score: 4.0, movementMode: 'TACTICAL', description: 'leaving the smoke' };
         }
 
         // CASE 2: SMOKE IS ON THE ENEMY (Opportunity)
@@ -509,7 +599,7 @@ export class TacticalEvaluator {
             if (isAggressive || isCQBWeapon) {
                 const distToEnemy = Utils.distance(this.agent.pos, enemyPos);
                 if (distToEnemy > 150) {
-                     return { type: 'ATTACK', target: enemyPos, score: 3.0, movementMode: 'BOUNDING', description: 'Assault Blinded' };
+                     return { type: 'ATTACK', target: enemyPos, score: 3.0, movementMode: 'BOUNDING', description: 'rushing a hidden enemy' };
                 }
             }
             // Others: Suppress the smoke cloud (Handled by CombatEvaluator blindFire)
@@ -533,7 +623,7 @@ export class TacticalEvaluator {
                 
                 if (coverDist < myDist - 50) {
                      // SCREENED ADVANCE: We can move because they can't see us
-                     return { type: 'MOVE', target: betterCover, score: 2.5, movementMode: 'BOUNDING', description: 'Screened Advance' };
+                     return { type: 'MOVE', target: betterCover, score: 2.5, movementMode: 'BOUNDING', description: 'advancing behind smoke' };
                 }
             }
             
@@ -550,7 +640,7 @@ export class TacticalEvaluator {
             // Check if flank target is valid and safe(ish)
              if (world.isPositionClear(target.x, target.y, this.agent.radius)) {
                  // FLANK the smoke
-                 return { type: 'MOVE', target: target, score: 2.5, movementMode: 'TACTICAL', description: 'Screen Flank' };
+                 return { type: 'MOVE', target: target, score: 2.5, movementMode: 'TACTICAL', description: 'moving around the enemy behind smoke' };
              }
         } else {
              // Smoke is nearby but useless? 
@@ -569,7 +659,7 @@ export class TacticalEvaluator {
                  };
                  
                  if (Utils.distance(this.agent.pos, target) > 20 && world.isPositionClear(target.x, target.y, this.agent.radius)) {
-                      return { type: 'MOVE', target: target, score: 2.2, movementMode: 'BOUNDING', description: 'Use Smoke Screen' };
+                      return { type: 'MOVE', target: target, score: 2.2, movementMode: 'BOUNDING', description: 'moving behind smoke' };
                  }
              }
         }
@@ -623,7 +713,7 @@ export class TacticalEvaluator {
             if (!world.isPositionClear(p.x, p.y, this.agent.radius)) continue;
             
             // Must have LOS to enemy
-            if (world.hasLineOfSight(p, enemyPos)) {
+            if (world.hasVisualLine(p, enemyPos)) {
                 validSpots.push(p);
             }
         }

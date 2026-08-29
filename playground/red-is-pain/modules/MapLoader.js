@@ -1,6 +1,6 @@
 
-import { Config } from './Config.js';
-import { Utils } from './Utils.js';
+import { Config } from './Config.js?v=field-console-14';
+import { Utils } from './Utils.js?v=field-console-14';
 
 export class MapLoader {
     constructor() {
@@ -23,7 +23,7 @@ export class MapLoader {
             covers: [],     // Low obstacles
             spawns: [],
             grid: [],       // 2D array for pathfinding/vision (4px resolution)
-            visualLayers: [mapData.layers[0] || {}, mapData.layers[1] || {}, mapData.layers[2] || {}]
+            visualLayers: [mapData.layers[0] || {}, mapData.layers[1] || {}, this.getVisualEntries(mapData.layers[2])]
         };
 
         // Grid resolution (4px per cell by default in Config)
@@ -51,26 +51,29 @@ export class MapLoader {
         if (vectors && Array.isArray(vectors)) {
             vectors.forEach(v => {
                 if (!v || !v.points) return;
+
+                const shape = this.normalizeShape(v);
+                if (!shape) return;
                 
                 // Determine Type
-                const tag = v.tag || v.type || 'wall';
+                const tag = shape.tag || shape.type || 'wall';
                 
                 if (tag.includes('wall')) {
-                    result.walls.push(v);
-                    Utils.rasterizePolygon(result.grid, v.points, 1, gridSize); // 1 = Wall/Block
+                    result.walls.push(shape);
+                    this.rasterizeShape(result.grid, shape, 1, gridSize); // 1 = Wall/Block
                 } else if (tag.includes('cover')) {
                     result.covers.push({
-                        ...v,
+                        ...shape,
                         hp: Config.PHYSICS.COVER_HP_STONE,
                         maxHp: Config.PHYSICS.COVER_HP_STONE
                     });
-                    Utils.rasterizePolygon(result.grid, v.points, 3, gridSize); // 3 = Cover
+                    this.rasterizeShape(result.grid, shape, 3, gridSize); // 3 = Cover
                 } else if (tag.includes('bush')) {
-                    result.bushes.push(v);
+                    result.bushes.push(shape);
                     // Bushes don't block movement (0), but block vision? 
                     // Verify grid logic. Usually bushes are handled separately.
                     // If grid value 2 is "Vision Block but Walkable", use that.
-                    Utils.rasterizePolygon(result.grid, v.points, 2, gridSize); 
+                    this.rasterizeShape(result.grid, shape, 2, gridSize);
                 }
             });
         }
@@ -101,5 +104,62 @@ export class MapLoader {
         }
 
         return result;
+    }
+
+    getVisualEntries(layer) {
+        if (!layer || Array.isArray(layer)) return {};
+        return Object.fromEntries(Object.entries(layer).filter(([, value]) => {
+            return typeof value === 'string' || (value && typeof value === 'object' && typeof value.path === 'string');
+        }));
+    }
+
+    normalizeShape(shape) {
+        const points = shape.points
+            .filter(point => point && Number.isFinite(point.x) && Number.isFinite(point.y))
+            .map(point => ({ x: point.x, y: point.y }));
+        if (points.length < 2) return null;
+
+        const minX = Math.min(...points.map(point => point.x));
+        const maxX = Math.max(...points.map(point => point.x));
+        const minY = Math.min(...points.map(point => point.y));
+        const maxY = Math.max(...points.map(point => point.y));
+        const distinctPoints = new Set(points.map(point => `${point.x},${point.y}`));
+        if (distinctPoints.size < 2) return null;
+
+        const isPolygon = Boolean(shape.closed) && distinctPoints.size >= 3;
+        const isBush = String(shape.tag || '').includes('bush');
+        const thickness = Number.isFinite(shape.thickness)
+            ? Math.max(Config.WORLD.GRID_SIZE, shape.thickness)
+            : (isBush ? 10 : 6);
+        const padding = isPolygon ? 0 : thickness / 2;
+        const center = { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+        const bounds = {
+            x: minX - padding,
+            y: minY - padding,
+            w: Math.max(thickness, maxX - minX + padding * 2),
+            h: Math.max(thickness, maxY - minY + padding * 2)
+        };
+
+        return {
+            ...shape,
+            points,
+            closed: isPolygon,
+            geometryType: isPolygon ? 'polygon' : 'polyline',
+            thickness,
+            x: isBush ? center.x : bounds.x,
+            y: isBush ? center.y : bounds.y,
+            w: bounds.w,
+            h: bounds.h,
+            center,
+            ...(isBush ? { radius: Math.max(bounds.w, bounds.h) / 2 } : {})
+        };
+    }
+
+    rasterizeShape(grid, shape, value, gridSize) {
+        if (shape.closed) {
+            Utils.rasterizePolygon(grid, shape.points, value, gridSize);
+        } else {
+            Utils.rasterizePolyline(grid, shape.points, value, gridSize, shape.thickness);
+        }
     }
 }

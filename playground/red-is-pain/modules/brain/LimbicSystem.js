@@ -1,5 +1,5 @@
-import { Utils } from '../Utils.js';
-import { Config } from '../Config.js';
+import { Utils } from '../Utils.js?v=field-console-14';
+import { Config } from '../Config.js?v=field-console-14';
 
 export class LimbicSystem {
     constructor(agent) {
@@ -52,7 +52,7 @@ export class LimbicSystem {
                 const leaderRetreating = leader.brain.currentThought === 'SURVIVAL';
                 
                 if (iAmFighting && leaderRetreating) {
-                    this.agent.memory.modifyLeaderApproval(-Config.WORLD.APPROVAL_COWARDICE_PENALTY * (dt / 1000));
+                    this.agent.memory.modifyLeaderApproval(-Config.AGENT.APPROVAL_COWARDICE_PENALTY * (dt / 1000));
                 }
             }
         }
@@ -70,7 +70,8 @@ export class LimbicSystem {
         if (woundedAlly && this.canHeal(woundedAlly)) {
             // Empathy Factor: High Agreeableness = More likely to prioritize helping
             const empathy = this.agent.traits.agreeableness * 1.5;
-            const urgency = (1 - woundedAlly.state.hp) * 100; // More hurt = more urgent
+            const healthRatio = woundedAlly.state.hp / Math.max(1, woundedAlly.state.maxHp);
+            const urgency = (1 - healthRatio) * 100; // More hurt = more urgent
 
             priority = urgency + (empathy * 20);
             
@@ -81,7 +82,7 @@ export class LimbicSystem {
                 type: 'HEAL', 
                 targetId: woundedAlly.id, 
                 movementMode: 'BOUNDING', 
-                description: 'COMBAT MEDIC' 
+                description: 'helping a wounded teammate'
             };
             return { priority, action };
         }
@@ -102,7 +103,7 @@ export class LimbicSystem {
                 type: 'MOVE',
                 target: squadCenter,
                 movementMode: 'BOUNDING', // Run back to safety!
-                description: 'REGROUP'
+                description: 'regrouping with the squad'
             };
             return { priority, action };
         }

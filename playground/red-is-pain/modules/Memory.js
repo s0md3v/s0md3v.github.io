@@ -1,5 +1,5 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
 
 export class Memory {
     constructor(worldWidth = 1200, worldHeight = 800) {
@@ -33,7 +33,7 @@ export class Memory {
         // Convert existing maps to Float32Array for better performance
         this.heatmap = Array(this.gridRows).fill(0).map(() => new Float32Array(this.gridCols));
         this.controlMap = Array(this.gridRows).fill(0).map(() => new Float32Array(this.gridCols));
-        this.observedMap = Array(this.gridRows).fill(0).map(() => new Float32Array(this.gridCols));
+        this.observedMap = Array(this.gridRows).fill(0).map(() => new Float64Array(this.gridCols));
 
         this._lastDiffusionTime = Date.now() - Math.random() * 200;
         this._diffusionInterval = 200; // 5Hz is sufficient for passive updates
@@ -46,6 +46,8 @@ export class Memory {
     }
 
     modifyLeaderApproval(amount) {
+        if (!Number.isFinite(amount)) return;
+        if (!Number.isFinite(this.leaderApproval)) this.leaderApproval = 50;
         this.leaderApproval = Math.max(0, Math.min(100, this.leaderApproval + amount));
     }
 
@@ -252,6 +254,31 @@ export class Memory {
         }
     }
 
+    recordDangerZone(cue) {
+        if (!cue || !Number.isFinite(cue.x) || !Number.isFinite(cue.y)) return;
+
+        const timestamp = Number.isFinite(cue.timestamp) ? cue.timestamp : Date.now();
+        const type = cue.type || 'UNKNOWN';
+        const recentMatch = this.dangerZones.find(zone =>
+            zone.type === type &&
+            zone.sourceId === cue.sourceId &&
+            timestamp - zone.timestamp < 1200 &&
+            Utils.distance(zone, cue) < 40
+        );
+
+        if (recentMatch) {
+            Object.assign(recentMatch, cue, {
+                timestamp,
+                intensity: Math.max(recentMatch.intensity || 0, cue.intensity || 0)
+            });
+        } else {
+            this.dangerZones.push({ ...cue, type, timestamp });
+            if (this.dangerZones.length > 64) {
+                this.dangerZones.splice(0, this.dangerZones.length - 64);
+            }
+        }
+    }
+
 
 
     modifyTrust(agentId, amount) {
@@ -269,15 +296,18 @@ export class Memory {
     }
 
     updateHostile(id, position, time, confidence = 1.0) {
-        if (confidence < 0.4) return; // Ignore "Boy who cried wolf"
+        if (confidence < 0.4 || !position || !Number.isFinite(position.x) || !Number.isFinite(position.y)) return;
+
+        const snapshot = { x: position.x, y: position.y };
 
         const existing = this.knownHostiles.find(h => h.id === id);
         if (existing) {
-            existing.lastKnownPosition = position;
+            existing.lastKnownPosition = snapshot;
             existing.timestamp = time;
-            existing.isGhost = false; // Confirmed sighting
+            existing.isGhost = confidence < 0.9;
+            existing.confidence = confidence;
         } else {
-            this.knownHostiles.push({ id, lastKnownPosition: position, timestamp: time, isGhost: false });
+            this.knownHostiles.push({ id, lastKnownPosition: snapshot, timestamp: time, isGhost: confidence < 0.9, confidence });
         }
     }
 
@@ -287,6 +317,11 @@ export class Memory {
     }
 
     markUnreachable(pos) {
+        const existing = this.unreachableAreas.find(area => Utils.distance(area, pos) < 20);
+        if (existing) {
+            existing.timestamp = Date.now();
+            return;
+        }
         this.unreachableAreas.push({ x: pos.x, y: pos.y, timestamp: Date.now() });
     }
 

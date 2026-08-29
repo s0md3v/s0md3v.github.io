@@ -1,6 +1,6 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
-import { THOUGHT_IDLE, THOUGHT_SOCIAL } from './DecisionConstants.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
+import { THOUGHT_IDLE, THOUGHT_SOCIAL } from './DecisionConstants.js?v=field-console-14';
 
 export class BackgroundEvaluator {
     constructor(decisionModule) {
@@ -17,7 +17,7 @@ export class BackgroundEvaluator {
             const dist = Utils.distance(this.agent.pos, item);
             if (dist > this.agent.traits.visionRadius * 1.5) return;
 
-            const hasLOS = world.hasLineOfSight(this.agent.pos, item);
+            const hasLOS = world.hasVisualLine(this.agent.pos, item);
             if (!hasLOS) return; // Cannot see it through walls
 
             let score = dist;
@@ -58,7 +58,7 @@ export class BackgroundEvaluator {
         // --- REACHABILITY CHECK ---
         // If it's a known loot (not currently in LOS), we must check if we can even get there.
         // We use a simple LOS check first, then a pathfinder check if LOS is blocked.
-        const hasLOS = world.hasLineOfSight(this.agent.pos, bestLoot);
+        const hasLOS = world.hasVisualLine(this.agent.pos, bestLoot);
         if (!hasLOS) {
              const path = world.pathfinder.findPath(this.agent.pos, bestLoot);
              if (path.length === 0) {
@@ -67,7 +67,7 @@ export class BackgroundEvaluator {
              }
         }
         
-        return { type: 'LOOT', target: bestLoot, score: 1, description: 'Securing Assets' };
+        return { type: 'LOOT', target: bestLoot, score: 1, description: 'collecting supplies' };
     }
 
     scoreSocialize(world) {
@@ -112,7 +112,7 @@ export class BackgroundEvaluator {
         if (!leader) return { score: 0 }; 
 
         const approval = this.agent.memory.leaderApproval;
-        if (approval > Config.WORLD.APPROVAL_MIN_MUTINY) return { score: 0 };
+        if (approval > Config.AGENT.APPROVAL_MIN_MUTINY) return { score: 0 };
 
         // Competence Gap
         const myPotential = this.agent.traits.leadershipPotential;
@@ -235,16 +235,16 @@ export class BackgroundEvaluator {
             // If we are already close to the strategic objective, we can transition to local scouting
             if (dist < 150) {
                  // High score to keep us here until it's "cleared" by seeing it
-                 return { type: 'MOVE', target: goal, score: 3.5, description: 'Scouting Area', movementMode: 'TACTICAL' };
+                 return { type: 'MOVE', target: goal, score: 3.5, description: 'checking the area', movementMode: 'TACTICAL' };
             }
             
             // On the way to a strategic objective
-            return { type: 'MOVE', target: goal, score: 3.0, description: 'Strategic Recon', movementMode: 'TACTICAL' };
+            return { type: 'MOVE', target: goal, score: 3.0, description: 'searching for enemies', movementMode: 'TACTICAL' };
         }
 
         // 2. COMMITMENT: If we already have a scouting target and are moving towards it, stick to it!
         if (this.agent.currentAction && 
-            this.agent.currentAction.description === 'Scouting Area' && 
+            this.agent.currentAction.description === 'checking the area' &&
             this.agent.path && this.agent.path.length > 0) {
             
             const lastT = this.agent.currentAction.target;
@@ -302,11 +302,11 @@ export class BackgroundEvaluator {
 
         if (bestTarget && maxUtility > 1.5) {
              if (world.isPositionClear(bestTarget.x, bestTarget.y, this.agent.radius)) {
-                 return { type: 'MOVE', target: bestTarget, score: 1.8, description: 'Scouting Area', movementMode: 'TACTICAL' };
+                 return { type: 'MOVE', target: bestTarget, score: 1.8, description: 'checking the area', movementMode: 'TACTICAL' };
              }
              const valid = this.findNearestValidPoint(world, bestTarget.x, bestTarget.y);
              if (valid) {
-                 return { type: 'MOVE', target: valid, score: 1.8, description: 'Scouting Area', movementMode: 'TACTICAL' };
+                 return { type: 'MOVE', target: valid, score: 1.8, description: 'checking the area', movementMode: 'TACTICAL' };
              }
         }
         
@@ -314,14 +314,14 @@ export class BackgroundEvaluator {
     }
 
     findNearestValidPoint(world, x, y, range = 100) {
-        if (!world.isWallAt(x, y)) return { x, y };
+        if (world.isPositionClear(x, y, this.agent.radius)) return { x, y };
 
         const spiralStep = 20;
         for (let r = spiralStep; r < range; r += spiralStep) {
             for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
                 const tx = x + Math.cos(a) * r;
                 const ty = y + Math.sin(a) * r;
-                if (!world.isPositionClear(tx, ty, this.agent.radius)) return { x: tx, y: ty };
+                if (world.isPositionClear(tx, ty, this.agent.radius)) return { x: tx, y: ty };
             }
         }
         return null;
@@ -360,7 +360,7 @@ export class BackgroundEvaluator {
                 type: 'MOVE', 
                 target: target, 
                 score: score, 
-                description: 'Intercepting Contact', 
+                description: 'moving toward a reported enemy',
                 movementMode: movementMode 
             };
         }

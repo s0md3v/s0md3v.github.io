@@ -30,7 +30,6 @@ export class AudioController {
 
         await Promise.all(promises);
         this.loaded = true;
-        console.log("Audio assets loaded (Web Audio API).");
     }
 
     playBuffer(filename, volume = 0.5, playbackRate = 1.0) {

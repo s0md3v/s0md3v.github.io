@@ -1,6 +1,6 @@
 
-import { AssetManifest } from './assets/AssetManifest.js';
-import { Config } from './modules/Config.js';
+import { AssetManifest } from './assets/AssetManifest.js?v=field-console-13';
+import { Config } from './modules/Config.js?v=field-console-13';
 
 const TILE_SIZE = 16;
 const COLLISION_RESOLUTION = 2; // Physical resolution (2x2px per tile)
@@ -11,19 +11,23 @@ const canvas = document.getElementById('editor-canvas');
 const ctx = canvas.getContext('2d');
 const assetBrowser = document.getElementById('asset-browser');
 
+function createBlankMap() {
+    return {
+        width: DEFAULT_WIDTH,
+        height: DEFAULT_HEIGHT,
+        tileSize: TILE_SIZE,
+        layers: [
+            {}, // Layer 0: Ground (sparse map: "x,y" -> imagePath)
+            {}, // Layer 1: Objects ("x,y" -> imagePath)
+            {}, // Layer 2: Deco ("x,y" -> imagePath)
+            [], // Layer 3: Vector Colliders
+            {}  // Layer 4: Spawns ("x,y" -> {spawnType})
+        ]
+    };
+}
+
 // State
-let mapData = {
-    width: DEFAULT_WIDTH,
-    height: DEFAULT_HEIGHT,
-    tileSize: TILE_SIZE,
-    layers: [
-        {}, // Layer 0: Ground (sparse map: "x,y" -> imagePath)
-        {}, // Layer 1: Objects ("x,y" -> imagePath)
-        {}, // Layer 2: Deco ("x,y" -> imagePath)
-        [], // Layer 3: Vector Colliders
-        {}  // Layer 4: Spawns ("x,y" -> {spawnType})
-    ]
-};
+let mapData = createBlankMap();
 
 let currentTool = 'brush'; // brush, eraser, fill
 let currentLayer = 1;
@@ -37,16 +41,17 @@ let isDrawing = false;
 let camera = { x: 0, y: 0, zoom: 2 }; 
 let selectedTile = null; // { x, y, layer, w, h } - Bounding box of selection
 let selectedObjectKey = null; // Key of the object in map data (top-left)
-let autoCollision = true;
 let movingObject = null; // { data, originalKey, offsetX, offsetY }
 let layerVisibility = [true, true, true, true, true];
 let history = [];
 let redoStack = [];
 const MAX_HISTORY = 50;
 let isPanning = false;
+let isSpacePressed = false;
 let lastMouseX = 0, lastMouseY = 0;
 let activeHandle = null; // 'nw', 'ne', 'sw', 'se', 'rot'
 let originalTransform = null; // Store state when starting a transform
+let mapLoadVersion = 0;
 
 // Asset Cache
 const images = {};
@@ -86,6 +91,7 @@ function init() {
     loadAssets();
     setupEvents();
     requestAnimationFrame(loop);
+    loadDefaultMap();
 }
 
 function resizeCanvas() {
@@ -151,20 +157,36 @@ function selectAsset(asset, el) {
     }
 }
 
+function isFormControl(target) {
+    return target instanceof Element && Boolean(
+        target.closest('input, select, textarea, button, [contenteditable="true"]')
+    );
+}
+
 function setupEvents() {
     // Canvas Mouse Events
     canvas.addEventListener('mousedown', (e) => {
-        isDrawing = true;
-        handleDraw(e);
-    });
-    
-    window.addEventListener('mousedown', (e) => {
-        if (e.button === 1 || (e.button === 0 && e.spaceKey)) {
+        const wantsPan = e.button === 1 || (e.button === 0 && isSpacePressed);
+        if (wantsPan) {
             isPanning = true;
+            isDrawing = false;
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
             e.preventDefault();
+            return;
         }
+
+        // Keep secondary-click erase as a single action; only the primary
+        // button can begin a continuous drawing gesture.
+        if (e.button === 2) {
+            isDrawing = true;
+            handleDraw(e);
+            isDrawing = false;
+            return;
+        }
+        if (e.button !== 0) return;
+        isDrawing = true;
+        handleDraw(e);
     });
 
     window.addEventListener('mouseup', () => {
@@ -192,7 +214,18 @@ function setupEvents() {
 
     // Spacebar for panning
     window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') e.preventDefault();
+        if (e.code === 'Space' && !isFormControl(e.target)) {
+            isSpacePressed = true;
+            e.preventDefault();
+        }
+    });
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') isSpacePressed = false;
+    });
+    window.addEventListener('blur', () => {
+        isSpacePressed = false;
+        isPanning = false;
+        isDrawing = false;
     });
 
     // Toolbar Events
@@ -247,8 +280,10 @@ function setupEvents() {
         btn.onclick = () => {
             // Fix: Cancel move if active to prevent state corruption
             if (movingObject) {
-                 mapData.layers[movingObject.layer][movingObject.originalKey] = movingObject.data;
-                 movingObject = null;
+                if (movingObject.layer !== 3) {
+                    mapData.layers[movingObject.layer][movingObject.originalKey] = movingObject.data;
+                }
+                movingObject = null;
             }
 
             currentTool = btn.dataset.tool;
@@ -276,6 +311,8 @@ function setupEvents() {
     
     // Keybinds
     window.addEventListener('keydown', (e) => {
+        if (isFormControl(e.target)) return;
+
         const key = e.key.toLowerCase();
         
         // Undo/Redo
@@ -547,8 +584,12 @@ function handleMove(x, y, eventType) {
                 initialY: obj.y,
                 layer: currentLayer // Store original layer
             };
-            // Remove original temporarily (visual feedback)
-            delete mapData.layers[currentLayer][obj.key];
+            // Object layers use sparse keys, so remove their original while the
+            // ghost moves. Vector arrays retain their slot and are hidden while
+            // dragging so a move never creates a hole or changes draw order.
+            if (currentLayer !== 3) {
+                delete mapData.layers[currentLayer][obj.key];
+            }
             selectedTile = null; 
         }
     } else if (eventType === 'mousemove' && isDrawing && movingObject) {
@@ -606,8 +647,8 @@ window.addEventListener('mouseup', (e) => {
                      p.y += dy;
                  });
                  
-                 mapData.layers[3].push(movingObject.data);
-                 selectedObjectKey = mapData.layers[3].length - 1;
+                 mapData.layers[3][movingObject.originalKey] = movingObject.data;
+                 selectedObjectKey = movingObject.originalKey;
                  
                  // Recalculate bounds for selection tile
                  let minX = movingObject.data.points[0].x, maxX = minX, minY = movingObject.data.points[0].y, maxY = minY;
@@ -630,8 +671,7 @@ window.addEventListener('mouseup', (e) => {
              }
          } else {
              if (movingObject.layer === 3) {
-                 mapData.layers[3].push(movingObject.data); 
-                 selectedObjectKey = mapData.layers[3].length - 1;
+                 selectedObjectKey = movingObject.originalKey;
              } else {
                  mapData.layers[movingObject.layer][movingObject.originalKey] = movingObject.data;
                  selectedObjectKey = movingObject.originalKey;
@@ -851,8 +891,8 @@ function render() {
         const gy = lastY - movingObject.offsetY;
         
         if (movingObject.layer === 3) {
-            const dx = gx - movingObject.data.points[0].x;
-            const dy = gy - movingObject.data.points[0].y;
+            const dx = gx - movingObject.initialX;
+            const dy = gy - movingObject.initialY;
             const ghostPoints = movingObject.data.points.map(p => ({ x: p.x + dx, y: p.y + dy }));
             renderVectorObject({ ...movingObject.data, points: ghostPoints }, false);
         } else if (movingObject.layer === 4) {
@@ -962,6 +1002,7 @@ function renderVectorLayer() {
     
     vectors.forEach((v, index) => {
         if (!v) return;
+        if (movingObject && movingObject.layer === 3 && movingObject.originalKey === index) return;
         const isSelected = (selectedTile && selectedTile.layer === 3 && selectedObjectKey == index); 
         renderVectorObject(v, isSelected);
     });
@@ -1062,17 +1103,24 @@ function renderObject(x, y, data) {
     }
 }
 
+function createExportData() {
+    const data = JSON.parse(JSON.stringify(mapData));
+    if (!Array.isArray(data.layers[3])) data.layers[3] = [];
+    data.layers[3] = data.layers[3].filter(vector => vector !== null);
+    return data;
+}
+
 function saveMap() {
-    if (autoCollision) {
-        processAutoCollision();
-    }
-    const json = JSON.stringify(mapData, null, 2);
+    // Layer 2 is a visual/decor layer in the current runtime schema. Export a
+    // clean snapshot without regenerating the legacy numeric collision raster.
+    const json = JSON.stringify(createExportData(), null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'map.json';
     a.click();
+    URL.revokeObjectURL(url);
 }
 
 function processAutoCollision() {
@@ -1206,36 +1254,107 @@ function postProcessCollision(walls) {
     toRemove.forEach(k => walls.delete(k));
 }
 
+function isSparseLayer(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function normalizeLoadedMap(data) {
+    const width = Number(data && data.width);
+    const height = Number(data && data.height);
+    if (!Number.isInteger(width) || width <= 0 || !Number.isInteger(height) || height <= 0) {
+        throw new Error('Map dimensions must be positive integers.');
+    }
+    if (!Array.isArray(data.layers)) {
+        throw new Error('Map layers must be an array.');
+    }
+
+    const layers = data.layers.slice();
+    while (layers.length < 5) {
+        layers.push(layers.length === 3 ? [] : {});
+    }
+
+    for (let index = 0; index <= 2; index++) {
+        if (!isSparseLayer(layers[index])) layers[index] = {};
+    }
+    if (!Array.isArray(layers[3])) layers[3] = [];
+    layers[3] = layers[3].filter(vector => vector !== null);
+    if (!isSparseLayer(layers[4])) layers[4] = {};
+
+    return {
+        ...data,
+        width,
+        height,
+        tileSize: TILE_SIZE,
+        layers
+    };
+}
+
+function resetEditorState() {
+    selectedTile = null;
+    selectedObjectKey = null;
+    activeBoundary = null;
+    movingObject = null;
+    activeHandle = null;
+    originalTransform = null;
+    fillStart = null;
+    isDrawing = false;
+    isPanning = false;
+    isSpacePressed = false;
+    lastX = 0;
+    lastY = 0;
+    history = [];
+    redoStack = [];
+    camera.x = 0;
+    camera.y = 0;
+    camera.zoom = 2;
+
+    document.getElementById('selected-info').innerText = '';
+    document.getElementById('coord-display').innerText = 'X: 0, Y: 0';
+    document.getElementById('zoom-display').innerText = '200%';
+}
+
+function applyLoadedMap(data) {
+    mapData = normalizeLoadedMap(data);
+    resetEditorState();
+    syncUIWithData();
+}
+
+async function loadDefaultMap() {
+    const version = ++mapLoadVersion;
+    try {
+        const response = await fetch('assets/maps/map.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Map request failed with ${response.status}.`);
+        const data = await response.json();
+        if (version !== mapLoadVersion) return;
+        applyLoadedMap(data);
+    } catch (err) {
+        if (version !== mapLoadVersion) return;
+        console.warn('Could not load the shipped map; using a blank map.', err);
+        applyLoadedMap(createBlankMap());
+    }
+}
+
 function loadMap(e) {
     const file = e.target.files[0];
     if (!file) return;
-    
+
+    const version = ++mapLoadVersion;
     const reader = new FileReader();
     reader.onload = (event) => {
+        if (version !== mapLoadVersion) return;
         try {
-            const data = JSON.parse(event.target.result);
-            if (data.width && data.height && data.layers) {
-                // Migration: Ensure all layers exist (Legacy maps might have fewer)
-                while (data.layers.length < 5) {
-                    // Decide if we are adding a vector array (3) or a sparse object (4)
-                    if (data.layers.length === 3) data.layers.push([]); // Collision vectors
-                    else data.layers.push({}); // Others are sparse objects
-                }
-                
-                // Migration: If Layer 2 is using old integer markers (Meta), clear it or convert
-                // For now, let's just ensure it's an object.
-                if (Array.isArray(data.layers[2])) data.layers[2] = {};
-
-                mapData = data;
-                document.getElementById('map-width').value = mapData.width;
-                document.getElementById('map-height').value = mapData.height;
-                resizeCanvas();
-                mapData.tileSize = TILE_SIZE; 
-            }
+            applyLoadedMap(JSON.parse(event.target.result));
         } catch (err) {
             console.error(err);
-            alert("Invalid map file");
+            alert('Invalid map file');
+        } finally {
+            e.target.value = '';
         }
+    };
+    reader.onerror = () => {
+        console.error(reader.error);
+        alert('Could not read map file');
+        e.target.value = '';
     };
     reader.readAsText(file);
 }

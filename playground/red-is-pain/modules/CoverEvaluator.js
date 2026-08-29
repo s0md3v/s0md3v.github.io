@@ -1,5 +1,5 @@
-import { Utils } from './Utils.js';
-import { Config } from './Config.js';
+import { Utils } from './Utils.js?v=field-console-14';
+import { Config } from './Config.js?v=field-console-14';
 
 export class CoverEvaluator {
     constructor(decisionModule) {
@@ -53,7 +53,7 @@ export class CoverEvaluator {
 
         // B. Offensive Opportunity (Can I shoot from here?)
         // If I can see the enemy from my cover (peeking), it's a great spot.
-        const canSee = world.hasLineOfSight(this.agent.pos, enemyPos);
+        const canSee = world.hasVisualLine(this.agent.pos, enemyPos);
         if (canSee) {
             score += 1.0; // Good fighting position
         } else {
@@ -90,7 +90,7 @@ export class CoverEvaluator {
             score -= 3.0; // Too close, they might rush around
         }
 
-        return { type: 'HOLD', score: score, target: currentCover, description: 'Hold Cover' };
+        return { type: 'HOLD', score: score, target: currentCover, description: 'staying behind cover' };
     }
 
     // Evaluate moving to better cover

@@ -2,115 +2,239 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red is pain</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0d0f">
+    <title>Red Is Pain — Tactical AI Simulation</title>
+    <link rel="stylesheet" href="style.css?v=field-console-9">
 </head>
 <body>
-    <div id="simulation-container" style="position: relative;">
-        <!-- Empty Space Hint (Only shown in HUMAN mode, handled by JS later if needed, but here it's static UI we toggle) -->
-        <div id="empty-space-hint" style="display: none; position: absolute; bottom: 20px; left: 20px; color: rgba(255,255,255,0.2); font-family: monospace; font-size: 0.8rem; pointer-events: none; max-width: 250px;">
-            Blank space around the map is intentional. Use mouse wheel or D-Pad to zoom.
-        </div>
+    <!-- Start Menu -->
+    <section id="start-menu" class="screen-overlay start-screen" role="dialog" aria-modal="true" aria-labelledby="start-title" aria-describedby="start-description">
+        <div class="scanline" aria-hidden="true"></div>
+        <div class="start-menu-panel">
+            <h1 id="start-title">RED IS PAIN</h1>
+            <p id="start-description" class="start-subtitle">Tactical AI Combat Simulation</p>
 
-        <canvas id="sim-canvas"></canvas>
-        <div id="inspector-sidebar">
-            <!-- PANEL 1: SIGNAL STATUS -->
-            <div id="signal-header" class="sidebar-panel">
-                <div class="placeholder-text">
-                    <div class="hologram-effect"></div>
-                    <div class="glitch-signal">NO SIGNAL</div>
-                    <div style="font-size: 0.7em; opacity: 0.5; margin-top: 10px; letter-spacing: 2px;">
-                        <span style="color: var(--accent);">[ STATUS: STANDBY ]</span><br>
-                        SELECT UNIT TO INTERFACE
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANEL 2: BIOMETRIC INTEL -->
-            <div id="biometric-stats" class="sidebar-panel" style="display: none;">
-                <div id="stats-hud"></div>
-                <div id="personality-chart-container">
-                    <canvas id="personality-canvas"></canvas>
-                </div>
-                <div id="status-badges-container"></div>
-            </div>
-
-            <div id="system-controls" class="sidebar-panel">
-                <h3>FIELD OVERLAYS</h3>
-                <div class="controls-grid">
-                    <label class="debug-option"><input type="checkbox" id="toggle-vision"> Vision Cones</label>
-                    <label class="debug-option"><input type="checkbox" id="toggle-trust"> Squad Cohesion</label>
-                    <label class="debug-option"><input type="checkbox" id="toggle-heatmap"> Awareness Grid</label>
-                    <label class="debug-option"><input type="checkbox" id="toggle-targets" checked> Intent Lines</label>
-                </div>
-            </div>
-            <div id="human-controls" class="sidebar-panel" style="display:none;">
-                <h3>CONTROLS</h3>
-                <div style="font-family: monospace; font-size: 0.8rem; color: #ccc;">
-                    <p style="margin: 5px 0;"><strong>WASD / Left Stick:</strong> Move</p>
-                    <p style="margin: 5px 0;"><strong>Mouse / Right Stick:</strong> Aim</p>
-                    <p style="margin: 5px 0;"><strong>Left Click / RB / RT:</strong> Fire Weapon</p>
-                    <p style="margin: 5px 0;"><strong>Hold Shift / LT:</strong> Sprint</p>
-                    <p style="margin: 5px 0;"><strong>Scroll / D-Pad Up-Down:</strong> Zoom</p>
-                </div>
+            <div class="start-actions" aria-label="Choose a simulation mode">
+                <button id="btn-start-ai" class="menu-button" type="button">AI vs AI</button>
+                <button id="btn-start-human" class="menu-button" type="button">Human vs AI</button>
+                <button id="btn-info" class="menu-button start-info-button" type="button">What is this?</button>
             </div>
         </div>
-    </div>
-    <div id="ui-layer">
-        <div id="unit-card" class="panel">
-            <!-- Details extracted via JS -->
-                 UNIT #009 <span style="float:right; color:#ff4444">BRAVO</span>
-                 <br><br>
-                 <div id="unit-status">...</div>
-        </div>
-    </div>
-    
-    <!-- Start Menu Overlay -->
-    <div id="start-menu" style="display:none; flex-direction: column; align-items: center; justify-content: center;">
-        <div class="scanline"></div>
-        <h1 style="font-size: 3rem; margin-bottom: 5px;">RED IS PAIN</h1>
-        <p style="color: var(--text-muted); font-family: monospace; font-size: 1rem; margin-bottom: 40px;">Tactical AI Combat Simulation</p>
-        
-        <div style="display:flex; flex-direction:column; gap:20px; align-items:center; width: 300px;">
-            <button id="btn-start-ai" class="menu-button" style="width: 100%; font-size: 1.2rem; padding: 15px;">AI vs AI</button>
-            <button id="btn-start-human" class="menu-button" style="width: 100%; font-size: 1.2rem; padding: 15px;">Human vs AI</button>
-            <button id="btn-info" class="menu-button" style="width: 100%; font-size: 1.2rem; padding: 15px; border-color: rgba(255,255,255,0.2); color: #ccc;">WHAT IS THIS?</button>
-        </div>
-    </div>
+    </section>
 
-    <!-- Info Modal -->
-    <div id="info-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10,10,12,0.95); z-index: 2000; align-items: center; justify-content: center;">
-        <div class="panel" style="max-width: 600px; padding: 30px; border-color: var(--accent);">
-            <h2 style="color: var(--accent); margin-bottom: 20px;">PROJECT: RED IS PAIN</h2>
-            <div style="font-family: monospace; font-size: 0.9rem; line-height: 1.6; color: #ddd;">
-                <p style="margin-bottom: 1em;">You have consumed enough opinions from your favorite websites and echo chambers that nothing I can say about machines and intelligence will be seen as is. So, I will not do that. You are very smart and your biases are correct!</p>
-                
-                <p style="margin-bottom: 1em;">Anyways, the idea behind this experiment is simple; can we fake intelligence and emotions?</p>
-                
-                <p style="margin-bottom: 0.5em;">This simulation has characters controlled completely by simple code. Each character has:</p>
-                <ol style="margin-top: 5px; margin-bottom: 15px; padding-left: 20px;">
-                    <li style="margin-bottom: 5px;"><strong>Big-5 disposition:</strong> Basically, randomly generated personality traits. They are one of the factors for the character's reaction to a given event.</li>
-                    <li style="margin-bottom: 5px;"><strong>Mental state:</strong> Characters remember death of their allies and heated areas.</li>
-                    <li style="margin-bottom: 5px;"><strong>Memory:</strong> They remember deaths, danger zones, bad spots to be in and such. A lightweight 'learning' simulation and necessary to fake PTSD.</li>
-                    <li style="margin-bottom: 5px;"><strong>Relationships:</strong> Characters bond over time. Watching a friend die causes more stress than losing a stranger.</li>
-                    <li style="margin-bottom: 5px;"><strong>Senses:</strong> Characters don't cheat. They only know what they can directly see, hear, or get told by their allies.</li>
-                    <li style="margin-bottom: 5px;"><strong>Panic:</strong> Bullets flying nearby cause stress. Panicked characters lose accuracy and run for cover.</li>
-                    <li style="margin-bottom: 5px;"><strong>Code:</strong> There is no machine learning. Tactical choices and fear all emerge from simple math and rules.</li>
+    <!-- Project Information -->
+    <div id="info-modal" class="screen-overlay modal-overlay" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-intro" hidden>
+        <article class="modal-panel modal-panel--about">
+            <header class="modal-header">
+                <h2 id="info-title">PROJECT: RED IS PAIN</h2>
+            </header>
+
+            <div class="modal-content about-copy">
+                <p id="info-intro">You have consumed enough opinions from your favorite websites and echo chambers that nothing I can say about machines and intelligence will be seen as is. So, I will not do that. You are very smart and your biases are correct!</p>
+
+                <p>Anyways, the idea behind this experiment is simple; can we fake intelligence and emotions?</p>
+
+                <p>This simulation has characters controlled completely by simple code. Each character has:</p>
+                <ol>
+                    <li><strong>Big-5 disposition:</strong> Basically, randomly generated personality traits. They are one of the factors for the character's reaction to a given event.</li>
+                    <li><strong>Mental state:</strong> Characters remember death of their allies and heated areas.</li>
+                    <li><strong>Memory:</strong> They remember deaths, danger zones, bad spots to be in and such. A lightweight 'learning' simulation and necessary to fake PTSD.</li>
+                    <li><strong>Relationships:</strong> Characters bond over time. Watching a friend die causes more stress than losing a stranger.</li>
+                    <li><strong>Senses:</strong> Characters don't cheat. They only know what they can directly see, hear, or get told by their allies.</li>
+                    <li><strong>Panic:</strong> Bullets flying nearby cause stress. Panicked characters lose accuracy and run for cover.</li>
+                    <li><strong>Code:</strong> There is no machine learning. Tactical choices and fear all emerge from simple math and rules.</li>
                 </ol>
-                <p style="margin-bottom: 0.5em;">PS: I am still working on this, it's far from perfect. Don't expect much.</p>
+                <p>PS: I am still working on this, it's far from perfect. Don't expect much.</p>
             </div>
-            <button id="btn-close-info" class="menu-button" style="margin-top: 25px; width: 100%;">ACKNOWLEDGED</button>
+
+            <footer class="modal-footer">
+                <button id="btn-close-info" class="menu-button" type="button">Acknowledged</button>
+            </footer>
+        </article>
+    </div>
+
+    <!-- Simulation Workspace. main.js removes inert when a match starts. -->
+    <main id="simulation-container" inert>
+        <header id="command-bar" aria-label="Match command bar">
+            <div class="command-brand" aria-label="Red Is Pain">
+                <span class="command-brand__mark" aria-hidden="true"></span>
+                <span class="command-brand__copy">
+                    <strong>RED IS PAIN</strong>
+                </span>
+            </div>
+
+            <div class="match-strip" aria-label="Match status">
+                <span id="match-mode" class="match-mode">READY</span>
+                <span class="team-readout team-readout--alpha">
+                    <span class="team-readout__name">Alpha</span>
+                    <strong id="alpha-count">&#8212;</strong>
+                </span>
+                <span class="versus" aria-hidden="true">/</span>
+                <span class="team-readout team-readout--bravo">
+                    <span class="team-readout__name">Bravo</span>
+                    <strong id="bravo-count">&#8212;</strong>
+                </span>
+                <time id="match-timer" class="match-timer" datetime="PT0M0S">00:00</time>
+            </div>
+
+            <nav class="command-actions" aria-label="Simulation controls">
+                <button id="btn-pause" class="command-button" type="button" aria-label="Pause simulation" title="Pause simulation">
+                    <span class="command-button__icon" aria-hidden="true">&#8545;</span>
+                    <span class="command-button__label">Pause</span>
+                </button>
+                <button id="btn-fit" class="command-button" type="button" aria-label="Fit map to view" title="Fit map to view">
+                    <span class="command-button__icon frame-icon" aria-hidden="true"></span>
+                    <span class="command-button__label">Fit</span>
+                </button>
+                <button id="btn-mute" class="command-button" type="button" aria-label="Mute audio" aria-pressed="false" title="Mute audio">
+                    <span class="command-button__icon" aria-hidden="true">&#9686;</span>
+                    <span class="command-button__label">Audio</span>
+                </button>
+                <button id="btn-menu" class="command-button command-button--menu" type="button" aria-label="Return to menu" title="Return to menu">
+                    <span class="command-button__icon" aria-hidden="true">&#8943;</span>
+                    <span class="command-button__label">Menu</span>
+                </button>
+                <button id="btn-inspector" class="command-button command-button--inspector" type="button" aria-label="Open unit inspector" aria-expanded="false" aria-controls="inspector-sidebar" title="Open unit inspector">
+                    <span class="command-button__icon" aria-hidden="true">&#9776;</span>
+                    <span class="command-button__label">Unit details</span>
+                </button>
+            </nav>
+        </header>
+
+        <span id="canvas-summary" class="sr-only" aria-live="polite">Simulation is standing by. Choose a mode to begin.</span>
+        <canvas id="sim-canvas" role="img" tabindex="0" aria-label="Tactical combat simulation map" aria-describedby="canvas-summary">
+            The tactical simulation requires canvas support. Match status is also reported in the command bar and event feed.
+        </canvas>
+
+        <div id="observer-hint" class="coach-mark" hidden>
+            <span class="coach-mark__label">Controls</span>
+            <span>Select a unit to see its details</span>
+            <span class="coach-mark__keys"><kbd>Wheel</kbd> zoom <span aria-hidden="true">&#183;</span> <kbd>Alt</kbd> + drag pan</span>
         </div>
-    </div>
 
-    <!-- Game Over Overlay -->
-    <div id="game-over-screen" style="display:none;">
-        <div class="scanline"></div>
-        <h1 id="victory-text">TEAM WINS!</h1>
-        <button id="btn-restart" class="menu-button" style="padding: 15px 40px; border-color: var(--accent); color: var(--accent);">RE-INITIALIZE</button>
-    </div>
+        <div id="empty-space-hint" class="canvas-hint" role="status">
+            <span aria-hidden="true">&#8597;</span>
+            <span>The field extends beyond this view. Use the wheel or D-pad to zoom.</span>
+        </div>
 
-    <script type="module" src="main.js"></script>
+        <ol id="event-feed" class="event-feed" aria-label="Live match events" aria-live="polite" aria-relevant="additions" hidden></ol>
+
+        <section id="player-hud" class="player-hud" aria-label="Player status" hidden>
+            <div class="player-hud__stat player-hud__stat--hp">
+                <span>Health</span>
+                <strong id="player-hp">&#8212;</strong>
+            </div>
+            <div class="player-hud__stat player-hud__stat--ammo">
+                <span>Ammo</span>
+                <strong><span id="player-ammo">&#8212;</span><small> / <span id="player-reserve">&#8212;</span></small></strong>
+            </div>
+            <div class="player-hud__controls" aria-label="Player controls">
+                <span><kbd>WASD</kbd> Move</span>
+                <span><b>Mouse</b> Aim</span>
+                <span><b>Click</b> Fire</span>
+                <span><kbd>Shift</kbd> Sprint</span>
+                <span><kbd>R</kbd> Reload</span>
+                <span><b>Wheel</b> Zoom</span>
+            </div>
+        </section>
+
+        <section id="touch-controls" class="touch-controls" aria-label="Touch controls" hidden>
+            <div class="touch-control-group touch-control-group--move">
+                <span class="touch-control-label">Move</span>
+                <div id="move-stick" class="touch-stick" aria-hidden="true">
+                    <span id="move-knob" class="touch-knob"></span>
+                </div>
+            </div>
+            <div class="touch-action-stack">
+                <button id="btn-touch-sprint" class="touch-action" type="button">Sprint</button>
+                <button id="btn-touch-reload" class="touch-action" type="button">Reload</button>
+            </div>
+            <div class="touch-control-group touch-control-group--aim">
+                <span class="touch-control-label">Aim / fire</span>
+                <div id="aim-stick" class="touch-stick touch-stick--aim" aria-hidden="true">
+                    <span id="aim-knob" class="touch-knob"></span>
+                </div>
+            </div>
+        </section>
+
+        <aside id="inspector-sidebar" aria-label="Selected unit details">
+            <div class="inspector-scroll">
+                <section id="signal-header" class="sidebar-panel signal-panel" aria-label="Selected unit">
+                    <div class="placeholder-text">
+                        <div class="hologram-effect" aria-hidden="true"></div>
+                        <div class="glitch-signal">No unit selected</div>
+                        <p>Select a unit on the map to see its details.</p>
+                    </div>
+                </section>
+
+                <section id="biometric-stats" class="sidebar-panel" aria-label="Unit status and personality">
+                    <div id="stats-hud"></div>
+                    <div id="personality-chart-container">
+                        <div class="chart-heading">
+                            <p class="chart-title">Personality</p>
+                            <details class="trait-help">
+                                <summary aria-label="What the personality traits mean">?</summary>
+                                <div class="trait-help__panel">
+                                    <dl>
+                                        <div><dt>Openness</dt><dd>Tries new paths and tactics.</dd></div>
+                                        <div><dt>Conscientiousness</dt><dd>Follows plans and checks risks.</dd></div>
+                                        <div><dt>Extraversion</dt><dd>Communicates and acts boldly.</dd></div>
+                                        <div><dt>Agreeableness</dt><dd>Cooperates and helps teammates.</dd></div>
+                                        <div><dt>Neuroticism</dt><dd>Reacts strongly to danger and stress.</dd></div>
+                                    </dl>
+                                </div>
+                            </details>
+                        </div>
+                        <canvas id="personality-chart" width="360" height="250" role="img" aria-label="Selected unit personality distribution"></canvas>
+                    </div>
+                    <div id="status-badges-container" aria-label="Active unit statuses"></div>
+                </section>
+
+                <section id="system-controls" class="sidebar-panel controls-panel" aria-labelledby="overlays-title">
+                    <div class="panel-heading-row">
+                        <div>
+                            <h2 id="overlays-title">Map overlays</h2>
+                        </div>
+                    </div>
+                    <div class="controls-grid">
+                        <label class="debug-option"><input type="checkbox" id="toggle-vision"><span>Vision cones</span></label>
+                        <label class="debug-option"><input type="checkbox" id="toggle-trust"><span>Squad cohesion</span></label>
+                        <label class="debug-option"><input type="checkbox" id="toggle-heatmap"><span>Awareness grid</span></label>
+                        <label class="debug-option"><input type="checkbox" id="toggle-targets" checked><span>Intent lines</span></label>
+                    </div>
+                </section>
+
+            </div>
+        </aside>
+    </main>
+
+    <!-- Pause Menu -->
+    <section id="pause-screen" class="screen-overlay state-screen" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden>
+        <div class="state-card">
+            <h2 id="pause-title">Paused</h2>
+            <p>Resume the battle, restart it, or return to mode selection.</p>
+            <div class="state-actions">
+                <button id="btn-resume" class="menu-button menu-button--primary" type="button">Resume simulation</button>
+                <button id="btn-pause-restart" class="menu-button" type="button">Restart scenario</button>
+                <button id="btn-pause-menu" class="text-button" type="button">Return to mode selection</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Over -->
+    <section id="game-over-screen" class="screen-overlay state-screen" role="dialog" aria-modal="true" aria-labelledby="victory-text" aria-describedby="game-over-summary" hidden>
+        <div class="scanline" aria-hidden="true"></div>
+        <div class="state-card state-card--result">
+            <h1 id="victory-text">TEAM WINS!</h1>
+            <p id="game-over-summary">The engagement is complete.</p>
+            <div class="state-actions state-actions--horizontal">
+                <button id="btn-restart" class="menu-button menu-button--primary" type="button">Run it again</button>
+                <button id="btn-game-over-menu" class="menu-button" type="button">Change mode</button>
+            </div>
+        </div>
+    </section>
+
+    <script type="module" src="main.js?v=field-console-18"></script>
 </body>
 </html>
