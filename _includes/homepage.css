@@ -89,8 +89,7 @@
     display: none;
   }
 
-  /* Hide all sketches/annotations/graphics on mobile */
-  .corner-layer,
+  /* Keep decorative sketches out of the mobile navigation. */
   .sketch-note,
   .layout-guide,
   #hand-tooltip {
@@ -111,8 +110,71 @@
   }
 
   .mobile-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 4px 12px;
     text-decoration: underline;
     text-decoration-thickness: 1px;
+  }
+
+  .homepage {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  .corner-layer .corner-annotation {
+    display: none;
+  }
+
+  .corner-layer .top-right {
+    display: block;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+    transform: none;
+    opacity: 1;
+    background: var(--background-color);
+    border-top: 1px solid var(--border-color);
+    pointer-events: auto;
+  }
+
+  #mode-switch {
+    justify-content: center !important;
+    gap: 24px !important;
+    transform: none !important;
+  }
+
+  .mode-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+  }
+
+  .mode-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .social-link .social-icon {
+    width: 28px !important;
+    height: 28px;
+  }
+
+  .menu .note-right,
+  .menu .note-left {
+    display: block !important;
+    top: 100%;
+    left: 0;
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .menu .sketch-text {
+    font-size: inherit !important;
   }
 }
 

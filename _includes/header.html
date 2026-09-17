@@ -5,7 +5,7 @@
         <div class="site-home">
             <a href="/">home</a>
             <div class="settings-wrapper">
-                <button class="settings-icon" id="settings-toggle" aria-label="Settings">
+                <button class="settings-icon" id="settings-toggle" aria-label="Settings" aria-expanded="false" aria-controls="settings-menu">
                     <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20">
                 </button>
                 <div class="settings-dropdown" id="settings-menu">
@@ -47,16 +47,16 @@
                     <div class="settings-section">
                         <div class="settings-subtitle">Font Size</div>
                         <div class="settings-options size-options">
-                            <button id="decrease-font">−</button>
-                            <button id="reset-font">Reset</button>
-                            <button id="increase-font">+</button>
+                            <button id="decrease-font" aria-label="Decrease font size">−</button>
+                            <button id="reset-font" aria-label="Reset font size">Reset</button>
+                            <button id="increase-font" aria-label="Increase font size">+</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <button class="menu-toggle" aria-label="Toggle navigation">
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-navigation">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" />
@@ -67,7 +67,7 @@
             </svg>
         </button>
 
-        <ul class="nav-links">
+        <ul class="nav-links" id="site-navigation">
             <li><a href="/projects">projects</a></li>
             <li><a href="/blog">blog</a></li>
             <li><a href="/philosophy">philosophy</a></li>

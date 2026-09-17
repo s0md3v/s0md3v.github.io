@@ -123,44 +123,74 @@ document.addEventListener('DOMContentLoaded', function () {
     loadFontSettings();
     deobfuscateEmails();
 
-    const menuToggle = document.querySelector(".menu-toggle");
-    const navLinks = document.querySelector(".nav-links");
-    const header = document.getElementById("site-header");
-    let lastScrollTop = 0;
-
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener("click", () => {
-            navLinks.classList.toggle("visible");
-        });
-    }
-
-    if (header) {
-        window.addEventListener("scroll", function () {
-            let scrollTop = window.scrollY;
-            if (scrollTop > lastScrollTop && scrollTop > 50) {
-                header.classList.add("hidden");
-            } else {
-                header.classList.remove("hidden");
-            }
-            lastScrollTop = Math.max(0, scrollTop);
-        });
-    }
-
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    const header = document.getElementById('site-header');
     const settingsToggle = document.getElementById('settings-toggle');
     const settingsMenu = document.getElementById('settings-menu');
+    const mobileNavigation = window.matchMedia('(max-width: 768px)');
+    const panels = [
+        { toggle: menuToggle, panel: navLinks },
+        { toggle: settingsToggle, panel: settingsMenu }
+    ].filter(({ toggle, panel }) => toggle && panel);
 
-    if (settingsToggle && settingsMenu) {
-        settingsToggle.addEventListener('click', function () {
-            settingsToggle.classList.toggle('active');
-            settingsMenu.classList.toggle('visible');
+    function setPanel({ toggle, panel }, open) {
+        panel.classList.toggle('visible', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        if (open && header) header.classList.remove('hidden');
+    }
+
+    panels.forEach(entry => {
+        entry.toggle.addEventListener('click', () => {
+            const open = entry.toggle.getAttribute('aria-expanded') !== 'true';
+            panels.forEach(other => setPanel(other, other === entry && open));
         });
+        entry.panel.addEventListener('click', event => {
+            if (event.target.closest('a')) setPanel(entry, false);
+        });
+    });
 
-        document.addEventListener('click', function (event) {
-            if (!settingsMenu.contains(event.target) && !settingsToggle.contains(event.target)) {
-                settingsToggle.classList.remove('active');
-                settingsMenu.classList.remove('visible');
+    document.addEventListener('click', event => {
+        panels.forEach(entry => {
+            if (!entry.panel.contains(event.target) && !entry.toggle.contains(event.target)) {
+                setPanel(entry, false);
             }
         });
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        const openPanel = panels.find(entry => entry.toggle.getAttribute('aria-expanded') === 'true');
+        if (openPanel) {
+            event.preventDefault();
+            setPanel(openPanel, false);
+            openPanel.toggle.focus();
+        }
+    });
+
+    document.addEventListener('focusin', event => {
+        panels.forEach(entry => {
+            if (!entry.panel.contains(event.target) && !entry.toggle.contains(event.target)) {
+                setPanel(entry, false);
+            }
+        });
+    });
+
+    mobileNavigation.addEventListener('change', () => {
+        panels.forEach(entry => setPanel(entry, false));
+        if (header) header.classList.remove('hidden');
+    });
+
+    let lastScrollTop = 0;
+    if (header) {
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const panelOpen = panels.some(entry => entry.toggle.getAttribute('aria-expanded') === 'true');
+            header.classList.toggle('hidden', !mobileNavigation.matches && !panelOpen &&
+                !header.contains(document.activeElement) && scrollTop > lastScrollTop && scrollTop > 50);
+            lastScrollTop = Math.max(0, scrollTop);
+        }, { passive: true });
     }
 
     function setupAccessibility() {

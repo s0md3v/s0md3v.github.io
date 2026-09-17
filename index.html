@@ -176,6 +176,7 @@ layout_style: "homepage"
         function updateModeIcons() {
           const current = getPreferredTheme();
           document.querySelectorAll('#mode-switch .mode-icon').forEach(icon => {
+            icon.setAttribute('aria-pressed', String(icon.dataset.mode === current));
             if (icon.dataset.mode === current) {
               icon.style.opacity = '1';
             } else {

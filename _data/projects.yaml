@@ -50,7 +50,7 @@
   stars: 285
   what: Extracts hardcoded strings from source code.
   why: Developers accidentally leave API keys and sensitive info inside strings, and
-    normal greping gets messy with comments.
+    normal grepping gets messy with comments.
   how: Uses a modular tokenizer that actually understands comments and string syntax
     across over 20 different programming languages.
 - title: Orbit

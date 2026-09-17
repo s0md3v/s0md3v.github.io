@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Now
+updated: 2026-09-17
 ---
 <style>
     /* Now Layout - Responsive Grid */
@@ -81,7 +82,6 @@ title: Now
 
     .list-item.active {
         color: var(--accent-color);
-        font-weight: 500;
     }
 
     /* Note Styles */
@@ -121,14 +121,17 @@ title: Now
 <div class="wrapper wide now-container">
 
     <div class="list-column">
-        <h1 style="margin-bottom: 1.5rem; font-family: 'Comfortaa', sans-serif;">Now</h1>
+        <div>
+            <h1 style="font-family: 'Comfortaa', sans-serif;">Now</h1>
+            <p style="font-size: 0.9rem; color: var(--muted-color);">Updated <time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: '%-d %B %Y' }}</time></p>
+        </div>
 
         <!-- Working -->
         <div class="list-section">
             <div class="section-label">working</div>
 
-            <div class="list-item" data-note="Building something that matters.">Project X (Non-security Product)</div>
-            <div class="mobile-note">Building something that matters.</div>
+            <div class="list-item" data-note="Building an app for your first brain.">Project X (Non-security Product)</div>
+            <div class="mobile-note">Building an app for your first brain.</div>
         </div>
 
         <!-- Learning -->
@@ -147,7 +150,7 @@ title: Now
 
     <!-- Sticky Note Area -->
     <div class="note-column">
-        <div class="sticky-note" id="note-display">Updated: {{ site.time | date: "%B %Y" }}</div>
+        <div class="sticky-note" id="note-display">Building an app for your first brain.</div>
     </div>
 
 </div>
