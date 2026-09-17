@@ -222,8 +222,6 @@ pre>code {
   font-size: 1.7rem;
   font-family: var(--blog-font-family);
   transition: all 0.3s ease;
-  border-left: 4px solid transparent;
-  padding-left: 15px;
 }
 
 .post-list>li>a:hover {
@@ -231,7 +229,14 @@ pre>code {
   text-decoration: none;
   text-decoration-color: var(--foreground-color);
   background: transparent;
-  border-left: 4px solid var(--border-color);
+}
+
+.post-list>li>.post-meta {
+  /* Keep dates beside the title without taking up its wrapping space. */
+  display: inline-block;
+  width: 0;
+  white-space: nowrap;
+  transform: translateX(0.75rem);
 }
 
 .post-meta {

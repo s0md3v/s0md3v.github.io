@@ -52,11 +52,7 @@ order: 1
   display: flex;
   flex-direction: column;
   gap: 5px;
-  transition: transform 0.3s ease;
   cursor: default;
-}
-.impact-item:hover {
-  transform: translateY(-5px) scale(1.05);
 }
 .impact-value {
   font-family: "Comfortaa", sans-serif;
@@ -78,13 +74,12 @@ order: 1
 .proj-card {
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
   background-color: transparent;
 }
 .proj-card:hover {
   border-color: var(--accent-color);
   background-color: rgba(0,0,0,0.015);
-  transform: translateY(-2px);
 }
 html.dark-mode .proj-card:hover {
   background-color: rgba(255,255,255,0.02);
@@ -95,6 +90,7 @@ html.dark-mode .proj-card:hover {
   text-decoration: none !important;
   color: inherit;
   padding: 25px;
+  border-radius: inherit;
 }
 .proj-header {
   display: flex;
@@ -122,12 +118,12 @@ html.dark-mode .proj-card:hover {
   font-family: var(--blog-font-family);
   font-size: 1.1rem;
   color: var(--muted-color);
-  border: 1px solid var(--border-color);
+  border: 1px solid transparent;
   padding: 4px 12px;
   border-radius: 20px;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, color 0.3s ease;
 }
-.proj-card:hover .proj-stat {
+.proj-stat:hover {
   border-color: var(--accent-color);
   color: var(--foreground-color);
 }

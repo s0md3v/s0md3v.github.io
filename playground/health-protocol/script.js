@@ -620,8 +620,6 @@ function renderQuestion() {
     const data = assessmentModel[currentStep];
     
     // Update Header
-    document.getElementById('category-tag').textContent = data.category;
-    document.getElementById('category-tag').style.display = 'inline-block';
     document.getElementById('question-text').textContent = data.prompt;
     document.getElementById('question-subtext').textContent = data.subtext || '';
 
@@ -852,7 +850,6 @@ function renderResults() {
         
         const protocolHtml = item.protocol.map(step => `
             <li class="protocol-step">
-                <span class="check-icon"></span>
                 <span>${step.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</span>
             </li>
         `).join('');
@@ -875,14 +872,13 @@ function renderResults() {
         card.innerHTML = `
             <div class="card-header">
                 <div class="header-main">
-                    <span class="priority-label">${priorityLabel} Priority</span>
+                    <span class="priority-label">${priorityLabel} priority</span>
                     <h4>${item.title}</h4>
                 </div>
             </div>
             
             <div class="card-body">
                 <div class="reasoning-section">
-                    <h5>Why it matters</h5>
                     <p>${item.reasoning}</p>
                 </div>
 
@@ -909,8 +905,13 @@ function renderResults() {
 
                 <div class="sources-section">
                     <details>
-                        <summary>Sources</summary>
-                        <ul class="source-list">
+                        <summary>
+                            <svg class="sources-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                            <span>Sources</span>
+                        </summary>
+                        <ul class="source-list" role="list">
                             ${sourcesHtml}
                         </ul>
                     </details>

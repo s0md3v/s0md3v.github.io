@@ -11,7 +11,9 @@ description: "Research notes, tutorials, and thoughts on security engineering."
     {% unless post.unlisted %}
     {% if post.type == "tech" %}
     <li>
-      <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a><span class="post-meta">
+        {{ post.date | date: "%-d %b %Y" }}
+      </span>
     </li>
     {% endif %}
     {% endunless %}
