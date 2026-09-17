@@ -53,7 +53,6 @@ a:hover {
   top: 3vw;
   left: 3vw;
   line-height: 1.4;
-  transform: rotate(-2deg);
   max-width: 250px;
 }
 
@@ -66,7 +65,6 @@ a:hover {
 .bottom-right {
   bottom: 2vw;
   right: 2vw;
-  transform: rotate(-2deg);
   text-align: left;
   line-height: 1.5;
   pointer-events: auto;
@@ -75,7 +73,6 @@ a:hover {
 .bottom-left {
   bottom: 2vw;
   left: 3vw;
-  transform: rotate(1deg);
   line-height: 1.6;
 }
 
@@ -121,7 +118,6 @@ a:hover {
   top: -1rem;
   left: 100%;
   margin-left: 0.8rem;
-  transform: rotate(-3deg);
   align-items: flex-start;
 }
 
@@ -133,7 +129,6 @@ a:hover {
   top: 100%;
   left: 0;
   margin-top: 0.2rem;
-  transform: rotate(2deg);
   align-items: flex-start;
 }
 
@@ -155,13 +150,12 @@ a:hover {
   top: 0.8rem;
   left: 100%;
   margin-left: 0.5rem;
-  transform: rotate(4deg);
 }
 
 .note-bottom {
   top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(0.5rem) rotate(-2deg);
+  transform: translateX(-50%) translateY(0.5rem);
   align-items: center;
 }
 
@@ -197,6 +191,6 @@ a:hover {
   .corner-annotation.bottom-right {
     bottom: 1.5rem;
     right: 1.5rem;
-    transform: scale(0.8) rotate(2deg);
+    transform: scale(0.8);
   }
 }

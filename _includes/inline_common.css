@@ -651,7 +651,6 @@ li {
   top: -1rem;
   left: 100%;
   margin-left: 0.8rem;
-  transform: rotate(-3deg);
   align-items: flex-start;
 }
 
@@ -663,7 +662,6 @@ li {
   top: 100%;
   left: 0;
   margin-top: 0.2rem;
-  transform: rotate(2deg);
   align-items: flex-start;
 }
 
@@ -685,13 +683,12 @@ li {
   top: 0.8rem;
   left: 100%;
   margin-left: 0.5rem;
-  transform: rotate(4deg);
 }
 
 .note-bottom {
   top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(0.5rem) rotate(-2deg);
+  transform: translateX(-50%) translateY(0.5rem);
   align-items: center;
 }
 
@@ -731,7 +728,7 @@ li {
   .corner-annotation.bottom-right {
     bottom: 1.5rem;
     right: 1.5rem;
-    transform: scale(0.8) rotate(2deg);
+    transform: scale(0.8);
   }
 }
 
@@ -786,7 +783,6 @@ li {
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: auto;
-  transform: rotate(-1.5deg);
   text-shadow: 0 0 10px var(--background-color);
   z-index: 5;
 }
@@ -801,7 +797,6 @@ li {
 
 .social-links {
   display: flex;
-  gap: 15px;
   margin-top: 5px;
   flex-wrap: wrap;
   justify-content: center;
@@ -811,26 +806,35 @@ li {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background-color: var(--code-bg);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 8px;
+  background: transparent;
   color: var(--foreground-color);
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .social-btn:hover {
-  background-color: var(--background-color);
-  border-color: var(--accent-color);
+  background: transparent;
   color: var(--accent-color);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
 }
 
 .social-btn svg {
-  width: 24px;
-  height: 24px;
+  width: clamp(24px, 4vw, 42px);
+  height: clamp(24px, 4vw, 42px);
+}
+
+.social-btn svg path {
+  stroke: var(--foreground-color);
+  transition: stroke 0.3s ease;
+}
+
+.social-btn:hover svg path {
+  stroke: var(--accent-color);
 }
 
 .dark-mode .about-image img {

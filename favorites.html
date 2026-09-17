@@ -55,8 +55,6 @@ title: Favorites
     .section-label {
         font-family: 'Comfortaa', sans-serif;
         font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.15em;
         color: var(--muted-color);
         margin-bottom: 0.5rem;
         font-weight: bold;
@@ -98,7 +96,6 @@ title: Favorites
         
         .list-item.active {
             color: var(--accent-color);
-            font-weight: 500;
         }
     }
     
@@ -113,15 +110,13 @@ title: Favorites
         font-size: 2.16rem;
         line-height: 1.4;
         text-align: center;
-        transform: rotate(-2deg);
         opacity: 0;
-        transition: opacity 0.2s ease, transform 0.3s ease;
+        transition: opacity 0.2s ease;
         max-width: 280px;
     }
 
     .sticky-note.visible {
         opacity: 1;
-        transform: rotate(-1deg);
     }
     
     /* Mobile Note (Inline) */
@@ -140,10 +135,24 @@ title: Favorites
     
     .sup-note {
         font-family: 'Reenie Beanie', cursive;
-        font-size: 0.72em;
+        font-size: 1.1em;
         vertical-align: top;
         color: var(--accent-color);
         margin-left: 2px;
+    }
+
+    .letterboxd-note {
+        font-family: 'Reenie Beanie', cursive;
+        font-size: 1.6rem;
+        line-height: 1.4;
+        color: var(--accent-color);
+        margin: 0.8rem 0 0;
+    }
+
+    .letterboxd-note a {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
     }
 </style>
 
@@ -154,7 +163,7 @@ title: Favorites
 
         <!-- Watch -->
         <div class="list-section">
-            <div class="section-label">watch</div>
+            <div class="section-label">Watch</div>
             
             {% assign watch_items = "About Time|Poor Things|Mard Ko Dard Nahi Hota|Past Lives|La La Land|Fleabag|Portrait of a Lady on Fire|Parasite|True Detective" | split: "|" %}
             {% assign watch_notes = "if you are going to watch one movie from this list, watch this one.|my fav movie, go in blind|they made this one for me, you probably won't like it|i cried. amor fati.|'past lives' but make it cheesy|it'll pass.|yearning caught in 4k|we both know who the real parasite is :p|wake up babe, new literally me character just dropped" | split: "|" %}
@@ -185,11 +194,12 @@ title: Favorites
 
             <div class="list-item" data-note="wake up babe, new literally me character just dropped">True Detective <span class="sup-note">s1 only!</span></div>
             <div class="mobile-note">wake up babe, new literally me character just dropped</div>
+            <p class="letterboxd-note">Want more movies? Find me on <a href="https://letterboxd.com/s0md3v/">Letterboxd</a>.</p>
         </div>
 
         <!-- Read -->
         <div class="list-section">
-            <div class="section-label">read</div>
+            <div class="section-label">Read</div>
             
             <div class="list-item" data-note="if you are going to read one book in your life, it should be this one.">Nicomachean Ethics <span class="meta-tag">(Aristotle)</span></div>
             <div class="mobile-note">if you are going to read one book in your life, it should be this one.</div>
@@ -203,7 +213,7 @@ title: Favorites
 
         <!-- Play -->
         <div class="list-section">
-            <div class="section-label">play</div>
+            <div class="section-label">Play</div>
             
             <div class="list-item" data-note="this is a life changing game">Disco Elysium</div>
             <div class="mobile-note">this is a life changing game</div>
