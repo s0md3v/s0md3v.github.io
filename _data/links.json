@@ -574,13 +574,6 @@
     "category": "Society & culture"
   },
   {
-    "id": "f2c662a213ab",
-    "url": "https://github.com/github/awesome-copilot",
-    "title": "Awesome Copilot",
-    "description": "Community-contributed instructions and resources for GitHub Copilot.",
-    "category": "AI & machine learning"
-  },
-  {
     "id": "d1684ed124f4",
     "url": "https://little-book-of.github.io/linear-algebra/",
     "title": "Linear algebra textbook",
@@ -1097,20 +1090,6 @@
     "title": "Fashion and style commentary",
     "description": "Frugal Aesthetic’s humorous fashion commentary, with videos on personal style, clothing trends, and putting outfits together.",
     "category": "Art & media"
-  },
-  {
-    "id": "354369e024c4",
-    "url": "https://github.com/github/copilot-cli",
-    "title": "Copilot CLI",
-    "description": "Use GitHub Copilot in the terminal.",
-    "category": "AI & machine learning"
-  },
-  {
-    "id": "bb7b62508cb4",
-    "url": "https://docs.github.com/en/copilot/how-tos/chat-with-copilot",
-    "title": "Copilot Chat",
-    "description": "Documentation for using GitHub’s coding assistant.",
-    "category": "AI & machine learning"
   },
   {
     "id": "0fb48f2f7b7b",
