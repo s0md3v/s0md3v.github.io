@@ -1111,5 +1111,131 @@
     "title": "Copilot Chat",
     "description": "Documentation for using GitHub’s coding assistant.",
     "category": "AI & machine learning"
+  },
+  {
+    "id": "0fb48f2f7b7b",
+    "url": "https://phosphoricons.com/",
+    "title": "Phosphor Icons",
+    "description": "An icon library for interfaces, diagrams, and presentations.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "b106853e5676",
+    "url": "https://www.youtube.com/watch?v=4cd5kV8hOtY",
+    "title": "Drawing what you see",
+    "description": "Stephen Travers demonstrates how observing the visual effects of objects, rather than drawing objects in isolation, makes a scene more convincing.",
+    "category": "Art & media"
+  },
+  {
+    "id": "b644385932ab",
+    "url": "https://www.youtube.com/watch?v=ESdLgLleAaM",
+    "title": "Eugene Schwartz on copywriting",
+    "description": "A recorded workshop with the author of Breakthrough Advertising on writing persuasive advertising copy.",
+    "category": "Business & career"
+  },
+  {
+    "id": "dd8fda6264c8",
+    "url": "https://www.youtube.com/watch?v=TUMjnmfsPeM",
+    "title": "Harry Dry on copywriting",
+    "description": "Learn to write concrete, testable, distinctive copy through ad comparisons and a live writing demonstration.",
+    "category": "Business & career"
+  },
+  {
+    "id": "8b4448c24495",
+    "url": "https://www.microsoft.com/en-us/wdsi/filesubmission",
+    "title": "Microsoft malware submissions",
+    "description": "Submit suspicious files or report false positives to Microsoft’s security analysts.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "080cd3268ab7",
+    "url": "https://github.com/1NobleCyber/Get-MSStoreDownloadLinks",
+    "title": "Microsoft Store download links",
+    "description": "A PowerShell function that retrieves temporary download URLs for Microsoft Store apps.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "44f9822435c4",
+    "url": "https://item.market/studio",
+    "title": "Device mockup studio",
+    "description": "Place images or videos in phone, tablet, laptop, and browser mockups, then customize the scene and export it.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "609071fd06d7",
+    "url": "https://splasho.com/upgoer5/",
+    "title": "Up-Goer Five writing editor",
+    "description": "Practice explaining complex ideas using only the 1,000 most common words.",
+    "category": "Business & career"
+  },
+  {
+    "id": "271c3bd60e15",
+    "url": "https://www.rams.ai/",
+    "title": "Rams design review",
+    "description": "Automated UI reviews that identify accessibility and design issues in code and suggest fixes.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "446b704da610",
+    "url": "https://www.checklist.design/",
+    "title": "Interface design checklists",
+    "description": "Check common pages, components, and user flows for overlooked design and usability details.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "9707e8154039",
+    "url": "https://www.gatheros.co/",
+    "title": "GatherOS visual bookmarks",
+    "description": "A Mac app for collecting design references and finding them again with visual search, tags, and color filters.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "c2619801df23",
+    "url": "https://www.youtube.com/watch?v=pxHGcSyk3SE",
+    "title": "Circular reasoning explained",
+    "description": "Kane B examines when an argument assumes its own conclusion and competing accounts of why this is a fallacy.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "be7a0c1b1dc9",
+    "url": "https://www.youtube.com/watch?v=c9BFn4Kqj0E",
+    "title": "Truth beyond statements",
+    "description": "Kane B explores whether things such as friends or objects can be true, comparing philosophical theories and objections.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "f35d0d6b4b77",
+    "url": "https://interfaces.dev/cheat-sheet",
+    "title": "Interface design cheat sheet",
+    "description": "Interactive examples of UI layout, typography, and animation techniques.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "e50953399cee",
+    "url": "https://www.designsystemchecklist.com/",
+    "title": "Design system checklist",
+    "description": "An open-source checklist for planning, building, and maintaining a design system.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "05a5769075d9",
+    "url": "https://ambientcg.com/",
+    "title": "Free textures and 3D assets",
+    "description": "Browse CC0 textures, HDR lighting environments, and 3D models for personal and commercial projects.",
+    "category": "Art & media"
+  },
+  {
+    "id": "b713bf2029c6",
+    "url": "https://try.cloudflare.com/",
+    "title": "Cloudflare Quick Tunnels",
+    "description": "Share a local development server through a temporary public HTTPS URL without creating an account.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "d98f9a968b63",
+    "url": "https://the-brandidentity.com/features",
+    "title": "Brand identity case studies",
+    "description": "Explore branding projects and designer interviews covering typography, visual identity, and design decisions.",
+    "category": "Design & UX"
   }
 ]
