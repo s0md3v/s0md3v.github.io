@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Playground
-description: A collection of small tools, experiments, and interactive guides built for fun and utility.
+description: Small tools, experiments, interactive guides, and useful links.
 permalink: /playground/
 ---
 
@@ -25,13 +25,13 @@ permalink: /playground/
   
   .playground-subtitle {
     font-size: 1.2rem;
-    color: var(--text-muted, #666);
+    color: var(--midground-color, #666);
     line-height: 1.5;
   }
 
   .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
     gap: 1.5rem;
   }
 
@@ -50,6 +50,11 @@ permalink: /playground/
     border-color: var(--accent-color, #2563eb);
   }
 
+  .tool-card:focus-visible {
+    outline: 2px solid var(--accent-color, #2563eb);
+    outline-offset: 4px;
+  }
+
   .tool-title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -61,7 +66,7 @@ permalink: /playground/
 
   .tool-desc {
     font-size: 0.95rem;
-    color: var(--text-muted, #666);
+    color: var(--midground-color, #666);
     line-height: 1.4;
   }
 
@@ -72,7 +77,8 @@ permalink: /playground/
     color: var(--accent-color, #2563eb);
   }
 
-  .tool-card:hover .arrow-icon {
+  .tool-card:hover .arrow-icon,
+  .tool-card:focus-visible .arrow-icon {
     opacity: 1;
     transform: translateX(0);
   }
@@ -81,7 +87,7 @@ permalink: /playground/
 <div class="playground-container">
   <header class="playground-header">
     <h1 class="playground-title">Playground</h1>
-    <p class="playground-subtitle">Small tools, experiments, and interactive guides I've built. Less serious than my main work, but hopefully just as useful.</p>
+    <p class="playground-subtitle">Small tools, experiments, interactive guides, and useful links.</p>
   </header>
 
   <div class="tools-grid">
@@ -107,6 +113,14 @@ permalink: /playground/
         <span class="arrow-icon">→</span>
       </div>
       <p class="tool-desc">An abstract wallpaper and animation generator.</p>
+    </a>
+
+    <a href="{{ '/playground/links/' | relative_url }}" class="tool-card">
+      <div class="tool-title">
+        Links
+        <span class="arrow-icon" aria-hidden="true">→</span>
+      </div>
+      <p class="tool-desc">Tools, articles, videos, and resources. Browse by topic or search for something specific.</p>
     </a>
 
   </div>

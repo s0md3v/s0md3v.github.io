@@ -1,0 +1,1115 @@
+[
+  {
+    "id": "680e4a713683",
+    "url": "https://jevable.com/",
+    "title": "Jev project gallery",
+    "description": "A gallery of projects and experiments built with Jev.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "0f9780d6fa5d",
+    "url": "https://sound-effects.bbcrewind.co.uk/",
+    "title": "BBC Sound Effects",
+    "description": "Browse the BBC’s sound-effects archive.",
+    "category": "Art & media"
+  },
+  {
+    "id": "b8b09598a28c",
+    "url": "https://www.youtube.com/watch?v=GjkKi6uXxYw",
+    "title": "North Sentinel Island documentary",
+    "description": "Geno Samuel’s documentary on the Sentinelese, their encounters with outsiders, and the history of neighboring peoples in the Andaman Islands.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "872e9c05d2bb",
+    "url": "https://whip.run/",
+    "title": "Whip interactive experiences",
+    "description": "Discover, play and create interactive web experiences.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "e1739cedc6f9",
+    "url": "https://github.com/cactus-compute/needle",
+    "title": "Needle tiny AI model",
+    "description": "A 14 MB foundation model for tiny devices.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "beff46d6ec2b",
+    "url": "https://www.hackdex.app/discover",
+    "title": "Pokémon ROM hacks",
+    "description": "Discover Pokémon ROM hacks, compare their features, and apply patches to your own game files in the browser.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "5b8b35e3d0d3",
+    "url": "https://github.com/duty1g/x64dbg-mcp-server",
+    "title": "x64dbg MCP server",
+    "description": "Connect x64dbg to tools through the Model Context Protocol.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "f68b1a5ee94f",
+    "url": "https://how.complexsystems.fail/",
+    "title": "How complex systems fail",
+    "description": "An essay on the behavior and failure of complex systems.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "bc7a74a87a8e",
+    "url": "https://internals-for-interns.com/",
+    "title": "Software internals explained",
+    "description": "A collection of blog posts explaining software internals in an approachable way",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "89a0e1bad786",
+    "url": "https://github.com/FlashML-org/FreeToken",
+    "title": "FreeToken local AI models",
+    "description": "Run large mixture-of-experts models on personal hardware.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "c2f23d9c4c8f",
+    "url": "https://github.com/General-Legal/legal-templates",
+    "title": "Legal templates",
+    "description": "A public collection of legal templates from General Legal.",
+    "category": "Business & career"
+  },
+  {
+    "id": "2f305abb867c",
+    "url": "https://learn-inference.com/",
+    "title": "AI inference engineering",
+    "description": "An interactive guide to inference engineering: how generative AI models are served in production, from attention kernels to multi-cloud capacity.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "dfa8e66d1dcd",
+    "url": "https://stephango.com/moats",
+    "title": "Competitive advantages",
+    "description": "An essay about competitive advantages.",
+    "category": "Business & career"
+  },
+  {
+    "id": "7d251c42bf73",
+    "url": "https://store.steampowered.com/search/?hwtype=0&maxprice=free&category1=998&specials=1&ndl=1",
+    "title": "Steam giveaways",
+    "description": "Find games temporarily discounted to free.",
+    "category": "Art & media"
+  },
+  {
+    "id": "7f95fd4a7742",
+    "url": "https://markxiv.org/",
+    "title": "Research papers for AI",
+    "description": "Prepare research papers for language models.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "87a9a8178b23",
+    "url": "https://ar5iv.labs.arxiv.org/",
+    "title": "Research papers in HTML",
+    "description": "Read research papers as web pages.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "4fcf7dd2b25b",
+    "url": "https://github.com/firecrawl/pdf-inspector",
+    "title": "PDF Inspector",
+    "description": "A Rust library for inspecting PDF files.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "9315689a1253",
+    "url": "https://www.givewell.org/",
+    "title": "GiveWell",
+    "description": "Charity research and giving recommendations.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "1242343fff3b",
+    "url": "https://www.youtube.com/playlist?list=PLxpB5Hi17Tp1QSXJhyJEH1dJlWEct_81q",
+    "title": "Startup Secrets lectures",
+    "description": "Michael Skok’s 2012 Startup Secrets lectures at Harvard Innovation Labs, a series on the practical challenges of building a startup.",
+    "category": "Business & career"
+  },
+  {
+    "id": "b7884da985bf",
+    "url": "https://huggingface.co/baidu/Unlimited-OCR",
+    "title": "Unlimited OCR",
+    "description": "Baidu’s optical character recognition model.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "0eadeb88e103",
+    "url": "https://www.promptfoo.dev/lm-security-db",
+    "title": "LLM vulnerability database",
+    "description": "A comprehensive database of researched vulnerabilities for Large Language Models",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "4a5c4eebcacd",
+    "url": "https://embracethered.com/blog/index.html",
+    "title": "Embrace The Red security blog",
+    "description": "wunderwuzzi's blog",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "458c04cd04ca",
+    "url": "https://github.com/morluto/rea",
+    "title": "AI reverse engineering",
+    "description": "Reverse-engineering tools built around AI agents.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "534c5624ba9a",
+    "url": "https://integrations.sh/",
+    "title": "AI agent integrations",
+    "description": "Find APIs, GraphQL endpoints, and MCP servers that AI agents can connect to, with credential requirements.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "57e43a42293b",
+    "url": "https://www.humanityslastmachine.com/",
+    "title": "Humanoid robotics explained",
+    "description": "A deep dive on humanoid robotics hardware and the technology shaping our future",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "02740ecde44a",
+    "url": "https://reicon.dev/",
+    "title": "Reicon open-source icons",
+    "description": "Open-source icons for interface design.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "4fddbba82c1b",
+    "url": "https://www.searchartwith.art/",
+    "title": "MoMA artwork search",
+    "description": "Explore MoMA’s collection using text search, similar artworks, image crops, and artist filters.",
+    "category": "Art & media"
+  },
+  {
+    "id": "a6b3766dd0bc",
+    "url": "https://github.com/Developer-Y/math-science-video-lectures",
+    "title": "Math & science video lectures",
+    "description": "A curated collection of science and mathematics video lectures.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "5a1dff09dc90",
+    "url": "https://productdesignpsychology.com/",
+    "title": "Product Design Psychology",
+    "description": "Understand the minds you design for and the mind you design with.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "c38bfbac2984",
+    "url": "https://recent.design/",
+    "title": "Recent design inspiration",
+    "description": "The best of recent design found on the Internet updated daily.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "20031b92cd95",
+    "url": "https://nosignups.net/",
+    "title": "Tools without signups",
+    "description": "Open-source tools that work without signing up.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "73468cde177d",
+    "url": "https://github.com/chopratejas/headroom",
+    "title": "Compress AI tool outputs",
+    "description": "Compress tool outputs, logs and files for AI workflows.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "ee8caa59fe9d",
+    "url": "https://designengineer.tools/",
+    "title": "Design Engineer Tools",
+    "description": "A list of useful tools for web-focused design engineers; curated by James Warner.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "b9f8f34f7637",
+    "url": "https://landscapes.directory/",
+    "title": "Public-domain landscape paintings",
+    "description": "A collection of landscape paintings with public-domain downloads.",
+    "category": "Art & media"
+  },
+  {
+    "id": "ed74b9d13b91",
+    "url": "https://www.youtube.com/watch?v=QVgeB5iWcBc",
+    "title": "Nutrition science explained",
+    "description": "Dabby’s illustrated introduction to digestion, macronutrients, vitamins, metabolism, the gut microbiome, and how the body processes food.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "308b4e638e9e",
+    "url": "https://diataxis.fr/",
+    "title": "Diátaxis documentation framework",
+    "description": "A framework for organizing tutorials, how-to guides, reference and explanation.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "f7179ba76c4d",
+    "url": "https://cartesian.app/",
+    "title": "Visual algorithms and data structures",
+    "description": "Learn data structures and algorithms with visualizations and code playback.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "bff819e4eab2",
+    "url": "https://vulnerabilityspoileralert.com/",
+    "title": "Early vulnerability alerts",
+    "description": "AI-powered early warning for open-source security patches — before the CVE drops.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "8c3f7b8f2e4a",
+    "url": "https://www.schoolofcriticalthinking.org/curriculum/",
+    "title": "Critical thinking curriculum",
+    "description": "Nine modules across three levels, ages 8–16. Patterns, causality, uncertainty, models, decisions.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "74231818b350",
+    "url": "https://github.com/trailofbits/trailmark",
+    "title": "Source code as a graph",
+    "description": "Build and query a graph representation of source code.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "aa76f34b90e0",
+    "url": "https://borretti.me/article/notes-on-managing-adhd",
+    "title": "Managing ADHD",
+    "description": "Strategies and tactics for staying productive.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "bd021b473bb1",
+    "url": "https://refero.design/",
+    "title": "Refero interface inspiration",
+    "description": "A searchable collection of web and iOS interface references.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "cf6956841f63",
+    "url": "https://www.webinspoo.com/",
+    "title": "SaaS website inspiration",
+    "description": "A collection of SaaS website examples.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "6019f79240bc",
+    "url": "https://ubuweb.com/film/",
+    "title": "Experimental films",
+    "description": "A collection of experimental films.",
+    "category": "Art & media"
+  },
+  {
+    "id": "cf1f38a182cb",
+    "url": "https://21st.dev/home",
+    "title": "21st.dev UI components",
+    "description": "A collection of UI components, AI-agent configurations and developer tools.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "6e18aa23e1f0",
+    "url": "https://github.com/heygen-com/hyperframes",
+    "title": "HTML to video",
+    "description": "Write HTML and render it as video.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "ecc6d5b762e2",
+    "url": "https://algebrica.org/",
+    "title": "Mathematics knowledge base",
+    "description": "A mathematical knowledge base.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "a0c60aff96ce",
+    "url": "https://www.makingsoftware.com/chapters",
+    "title": "How software works",
+    "description": "Chapters explaining how software works.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "935cdb2492cc",
+    "url": "https://godly.website/",
+    "title": "Godly web design inspiration",
+    "description": "A curated collection of website designs.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "21bf90b858a7",
+    "url": "https://locusonus.org/soundmap/",
+    "title": "Live microphones worldwide",
+    "description": "Live worldwide open microphones, a Locus Sonus initiative (LSLV, ESAAIX).",
+    "category": "Art & media"
+  },
+  {
+    "id": "674b41669a50",
+    "url": "https://www.flickr.com/photos/wocintechchat/",
+    "title": "Women of Color in Tech photos",
+    "description": "A photography collection featuring women of color in technology.",
+    "category": "Art & media"
+  },
+  {
+    "id": "e0988de66709",
+    "url": "https://www.shopify.com/stock-photos",
+    "title": "Burst stock photos",
+    "description": "Download free business, lifestyle, product, and nature photos for websites and creative projects.",
+    "category": "Art & media"
+  },
+  {
+    "id": "a8c5b9823e8a",
+    "url": "http://www.gratisography.com/",
+    "title": "Gratisography quirky stock photos",
+    "description": "Free, playful stock photos and vectors, including unusual portraits, amusing animals, and surreal scenes.",
+    "category": "Art & media"
+  },
+  {
+    "id": "d28d80263de4",
+    "url": "https://unsplash.com/images",
+    "title": "Unsplash photography",
+    "description": "Browse photography and illustrations by subject, from architecture and travel to textures and backgrounds.",
+    "category": "Art & media"
+  },
+  {
+    "id": "2a9891f77abc",
+    "url": "https://heropatterns.com/",
+    "title": "SVG background patterns",
+    "description": "Customize repeating SVG patterns and copy the CSS or download the artwork.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "7b4b462c63c7",
+    "url": "http://superfamous.com/",
+    "title": "Superfamous photography",
+    "description": "Photography and design assets; check attribution requirements.",
+    "category": "Art & media"
+  },
+  {
+    "id": "4e42d2cc6629",
+    "url": "http://publicdomainarchive.com/",
+    "title": "Public-domain photos",
+    "description": "Download public-domain photography, including landscapes, architecture, objects, and vintage images.",
+    "category": "Art & media"
+  },
+  {
+    "id": "8bab75c7f6d6",
+    "url": "http://picography.co/",
+    "title": "Picography stock photos",
+    "description": "Free high-resolution photos of people, business, technology, scenery, and everyday objects.",
+    "category": "Art & media"
+  },
+  {
+    "id": "56848841b0e1",
+    "url": "http://picjumbo.com/",
+    "title": "Picjumbo stock photos",
+    "description": "Browse free photos, backgrounds, and wallpapers for websites and designs, with themed photo packs available.",
+    "category": "Art & media"
+  },
+  {
+    "id": "01d929ee3ae3",
+    "url": "http://nos.twnsnd.co/",
+    "title": "Vintage public-archive photos",
+    "description": "Browse vintage photographs from public archives, including historic workplaces, cities, and space missions.",
+    "category": "Art & media"
+  },
+  {
+    "id": "ddb74f755877",
+    "url": "http://magdeleine.co/",
+    "title": "Magdeleine curated photos",
+    "description": "A curated photography collection with each image’s Creative Commons or public-domain license clearly labeled.",
+    "category": "Art & media"
+  },
+  {
+    "id": "5157f144486d",
+    "url": "http://join.deathtothestockphoto.com/",
+    "title": "Monthly stock-photo collections",
+    "description": "Sign up for monthly free photo collections for brands and creative projects.",
+    "category": "Art & media"
+  },
+  {
+    "id": "7c0f403a7100",
+    "url": "http://isorepublic.com/",
+    "title": "ISO Republic photos and videos",
+    "description": "Search free stock photos and video clips covering business, nature, travel, and everyday life.",
+    "category": "Art & media"
+  },
+  {
+    "id": "a5b273cc36d1",
+    "url": "https://www.imcreator.com",
+    "title": "IM Creator website builder",
+    "description": "Build responsive websites from templates with IM Creator.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "0e83b5fac64f",
+    "url": "http://foodiesfeed.com",
+    "title": "Food and drink photos",
+    "description": "Download food and drink photos, including coffee, baked goods, fresh ingredients, and prepared meals.",
+    "category": "Art & media"
+  },
+  {
+    "id": "897d5adb0f0c",
+    "url": "https://standardebooks.org/",
+    "title": "Public-domain ebooks",
+    "description": "Carefully formatted public-domain ebooks with modern reading features.",
+    "category": "Art & media"
+  },
+  {
+    "id": "3713498cf786",
+    "url": "https://artsandculture.google.com/explore",
+    "title": "Google Arts & Culture",
+    "description": "Explore collections from museums and cultural archives.",
+    "category": "Art & media"
+  },
+  {
+    "id": "b3a9557a0160",
+    "url": "https://news.google.com/newspapers",
+    "title": "Google Newspaper Archive",
+    "description": "A searchable collection of historical newspapers.",
+    "category": "Collections & reference"
+  },
+  {
+    "id": "3a25fcb96bc3",
+    "url": "https://quesma.com/blog/introducing-binaryaudit/",
+    "title": "Finding binary backdoors with AI",
+    "description": "An experiment testing AI detection of hidden binary backdoors.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "663a116cfbef",
+    "url": "https://dianoiaprotocol.substack.com/p/why-intelligence-doesnt-improve-rationality",
+    "title": "Intelligence versus rationality",
+    "description": "Why real-world rationality is not a matter of IQ, but of timing, framing, & incentives.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "aafe8d60ada3",
+    "url": "https://www.youtube.com/watch?v=20JNerTHh6w",
+    "title": "Capitalist conditioning",
+    "description": "A video essay by revolutionaryth0t examining how capitalism shapes beliefs and behavior, and proposing ways to recognize and challenge that conditioning.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "848e473f60b4",
+    "url": "https://www.youtube.com/watch?v=lpo4DKrykaw",
+    "title": "Adorno’s critique of society",
+    "description": "Popular Philosophy introduces Adorno’s negative dialectics and culture industry critique, examining how entertainment and social systems shape conformity.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "b58ee95455cd",
+    "url": "https://www.youtube.com/@ArtemKirsanov/videos",
+    "title": "Neuroscience and machine learning videos",
+    "description": "Artem Kirsanov’s visual explanations of computational neuroscience and machine learning, exploring how brains and mathematical models process information.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "e70ece295b59",
+    "url": "https://stefan-gloor.ch/",
+    "title": "Electronics and embedded projects",
+    "description": "Explore electronics and programming projects involving hardware, Linux, and embedded systems.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "dcfea708371f",
+    "url": "https://youtu.be/fXjKBzi57OQ",
+    "title": "Do language models make claims?",
+    "description": "Philosopher Ryan Simonelli examines whether language models make assertions, and what it would mean to treat their outputs as claims.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "3e115d909fa6",
+    "url": "https://www.youtube.com/@AppleDeveloper/playlists",
+    "title": "Apple developer videos",
+    "description": "Apple’s official developer video collections, with talks and tutorials on app development, interface design, and building for Apple platforms.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "3df899e12ab8",
+    "url": "https://lawsofux.com/",
+    "title": "Laws of UX",
+    "description": "Laws of UX is a collection of best practices that designers can consider when building user interfaces.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "e8a778988ec0",
+    "url": "https://stitch.withgoogle.com/",
+    "title": "Stitch AI interface design",
+    "description": "Stitch generates UIs for mobile and web applications, making design ideation fast and easy.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "bd02cffefd94",
+    "url": "https://ofriw.github.io/AI-Coding-Course/",
+    "title": "AI coding for engineers",
+    "description": "A course in AI-assisted software engineering for experienced developers.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "7f89b5dcd967",
+    "url": "https://youtu.be/vSQjk9jKarg",
+    "title": "What makes a happy life?",
+    "description": "Veritasium explores long-running happiness research with Robert Waldinger, focusing on relationships, loneliness, and what contributes to a satisfying life.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "a4a419712d4f",
+    "url": "https://www.youtube.com/watch?v=XX7PdJIGiCw",
+    "title": "Evolution and kin selection",
+    "description": "Veritasium uses simulations to explain evolution, gene mutation, natural selection, and how kin selection helps account for seemingly selfless behavior.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "334a5e1e29cf",
+    "url": "https://www.youtube.com/watch?v=AEPSUC-UQ5k&t=1227s",
+    "title": "Consumerism as social control",
+    "description": "Jiang Xueqin argues that consumer culture replaces worker solidarity with competition and debt; the timestamp opens that section of his lecture.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "f2c662a213ab",
+    "url": "https://github.com/github/awesome-copilot",
+    "title": "Awesome Copilot",
+    "description": "Community-contributed instructions and resources for GitHub Copilot.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "d1684ed124f4",
+    "url": "https://little-book-of.github.io/linear-algebra/",
+    "title": "Linear algebra textbook",
+    "description": "An introduction to linear algebra.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "32eb59c82bf7",
+    "url": "https://github.com/Escape-Technologies/graphql-wordlist",
+    "title": "GraphQL wordlist",
+    "description": "A wordlist for GraphQL security testing.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "8feaa76486e6",
+    "url": "https://www.petercai.com/technical-founder-guide",
+    "title": "Technical Founder Guide",
+    "description": "An opinionated collection of technical tips for technical founders.",
+    "category": "Business & career"
+  },
+  {
+    "id": "e466ff7c86bb",
+    "url": "https://mitxonline.mit.edu/catalog/courses",
+    "title": "MITx Online",
+    "description": "MIT’s catalog of online courses.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "f4e0adf84666",
+    "url": "https://github.com/github/spec-kit",
+    "title": "GitHub Spec Kit",
+    "description": "A toolkit for specification-driven software development.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "60bb8652a290",
+    "url": "https://heavyweight.cc/",
+    "title": "Formal letter generator",
+    "description": "Create formal-looking letters without claiming legal authority.",
+    "category": "Business & career"
+  },
+  {
+    "id": "562afe04bb91",
+    "url": "https://github.com/aliasrobotics/cai",
+    "title": "Cybersecurity AI framework",
+    "description": "An open cybersecurity AI framework.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "f38a051c2eba",
+    "url": "https://exploitreversing.com/",
+    "title": "Exploit Reversing",
+    "description": "A blog about vulnerability research, exploit development and reverse engineering.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "4f9882232dcd",
+    "url": "https://bugmenot.com",
+    "title": "Website logins without signup",
+    "description": "A resource for shared website logins.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "6729c961d12e",
+    "url": "https://www.ventoy.net/en/index.html",
+    "title": "Multiboot USB creator",
+    "description": "Create a bootable USB drive by copying ISO files onto it.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "7c71a59996a0",
+    "url": "https://en.wikipedia.org/wiki/Underhanded_C_Contest",
+    "title": "Underhanded C Contest",
+    "description": "A programming contest about concealing malicious behavior in apparently innocent C code.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "8561ce065e3c",
+    "url": "https://grugbrain.dev/",
+    "title": "Keeping software simple",
+    "description": "Thoughts on keeping software development simple.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "520256a932f1",
+    "url": "https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools",
+    "title": "AI system prompts",
+    "description": "A repository of system prompts and related AI-tool material.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "44f76c4a157a",
+    "url": "https://jhalon.github.io/chrome-browser-exploitation-3/",
+    "title": "Chrome exploitation, part 3",
+    "description": "Part 3 of a tutorial series on exploiting Chrome.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "35f1c74f6625",
+    "url": "https://jhalon.github.io/chrome-browser-exploitation-2/",
+    "title": "Chrome exploitation, part 2",
+    "description": "Part 2 of a tutorial series on exploiting Chrome.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "7d97f9bbf593",
+    "url": "https://jhalon.github.io/chrome-browser-exploitation-1/",
+    "title": "Chrome exploitation, part 1",
+    "description": "Part 1 of a tutorial series on exploiting Chrome.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "96b51b05f3bb",
+    "url": "https://www.sesame.com/research/crossing_the_uncanny_valley_of_voice#demo",
+    "title": "Sesame voice demo",
+    "description": "Research and demonstrations of conversational AI voices.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "3afe92261cec",
+    "url": "https://github.com/Arcanum-Sec/arc_pi_taxonomy",
+    "title": "Prompt injection taxonomy",
+    "description": "A taxonomy of prompt-injection techniques.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "dacf5de43931",
+    "url": "https://connorjaydunn.github.io/blog/posts/denuvo-analysis/",
+    "title": "Denuvo protection analysis",
+    "description": "A technical analysis of Denuvo’s software protection.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "e327ca3d8b6d",
+    "url": "https://darkmarc.substack.com/p/flipper-zero-hacking-tool-the-complete",
+    "title": "Flipper Zero beginner’s guide",
+    "description": "A beginner’s guide to Flipper Zero and its hardware capabilities.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "443181d2dca5",
+    "url": "https://brutecat.com/articles/decoding-google",
+    "title": "Mapping Google’s attack surface",
+    "description": "An investigation into mapping and understanding Google’s attack surface.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "28ff1cf204db",
+    "url": "https://www.youtube.com/watch?v=P_fHJIYENdI",
+    "title": "AlphaFold and AI protein design",
+    "description": "Veritasium explains how AlphaFold predicts protein structures and how AI tools such as RFdiffusion enable researchers to design new proteins.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "34dd482cd0c5",
+    "url": "https://huggingface.co/learn",
+    "title": "Machine learning courses",
+    "description": "Courses and tutorials on machine learning.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "56511fbbc1f9",
+    "url": "https://femmebot.github.io/google-type/",
+    "title": "Google Fonts pairings",
+    "description": "Examples of typography pairings using Google Fonts.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "f3f049c83251",
+    "url": "https://docs.google.com/document/u/0/d/1nZQCwjnXTQgM_u7k_K3wI54xONV4TIKSeX80Mvukg5E/mobilebasic",
+    "title": "LLM jailbreak guide",
+    "description": "An archived guide to LLM models and jailbreaking prompts.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "a11babb1ff8a",
+    "url": "https://tabboo.xyz/",
+    "title": "Jump scares for distracting sites",
+    "description": "A browser extension that adds jump scares to distracting websites.",
+    "category": "Collections & reference"
+  },
+  {
+    "id": "b8f242a7a1b0",
+    "url": "https://huggingface.co/spaces/srinivasbilla/llasa-3b-tts",
+    "title": "Llasa text-to-speech demo",
+    "description": "An interactive text-to-speech demo.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "3cafcfbdb54a",
+    "url": "https://drive.google.com/file/d/1TlDb1H5bRnZZdswmdr07m-58yxs4Es7-/edit",
+    "title": "Pen-spinning illustrated guide",
+    "description": "An illustrated book on pen-spinning history, communities, competitions, and the notation used to describe tricks.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "305457fca1e6",
+    "url": "https://www.hendrix.edu/uploadedFiles/Academics/Faculty_Resources/Teaching_and_Learning/Presence-Smartphone-reduces-cognitive-capacity.pdf",
+    "title": "Smartphones and attention",
+    "description": "A 2017 study testing whether a nearby smartphone affects working memory and reasoning.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "9d70a9cb06b3",
+    "url": "https://github.com/pbrucla/fuzzing-lab",
+    "title": "Hands-on fuzzing lab",
+    "description": "A fuzzing lab from UCLA ACM Cyber.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "8a6bd1ab56d5",
+    "url": "https://challenge.bellingcat.com/",
+    "title": "OSINT practice challenges",
+    "description": "Exercises in open-source investigation.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "d9474c757c3f",
+    "url": "https://docs.google.com/spreadsheets/d/1ruiEYvPpltLB8P2fxahjZapiBYKWKKWC/edit?gid=672499679#gid=672499679",
+    "title": "Perfume alternatives spreadsheet",
+    "description": "Compare designer and niche fragrances with their Middle Eastern perfume dupes in a searchable spreadsheet.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "20e44c2b0eba",
+    "url": "https://redteamrecipe.com/osint-methods-for-image-investigations",
+    "title": "Image investigation techniques",
+    "description": "Techniques for finding and interpreting information in images.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "dab1fc3b4a01",
+    "url": "https://indiaincomecheck.in/",
+    "title": "India Income Check",
+    "description": "A tool for comparing income in India.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "8f30c68d000b",
+    "url": "https://www.youtube.com/watch?v=61nuXrvqNgI&list=PLDb22nlVXGgdg_NR_-GtTrMnbMVmtSSXa&index=1",
+    "title": "Journey to the West retelling",
+    "description": "Overly Sarcastic Productions’ animated retelling of Journey to the West, beginning with Sun Wukong’s origins and his rebellion in heaven.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "da30a3549cad",
+    "url": "https://www.sectemplates.com/2024/08/announcing-the-vulnerability-management-program-pack-10.html",
+    "title": "Vulnerability management templates",
+    "description": "Templates and guidance for a vulnerability-management program.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "547e49f6268c",
+    "url": "https://www.youtube.com/watch?v=vyCsWFF1S9Y",
+    "title": "Geolocating a wanted gang leader",
+    "description": "Bendobrown demonstrates geolocating a wanted gang leader’s home from public footage, matching routes, landmarks, and architecture against satellite imagery.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "72e948491f7e",
+    "url": "https://cybdetective.com/osintmap/",
+    "title": "Worldwide OSINT map",
+    "description": "Find open-source investigation resources by location.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "5d855bd0acd0",
+    "url": "https://github.com/ehrishirajsharma/SwiftnessX",
+    "title": "Security assessment notes",
+    "description": "A cross-platform note-taking tool for security assessments.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "dccc7822c43f",
+    "url": "https://adasci.org/lightweight-text-extraction-with-nuextract-a-deep-dive/",
+    "title": "Structured extraction with NuExtract",
+    "description": "A guide to extracting structured JSON from unstructured text using NuExtract.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "f5af214e392c",
+    "url": "https://github.com/ouaibe/dreo-cloudcutter",
+    "title": "Local control of Dreo fans",
+    "description": "Run supported Dreo fans locally through Home Assistant.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "1282ad725d2e",
+    "url": "https://osintframework.com/",
+    "title": "OSINT Framework",
+    "description": "A directory of open-source intelligence tools and resources.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "70ffba600240",
+    "url": "https://pierrekim.github.io/blog/2024-06-27-sharp-mfp-17-vulnerabilities.html",
+    "title": "Sharp printer vulnerabilities",
+    "description": "Research into vulnerabilities in Sharp multifunction printers.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "6889d68753e9",
+    "url": "https://secret.club/2024/06/30/ring-around-the-regex-1.html",
+    "title": "Fuzzing regex libraries",
+    "description": "Lessons learned from fuzzing regular-expression libraries.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "4b3dc88513e5",
+    "url": "https://xbow.com/#researching-and-implementing-an-exploit-for-a-node-jose-vulnerability---66",
+    "title": "Exploiting node-jose",
+    "description": "An example of researching and implementing a node-jose exploit.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "31d323a23314",
+    "url": "https://capec.mitre.org/data/definitions/3000.html",
+    "title": "CAPEC attack patterns",
+    "description": "An organized view of attack patterns by domain.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "4a9243586067",
+    "url": "https://cwe.mitre.org/data/definitions/699.html",
+    "title": "CWE software weaknesses",
+    "description": "A catalog view of software-development weaknesses.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "2c3ce0ae9f37",
+    "url": "https://www.youtube.com/watch?v=Hn765WpVNJc",
+    "title": "How exhaustion affects judgment",
+    "description": "The School of Life explains how exhaustion can distort emotions and judgment, and why recognizing tiredness is a cue to rest.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "ef8684d2b2c3",
+    "url": "https://en.wikipedia.org/wiki/List_of_common_misconceptions",
+    "title": "Common misconceptions",
+    "description": "A collection of common misconceptions and their corrections.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "326f2045d554",
+    "url": "https://start.me/p/vjR5wL/osint-india",
+    "title": "OSINT India",
+    "description": "A collection of investigation resources for India.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "b6711d27f640",
+    "url": "https://ntfy.sh/",
+    "title": "Scriptable push notifications",
+    "description": "ntfy is a simple HTTP-based pub-sub notification service. It allows you to send notifications to your phone or desktop via scripts from any computer, and/or using a REST API.",
+    "category": "Programming & tools"
+  },
+  {
+    "id": "0fcbe6516f21",
+    "url": "https://colab.research.google.com/github/GalenReich/ShadowFinder/blob/main/ShadowFinderColab.ipynb#scrollTo=OwSUMKH8slkv",
+    "title": "ShadowFinder geolocation notebook",
+    "description": "A Google Colab notebook for working with shadows in geolocation.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "596f83546bbd",
+    "url": "https://www.youtube.com/watch?v=pQIjDPFgdJA",
+    "title": "Geolocation using shadows",
+    "description": "Rainbolt demonstrates ShadowFinder, a tool that uses shadows in an image to help narrow down where it was taken.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "3af9a4f48124",
+    "url": "https://github.com/pinokiocomputer/llamanet",
+    "title": "Replace OpenAI with llama.cpp",
+    "description": "A project for replacing OpenAI calls with llama.cpp.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "28eaf325b659",
+    "url": "https://youtu.be/4HHUGnHcDQw?t=382",
+    "title": "Math breakthroughs of 2023",
+    "description": "Quanta’s review of 2023 breakthroughs in Ramsey theory, aperiodic tiling, and arithmetic progressions; this link starts at the single-tile discovery.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "289343be5824",
+    "url": "https://www.youtube.com/watch?v=mZck0N_T9Cs",
+    "title": "Avi Wigderson and pseudorandomness",
+    "description": "Polylog explains Avi Wigderson’s Turing Award through pseudorandomness, derandomization, and the question of whether randomized algorithms can run deterministically.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "dc41de752a41",
+    "url": "https://www.youtube.com/watch?v=oAOypGQdzGU",
+    "title": "Bonded labor in brick kilns",
+    "description": "Business Insider investigates families working in Pakistan’s brick kilns, showing how low wages and growing debts trap workers in bonded labor.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "ba4d0af93377",
+    "url": "https://www.newsminimalist.com/",
+    "title": "News summaries by significance",
+    "description": "A service that selects and summarizes news stories.",
+    "category": "Society & culture"
+  },
+  {
+    "id": "d256f9237c04",
+    "url": "https://docs.google.com/spreadsheets/d/18rtqh8EG2q1xBo2cLNyhIDuK9jrPGwYr9DI2UncoqJQ/edit#gid=930747607",
+    "title": "Bellingcat investigation toolkit",
+    "description": "Bellingcat’s investigation toolkit: mapping, satellite imagery, photo verification, and other open-source research tools.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "246f924f0617",
+    "url": "https://www.bellingcat.com/resources/2023/05/08/chronolocation-determining-when-a-photo-was-taken-using-facebook-google-street-view-and-assorted-tiny-details/",
+    "title": "Dating photos with OSINT",
+    "description": "Social media posts, mapping tools and a being aware of small but important details can help researchers determine when an undated image was taken.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "d7bdb5ceb63f",
+    "url": "https://osm-search.bellingcat.com/",
+    "title": "Bellingcat OpenStreetMap Search",
+    "description": "Search map features for geolocation investigations.",
+    "category": "OSINT & investigation"
+  },
+  {
+    "id": "43f35e764156",
+    "url": "https://fmhy.net/",
+    "title": "Free online resources",
+    "description": "A directory of free online resources.",
+    "category": "Collections & reference"
+  },
+  {
+    "id": "fffa6cbd7dd0",
+    "url": "https://www.youtube.com/watch?v=HZGCoVF3YvM",
+    "title": "Bayes’ theorem visualized",
+    "description": "3Blue1Brown builds a visual intuition for Bayes’ theorem, showing how prior probabilities and new evidence combine to update beliefs.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "ec3f8852ad00",
+    "url": "https://github.com/narfindustries/http-garden",
+    "title": "HTTP implementation fuzzing",
+    "description": "Differential testing and fuzzing of HTTP implementations.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "c4b4866081e2",
+    "url": "https://baldur.dk/blog/embedded-mitel-exploitation.html",
+    "title": "Mitel phone exploitation",
+    "description": "How to achieve a working remote code execution exploit in an embedded phone without any previous access.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "283b67c1de53",
+    "url": "https://arbital.com/p/bayes_rule/",
+    "title": "Bayes' rule",
+    "description": "Bayes' rule is the core theorem of probability theory saying how to revise our beliefs when we make a new observation.",
+    "category": "Science & learning"
+  },
+  {
+    "id": "ac086dfd441c",
+    "url": "https://futuretools.io/tools",
+    "title": "AI tools directory",
+    "description": "Browse AI tools by category and purpose.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "5eba811c3ecb",
+    "url": "https://waitbutwhy.com/2015/12/the-tail-end.html",
+    "title": "Time left with loved ones",
+    "description": "No matter what your age, you may, without realizing it, be enjoying the very last chapter of the relationships that matter most to you. Make it count.",
+    "category": "Mind & wellbeing"
+  },
+  {
+    "id": "a9277ebfa56b",
+    "url": "https://www.youtube.com/watch?v=N2JG7qIlpi0",
+    "title": "Starting an infosec company",
+    "description": "Cure53 founder Mario Heiderich’s nullcon Goa 2019 talk on starting and running an information-security company, drawing on his experience in penetration testing.",
+    "category": "Business & career"
+  },
+  {
+    "id": "217313cfedea",
+    "url": "https://martinfowler.com/articles/2023-chatgpt-xu-hao.html",
+    "title": "Prompting LLMs to write code",
+    "description": "Generated knowledge and chain of thought prompting of an LLM can generate useful code.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "419eccbf27aa",
+    "url": "https://github.com/forcesunseen/llm-hackers-handbook/blob/master/src/handbook.md",
+    "title": "LLM Hacker’s Handbook",
+    "description": "A 2023 guide to prompt injection, language-model attack techniques, and defenses.",
+    "category": "Security & reverse engineering"
+  },
+  {
+    "id": "3c0267382524",
+    "url": "https://godmode.space/",
+    "title": "Generative agent playground",
+    "description": "An interface for experimenting with generative agents.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "2e5db8eb44d2",
+    "url": "https://thakkarparth007.github.io/copilot-explorer/posts/copilot-internals",
+    "title": "Copilot internals",
+    "description": "An exploration of data sent by the Copilot extension.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "53a064b0ef22",
+    "url": "https://www.youtube.com/@FrugalAesthetic",
+    "title": "Fashion and style commentary",
+    "description": "Frugal Aesthetic’s humorous fashion commentary, with videos on personal style, clothing trends, and putting outfits together.",
+    "category": "Art & media"
+  },
+  {
+    "id": "354369e024c4",
+    "url": "https://github.com/github/copilot-cli",
+    "title": "Copilot CLI",
+    "description": "Use GitHub Copilot in the terminal.",
+    "category": "AI & machine learning"
+  },
+  {
+    "id": "bb7b62508cb4",
+    "url": "https://docs.github.com/en/copilot/how-tos/chat-with-copilot",
+    "title": "Copilot Chat",
+    "description": "Documentation for using GitHub’s coding assistant.",
+    "category": "AI & machine learning"
+  }
+]

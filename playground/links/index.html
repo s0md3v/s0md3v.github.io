@@ -1,0 +1,41 @@
+---
+layout: default
+title: Links
+description: Useful tools, articles, videos, and resources, organized by topic.
+permalink: /playground/links/
+custom_css:
+  - /playground/links/style.css
+---
+<script src="{{ '/playground/links/script.js' | relative_url }}" defer></script>
+  {% assign categories = site.data.links | group_by: 'category' | sort: 'name' %}
+  <div class="links-page">
+    <div class="workspace">
+      <aside class="topics enhanced" hidden aria-label="Filter by topic">
+        <button type="button" data-topic="" aria-pressed="true"><span>All links</span></button>
+        {% for category in categories %}<button type="button" data-topic="{{ category.name | escape }}" aria-pressed="false"><span>{{ category.name | escape }}</span></button>{% endfor %}
+      </aside>
+      <div class="link-results" id="results" tabindex="-1">
+        <form class="filters enhanced" role="search" hidden>
+          <div class="search-field"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><label class="sr-only" for="search">Search links and descriptions</label><input type="search" id="search" placeholder="Search links and descriptions…" autocomplete="off"><kbd aria-hidden="true">/</kbd></div>
+          <div class="filter-row">
+            <label class="mobile-topic" for="category">Topic<select id="category"><option value="">All topics</option>{% for category in categories %}<option>{{ category.name | escape }}</option>{% endfor %}</select></label>
+          </div>
+        </form>
+        <div class="sections">
+          {% for category in categories %}
+          <section aria-labelledby="{{ category.name | slugify }}">
+            <h2 id="{{ category.name | slugify }}">{{ category.name | escape }}</h2>
+            <ol>
+              {% assign links = category.items | sort_natural: 'title' %}
+              {% for link in links %}
+              <li id="{{ link.id | escape }}" data-category="{{ link.category | escape }}"><a href="{{ link.url | escape }}" target="_blank" rel="nofollow noopener noreferrer">{{ link.title | escape }}</a>: <span class="description">{{ link.description | escape }}</span></li>
+              {% endfor %}
+            </ol>
+          </section>
+          {% endfor %}
+        </div>
+        <div id="empty-state" role="status" hidden><h2>No matching links</h2><p>Try a different search or choose All links.</p></div>
+        <a class="back-top" href="#results">Back to top ↑</a>
+      </div>
+    </div>
+  </div>

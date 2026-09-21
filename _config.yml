@@ -37,6 +37,7 @@ image:
   path: /assets/images/profile.jpg
 
 exclude:
+  - "denoise*.html"
   - Gemfile
   - Gemfile.lock
   - node_modules
