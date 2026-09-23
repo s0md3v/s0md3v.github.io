@@ -4,6 +4,7 @@ title:  "Overcoming Self-Hate & Regrets"
 date:   2021-12-02 21:23:00 +0530
 author: Somdev Sangwan
 type:   philosophy
+unlisted: true
 image: /assets/thumbs/self-hate-and-regrets.png
 permalink: /blog/self-hate-and-regrets
 description: "Learn how to deal with self-hate and regrets."  

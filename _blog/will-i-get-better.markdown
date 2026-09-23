@@ -4,6 +4,7 @@ title:  "Will I ever get better?"
 date:   2023-04-07 22:30:00 +0530
 author: Somdev Sangwan
 type:   philosophy
+unlisted: true
 image: /assets/thumbs/will-i-get-better.jpg
 permalink: /blog/will-i-get-better
 description: "Let's talk about mental health."

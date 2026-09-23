@@ -3,14 +3,18 @@ layout: null
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  {% for post in site.posts %}<url>
+  {% assign posts = site.blog | concat: site.essays %}
+  {% unless site.future %}
+  {% assign posts = posts | where_exp: "post", "post.date <= site.time" %}
+  {% endunless %}
+  {% for post in posts %}{% unless post.unlisted %}<url>
     <loc>{{ site.url }}{{ post.url }}</loc>
     <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
-  </url>{% endfor %}
-  {% for page in site.pages %}{% if page.url contains '.html' or page.url contains '/' %}{% unless page.url contains '404.html' or page.url contains 'robots.txt' or page.url contains 'sitemap.xml' or page.url contains 'feed.xml' or page.url contains 'style.css' %}<url>
+  </url>{% endunless %}{% endfor %}
+  {% for page in site.pages %}{% unless page.unlisted or page.sitemap == false %}{% if page.url contains '.html' or page.url contains '/' %}{% unless page.url contains '404.html' or page.url contains 'robots.txt' or page.url contains 'sitemap.xml' or page.url contains 'feed.xml' or page.url contains 'style.css' %}<url>
     <loc>{{ site.url }}{{ page.url }}</loc>
     <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
-  </url>{% endunless %}{% endif %}{% endfor %}
+  </url>{% endunless %}{% endif %}{% endunless %}{% endfor %}
   {% for file in site.static_files %}{% if file.extname == '.pdf' and file.path contains 'assets/papers' %}<url>
     <loc>{{ site.url }}{{ file.path }}</loc>
     <lastmod>{{ file.modified_time | date_to_xmlschema }}</lastmod>

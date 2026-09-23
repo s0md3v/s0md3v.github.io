@@ -1,0 +1,17 @@
+{% assign post_list_entries = include.posts | sort: "date" %}
+{% if include.order == "desc" %}
+{% assign post_list_entries = post_list_entries | reverse %}
+{% endif %}
+<ul class="post-list">
+  {% for post in post_list_entries %}
+  {% unless post.unlisted %}
+  {% if site.future or post.date <= site.time %}
+  <li>
+    <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a><span class="post-meta">
+      {{ post.date | date: "%-d %b %Y" }}
+    </span>
+  </li>
+  {% endif %}
+  {% endunless %}
+  {% endfor %}
+</ul>

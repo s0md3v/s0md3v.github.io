@@ -4,6 +4,30 @@ url: "https://somdev.in"
 title: "Somdev Sangwan"
 permalink: pretty
 
+collections:
+  blog:
+    output: true
+    permalink: /blog/:name
+  essays:
+    output: true
+    permalink: /essays/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: blog
+    values:
+      layout: post
+      author: Somdev Sangwan
+      type: tech
+  - scope:
+      path: ""
+      type: essays
+    values:
+      layout: post
+      author: Somdev Sangwan
+      type: philosophy
+
 description: "Somdev Sangwan (s0md3v)"
 author:
   name: Somdev Sangwan
@@ -22,6 +46,10 @@ twitter:
 plugins:
   - jekyll-seo-tag
   - jekyll-minifier
+  - jekyll-redirect-from
+
+redirect_from:
+  json: false
 
 jekyll-minifier:
   uglifier_args:

@@ -3,7 +3,7 @@
 <header id="site-header" class="header">
     <nav class="nav-container">
         <div class="site-home">
-            <a href="/">home</a>
+            <a href="{{ site.data.navigation.links.home.url | relative_url }}">{{ site.data.navigation.links.home.label | escape }}</a>
             <div class="settings-wrapper">
                 <button class="settings-icon" id="settings-toggle" aria-label="Settings" aria-expanded="false" aria-controls="settings-menu">
                     <img src="/assets/icons/settings.svg" alt="Settings" width="20" height="20">
@@ -68,10 +68,10 @@
         </button>
 
         <ul class="nav-links" id="site-navigation">
-            <li><a href="/projects">projects</a></li>
-            <li><a href="/blog">blog</a></li>
-            <li><a href="/philosophy">philosophy</a></li>
-            <li><a href="/about">about</a></li>
+            {% for link_id in site.data.navigation.header %}
+            {% assign nav_link = site.data.navigation.links[link_id] %}
+            <li><a href="{{ nav_link.url | relative_url }}">{{ nav_link.label | escape }}</a></li>
+            {% endfor %}
         </ul>
     </nav>
 </header>

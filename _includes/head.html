@@ -8,6 +8,10 @@
 
   {% seo %}
 
+  {% if page.unlisted %}
+  <meta name="robots" content="noindex">
+  {% endif %}
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   {% include theme_init.html %}

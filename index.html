@@ -9,6 +9,7 @@ layout_style: "homepage"
 {% include head.html %}
 
 <body>
+  {% assign navigation = site.data.navigation.links %}
   <main class="homepage">
     <div class="corner-layer">
       <div class="corner-annotation top-left">
@@ -52,12 +53,10 @@ layout_style: "homepage"
       </div>
 
       <div class="corner-annotation bottom-right">
-        <div style="margin-bottom: 0.5rem;"><a href="/playground" style="text-decoration: underline; color: inherit;">playground</a></div>
-        <div style="margin-bottom: 0.5rem;"><a href="/now" style="text-decoration: underline; color: inherit;">my life
-            rn</a></div>
-        <div style="margin-bottom: 0.5rem;"><a href="/favorites"
-            style="text-decoration: underline; color: inherit;">recommendations</a></div>
-        <div><a href="/uses" style="text-decoration: underline; color: inherit;">what i use</a></div>
+        {% for link_id in site.data.navigation.homepage_extra %}
+        {% assign nav_link = navigation[link_id] %}
+        <div{% unless forloop.last %} style="margin-bottom: 0.5rem;"{% endunless %}><a href="{{ nav_link.url | relative_url }}" style="text-decoration: underline; color: inherit;">{{ nav_link.label | escape }}</a></div>
+        {% endfor %}
       </div>
     </div>
 
@@ -74,9 +73,9 @@ layout_style: "homepage"
       <div class="menuline">
         <span class="menuheader">[meta]</span>
         <span class="menulinks">
-          <a href="/about">about</a>,
-          <a href="/work" class="sketch-anchor">
-            work with me
+          <a href="{{ navigation.about.url | relative_url }}">{{ navigation.about.label | escape }}</a>,
+          <a href="{{ navigation.work.url | relative_url }}" class="sketch-anchor">
+            {{ navigation.work.label | escape }}
             <div class="sketch-note note-right">
               <span class="sketch-text">selectively available</span>
             </div>
@@ -86,15 +85,15 @@ layout_style: "homepage"
       <div class="menuline">
         <span class="menuheader">[tech]</span>
         <span class="menulinks">
-          <a href="/projects" class="sketch-anchor">
-            projects
+          <a href="{{ navigation.projects.url | relative_url }}" class="sketch-anchor">
+            {{ navigation.projects.label | escape }}
             <div class="sketch-note note-left">
               <span class="sketch-text">{{ site.data.stats.total_stars }} stars</span>
             </div>
           </a>,
-          <a href="/blog">blog</a>,
-          <a href="/papers" class="sketch-anchor">
-            papers
+          <a href="{{ navigation.blog.url | relative_url }}">{{ navigation.blog.label | escape }}</a>,
+          <a href="{{ navigation.papers.url | relative_url }}" class="sketch-anchor">
+            {{ navigation.papers.label | escape }}
             <div class="sketch-note note-right-far">
               <span class="sketch-text">only 2 :(</span>
             </div>
@@ -104,8 +103,8 @@ layout_style: "homepage"
       <div class="menuline" style="position: relative;">
         <span class="menuheader">[misc]</span>
         <span class="menulinks">
-          <a href="/gallery">gallery</a>,
-          <a href="/philosophy">philosophy</a>
+          <a href="{{ navigation.gallery.url | relative_url }}">{{ navigation.gallery.label | escape }}</a>,
+          <a href="{{ navigation.philosophy.url | relative_url }}">{{ navigation.philosophy.label | escape }}</a>
         </span>
 
         <div class="layout-guide"
@@ -158,13 +157,10 @@ layout_style: "homepage"
         </svg>
       </a>
       <div class="mobile-footer">
-        <div style="margin-bottom: 0.8rem;"><a href="/playground" style="color: inherit; text-decoration: underline;">playground</a></div>
-        <div style="margin-bottom: 0.8rem;"><a href="/now" style="color: inherit; text-decoration: underline;">my life
-            rn</a>
-        </div>
-        <div style="margin-bottom: 0.8rem;"><a href="/favorites"
-            style="color: inherit; text-decoration: underline;">recommendations</a></div>
-        <div><a href="/uses" style="color: inherit; text-decoration: underline;">what i use</a></div>
+        {% for link_id in site.data.navigation.homepage_extra %}
+        {% assign nav_link = navigation[link_id] %}
+        <div{% unless forloop.last %} style="margin-bottom: 0.8rem;"{% endunless %}><a href="{{ nav_link.url | relative_url }}" style="color: inherit; text-decoration: underline;">{{ nav_link.label | escape }}</a></div>
+        {% endfor %}
       </div>
     </div>
   </main>
@@ -224,22 +220,17 @@ layout_style: "homepage"
 
       if (tooltip && tooltipText && tooltipSvgPath) {
         const linkMap = {
-          '/about': 'Somdev Sangwan aka s0md3v',
-          '/work': 'need help with your security product?',
-          '/projects': 'i picked the best 10',
-          '/blog': 'research, hacking, dev',
-          '/papers': 'high effort research',
-          '/gallery': 'good photos, i promise',
-          '/philosophy': 'i write essays',
+          {% for entry in navigation %}
+          {% assign nav_link = entry[1] %}
+          {% if nav_link.tooltip %}
+          {{ nav_link.url | relative_url | jsonify }}: {{ nav_link.tooltip | jsonify }},
+          {% endif %}
+          {% endfor %}
           'https://github.com/s0md3v': 'sponsor me ^_^',
           'https://twitter.com/s0md3v': 'quality posting only',
           'https://www.instagram.com/s0md3v': 'strictly non-professional',
           'mailto:s0md3v[at]gmail.com': 'need a pgp key?',
-          'https://www.linkedin.com/in/s0md3v': '"lets connect" :D',
-          '/playground': 'random experiments',
-          '/now': 'what am i doing?',
-          '/favorites': 'stuff i love',
-          '/uses': 'my gear'
+          'https://www.linkedin.com/in/s0md3v': '"lets connect" :D'
         };
 
         function updateTooltipShape(text) {

@@ -4,6 +4,7 @@ title:  "How to get your life together"
 date:   2025-01-12 01:19:00 +0530
 author: Somdev Sangwan
 type:   philosophy
+unlisted: true
 image: /assets/thumbs/fix-life.png
 permalink: /blog/get-life-together
 description: "Want to beat procrastination and impulsive decisions?"

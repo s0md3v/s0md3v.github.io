@@ -11,7 +11,11 @@ layout: null
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
     <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
     <generator>Jekyll v{{ jekyll.version }}</generator>
-    {% for post in site.posts limit:20 %}
+    {% assign listed_posts = site.blog | concat: site.essays | where_exp: "post", "post.unlisted != true" | sort: "date" | reverse %}
+    {% unless site.future %}
+    {% assign listed_posts = listed_posts | where_exp: "post", "post.date <= site.time" %}
+    {% endunless %}
+    {% for post in listed_posts limit:20 %}
       <item>
         <title>{{ post.title | xml_escape }}</title>
         <description>{{ post.description | default: post.excerpt | xml_escape }}</description>
