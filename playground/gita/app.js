@@ -66,7 +66,8 @@ const quickActions = () => [
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const imagePageLink = page => `./public/pages/page-${String(page).padStart(3, '0')}.webp`;
-const verseKey = verse => `${verse.chapter}:${verse.verse}`;
+const chapterVerseKey = (chapter, verse) => `${chapter}:${verse}`;
+const verseKey = verse => chapterVerseKey(verse.chapter, verse.verse);
 const verseLabel = verse => verse.verse === 0 ? `${verse.chapter} · opening` : `${verse.chapter}.${verse.verse}`;
 
 function readStored() {
@@ -338,7 +339,7 @@ function renderReader() {
   <nav class="reader-nav" aria-label="Reading navigation">
     <div class="location-controls">
       <label class="location-select book-select-wrap"><span class="sr-only">Book</span><select id="book-select" aria-label="Book">${state.book.chapters.map(ch => `<option value="${ch.number}" ${ch.number === verse.chapter ? 'selected' : ''}>Book ${ch.number}</option>`).join('')}</select>${icon('chevronDown', 15)}</label>
-      <label class="location-select verse-select-wrap"><span class="sr-only">Verse</span><select id="verse-select" data-chapter="${verse.chapter}" aria-label="Verse">${chapterFor(verse.chapter).verses.map(item => `<option value="${verseKey(item)}" ${verseKey(item) === state.selected ? 'selected' : ''}>${item.verse === 0 ? 'Opening' : `Verse ${item.verse}`}</option>`).join('')}</select>${icon('chevronDown', 15)}</label>
+      <label class="location-select verse-select-wrap"><span class="sr-only">Verse</span><select id="verse-select" data-chapter="${verse.chapter}" aria-label="Verse">${chapterFor(verse.chapter).verses.map(item => `<option value="${chapterVerseKey(verse.chapter, item.verse)}" ${chapterVerseKey(verse.chapter, item.verse) === state.selected ? 'selected' : ''}>${item.verse === 0 ? 'Opening' : `Verse ${item.verse}`}</option>`).join('')}</select>${icon('chevronDown', 15)}</label>
     </div>
     <div class="toolbar-actions">${quickActions()}</div>
   </nav>`;
@@ -390,7 +391,7 @@ function syncReaderToolbar() {
   if (!bookSelect || !verseSelect) return;
   bookSelect.value = String(verse.chapter);
   if (verseSelect.dataset.chapter !== String(verse.chapter)) {
-    verseSelect.innerHTML = chapterFor(verse.chapter).verses.map(item => `<option value="${verseKey(item)}">${item.verse === 0 ? 'Opening' : `Verse ${item.verse}`}</option>`).join('');
+    verseSelect.innerHTML = chapterFor(verse.chapter).verses.map(item => `<option value="${chapterVerseKey(verse.chapter, item.verse)}">${item.verse === 0 ? 'Opening' : `Verse ${item.verse}`}</option>`).join('');
     verseSelect.dataset.chapter = String(verse.chapter);
   }
   verseSelect.value = state.selected;
@@ -438,7 +439,7 @@ function selectVerse(ref, options = {}) {
   setRoute(`/read/${verse.chapter}/${verse.verse}`, options.push !== false);
   ignoreScrollUntil = performance.now() + 220;
   const first = chapterFor(verse.chapter).verses[0];
-  const target = verseKey(first) === ref ? document.getElementById(`book-${verse.chapter}`) : document.getElementById(`v-${verse.chapter}-${verse.verse}`);
+  const target = chapterVerseKey(verse.chapter, first.verse) === ref ? document.getElementById(`book-${verse.chapter}`) : document.getElementById(`v-${verse.chapter}-${verse.verse}`);
   if (options.scroll !== false) target?.scrollIntoView({ block: 'start', behavior: 'instant' });
   if (options.focus) document.getElementById(`v-${verse.chapter}-${verse.verse}`)?.focus({ preventScroll: true });
   if (entering) {
@@ -694,7 +695,7 @@ function handleInput(event) {
 function handleChange(event) {
   if (event.target.id === 'book-select') {
     const chapter = chapterFor(Number(event.target.value));
-    if (chapter) selectVerse(verseKey(chapter.verses[0]));
+    if (chapter) selectVerse(chapterVerseKey(chapter.number, chapter.verses[0].verse));
     document.getElementById('book-select')?.focus({ preventScroll: true });
   } else if (event.target.id === 'verse-select') {
     selectVerse(event.target.value);
@@ -752,7 +753,7 @@ async function init() {
   const app = document.getElementById('app');
   app.innerHTML = `<div class="loading-screen"><strong>The Bhagavad Gītā</strong><span>Opening the book…</span></div>`;
   try {
-    const [bookResponse, frontResponse, conceptsResponse] = await Promise.all([fetch('./data/gita.json?v=24'), fetch('./data/frontmatter.json'), fetch('./data/concepts.json')]);
+    const [bookResponse, frontResponse, conceptsResponse] = await Promise.all([fetch('./data/gita.json?v=25'), fetch('./data/frontmatter.json'), fetch('./data/concepts.json')]);
     if (!bookResponse.ok) throw new Error(`Could not load the translation (${bookResponse.status})`);
     state.book = await bookResponse.json();
     state.frontmatter = frontResponse.ok ? await frontResponse.json() : { sections: [] };
