@@ -1,0 +1,25 @@
+---
+layout: null
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fafafa" />
+    <meta name="description" content="A quiet reading edition of the Bhagavad Gītā, with Winthrop Sargeant’s translation, a plain English reading, and original printed pages." />
+    <title>The Bhagavad Gītā · Winthrop Sargeant</title>
+    <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {% include theme_init.html %}
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ '/assets/css/fonts.css' | relative_url }}" />
+    <link rel="stylesheet" href="./styles.css?v=34" />
+  </head>
+  <body>
+    <a class="skip-link" href="#reader-main">Skip to reading</a>
+    <div id="app" aria-live="off"></div>
+    <script type="module" src="./app.js?v=34"></script>
+  </body>
+</html>

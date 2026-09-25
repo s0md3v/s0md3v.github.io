@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "source": "Winthrop Sargeant, The Bhagavad Gītā, Twenty-fifth-Anniversary Edition",
+    "note": "Brief reading aids based on this edition's printed vocabulary. Meanings depend on context; open the source page for the full gloss."
+  },
+  "entries": [
+    {
+      "term": "dharma",
+      "meaning": "Duty, law, righteousness, virtue, or honor.",
+      "sourcePage": 73,
+      "sourceReference": "1.1"
+    },
+    {
+      "term": "karma",
+      "meaning": "Action or deeds.",
+      "sourcePage": 162,
+      "sourceReference": "2.43"
+    },
+    {
+      "term": "yoga",
+      "meaning": "Discipline or steadfastness.",
+      "sourcePage": 167,
+      "sourceReference": "2.48"
+    },
+    {
+      "term": "ātman",
+      "aliases": ["atman"],
+      "meaning": "The self.",
+      "sourcePage": 174,
+      "sourceReference": "2.55"
+    },
+    {
+      "term": "buddhi",
+      "meaning": "Insight, intelligence, or mental determination.",
+      "sourcePage": 158,
+      "sourceReference": "2.39"
+    },
+    {
+      "term": "bhakti",
+      "meaning": "Devotion or love.",
+      "sourcePage": 436,
+      "sourceReference": "9.26"
+    },
+    {
+      "term": "prakṛti",
+      "aliases": ["prakriti"],
+      "meaning": "Material nature.",
+      "sourcePage": 562,
+      "sourceReference": "13 (opening stanza)"
+    },
+    {
+      "term": "puruṣa",
+      "aliases": ["purusha"],
+      "meaning": "Spirit, person, or man.",
+      "sourcePage": 562,
+      "sourceReference": "13 (opening stanza)"
+    },
+    {
+      "term": "kṣetra",
+      "aliases": ["kshetra"],
+      "meaning": "A field.",
+      "sourcePage": 562,
+      "sourceReference": "13 (opening stanza)"
+    },
+    {
+      "term": "kṣetrajña",
+      "aliases": ["kshetrajna"],
+      "meaning": "The knower of the field.",
+      "sourcePage": 562,
+      "sourceReference": "13 (opening stanza)"
+    }
+  ]
+}
