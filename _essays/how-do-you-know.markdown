@@ -120,6 +120,6 @@ Instead of waiting until we know "for sure" or jumping to conclusion, we can hol
 Or if you want a simpler takeway: we can be wrong even when we are really really sure so we should always keep an open mind. Especially about the beliefs that you are really really sure about because your brain is protecting them really hard.
 
 ## References
-[^1]: https://sjdm.org/~baron/journal/13/13313/jdm13313.html
-[^2]: https://eirny.com/2016/11/21/all-rulers-are-not-created-equal/
-[^3]: https://archive.org/details/in.ernet.dli.2015.461169/page/112/mode/2up
+[^1]: [Ideology, motivated reasoning, and cognitive reflection](https://sjdm.org/~baron/journal/13/13313/jdm13313.html)
+[^2]: [All rulers are not created equal](https://eirny.com/2016/11/21/all-rulers-are-not-created-equal/)
+[^3]: [ Human Knowledge - Its Scope And Limits ](https://archive.org/details/in.ernet.dli.2015.461169/page/112/mode/2up)
