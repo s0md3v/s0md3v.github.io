@@ -124,7 +124,7 @@ And don't forget, you probably thought the candle was $8 and were pretty sure ab
 - Justified True Belief (Our definition of knowledge)
 - The Gettier problem (The clock example, and more like it)
 - Fallibilism (Philosophy principle that says human knowledge is never free from possibility of error.)
-- Skepticism (A stance that questions are ability to know.)
+- Skepticism (A stance that questions our ability to know.)
 
 ## References
 [^1]: [Ideology, motivated reasoning, and cognitive reflection](https://sjdm.org/~baron/journal/13/13313/jdm13313.html)
