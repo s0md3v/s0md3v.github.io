@@ -40,22 +40,21 @@ Now imagine someone reads that paper strip example where the ruler itself is fau
 
 They hear an ambulance siren outside. Does that mean that there's an ambulance? Well, the sound could be coming from someone's speakers. To be really sure, they look out of the window and see an ambulance. But what if it is a vehicle modified to look like an ambulance by drug traffickers to avoid suspicion? That person can keep inventing such possibilities. How would they get even the simplest things done?
 
-When you hear the siren, you have a *reason* to believe there's an ambulance. When you see it through the window, you have one more reason, a more reliable one this time. You are now more *justified* in believing that it's an ambulance.
+When you hear the siren, you have a *reason* to believe there's an ambulance. When you see it through the window, you have one more reason, a more reliable one this time and thus you are now more *justified* in believing that it's an ambulance.
 
-Wait, what makes a reason "good" for having a belief anyway? I'm listing down a few categories of good reasons but keep in mind that they don't make something true.
-1. Senses: If you see an apple or think a cup is hot by touching, you have good reason for believing it.
-2. Verifiability: I haven't measured Mount Everest myself but I believe it's 8,848 meters. Why? Because multiple people have checked it throughout the history and I can too, using trignometry.
-3. Best explanation: You come home to see a vase knocked down. Nobody lives with you except your cat and there's no sign of someone breaking in. The simplest explanation is that your cat knocked it over even though you didn't see it happen. The explanation is a good reason to believe so.
+Wait, what makes a reason "good" for having a belief anyway? Here are three questions you can ask yourself:
+1. **Did I see/hear/touch it?** If you see an apple or think a cup is hot by touching, you have good reason for believing it.
+2. **Can I check it?**: I haven't measured Mount Everest myself but I believe it's 8,848 meters. Why? Because multiple people have checked it throughout the history and I can too, using trignometry.
+3. **Is it the best explanation?** You come home to see a vase knocked down. Nobody lives with you except your cat and there's no sign of someone breaking in. The simplest explanation is that your cat knocked it over even though you didn't see it happen. The explanation is a good reason to believe so.
 
-These must sound very obvious to you but we all regularly encounter people who have beliefs that we find to be totatlly baseless.
+This is a good starting point for keeping your beliefs in check but see what happens when we use them wrong:
+1. *I just saw a shadowy figure from the corner of my eye at 2 AM, must be a ghost!* Seeing something unclear in poor lightning for a split second when you are sleep or sleepy deprived and you conclude that it's a ghost?
+2. *I just found this study that says eating candies makes you happier, must be true!* Could be true but did you check who funded the study or how it was done? Bogus studies are very common. It was probably funded by *Candy Store Inc.*
+3. *That person didn't text back in an hour so they must be losing interest in me!* Is that really the best explanation? Come on.
 
-Oh, the senses are a good reason? Well, I just saw a shadowy figure from the corner of my eye at 2 AM, must be a ghost!\
-Verifiability? I just found this study funded by *Candy Store Inc.* that says eating candies makes you happier, must be true!\
-Best explanation? That person didn't text back in an hour so they must be losing interest in me!
+These conclusions probably felt reasonable to the person who came to them. That's the thing, you can't really "feel" how strong a reason is, you have to really think about it, ask questions. Such wrong conclusions are also often caused by finding reasons for a belief instead of forming a belief based on reasons.
 
-Those three categories of reasons are helpful criteria to see if a reason is good but in the end, you are the one doing the believing.
-
-For now, lets come back to the paper strip measuring example and list the 4 aspects we have identified:
+Anyways, for now, lets come back to the paper strip measuring example and list the 4 aspects we have identified:
 - **Truth**: How long it is.
 - **Belief:** How long you think it is.
 - **Reasons:** Reasons to think that.
@@ -108,7 +107,7 @@ Remember the four aspects of the paper strip example? Truth, belief, reasons, an
 
 There's a fifth one I skipped because I wanted you to see how hard it is to know things "for sure". The fifth aspect is **confidence**: how sure you are that the strip is 10cm long?
 
-Earlier, I said that a belief is something you accept as true. But you don't just "believe" or "not believe" something. Maybe your belief in something is at like 80% because you have your doubts.
+Earlier, I said that a belief is something you accept to be true. But you don't just "believe" or "not believe" something. Maybe your belief in something is at like 80% because you have your doubts.
 
 This is important because in many real life scenarios, we don't even have the whole picture to decide what to believe. And even if we did have it, the "knowledge" section showed how we can still be wrong.  
   
@@ -118,6 +117,14 @@ So, what to do about it?\
 Instead of waiting until we know "for sure" or jumping to conclusion, we can hold each belief at the confidence its reasons deserve. And when reasons that support or challenge the belief come up, adjust that confidence accordingly.
 
 Or if you want a simpler takeway: we can be wrong even when we are really really sure so we should always keep an open mind. Especially about the beliefs that you are really really sure about because your brain is protecting them really hard.
+
+And don't forget, you probably thought the candle was $8 and were pretty sure about it. There are many candles like that and we will find them all as we go ;)
+
+## Topics for further reading
+- Justified True Belief (Our definition of knowledge)
+- The Gettier problem (The clock example, and more like it)
+- Fallibilism (Philosophy principle that says human knowledge is never free from possibility of error.)
+- Skepticism (A stance that questions are ability to know.)
 
 ## References
 [^1]: [Ideology, motivated reasoning, and cognitive reflection](https://sjdm.org/~baron/journal/13/13313/jdm13313.html)
