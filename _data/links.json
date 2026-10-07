@@ -1216,5 +1216,48 @@
     "title": "Brand identity case studies",
     "description": "Explore branding projects and designer interviews covering typography, visual identity, and design decisions.",
     "category": "Design & UX"
+  },
+  {
+    "id": "f2e6b8a1795e",
+    "url": "https://oa.letterformarchive.org",
+    "title": "Letterform Archive",
+    "description": "An online archive of lettering, typography, calligraphy, and graphic design history.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "8b5cf5d7b418",
+    "url": "https://www.rijksmuseum.nl/en/collection",
+    "title": "Rijksmuseum collection",
+    "description": "Explore and download high-resolution artworks and historical objects from the Rijksmuseum.",
+    "category": "Art & media"
+  },
+  {
+    "id": "7f3faf9c7591",
+    "url": "https://digitalcollections.nypl.org/",
+    "title": "NYPL Digital Collections",
+    "description": "Explore digitized prints, photographs, maps, manuscripts, and historical materials from the New York Public Library.",
+    "category": "Collections & reference"
+  },
+  {
+    "id": "30ab3ae0a753",
+    "url": "https://nokiadesignarchive.aalto.fi/",
+    "title": "Nokia Design Archive",
+    "description": "An interactive archive exploring decades of Nokia mobile phone designs, concepts, hardware prototypes, and design processes.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "8982ff40b804",
+    "url": "https://perfolios.shwn.design/",
+    "title": "Perfolios portfolio inspiration",
+    "description": "A curated directory of personal website and portfolio inspiration for designers and developers.",
+    "category": "Design & UX"
+  },
+  {
+    "id": "793d82ad618c",
+    "url": "https://www.movingimagearchive.com/",
+    "title": "Moving Image Archive",
+    "description": "Search, watch, and download public-domain archival footage by the shot.",
+    "category": "Art & media"
   }
 ]
+
