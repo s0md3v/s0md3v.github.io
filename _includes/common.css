@@ -2,12 +2,27 @@ div {
   display: block;
 }
 
+/* One reading scale for every inner page (posts included).
+   Everything inside a .wrapper is sized in em off this, so the reader's font size
+   setting (--blog-font-size) scales body, headings, code and line length together. */
+:root {
+  /* Fluid body size anchored to the reader's chosen --blog-font-size */
+  --reading-size: clamp(var(--blog-font-size), calc(var(--blog-font-size) * 0.9 + 0.3vw), calc(var(--blog-font-size) * 1.15));
+}
+
 .wrapper {
-  max-width: 65ch;
+  font-size: var(--reading-size);
+  line-height: 1.6;
+  /* 37.5em of text (~70 characters of Lexend) plus 1em padding on each side */
+  max-width: 39.5em;
   padding: 3em 1em;
   margin: auto;
-  line-height: 1.75;
-  font-size: 1.25em;
+}
+
+/* Wider variant for pages with a second column (about, projects, now, uses, favorites).
+   Same scale, centred on the same axis. */
+.wrapper.wide {
+  max-width: 50em;
 }
 
 .wrapper img {
@@ -15,40 +30,6 @@ div {
   height: auto;
   display: block;
   margin: 0 auto;
-}
-
-.page-content {
-  padding: 30px 0;
-}
-
-.post-header {
-  margin-bottom: 30px;
-}
-
-.post-title {
-  font-size: 42px;
-  letter-spacing: -1px;
-  line-height: 1;
-}
-
-@media screen and (max-width: 800px) {
-
-  .post-title {
-    font-size: 36px;
-  }
-}
-
-.menuline a svg {
-  transition: all 0.3s ease;
-}
-
-.menuline a svg path {
-  stroke: var(--foreground-color);
-  transition: stroke 0.3s ease;
-}
-
-.menuline a:hover svg path {
-  stroke: var(--accent-color);
 }
 
 body,
@@ -93,23 +74,20 @@ h4,
 h5,
 h6 {
   font-weight: 400;
+  /* Body line-height is far too loose once a heading wraps */
+  line-height: 1.25;
 }
 
-.post-content {
-  margin-bottom: 30px;
-  line-height: 1.8;
-}
-
-.post-content h2 {
-  font-size: 32px;
-}
-
-.post-content h3 {
-  font-size: 26px;
-}
-
-.post-content h4 {
-  font-size: 20px;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 ul,
@@ -127,26 +105,10 @@ blockquote {
   border-left: 4px solid var(--border-color);
   padding-left: 15px;
   font-size: 1.25rem;
-  letter-spacing: -1px;
-  font-style: italic;
 }
 
 blockquote> :last-child {
   margin-bottom: 0;
-}
-
-.blog-content a {
-  color: var(--link-color);
-  text-decoration: none;
-}
-
-.blog-content a:visited {
-  color: var(--link-visited);
-}
-
-.blog-content a:hover {
-  color: var(--foreground-color);
-  text-decoration: underline;
 }
 
 p {
@@ -177,121 +139,272 @@ pre>code {
   padding-left: 0;
 }
 
-.post-meta {
-  font-size: 14px;
-  color: var(--muted-color);
-}
-
 .blog-content p,
 .blog-content ul,
 .blog-content ol,
 .blog-content li,
 .blog-content blockquote {
   font-family: var(--blog-font-family);
-  font-size: var(--blog-font-size);
 }
 
-@media screen and (max-width: 800px) {
-  .post-content h2 {
-    font-size: 28px;
-  }
+/* Post typography (the reference for every inner page)
+   Sized in em off .wrapper; see the top of this file. */
 
-  .post-content h3 {
-    font-size: 22px;
-  }
+.post-title,
+.page-title {
+  font-size: 1.8em;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin-bottom: 0.35em;
+}
 
-  .post-content h4 {
-    font-size: 18px;
+/* A page title with nothing under it gets the same gap a post title + meta line would */
+.page-title:not(:has(+ .page-intro)) {
+  margin-bottom: 1.4em;
+}
+
+.blog-content .post-meta,
+.page-intro {
+  font-family: var(--blog-font-family);
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: var(--muted-color);
+  margin-bottom: 2.5em;
+}
+
+/* Plain section headings on inner pages use the post scale; :where() keeps this
+   weaker than the post rules below and any page-specific component */
+:where(.wrapper) :is(h2, h3, h4) {
+  text-wrap: balance;
+}
+
+:where(.wrapper) h2 {
+  font-size: 1.4em;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  margin: 2em 0 0.5em;
+}
+
+:where(.wrapper) h3 {
+  font-size: 1.2em;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin: 2em 0 0.5em;
+}
+
+.post-content {
+  margin-bottom: 30px;
+}
+
+.post-content p {
+  margin-bottom: 1.2em;
+  text-wrap: pretty;
+}
+
+/* Long URLs and inline code would otherwise push the page sideways on phones */
+.post-content p,
+.post-content li,
+.post-content :not(pre)>code {
+  overflow-wrap: anywhere;
+}
+
+.post-content strong,
+.post-content b {
+  font-weight: 600;
+}
+
+/* Headings stay close to body size; weight and space carry the hierarchy */
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.post-content h2 {
+  font-size: 1.4em;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin: 2em 0 0.5em;
+}
+
+.post-content h3 {
+  font-size: 1.2em;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 2em 0 0.5em;
+}
+
+.post-content h4 {
+  font-size: 1.05em;
+  font-weight: 600;
+  margin: 1.6em 0 0.4em;
+}
+
+.post-content :is(h2, h3, h4)+ :is(h2, h3, h4) {
+  margin-top: 0.5em;
+}
+
+.post-content> :first-child {
+  margin-top: 0;
+}
+
+.post-content ul,
+.post-content ol {
+  margin: 0 0 1.2em 1.4em;
+}
+
+.post-content li+li {
+  margin-top: 0.35em;
+}
+
+.post-content li::marker {
+  color: var(--muted-color);
+}
+
+.post-content li>p:last-child {
+  margin-bottom: 0;
+}
+
+.post-content video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1.2em;
+}
+
+.post-content blockquote {
+  font-size: 1em;
+  margin: 0 0 1.2em;
+  padding-left: 1em;
+  border-left-width: 3px;
+}
+
+/* Underlined in text colour so links read as links without colouring the paragraph */
+.blog-content a,
+.prose a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--link-color) 55%, transparent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.blog-content a:hover,
+.prose a:hover {
+  color: var(--accent-color);
+  text-decoration-color: currentColor;
+  background: none;
+}
+
+.blog-content a.footnote,
+.blog-content a.reversefootnote {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+/* Keep superscripts from pushing their line apart */
+.post-content sup {
+  line-height: 0;
+}
+
+.post-content .footnotes {
+  margin-top: 3em;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.875em;
+  color: var(--midground-color);
+}
+
+/* Some posts already introduce footnotes with a "References" heading */
+.post-content :is(h2, h3, h4)+.footnotes {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.post-content code,
+.prose code {
+  font-size: 0.85em;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+.post-content pre {
+  font-size: 0.85em;
+  line-height: 1.5;
+  padding: 0.9em 1.1em;
+  margin-bottom: 1.2em;
+}
+
+.post-content pre code {
+  font-size: 1em;
+  padding: 0;
+  background: none;
+}
+
+@media screen and (max-width: 600px) {
+  .post-content p,
+  .post-content li {
+    hyphens: auto;
   }
 }
 
-.page-heading {
-  font-size: 20px;
-}
-
+/* Post lists (blog, essays, 404): a quiet date column beside the titles */
 .post-list {
-  margin-left: 0;
+  margin: 0;
   list-style: none;
 }
 
 .post-list>li {
-  margin-bottom: 15px;
+  margin-bottom: 0.9em;
 }
 
-.post-list>li>a {
-  font-size: 1.7rem;
-  font-family: var(--blog-font-family);
-  transition: all 0.3s ease;
+.post-list-entry {
+  display: grid;
+  grid-template-columns: 4.5em minmax(0, 1fr);
+  column-gap: 1.25em;
+  align-items: baseline;
 }
 
-.post-list>li>a:hover {
-  color: var(--accent-color);
-  text-decoration: none;
-  text-decoration-color: var(--foreground-color);
-  background: transparent;
-}
-
-.post-list>li>.post-meta {
-  /* Keep dates beside the title without taking up its wrapping space. */
-  display: inline-block;
-  width: 0;
-  white-space: nowrap;
-  transform: translateX(0.75rem);
-}
-
-.post-meta {
-  font-size: 1.5rem;
-  font-family: 'Reenie Beanie', cursive;
+.post-list-date {
+  font-size: 0.85em;
   color: var(--muted-color);
-  position: relative;
-  top: -0.1rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-
-
-.project-item {
-  transition: all 0.3s ease;
-  border-left: 4px solid transparent;
-  padding-left: 15px;
+.post-list-main {
+  text-wrap: balance;
 }
 
-.project-item:hover {
-  border-left: 4px solid var(--border-color);
-  background-color: rgba(0, 0, 0, 0.03);
+.post-list-title {
+  font-size: 1.125em;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: color 0.15s ease;
 }
 
-.project-link {
-  display: block;
-  text-decoration: none;
-  padding: 10px 0;
-  color: var(--foreground-color);
-}
-
-.project-link:hover {
-  background: transparent;
-  text-decoration: none;
-}
-
-.project-title {
+.post-list-title:hover {
   color: var(--accent-color);
-  font-weight: bold;
-  margin-bottom: 0.2rem;
-  font-family: "Comfortaa", sans-serif;
-  font-size: 2.5rem;
-  text-transform: lowercase;
-  transition: color 0.2s;
-  cursor: pointer;
+  background: transparent;
 }
 
-.project-desc {
-  color: var(--foreground-color);
-  font-size: 1rem;
-  line-height: 1.4;
-  font-family: var(--blog-font-family);
-}
+@media (max-width: 600px) {
+  /* Date becomes a small line above the title rather than disappearing */
+  .post-list-entry {
+    display: flex;
+    flex-direction: column;
+  }
 
-.dark-mode .project-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  .post-list>li {
+    margin-bottom: 1.1em;
+  }
 }
 
 .header {
@@ -302,7 +415,7 @@ pre>code {
   width: 100%;
   transition: transform 0.3s ease-in-out;
   padding: 5px 20px;
-  z-index: 2;
+  z-index: 100;
   box-sizing: border-box;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -325,7 +438,7 @@ pre>code {
   display: flex;
   align-items: center;
   gap: 15px;
-  font-size: 1.4rem;
+  font-size: 1.05rem;
 }
 
 .site-home>a {
@@ -343,8 +456,8 @@ pre>code {
 
 .nav-links {
   display: flex;
-  gap: 15px;
-  font-size: 1.4rem;
+  gap: 1.2em;
+  font-size: 1.05rem;
   align-items: center;
   list-style: none;
   margin: 0;
@@ -366,6 +479,14 @@ pre>code {
   color: var(--accent-color);
   text-decoration: none;
   background: transparent;
+}
+
+/* Current page or section */
+.nav-links a[aria-current] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--accent-color);
 }
 
 .menu-toggle {
@@ -427,6 +548,8 @@ pre>code {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 200;
   font-size: 1rem;
+  /* The panel stays in the UI font so changing the reading font can't break it */
+  font-family: var(--base-font-family);
 }
 
 .settings-dropdown.visible {
@@ -489,6 +612,11 @@ pre>code {
   border-color: var(--accent-color);
 }
 
+/* White on the light dark-mode accent is too faint; use the dark background colour */
+.dark-mode .settings-options button.active {
+  color: var(--background-color);
+}
+
 .skip-link {
   background-color: var(--background-color);
   border: 2px solid var(--accent-color);
@@ -498,7 +626,8 @@ pre>code {
   position: absolute;
   transform: translateX(-50%) translateY(-150%);
   transition: transform 0.3s;
-  z-index: 100;
+  /* Above the fixed header (z-index 100) */
+  z-index: 101;
 }
 
 .skip-link:focus {
@@ -508,10 +637,6 @@ pre>code {
 }
 
 @media (max-width: 768px) {
-  .post-list > li > .post-meta {
-    display: none;
-  }
-
   .header {
     top: auto;
     bottom: 0;
@@ -532,10 +657,11 @@ pre>code {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
   }
 
-  main.content {
+  main.content,
+  main.blog-content {
     margin-top: 0;
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
   }
@@ -558,6 +684,7 @@ pre>code {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 100;
     align-items: stretch;
+    gap: 4px;
   }
 
   .nav-links.visible {
@@ -605,50 +732,7 @@ li {
   margin-top: 60px;
 }
 
-/* Sketch Layer (New Anchored Approach) */
-
-/* 1. Global Corner Annotations */
-.corner-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-  /* Above background, below interactive elements if needed */
-}
-
-.corner-annotation {
-  position: absolute;
-  font-family: "Reenie Beanie", cursive;
-  color: var(--link-visited);
-  opacity: 0.8;
-  font-size: 1.62rem;
-}
-
-.top-left {
-  top: 3vw;
-  left: 3vw;
-  line-height: 1.4;
-}
-
-.top-right {
-  top: 3vw;
-  right: 3vw;
-}
-
-.bottom-right {
-  bottom: 2vw;
-  right: 2vw;
-}
-
-.bottom-left {
-  bottom: 2vw;
-  left: 3vw;
-}
-
-/* 2. Anchored Notes */
+/* Hand-drawn note anchored to a word (used on the about page) */
 .sketch-anchor {
   position: relative;
   display: inline-block;
@@ -668,106 +752,10 @@ li {
   width: max-content;
 }
 
-.sketch-text {
-  display: block;
-  margin-bottom: -5px;
-  /* Pull text closer to arrow */
-}
-
-.sketch-arrow {
-  display: block;
-  overflow: visible;
-  color: var(--link-visited);
-}
-
-/* Specific Positions */
-.note-right {
-  top: -1rem;
-  left: 100%;
-  margin-left: 0.8rem;
-  align-items: flex-start;
-}
-
-.note-right .sketch-arrow {
-  margin-left: -10px;
-}
-
-.note-left {
-  top: 100%;
-  left: 0;
-  margin-top: 0.2rem;
-  align-items: flex-start;
-}
-
-.note-left .sketch-arrow {
-  margin-right: -10px;
-}
-
-/* Reinforce colors for sketched elements */
-#hand-tooltip path,
-.corner-annotation svg path {
-  stroke: var(--link-visited) !important;
-}
-
-#hand-tooltip {
-  color: var(--link-visited) !important;
-}
-
-.note-right-far {
-  top: 0.8rem;
-  left: 100%;
-  margin-left: 0.5rem;
-}
-
-.note-bottom {
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(0.5rem);
-  align-items: center;
-}
-
-.note-bottom .sketch-text {
-  order: 2;
-  margin-top: -5px;
-}
-
-.note-bottom .sketch-arrow {
-  order: 1;
-}
-
 @media (max-width: 1100px) {
   .sketch-note {
     display: none;
   }
-
-  /* Show corner layer but manage space on mobile */
-  .corner-layer {
-    display: block;
-  }
-
-  /* Hide text-heavy annotations to prevent clutter */
-  .corner-annotation.top-left,
-  .corner-annotation.bottom-left {
-    display: none;
-  }
-
-  /* Adjust Mode Switch for mobile */
-  .corner-annotation.top-right {
-    top: 1.5rem;
-    right: 1.5rem;
-    transform: scale(0.9);
-  }
-
-  /* Adjust Cat for mobile */
-  .corner-annotation.bottom-right {
-    bottom: 1.5rem;
-    right: 1.5rem;
-    transform: scale(0.8);
-  }
-}
-
-.wrapper.wide {
-  max-width: 900px;
 }
 
 /* About Page Styles */
@@ -775,7 +763,6 @@ li {
   display: flex;
   flex-direction: column-reverse;
   gap: 30px;
-  margin-top: 20px;
 }
 
 .about-text {
@@ -897,65 +884,24 @@ li {
   }
 }
 
-/* Work Page - Arrow List */
-.arrow-list {
-  list-style: none;
-  margin-left: 0;
-  margin-bottom: 2.5rem;
-}
-
-.arrow-list li {
-  margin-bottom: 0.8rem;
-  padding-left: 1.5rem;
-  position: relative;
-}
-
-.arrow-list li::before {
-  content: "➜";
-  position: absolute;
-  left: 0;
-  color: var(--accent-color);
-}
-
 /* Papers Page */
 .paper-item {
-  margin-bottom: 4rem;
+  margin-bottom: 3em;
 }
 
 .paper-item h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.paper-item h2 a {
-  text-decoration: none;
-  border-bottom: 1px solid var(--accent-color);
+  font-size: 1.2em;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5em;
 }
 
 .paper-item p {
-  line-height: 1.6;
+  margin-bottom: 1.2em;
+  text-wrap: pretty;
 }
 
 .paper-link {
-  font-size: 0.9rem;
-}
-
-/* Work Page Enhancements */
-.work-title {
-  font-family: "Comfortaa", sans-serif;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  font-size: 3rem;
-  letter-spacing: -1px;
-}
-
-.work-section-title {
-  font-family: "Comfortaa", sans-serif;
-  font-size: 1.5rem;
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-  color: var(--accent-color);
+  font-size: 0.85em;
 }
 
 .work-cta {
@@ -976,37 +922,10 @@ li {
 .work-cta:hover {
   background-color: var(--accent-color);
   color: #fff;
-  /* or contrast color */
   text-decoration: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.work-note {
-  margin-top: 4rem;
-  padding: 1.5rem;
-  border-left: 4px solid var(--accent-color);
-  background: var(--code-bg);
-  /* subtle background */
-  font-family: var(--blog-font-family);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  border-radius: 0 8px 8px 0;
-}
-
-.note-label {
-  font-weight: bold;
-  color: var(--accent-color);
-  margin-right: 0.5rem;
-}
-
-/* Refined Arrow List */
-.arrow-list li {
-  margin-bottom: 1.2rem;
-  line-height: 1.6;
-}
-
-.arrow-list li b {
-  color: var(--foreground-color);
-  font-weight: 600;
-  margin-right: 0.3rem;
+.dark-mode .work-cta:hover {
+  color: var(--background-color);
 }

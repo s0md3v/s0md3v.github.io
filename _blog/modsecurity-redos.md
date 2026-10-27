@@ -23,12 +23,12 @@ I then used [RegexBuddy](https://www.regexbuddy.com/) to analyze the impact of d
 
 Now, let’s talk about the different exploitable sub-patterns I found and how I wrote exploits for them.
 
-### Case #1
+## Case #1
 
 **Pattern:** ```(?:(?:^[\"'`\\]*?[^\"'\`]+[\"'\`])+|(?:^[\"'\`\\]*?[\d\"'`]+)+)\s```\
 **Exploit:** ```""""""""""""""``` (about 1000 "s)
 
-#### Why this exploit works?
+### Why this exploit works?
 
 **1. Intersecting alternate patterns**
 This pattern consists of two alternate sub-patterns. Both alternate patterns start with ```^["'`\\]*?``` which causes the regex engine to keep looking for both patterns and hence increasing the permutations.
@@ -37,13 +37,13 @@ In the second alternate pattern, the tokens ```["'`\\]*?``` and ```[\d"'`]+``` i
 **2. Nested repetition operators**
 The structure of this subpattern is `((pattern 1)+|(pattern 2)+)+` and it’s clear that it’s using nested repetition operators which dramatically increases the complexity.
 
-### Case #2
+## Case #2
 
 **Pattern:** `for(?:/[dflr].*)* %+[^ ]+ in\(.*\)\s?do`\
 **Vulnerable part:** `for(?:/[dflr].*)* %`\
 **Exploit:** `for/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r/r`
 
-#### Why this exploit works?
+### Why this exploit works?
 
 Let’s take a look at how the string is matched, step by step
 
@@ -68,12 +68,12 @@ Well, you are not wrong but a repetition operator applied over another repetitio
 The fact that `/r` can be matched by both `.*` and `/[dflr]` makes things even worse.
 I am not sure how much steps it goes through before failing but RegexBuddy4 has a limit of 10,00,000 steps so we don’t really know.
 
-### Case #3
+## Case #3
 
 **Pattern:** `(?:\s|/\*.*\*/|//.*|#.*)*\(.*\)`\
 **Exploit**: `################################################`
 
-#### Why this exploit works?
+### Why this exploit works?
 
 `(?:\s|/\*.*\*/|//.*|#.*)*` this part of the pattern consists of 4 alternate patterns and 3 of them have the good old `.*` which can match anything.
 When the regex engine compares the pattern against the string, the only part which matches is the last one but because there’s no `()` as required by the pattern, it fails to match and the regex engine goes nuts because there are nested repetition operators placed in such a way that adding a `#` to the string makes the number of steps to be tried grow exponentially.

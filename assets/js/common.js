@@ -1,17 +1,13 @@
+// DEFAULT_FONT, DEFAULT_FONT_SIZE, getFontFamily, getPreferredTheme and applyTheme
+// are defined in _includes/theme_init.html, which runs before this script.
 document.addEventListener('DOMContentLoaded', function () {
-    const DEFAULT_FONT_SIZE = 1.0;
-
-    function getFontFamily(font) {
-        switch (font) {
-            case 'lexend':
-                return '"Lexend", sans-serif';
-            case 'opendyslexic':
-                return '"OpenDyslexic", sans-serif';
-            case 'system':
-                return '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-            default:
-                return 'var(--base-font-family)'; // Default to site's base font (Lexend)
-        }
+    // Mark one button in a group as the active (pressed) option
+    function setActiveOption(buttons, activeButton) {
+        buttons.forEach(btn => {
+            const active = btn === activeButton;
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-pressed', String(active));
+        });
     }
 
     function deobfuscateEmails() {
@@ -34,18 +30,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Set active state based on current theme
         const currentTheme = getPreferredTheme();
         const activeThemeButton = document.querySelector(`.theme-options button[data-theme="${currentTheme}"]`);
-
-        if (activeThemeButton) {
-            themeButtons.forEach(btn => btn.classList.remove('active'));
-            activeThemeButton.classList.add('active');
-        }
+        setActiveOption(themeButtons, activeThemeButton);
 
         themeButtons.forEach(button => {
             button.addEventListener('click', function () {
                 const theme = this.dataset.theme;
 
-                themeButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
+                setActiveOption(themeButtons, this);
 
                 applyTheme(theme);
             });
@@ -58,8 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
             button.addEventListener('click', function () {
                 const font = this.dataset.font;
 
-                fontButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
+                setActiveOption(fontButtons, this);
 
                 document.documentElement.style.setProperty('--blog-font-family', getFontFamily(font));
                 localStorage.setItem('font', font);
@@ -99,22 +89,16 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('fontSize', newSize);
     }
 
-    // Load Font Settings
+    // Reflect the saved font in the settings menu. The font and size themselves are
+    // applied before first paint by _includes/theme_init.html.
     function loadFontSettings() {
-        // Initial theme load is already done at top level
-
-        const font = localStorage.getItem('font') || 'lexend';
-        // We set propertly on documentElement, so it's safe to do here
-        document.documentElement.style.setProperty('--blog-font-family', getFontFamily(font));
+        let font = DEFAULT_FONT;
+        try {
+            font = localStorage.getItem('font') || DEFAULT_FONT;
+        } catch (e) { }
 
         const activeFontButton = document.querySelector(`.font-options button[data-font="${font}"]`);
-        if (activeFontButton) {
-            document.querySelectorAll('.font-options button').forEach(btn => btn.classList.remove('active'));
-            activeFontButton.classList.add('active');
-        }
-
-        const fontSize = localStorage.getItem('fontSize') || DEFAULT_FONT_SIZE;
-        document.documentElement.style.setProperty('--blog-font-size', fontSize + 'rem');
+        setActiveOption(document.querySelectorAll('.font-options button'), activeFontButton);
     }
 
     setupThemeButtons();

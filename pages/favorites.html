@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Favorites
+description: "Films, shows, books and games I love and recommend."
 permalink: /favorites/
 ---
 <style>
@@ -40,6 +41,11 @@ permalink: /favorites/
         gap: 2.5rem;
     }
 
+    /* The column gap already separates the title from the lists */
+    .list-column > .page-title {
+        margin-bottom: 0;
+    }
+
     .list-section {
         display: flex;
         flex-direction: column;
@@ -59,7 +65,6 @@ permalink: /favorites/
         color: var(--muted-color);
         margin-bottom: 0.5rem;
         font-weight: bold;
-        opacity: 0.5;
     }
 
     .list-item {
@@ -160,7 +165,7 @@ permalink: /favorites/
 <div class="wrapper wide favorites-container">
     
     <div class="list-column">
-        <h1 style="margin-bottom: 1.5rem; font-family: 'Comfortaa', sans-serif;">Favorites</h1>
+        <h1 class="page-title">Favorites</h1>
 
         <!-- Watch -->
         <div class="list-section">

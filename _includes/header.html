@@ -10,15 +10,15 @@
                 </button>
                 <div class="settings-dropdown" id="settings-menu">
                     <div class="settings-section">
-                        <div class="settings-subtitle">Theme</div>
-                        <div class="settings-options theme-options">
-                            <button data-theme="light" aria-label="Light Mode">
+                        <div class="settings-subtitle" id="settings-theme-label">Theme</div>
+                        <div class="settings-options theme-options" role="group" aria-labelledby="settings-theme-label">
+                            <button data-theme="light" aria-label="Light Mode" aria-pressed="false">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M14.5 14.5c-1.2 2.5-4.5 3.2-6.5 1.5s-2.8-4.8-1.2-6.8 4.2-2.5 6.2-1.2 2.5 4.5 1.5 6.5z" />
                                     <path d="M12 2.5c0.2 1.5-0.5 2.5-0.2 4M11.5 18c0.2 1.8 0.5 3 0.8 4.5M4 4.5l2.2 2.8M17.5 17.5l3 3.5M2 12.5c1.5-0.2 3 0.5 4.5 0.2M18.5 11c1.8 0.5 3.2-0.2 4.8-0.5M4.5 19.5l2.8-2.2M19.5 4.5l-2.8 3" />
                                 </svg>
                             </button>
-                            <button data-theme="dark" aria-label="Dark Mode">
+                            <button data-theme="dark" aria-label="Dark Mode" aria-pressed="false">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <g transform="translate(4 0)">
                                         <g transform="rotate(-20 12 12)">
@@ -27,26 +27,19 @@
                                     </g>
                                 </svg>
                             </button>
-                            <button data-theme="cream" aria-label="Cream Mode">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17.5 10c2.5 0.2 3.8 2 3.2 4s-2.8 3-5 2.5l-0.5-0.2" />
-                                    <path d="M4.5 10.5c-0.5-1.5 0.8-3 2.5-3h9c1.8 0 2.5 1.2 2.2 3l-1.2 6c-0.5 2.5-2.2 4-4.8 4h-2.2c-2.5 0-4.2-1.5-4.8-4l-1.5-6.5z" />
-                                    <path d="M9 3c0.5 0.8-0.2 1.5-0.5 2.5M12.5 2c0.8 1.2-0.5 2.2-0.8 3.5M16 3c0.5 0.8-0.2 1.5-0.5 2.5" />
-                                </svg>
-                            </button>
                         </div>
                     </div>
                     <div class="settings-section">
-                        <div class="settings-subtitle">Font</div>
-                        <div class="settings-options font-options">
-                            <button data-font="system">System</button>
-                            <button data-font="lexend">Lexend</button>
-                            <button data-font="opendyslexic">Dyslexic</button>
+                        <div class="settings-subtitle" id="settings-font-label">Font</div>
+                        <div class="settings-options font-options" role="group" aria-labelledby="settings-font-label">
+                            <button data-font="system" aria-pressed="false">System</button>
+                            <button data-font="lexend" aria-pressed="false">Lexend</button>
+                            <button data-font="opendyslexic" aria-pressed="false">Dyslexic</button>
                         </div>
                     </div>
                     <div class="settings-section">
-                        <div class="settings-subtitle">Font Size</div>
-                        <div class="settings-options size-options">
+                        <div class="settings-subtitle" id="settings-size-label">Font Size</div>
+                        <div class="settings-options size-options" role="group" aria-labelledby="settings-size-label">
                             <button id="decrease-font" aria-label="Decrease font size">−</button>
                             <button id="reset-font" aria-label="Reset font size">Reset</button>
                             <button id="increase-font" aria-label="Increase font size">+</button>
@@ -70,7 +63,17 @@
         <ul class="nav-links" id="site-navigation">
             {% for link_id in site.data.navigation.header %}
             {% assign nav_link = site.data.navigation.links[link_id] %}
-            <li><a href="{{ nav_link.url | relative_url }}">{{ nav_link.label | escape }}</a></li>
+            {% comment %} The page itself, or a section it lives under (/blog/x -> /blog/, /essays/x -> /essays/) {% endcomment %}
+            {% assign nav_url_size = nav_link.url | size %}
+            {% assign page_url_prefix = page.url | slice: 0, nav_url_size %}
+            {% assign nav_url_last = nav_link.url | slice: -1, 1 %}
+            {% assign nav_current = nil %}
+            {% if page.url == nav_link.url %}
+            {% assign nav_current = "page" %}
+            {% elsif nav_link.url != "/" and nav_url_last == "/" and page_url_prefix == nav_link.url %}
+            {% assign nav_current = "true" %}
+            {% endif %}
+            <li><a href="{{ nav_link.url | relative_url }}"{% if nav_current %} aria-current="{{ nav_current }}"{% endif %}>{{ nav_link.label | escape }}</a></li>
             {% endfor %}
         </ul>
     </nav>

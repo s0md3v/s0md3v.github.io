@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Uses
+description: "The software and hardware I use every day."
 permalink: /uses/
 ---
 <style>
@@ -38,6 +39,11 @@ permalink: /uses/
         gap: 2.5rem;
     }
 
+    /* The column gap already separates the title from the lists */
+    .list-column > .page-title {
+        margin-bottom: 0;
+    }
+
     .list-section {
         display: flex;
         flex-direction: column;
@@ -58,7 +64,6 @@ permalink: /uses/
         color: var(--muted-color);
         margin-bottom: 0.5rem;
         font-weight: bold;
-        opacity: 0.5;
     }
 
     .list-item {
@@ -121,7 +126,7 @@ permalink: /uses/
 <div class="wrapper wide uses-container">
 
     <div class="list-column">
-        <h1 style="margin-bottom: 1.5rem; font-family: 'Comfortaa', sans-serif;">Uses</h1>
+        <h1 class="page-title">Uses</h1>
 
         <!-- Software -->
         <div class="list-section">

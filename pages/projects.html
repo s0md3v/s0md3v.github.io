@@ -7,225 +7,206 @@ order: 1
 ---
 
 <style>
-.projects-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-top: 30px;
-  margin-bottom: 50px;
-}
-.impact-container {
-  position: relative;
-  margin-top: 25px;
-  margin-bottom: 40px;
-}
-.last-updated {
-  font-family: "Reenie Beanie", cursive;
-  color: var(--link-visited);
-  font-size: 1.1rem;
+/* Sized in em off .wrapper, i.e. the same reading scale as posts. */
+.projects-page .sr-only {
   position: absolute;
-  top: -30px;
-  right: 5px;
-  opacity: 0.8;
-  z-index: 5;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
-.last-updated a {
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-}
-.last-updated a:hover {
-  opacity: 1;
-  text-decoration: underline;
+
+.impact {
+  margin: 1.5em 0 3em;
 }
 .impact-summary {
-  display: flex;
-  justify-content: space-around;
-  background: var(--code-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+  margin: 0;
+  padding: 1em 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 .impact-item {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  cursor: default;
+  gap: 0.15em;
 }
-.impact-value {
-  font-family: "Comfortaa", sans-serif;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--accent-color);
+/* Value is visually first but comes second in the dl */
+.impact-item dd {
+  order: -1;
+  margin: 0;
+  font-size: 1.4em;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
 }
-.impact-label {
-  font-size: 0.9rem;
+.impact-item dt {
+  font-size: 0.85em;
+  line-height: 1.35;
   color: var(--muted-color);
-  font-family: var(--blog-font-family);
 }
-@media (max-width: 600px) {
+.last-updated {
+  margin: 0.6em 0 0;
+  font-size: 0.8em;
+  color: var(--muted-color);
+}
+.last-updated a {
+  text-decoration-color: color-mix(in srgb, var(--muted-color) 45%, transparent);
+}
+@media (max-width: 480px) {
   .impact-summary {
-    flex-direction: column;
-    gap: 20px;
+    gap: 0.75em;
+  }
+  .impact-item dd {
+    font-size: 1.2em;
+  }
+  .impact-item dt {
+    font-size: 0.78em;
   }
 }
-.proj-card {
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-  background-color: transparent;
+
+.projects-list {
+  margin: 0 0 3em;
 }
-.proj-card:hover {
-  border-color: var(--accent-color);
-  background-color: rgba(0,0,0,0.015);
+.proj {
+  padding: 2em 0;
+  border-top: 1px solid var(--border-color);
 }
-html.dark-mode .proj-card:hover {
-  background-color: rgba(255,255,255,0.02);
-}
-.proj-link {
-  display: flex;
-  flex-direction: column;
-  text-decoration: none !important;
-  color: inherit;
-  padding: 25px;
-  border-radius: inherit;
+.proj:first-child {
+  padding-top: 0;
+  border-top: 0;
 }
 .proj-header {
   display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  column-gap: 1em;
+  margin-bottom: 0.8em;
 }
 .proj-title {
-  color: var(--accent-color);
-  font-weight: bold;
-  font-family: "Comfortaa", sans-serif;
-  font-size: 2.2rem;
-  text-transform: lowercase;
-  margin: 0 !important;
+  font-size: 1.4em;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  margin: 0;
 }
-.proj-stats {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.proj-stat {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--blog-font-family);
-  font-size: 1.1rem;
-  color: var(--muted-color);
-  border: 1px solid transparent;
-  padding: 4px 12px;
-  border-radius: 20px;
-  transition: border-color 0.3s ease, color 0.3s ease;
-}
-.proj-stat:hover {
-  border-color: var(--accent-color);
+.proj-title a {
   color: var(--foreground-color);
+  text-decoration: none;
 }
-.proj-stat svg {
-  color: #e3b341;
+.proj-title a:hover,
+.proj-title a:focus-visible {
+  color: var(--accent-color);
+  background: none;
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.2em;
+}
+.proj-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: 0.85em;
+  color: var(--muted-color);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.proj-stars svg {
+  width: 0.95em;
+  height: 0.95em;
+  position: relative;
+  top: -0.05em;
 }
 .proj-summary {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  grid-template-columns: 4.2em 1fr;
+  column-gap: 1em;
+  row-gap: 0.5em;
+  margin: 0;
 }
-@media (min-width: 800px) {
+.proj-summary dt {
+  font-size: 0.72em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--midground-color);
+  /* Line up with the first line of the 1em text beside it */
+  line-height: calc(1.6em / 0.72);
+}
+.proj-summary dd {
+  margin: 0;
+}
+@media (max-width: 480px) {
   .proj-summary {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 30px;
+    grid-template-columns: 3.4em 1fr;
+    column-gap: 0.75em;
   }
 }
-.summary-block {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.summary-label {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--accent-color);
-  font-weight: bold;
-  font-family: "Comfortaa", sans-serif;
-  opacity: 0.8;
-}
-.summary-text {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--foreground-color);
-  margin: 0 !important;
-  font-family: var(--blog-font-family);
+.projects-more {
+  color: var(--midground-color);
 }
 </style>
 
-<div class="wrapper wide">
-  <h1>projects</h1>
+<div class="wrapper projects-page">
+  <h1 class="page-title">Projects</h1>
 
-  <div class="impact-container">
-    <div class="last-updated">
-      <a href="https://github.com/s0md3v/s0md3v.github.io/tree/main/.github/scripts/fetch_stats.py">
-        Updated: {{ site.data.stats.last_updated }}
-      </a>
-    </div>
-    <div class="impact-summary">
+  <section class="impact" aria-label="Open source impact">
+    <dl class="impact-summary">
       <div class="impact-item">
-        <span class="impact-value">{{ site.data.stats.total_stars }}</span>
-        <span class="impact-label">GitHub Stars</span>
+        <dt>GitHub stars</dt>
+        <dd>{{ site.data.stats.total_stars }}</dd>
       </div>
       <div class="impact-item">
-        <span class="impact-value">{{ site.data.stats.monthly_downloads }}</span>
-        <span class="impact-label">Monthly Downloads</span>
+        <dt>Monthly downloads</dt>
+        <dd>{{ site.data.stats.monthly_downloads }}</dd>
       </div>
       <div class="impact-item">
-        <span class="impact-value">{{ site.data.stats.total_projects }}+</span>
-        <span class="impact-label">Open Source Tools</span>
+        <dt>Open source tools</dt>
+        <dd>{{ site.data.stats.total_projects }}+</dd>
       </div>
-    </div>
-  </div>
+    </dl>
+    <p class="last-updated prose">
+      <a href="https://github.com/s0md3v/s0md3v.github.io/tree/main/.github/scripts/fetch_stats.py">Updated: {{ site.data.stats.last_updated }}</a>
+    </p>
+  </section>
 
-  <div class="projects-container">
-    {% for project in site.data.projects %}
-    <div class="proj-card">
-      <a href="{{ project.href }}" class="proj-link">
-        <div class="proj-header">
-          <h2 class="proj-title">{{ project.title }}</h2>
-          <div class="proj-stats">
-            <div class="proj-stat">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star">
-                <path fill="currentColor" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
-              </svg>
-              <span>{{ project.stars }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="proj-summary">
-          <div class="summary-block">
-            <span class="summary-label">What</span>
-            <p class="summary-text">{{ project.what }}</p>
-          </div>
-          <div class="summary-block">
-            <span class="summary-label">Why</span>
-            <p class="summary-text">{{ project.why }}</p>
-          </div>
-          <div class="summary-block">
-            <span class="summary-label">How</span>
-            <p class="summary-text">{{ project.how }}</p>
-          </div>
-        </div>
-      </a>
-    </div>
+  <div class="projects-list">
+    {% assign projects = site.data.projects | sort: 'stars' | reverse %}
+    {% for project in projects %}
+    <article class="proj">
+      <div class="proj-header">
+        <h2 class="proj-title"><a href="{{ project.href }}">{{ project.title }}</a></h2>
+        {% if project.stars >= 50 %}
+        {% if project.stars >= 1000 %}
+        {% assign stars_k = project.stars | divided_by: 1000.0 | round: 1 | append: 'k' | replace: '.0k', 'k' %}
+        {% else %}
+        {% assign stars_k = project.stars %}
+        {% endif %}
+        <span class="proj-stars" title="{{ project.stars }} GitHub stars">
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path></svg>
+          {{ stars_k }}<span class="sr-only"> GitHub stars</span></span>
+        {% endif %}
+      </div>
+      <dl class="proj-summary">
+        <dt>What</dt>
+        <dd>{{ project.what }}</dd>
+        <dt>Why</dt>
+        <dd>{{ project.why }}</dd>
+        <dt>How</dt>
+        <dd>{{ project.how }}</dd>
+      </dl>
+    </article>
     {% endfor %}
   </div>
 
-  <div style="text-align: center; margin-top: 60px; margin-bottom: 80px;">
-    <p style="font-family: var(--blog-font-family); color: var(--muted-color); font-size: 1.2rem;">
-      I have built dozens of other tools and experiments. <br>
-      Explore them all on my <a href="https://github.com/s0md3v" style="color: var(--accent-color); font-weight: bold;">GitHub Profile</a>.
-    </p>
-  </div>
+  <p class="projects-more prose">
+    I have built dozens of other tools and experiments.
+    Explore them all on my <a href="https://github.com/s0md3v">GitHub profile</a>.
+  </p>
 </div>

@@ -4,7 +4,7 @@ const SITE_FONTS = {
   system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   opendyslexic: '"OpenDyslexic", sans-serif'
 };
-const SITE_THEMES = ['light', 'dark', 'cream'];
+const SITE_THEMES = ['light', 'dark'];
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII'];
 
 // Concise reading aids. Sargeant's fuller, verse-specific vocabulary remains visible on each original page.

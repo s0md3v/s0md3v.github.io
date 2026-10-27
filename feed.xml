@@ -2,7 +2,7 @@
 layout: null
 ---
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>{{ site.title | xml_escape }}</title>
     <description>{{ site.description | xml_escape }}</description>
@@ -15,10 +15,15 @@ layout: null
     {% unless site.future %}
     {% assign listed_posts = listed_posts | where_exp: "post", "post.date <= site.time" %}
     {% endunless %}
+    {% assign abs_root = site.url | append: site.baseurl | append: '/' %}
     {% for post in listed_posts limit:20 %}
+      {% comment %} Root-relative URLs become absolute so images and links work in feed readers; "]]>" is split so it can't end the CDATA section early {% endcomment %}
+      {% assign full_content = post.content | replace: 'src="/', 'src="ABSROOT' | replace: 'href="/', 'href="ABSROOT' | replace: 'srcset="/', 'srcset="ABSROOT' | replace: 'poster="/', 'poster="ABSROOT' | replace: 'ABSROOT/', '//' | replace: 'ABSROOT', abs_root | replace: ']]>', ']]]]><![CDATA[>' %}
       <item>
         <title>{{ post.title | xml_escape }}</title>
         <description>{{ post.description | default: post.excerpt | xml_escape }}</description>
+        <content:encoded><![CDATA[{{ full_content }}]]></content:encoded>
+        <dc:creator>{{ post.author | default: 'Somdev Sangwan' | xml_escape }}</dc:creator>
         <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
         <link>{{ post.url | prepend: site.baseurl | prepend: site.url }}</link>
         <guid isPermaLink="true">{{ post.url | prepend: site.baseurl | prepend: site.url }}</guid>

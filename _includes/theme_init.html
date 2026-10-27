@@ -5,45 +5,37 @@
         --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
         --blog-font-family: var(--base-font-family);
 
-        --background-color: #fafafa;
-        --foreground-color: #1a1a1a;
-        --midground-color: #666666;
-        --accent-color: #1976d2;
-        --link-hover-bg: #e5e5e5;
-        --muted-color: #666666;
-        --border-color: #e5e5e5;
-        --code-bg: #f0f0f0;
-        --link-color: #0b5394;
-        --link-visited: #0d47a1;
-        --icon-filter: none;
-    }
-
-    .dark-mode {
-        --background-color: #1e1e1e;
-        --foreground-color: #e0e0e0;
-        --midground-color: #a0a0a0;
-        --accent-color: #42a5f5;
-        --link-hover-bg: #333333;
-        --muted-color: #888888;
-        --border-color: #333333;
-        --code-bg: #2d2d2d;
-        --link-color: #64b5f6;
-        --link-visited: #a6d6ff;
-        --icon-filter: invert(1);
-    }
-
-    .cream-mode {
-        --background-color: #f3f0e6;
-        --foreground-color: #2d2a26;
+        /* Warm off-white paper with warm near-black ink: less glare than pure
+           white/black, while body text stays ~14:1 and muted text >5:1 (WCAG AA). */
+        color-scheme: light;
+        --background-color: #f6f3ea;
+        --foreground-color: #26231f;
         --midground-color: #5d564f;
         --accent-color: #1565c0;
-        --link-hover-bg: #e6e2d6;
-        --muted-color: #5d564f;
+        --link-hover-bg: #e9e4d7;
+        --muted-color: #655e56;
         --border-color: #dcd6c6;
-        --code-bg: #e8e2d2;
+        --code-bg: #ebe6d8;
         --link-color: #0d47a1;
         --link-visited: #0d47a1;
         --icon-filter: none;
+    }
+
+    /* Warm dark grey rather than black, and off-white text rather than white,
+       to avoid halation; same warm hue as the light theme. */
+    .dark-mode {
+        color-scheme: dark;
+        --background-color: #1c1b19;
+        --foreground-color: #e6e2da;
+        --midground-color: #aaa49a;
+        --accent-color: #42a5f5;
+        --link-hover-bg: #34322e;
+        --muted-color: #968f85;
+        --border-color: #34322e;
+        --code-bg: #292724;
+        --link-color: #64b5f6;
+        --link-visited: #a6d6ff;
+        --icon-filter: invert(1);
     }
 
     * {
@@ -55,12 +47,10 @@
     }
 
     html {
-        -webkit-hyphens: auto;
         background: var(--background-color);
         color: var(--foreground-color);
         font-size: 1rem;
         height: 100%;
-        hyphens: auto;
         margin: 0;
         padding: 0;
         scroll-behavior: smooth;
@@ -87,13 +77,37 @@
     a:hover {
         background: var(--link-hover-bg);
     }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
 </style>
 
 <script>
-    const themes = ["light", "dark", "cream"];
+    const themes = ["light", "dark"];
 
     function getPreferredTheme() {
-        const savedTheme = localStorage.getItem("theme");
+        let savedTheme = localStorage.getItem("theme");
+        // The old cream theme became the light theme
+        if (savedTheme === "cream") savedTheme = "light";
         if (savedTheme && themes.includes(savedTheme)) return savedTheme;
 
         const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -101,7 +115,7 @@
     }
 
     function applyTheme(theme) {
-        document.documentElement.classList.remove("light-mode", "dark-mode", "cream-mode");
+        document.documentElement.classList.remove("light-mode", "dark-mode");
         document.documentElement.classList.add(`${theme}-mode`);
         localStorage.setItem("theme", theme);
     }
@@ -111,6 +125,40 @@
         applyTheme(currentTheme);
     } catch (e) {
         console.error("Theme initialization failed:", e);
+    }
+
+    // Reader font preferences (also used by assets/js/common.js). Applied here, before
+    // first paint, so saved settings don't cause a layout shift.
+    const DEFAULT_FONT = "lexend";
+    const DEFAULT_FONT_SIZE = 1.0;
+    const FONT_FAMILIES = {
+        lexend: '"Lexend", sans-serif',
+        opendyslexic: '"OpenDyslexic", sans-serif',
+        system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+    };
+
+    function getFontFamily(font) {
+        return FONT_FAMILIES[font] || "var(--base-font-family)";
+    }
+
+    try {
+        const root = document.documentElement;
+        const savedFont = localStorage.getItem("font") || DEFAULT_FONT;
+        root.style.setProperty("--blog-font-family", getFontFamily(savedFont));
+        if (savedFont === "opendyslexic") {
+            const preload = document.createElement("link");
+            preload.rel = "preload";
+            preload.as = "font";
+            preload.type = "font/woff2";
+            preload.crossOrigin = "anonymous";
+            preload.href = "{{ '/assets/fonts/OpenDyslexic-Regular.woff2' | relative_url }}";
+            document.head.appendChild(preload);
+        }
+
+        const savedSize = parseFloat(localStorage.getItem("fontSize"));
+        root.style.setProperty("--blog-font-size", (savedSize > 0 ? savedSize : DEFAULT_FONT_SIZE) + "rem");
+    } catch (e) {
+        console.error("Font settings initialization failed:", e);
     }
 
     try {

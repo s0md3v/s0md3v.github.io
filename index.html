@@ -17,26 +17,19 @@ layout_style: "homepage"
       </div>
       <div class="corner-annotation top-right">
         <div id="mode-switch" style="transform: rotate(-1deg); pointer-events: auto; display: flex; gap: 15px; align-items: center; justify-content: flex-end;">
-          <div class="mode-icon" data-mode="light" role="button" tabindex="0" aria-label="Light Mode" style="cursor: pointer; opacity: 0.3; transition: opacity 0.3s ease;">
+          <div class="mode-icon" data-mode="light" role="button" tabindex="0" aria-label="Light Mode" style="cursor: pointer; opacity: 0.75; transition: opacity 0.3s ease;">
             <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14.5 14.5c-1.2 2.5-4.5 3.2-6.5 1.5s-2.8-4.8-1.2-6.8 4.2-2.5 6.2-1.2 2.5 4.5 1.5 6.5z" />
               <path d="M12 2.5c0.2 1.5-0.5 2.5-0.2 4M11.5 18c0.2 1.8 0.5 3 0.8 4.5M4 4.5l2.2 2.8M17.5 17.5l3 3.5M2 12.5c1.5-0.2 3 0.5 4.5 0.2M18.5 11c1.8 0.5 3.2-0.2 4.8-0.5M4.5 19.5l2.8-2.2M19.5 4.5l-2.8 3" />
             </svg>
           </div>
-          <div class="mode-icon" data-mode="dark" role="button" tabindex="0" aria-label="Dark Mode" style="cursor: pointer; opacity: 0.3; transition: opacity 0.3s ease;">
+          <div class="mode-icon" data-mode="dark" role="button" tabindex="0" aria-label="Dark Mode" style="cursor: pointer; opacity: 0.75; transition: opacity 0.3s ease;">
             <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
               <g transform="translate(4 0)">
                 <g transform="rotate(-20 12 12)">
                   <path transform="translate(24 0) scale(-1 1)" d="M12 3.5a8.5 8.5 0 0 1 0 17c2.2-2.2 3.3-5.3 3.3-8.5S14.2 5.7 12 3.5Z" />
                 </g>
               </g>
-            </svg>
-          </div>
-          <div class="mode-icon" data-mode="cream" role="button" tabindex="0" aria-label="Cream Mode" style="cursor: pointer; opacity: 0.3; transition: opacity 0.3s ease;">
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.5 10c2.5 0.2 3.8 2 3.2 4s-2.8 3-5 2.5l-0.5-0.2" />
-              <path d="M4.5 10.5c-0.5-1.5 0.8-3 2.5-3h9c1.8 0 2.5 1.2 2.2 3l-1.2 6c-0.5 2.5-2.2 4-4.8 4h-2.2c-2.5 0-4.2-1.5-4.8-4l-1.5-6.5z" />
-              <path d="M9 3c0.5 0.8-0.2 1.5-0.5 2.5M12.5 2c0.8 1.2-0.5 2.2-0.8 3.5M16 3c0.5 0.8-0.2 1.5-0.5 2.5" />
             </svg>
           </div>
         </div>
@@ -172,12 +165,11 @@ layout_style: "homepage"
         function updateModeIcons() {
           const current = getPreferredTheme();
           document.querySelectorAll('#mode-switch .mode-icon').forEach(icon => {
-            icon.setAttribute('aria-pressed', String(icon.dataset.mode === current));
-            if (icon.dataset.mode === current) {
-              icon.style.opacity = '1';
-            } else {
-              icon.style.opacity = '0.3';
-            }
+            const active = icon.dataset.mode === current;
+            icon.setAttribute('aria-pressed', String(active));
+            icon.style.opacity = active ? '1' : '0.75';
+            // A heavier stroke marks the selected icon without relying on opacity alone
+            icon.querySelector('svg').setAttribute('stroke-width', active ? '1.8' : '1.2');
           });
         }
 

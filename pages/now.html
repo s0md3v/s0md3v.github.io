@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Now
+description: "What I'm working on and learning right now."
 permalink: /now/
 updated: 2026-09-17
 ---
@@ -59,7 +60,6 @@ updated: 2026-09-17
         color: var(--muted-color);
         margin-bottom: 0.5rem;
         font-weight: bold;
-        opacity: 0.5;
     }
 
     .list-item {
@@ -117,14 +117,19 @@ updated: 2026-09-17
     .note-column {
         display: none;
     }
+
+    /* The column gap already separates the header from the lists */
+    .now-header .page-intro {
+        margin-bottom: 0;
+    }
 </style>
 
 <div class="wrapper wide now-container">
 
     <div class="list-column">
-        <div>
-            <h1 style="font-family: 'Comfortaa', sans-serif;">Now</h1>
-            <p style="font-size: 0.9rem; color: var(--muted-color);">Updated <time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: '%-d %B %Y' }}</time></p>
+        <div class="now-header">
+            <h1 class="page-title">Now</h1>
+            <p class="page-intro">Updated <time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: '%-d %B %Y' }}</time></p>
         </div>
 
         <!-- Working -->

@@ -4,7 +4,6 @@ title:  "Arjun: Solving Parameter Discovery"
 date:   2018-05-11 12:46:00 +0530
 author: Somdev Sangwan
 type:   tech
-image: /assets/thumbs/arjun.png
 permalink: /blog/making-of-arjun
 description: "Making of s0md3v/arjun repository"  
 ---
@@ -13,12 +12,12 @@ Webpages and APIs often have more parameters than they let users interact with. 
 
 Even if we have list of commonly-used parameter names, testing each parameter from the list is time consuming and by security measures for the sheer number of requests.
 
-### How to know if a parameter is valid?
+## How to know if a parameter is valid?
 The obvious way to check if a parameter is valid is to send a request with the parameter and check the response. If the response is different from the one without the parameter, it is likely that the parameter is valid.
 
 However, modern webpages have dynamic content such as CSRF tokens, timestamps, live numbers etc. Thus the same request sent twice may return slighty different responses so it is important to determine what parts are static and what parts are dynamic.
 
-### How to determine static and dynamic parts?
+## How to determine static and dynamic parts?
 Tools for comparing differences in text already exist because they are not reliable in complex cases.
 
 To create a solution, I first created a list of all the things that can tell if two response are difference. Here's the actual list from the code:
@@ -41,14 +40,14 @@ Now, we can send the same HTTP request twice and determine what anamolies from t
 
 When we send a request with a parameter, we can compare the anamolies of the response with the anamolies of the response without the parameter. If they are different, it is likely that the parameter is valid.
 
-### Solving the brute-force problem
+## Solving the brute-force problem
 So far so good. But how do we test all the parameters? We can send a request with each parameter from the wordlist and check the response, but that would be too many requests.
 
 We can send a request with multiple parameters at but then problem changes from brute-force to figuring out which parameter(s) caused the response to change.
 
 I solved this problem by using the binary search algorithm. Once a response shows anamoly, we can split the parameters into two halves and send requests with each half. If one half shows anamoly, we can further split that half and continue until we find the parameter(s) that caused the anamoly.
 
-### Expanding the scope
+## Expanding the scope
 Now that core problem was solved, I wanted to expand the scope as follows:
 
 1. Extract input fields from HTML forms and adding them to the wordlist.

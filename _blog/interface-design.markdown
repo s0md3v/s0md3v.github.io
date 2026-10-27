@@ -13,14 +13,14 @@ description: "Designing interfaces that real users love."
 
 At the time of writing this, I have been programming for 9 years and studying epistemology for 2 years. Naturally, first we must think about:
 
-### What's an interface? (important)
+## What's an interface? (important)
 The system has some rules and the user wants something from the system. Interface sits between the two and tries to communicate needs to the system and rules to the user. When we are designing an interface, we are solving a communication problem.
 
 A website is an interface and so is a warning message or pricing page within it. A locked door with a handle is an interface too (is it push or pull?). Even a litter box is an interface, it shouldn't get in the way of your cat doing its business.
 
 Yes, that's what it all boils down to. A good interface lets the user perform the action they intend to perform in the easiest way possible.
 
-### User is predicting
+## User is predicting
 The user is always predicting. What is this? Can I click it? What will happen if I click it? Did it work? Can I undo it? Am I about to lose money? Am I being tricked?
 
 This is happening very fast, usually without words. A user opens a food delivery app and thinks, where is pizza?
@@ -32,7 +32,7 @@ A bad interface makes the user ask unnecessary questions. A good interface answe
 
 Communicate clearly. "Continue to payment", "Pay", or "Pay $10" are better than "Continue".
 
-### State
+## State
 To help the users with predicting right, the system should always tell them what state it is in. Not in a philosophical way, although that would be nice. Just: where am I, what happened, what can I do now.
 
 If I click save and I don't see a clear indicator of success, indicator of progress or explanation of why saving failed - I will be disoriented. And I don't want to see a technical failure message either (unless you are sure I'll understand it), tell me if I messed up or your system messed up.
@@ -42,7 +42,7 @@ A good interface talks back at the right time, with the right information and in
 
 "Payment failed" or "Unable to reach server, payment failed" is bad. Tell me "The payment failed but no money was deducted. Try again after some time." or "The payment failed but money was deducted. Contact support."
 
-### Visual Hierarchy & Structure
+## Visual Hierarchy & Structure
 
 What do you want the user to look at first? What things are related to each other and how? That's what visual hierarchy is about.
 
@@ -62,7 +62,7 @@ If a feature is not commonly used, it's fine to keep it tucked away but easy to 
 
 You can't have everything, you can't please everyone. Thus, the interface needs to have an opinion on what the user needs to see first and needs most. This opinion can be validated by letting people test it.
 
-### Consistency
+## Consistency
 The user should be able to tell whether two things are similar or different.
 
 If a blue underlined word opens a new page in one place, downloads a file in another place, and opens a modal somewhere else, the user has to keep relearning your interface. That is bad.
@@ -80,7 +80,7 @@ Here's the gist:
 - Make the user learn as few new things as possible.
 - Reuse your patterns. Let the user predict right.
 
-### Mistakes
+## Mistakes
 The best error message is the one the user never sees because the interface prevented the error in the first place.
 
 If a username is taken, say it before the user submits the whole form. If you reject files above a certain size, say that before the user picks one.
@@ -93,7 +93,7 @@ Some day there will be a user who is pissed off at your system and your system w
 
 Some actions should be harder to do by accident. Deleting an account, sending money, publishing something public, exposing private data, rotating production keys. Those actions should require the user to understand what is about to happen and still choose it.
 
-### Recovery
+## Recovery
 Users forgive mistakes if they can recover. Undo is one of the most humane inventions in software. Mistakes will happen and the user needs to be safe when they do.
 
 Always think: what if the user doesn't want what just happened? Back, cancel, restore, edit, draft, history, preview. These things make the user feel safe and in control.
@@ -104,7 +104,7 @@ Try your best to prevent mistakes. If one still happens, give the user a clear w
 
 Recovery also applies to things the user wants to stop. A subscription. A newsletter. A public post. A saved card. A synced device. The user should be able to leave, cancel, undo, go back, or change their mind without feeling like they are fighting the product.
 
-### Accessibility
+## Accessibility
 It is very common to design interfaces and only then think about how to make them accessible, this is wrong.
 
 If you are displaying low contrast text because it looks aesthetic, there's a user unable to read it well under sunlight or a VGA monitor with a bad glare. It’s not just about people with low vision.
@@ -115,7 +115,7 @@ Closed captioning (subtitles *sigh*) are not just for deaf people, a lot of peop
 
 Keeping the layout, structure, navigation and language clear helps everyone. Accessibility isn't charity or a checkbox.
 
-### Beauty & Delight
+## Beauty & Delight
 
 Effects of beauty are hard-wired in humans, and many other animals. A beautiful interface will be perceived to be more trustworthy, usable and delightful.
 

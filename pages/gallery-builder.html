@@ -2,6 +2,8 @@
 layout: default
 title: Gallery Builder
 permalink: /gallery-builder
+sitemap: false
+unlisted: true
 ---
 
 <div class="builder-container">
@@ -9,6 +11,8 @@ permalink: /gallery-builder
         <h1>Gallery Builder</h1>
         <p>Drag images to reorder. Toggle "Wide" to span 2 columns. Click "Export Layout" to get the JSON for
             `_data/gallery.json`.</p>
+        <p>After adding photos to <code>assets/photos/</code>, run <code>python3 scripts/make_thumbs.py .</code> from
+            the repo root to generate the gallery thumbnails.</p>
         <button id="export-json" class="btn-primary">Export JSON</button>
     </div>
 

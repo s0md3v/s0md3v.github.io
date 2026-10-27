@@ -1,3 +1,8 @@
+{% comment %}
+  A list of posts with a quiet date column.
+  posts: the documents to list (unlisted and future ones are skipped)
+  order: "desc" for newest first, anything else for oldest first
+{% endcomment %}
 {% assign post_list_entries = include.posts | sort: "date" %}
 {% if include.order == "desc" %}
 {% assign post_list_entries = post_list_entries | reverse %}
@@ -6,10 +11,9 @@
   {% for post in post_list_entries %}
   {% unless post.unlisted %}
   {% if site.future or post.date <= site.time %}
-  <li>
-    <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a><span class="post-meta">
-      {{ post.date | date: "%-d %b %Y" }}
-    </span>
+  <li class="post-list-entry">
+    <time class="post-list-date" datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: "%b %Y" }}</time>
+    <span class="post-list-main"><a class="post-list-title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></span>
   </li>
   {% endif %}
   {% endunless %}

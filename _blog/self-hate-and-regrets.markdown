@@ -16,7 +16,7 @@ I don't think one should avoid conflicts, why am I like this then? Well as a kid
 
 Let's talk more about this, 'brain programming'.
 
-### How the brain gets wired
+## How the brain gets wired
 
 If you ask me why I do a certain thing, I can point out exactly how I picked it up.
 
@@ -32,7 +32,7 @@ We become what we experience, there are no exceptions. A major chunk of our pers
 
 Sure, you can think of an exception like a good kid raised by a bad family. How does that happen? Well, they must have been influenced by something else - like a movie, some outsiders, or even just a book. Nothing comes from within unless intended, it's all acquired.
 
-### Why does self-hate make zero sense
+## Why does self-hate make zero sense
 
 Did you wake up one day and say, "I am going to hate my body from now on". Did you ask for trust issues? No. Did you want to be physically unattractive? No.
 
@@ -43,7 +43,7 @@ This may sound like a excuse to avoid responsibilty for your faults but there's 
 - If you got to choose, you would never pick things you hate about yourself. You didn't get to choose.
 - And if you didn't have a choice, you are just a victim. It makes zero sense to blame yourself for something that **happened TO YOU**.
 
-### Why regrets make zero sense
+## Why regrets make zero sense
 
 > I want you to think about something you deeply regret. Close your eyes, put yourself in the place of your past self, and think what could have you have done to avoid this regret. Think.
 
@@ -54,13 +54,13 @@ We want the best for us, we make decisions that we think are the right. Bad purc
 
 Let's talk about these in detail.
 
-#### Lack of information
+### Lack of information
 
 You wouldn't buy a product if you knew a better alternative is available in the market for a similar or lower price. You wouldn't trust a person if you knew they are going to betray you.
 
 Don't beat yourself up for making a decision where the important information was hidden from you. You made the best decision based on what information you had and that's what any sane person does. I give you a gentle pat on your head for that, good job! *\~pat, pat\~*
 
-#### Our brains are flawed
+### Our brains are flawed
 
 Sometimes, everything you need to know is there but you still make a bad decision. Been there, done that, will keeping doing it.
 
@@ -76,7 +76,7 @@ I will just wrap this entire section with this,
 
 > Regret is like blaming a robot for making decisions based on its programming and input. The input is the information about the situation, programming is the thinking process shaped by life experiences.
 
-### Note this down somewhere
+## Note this down somewhere
 
 The title of this article is a lie, there's nothing to overcome. We just discussed how both of these feelings are baseless, they are made up by your mind.
 
@@ -84,7 +84,7 @@ Do you have an issue? Start by knowing that you received it, you didn't ask for 
 
 Do you have a regret, think you made a mistake? Start by knowing that you did the best thing your mind could come up with. That's it, if you think you would have made a better choice if you could go back in past - it is only because you are in a different mental state now and you have already witnessed what happens if you choose what you did.
 
-### Disclaimer
+## Disclaimer
 The purpose of this article is not to tell you that "it's all in your head", your issues are completely valid. I have just made an attempt to provide clarity on how the brain works and why you do not have control over the majority of things even when you think you do.
 
 Find a way to self-acceptance; either through introspection or with the help of a mental health professional.

@@ -3,8 +3,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
-  <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ " /feed.xml" |
-    prepend: site.baseurl | prepend: site.url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ '/feed.xml' | absolute_url }}">
 
   {% seo %}
 
@@ -12,17 +11,20 @@
   <meta name="robots" content="noindex">
   {% endif %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  {% include theme_init.html %}
+  {% comment %}
+    Pages that render Reenie Beanie (corner annotations, sketch notes, hover notes, ...).
+    Only these preload it and hide the handwritten elements until it has loaded.
+    Any other page can opt in with `handwritten_font: true` in its front matter.
+  {% endcomment %}
+  {% assign handwritten_urls = "/,/about/,/projects/,/now/,/uses/,/favorites/" | split: "," %}
+  {% assign page_url_key = page.url | remove: "index.html" | append: "/" | replace: "//", "/" %}
+  {% if page.handwritten_font or handwritten_urls contains page_url_key %}
+    {% assign uses_handwritten_font = true %}
+  {% else %}
+    {% assign uses_handwritten_font = false %}
+  {% endif %}
 
-  {% unless page.layout_style == "homepage" %}
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" media="print"
-    onload="this.media='all'">
-  <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-  </noscript>
-  {% endunless %}
+  {% include theme_init.html %}
 
   <style>
     {% if page.layout_style=="homepage" %}
@@ -33,8 +35,14 @@
     {% endif %}
   </style>
   <link rel="preload" href="{{ '/assets/fonts/Comfortaa.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  {% if uses_handwritten_font %}
   <link rel="preload" href="{{ '/assets/fonts/reenie-beanie.woff2' | relative_url }}" as="font" type="font/woff2"
     crossorigin>
+  {% endif %}
+  {% unless page.layout_style == "homepage" %}
+  <link rel="preload" href="{{ '/assets/fonts/Lexend-Variable-latin.woff2' | relative_url }}" as="font" type="font/woff2"
+    crossorigin>
+  {% endunless %}
 
   <style>
     @font-face {
@@ -52,7 +60,20 @@
       font-weight: normal;
       font-style: normal;
       font-display: swap;
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
+
+    {% unless page.layout_style == "homepage" %}
+    /* The homepage doesn't render Lexend, so it doesn't declare (or download) it */
+    @font-face {
+      font-family: 'Lexend';
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url('{{ "/assets/fonts/Lexend-Variable-latin.woff2" | relative_url }}') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    {% endunless %}
 
     @font-face {
       font-family: 'OpenDyslexic';
@@ -86,40 +107,42 @@
       font-display: swap;
     }
 
+    {% if uses_handwritten_font %}
     @media (min-width: 576px) {
       .handwritten-font-hidden .corner-annotation,
       .handwritten-font-hidden .sketch-note,
       .handwritten-font-hidden .menuheader,
-      .handwritten-font-hidden .post-meta,
       .handwritten-font-hidden .location-overlay,
       .handwritten-font-hidden #hand-tooltip,
       .handwritten-font-hidden .layout-guide {
         opacity: 0 !important;
       }
     }
+    {% endif %}
     /* Ensure transition applies when opacity changes back */
     .corner-annotation,
     .sketch-note,
     .menuheader,
     .mobile-footer,
-    .post-meta,
     .location-overlay,
     #hand-tooltip,
     .layout-guide {
       transition: opacity 0.5s ease-out;
     }
   </style>
+  {% if uses_handwritten_font %}
   <script>
-    document.documentElement.classList.add('handwritten-font-hidden');
-    if ("fonts" in document) {
-      document.fonts.load("1em 'Reenie Beanie'").then(() => {
-        document.documentElement.classList.remove('handwritten-font-hidden');
-      });
-    } else {
-      // Fallback for older browsers
-      document.documentElement.classList.remove('handwritten-font-hidden');
-    }
+    (function () {
+      var root = document.documentElement;
+      function reveal() { root.classList.remove('handwritten-font-hidden'); }
+      if (!("fonts" in document)) return; // Older browsers: never hide
+      root.classList.add('handwritten-font-hidden');
+      // Never keep the handwritten elements hidden for long, even if the font is slow or fails
+      setTimeout(reveal, 1500);
+      document.fonts.load("1em 'Reenie Beanie'").catch(function () { }).finally(reveal);
+    })();
   </script>
+  {% endif %}
   <script src="{{ '/assets/js/common.js' | relative_url }}" defer></script>
 
   {% if page.custom_css %}

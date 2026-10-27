@@ -4,14 +4,13 @@ title:  "Detecting Linguistic Information in Text"
 date:   2019-04-22 00:00:00 +0530
 author: Somdev Sangwan
 type:   tech
-image: /assets/thumbs/text-or-random.png
 permalink: /blog/text-or-random
 description: "A phonetic approach to differentiating human-readable text from random data."
 ---
 
 How can a computer tell the difference between meaningful text and a random string of characters? This question seems simple, but the obvious answers are often wrong. It's a problem that pops up everywhere, from analyzing data streams and detecting obfuscated code to simple input validation.
 
-### The Obvious (and Flawed) Solutions
+## The Obvious (and Flawed) Solutions
 
 Your first instinct might be to check for valid words using a dictionary. But what about made-up but meaningful words like `reddit`? Or what about strings common in programming like `frontendElementAsyncInit`? A dictionary-based approach would flag these as gibberish.
 
@@ -24,7 +23,7 @@ But this is also flawed. Consider these two strings:
 
 Ironically, the entropy of `frontendElementAsyncInit` is **3.70**, while the hash's entropy is only **3.35**. According to a typical entropy-based check, the human-readable string is more "random" than the actual random data! This happens because the hash is limited to a smaller set of hexadecimal characters, which lowers its entropy score, while the other string uses a wider variety of letters.
 
-### A Linguistic Approach: Can You Say It?
+## A Linguistic Approach: Can You Say It?
 
 The most noticeable difference between text and random junk is that one follows the rules of a language, and the other doesn't. But instead of trying to teach a computer complex grammar, we can use a simpler proxy: **pronounceability**.
 
@@ -36,7 +35,7 @@ Meaningful text, even if it contains made-up words, tends to be pronounceable. G
 
 This is the core idea. We can determine if a string is meaningful by checking if it's pronounceable in a given language.
 
-### The How-To
+## The How-To
 
 To do this, I broke text down into **bigrams**—pairs of adjacent characters. For example, `resin` becomes `re`, `es`, `si`, `in`.
 
@@ -87,7 +86,7 @@ def phonetic(string, bigrams):
     return total, good, bad
 ```
 
-### Does It Work?
+## Does It Work?
 
 When I ran the entire Oxford English Dictionary (a 4.3 MB file) through the script, it finished in **2 seconds** and classified the text as **98% meaningful**. The 2% error came from abbreviations and foreign words.
 

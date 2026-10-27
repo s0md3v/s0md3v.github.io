@@ -20,7 +20,7 @@ Ever since then, these questions have never stopped.
 
 That's all the boasting I'll do for now and I promise its relevant to the topic. Before you proceed with this article, I would like you to read my thoughts on [Creativity, Self-Doubt & Doing Remarkable Work](https://s0md3v.github.io/blog/creativity-and-self-doubt). It will provide you with context and clarity on many things being discussed here.
 
-### Why bother getting good at multiple things?
+## Why bother getting good at multiple things?
 
 > In 2002, 3 indian mathematicians created an [algorithm](https://en.wikipedia.org/wiki/AKS_primality_test) to determine whether a number is prime in polynomial time. AKS primality test is the first primality-proving algorithm to be simultaneously general, polynomial-time, deterministic, and unconditionally correct. Previous algorithms had been developed for centuries and achieved three of these properties at most, but not all four.
 
@@ -35,7 +35,7 @@ Taking a break from the creativity discourse, lets quickly go over other factors
 > Our greatest fear should not be of failure but of succeeding at things in life that don't really matter.
 >- Francis Chan
 
-### Defining "good"
+## Defining "good"
 
 Did someone/something ruin a nice photo you took? You can just draw around it with the lasso tool in photoshop and press shift+backspace to magically remove it.
 
@@ -51,7 +51,7 @@ That's how learning a skill works. Learning how to make a coffee takes minutes, 
 
 In this article, being "good" will be used as a synonym for being just good enough. We are not talking about the coffee that makes people say, "omg, this is one of the best coffees I have ever had."
 
-### Start
+## Start
 
 ![its better to try](/assets/inline/better-to-try.png)
 
@@ -67,7 +67,7 @@ This is a rule to live by in general - you miss all the shots you don't take. If
 
 It applies to everything from asking out someone to applying for a job you quite not qualify for.
 
-### The trick
+## The trick
 
 As the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle) states - 80% of results can be obtained by putting in 20% effort. The photoshop example I gave earlier embodies it.
 
@@ -77,7 +77,7 @@ Get a taste of everything and invest more time in things you like. That's the tr
 
 Then there are some things that take much more time to learn such as drawing, programming and making music. They too follow the 20-80 rule but the 20% effort is in days, not minutes/hours. This brings us to - perseverance.
 
-### Perseverance
+## Perseverance
 
 > Nothing in this world can take the place of persistence. Talent will not; nothing is more common than unsuccessful men with talent. Genius will not; unrewarded genius is almost a proverb. Education will not; the world is full of educated derelicts. Persistence and determination alone are omnipotent. The slogan 'Press On!' has solved and always will solve the problems of the human race.
 >- Calvin Coolidge
@@ -86,7 +86,7 @@ Trust the process. It is impossible for you to put effort and not learn a skill.
 
 As Calvin Coolidge says, nothing is more common than unsuccessful men with talent.
 
-### In the end
+## In the end
 
 Going to back to the initial part of the blog where I shared how I know about so many things. The reason is the kind of content I consume online. It is undeniable that the internet has become a second reality for most young people. You should carefully choose what you look at on the internet because your experiences shape you. My YouTube feed is full of humour, video games, hip-hop and knowledge - they are the things that **actually** matter to me. I am not following any brain-dead influencers, vlogs or anything like that.
 

@@ -4,7 +4,6 @@ title:  "Creating an XSS Polyglot"
 date:   2018-09-16 08:26:00 +0530
 author: Somdev Sangwan
 type:   tech
-image: /assets/thumbs/xss-polyglot-challenge.png
 permalink: /blog/xss-polyglot-challenge
 description: "An XSS polyglot example with explanations of injection contexts, JavaScript quoting, HTML end tags and event handling."
 ---

@@ -3,10 +3,13 @@ layout: base
 ---
 {% include header.html %}
 
-<main class="blog-content">
+<main class="blog-content" id="main-content" tabindex="-1">
   <div class="wrapper">
     <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
     <p class="post-meta">
+      {% assign word_count = content | strip_html | number_of_words %}
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
+      · {{ word_count | divided_by: 200.0 | ceil }} min read
       {% for tag in page.tags %}
       <span>[{{ tag }}]</span>
       {% endfor %}

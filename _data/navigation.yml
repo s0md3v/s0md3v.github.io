@@ -16,7 +16,7 @@ links:
     tooltip: i picked the best 10
   blog:
     label: blog
-    url: /blog
+    url: /blog/
     tooltip: research, hacking, dev
   papers:
     label: papers
@@ -32,19 +32,19 @@ links:
     tooltip: i write essays
   playground:
     label: playground
-    url: /playground
+    url: /playground/
     tooltip: random experiments
   now:
     label: my life rn
-    url: /now
+    url: /now/
     tooltip: what am i doing?
   favorites:
     label: recommendations
-    url: /favorites
+    url: /favorites/
     tooltip: stuff i love
   uses:
     label: what i use
-    url: /uses
+    url: /uses/
     tooltip: my gear
 
 header:

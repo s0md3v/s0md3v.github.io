@@ -11,7 +11,7 @@ description: "Various aspects of well-being and what does it mean to be well any
 ---
 
 
-### Suffering, Self-Care and Superheroes
+## Suffering, Self-Care and Superheroes
 
 In 399 BC, a prominent Greek philosopher named Socrates was being trialed for corrupting the minds of citizens with his ideas. Socrates did not believe that he committed a crime and he defended himself in court with reason and logic. The jury of the court which consisted of hundreds of male citizens, found him guilty and sentenced him to death.
 
@@ -23,7 +23,7 @@ I have purposefully kept away information about his views and the political clim
 
 In this article, I discuss various aspects of life that affect our well-being. Read it with an open mind, entertain the ideas I present and take away what you think will help you live a better life.
 
-### Suffering
+## Suffering
 Suffering is physical/mental discomfort or pain. It can be as simple as a headache or what you feel when the product you have been saving money for goes out of stock. We suffer when things aren't the way we want them to be.
 
 What if we could avoid the suffering altogether? Consider the following:
@@ -41,12 +41,12 @@ Another thing about suffering is that it is inevitable, it is only a matter of w
 
 Finally, we do not want to be in pain or discomfort therefore we attempt to get out of it. This urge to reduce discomfort is what has led to so many creations in the fields of science, engineering, arts etc. It is not the sole reason for the growth of a person or a species as a whole but it certainly pushes us to take action.
 
-#### Takeaways
+### Takeaways
 - Suffering is inevitable, it is expected.
 - Suffering is bad but without it, pleasure would not have the same effect.
 - Suffering calls for action.
 
-### Self-Care
+## Self-Care
 In [this](https://www.youtube.com/watch?v=AomPemsgjmg) documentary about the trend of height-enhancing surgery in India, a 155cm (5 feet) tall man shares his experience. He talks about how his peers would make fun of his height when he was in school. He was a bright student and thought that if he studies hard and does well in life - maybe it will overshadow his short height. He went on to become an engineer, learn 9 languages and acquire 5 academic degrees including a master's in arts and business. The comments and ridicule on his height however, did not stop. Thus, he decided to go through a dangerous surgery and 6 months of painful recovery to alter his body in his 40s.
 
 While the sentiment behind ✨all bodies are beautiful✨ message is kind, that statement itself is not true. It has been concluded through countless studies that certain physical traits are conventionally more attractive than others. Believing otherwise would be delusional and for this man, the illusion of all bodies being beautiful would break as soon as he stepped outside.
@@ -75,13 +75,13 @@ I can not prevent unwanted outcomes but I can choose how I will respond when the
 > When a dog is tied to a cart, if it wants to follow, it is pulled and follows, making its spontaneous act coincide with necessity. But if the dog does not follow, it will be compelled in any case. So it is with men too: even if they don't want to, they will be compelled to follow what is destined.
 > ― Zeno of Citium
 
-#### Takeaways
+### Takeaways
 - Self-care is taking care of yourself so neither your brain nor your body are weighing you down on the quest to live a good life.
 - Delusional coping mechanisms aren't good. Intellectualization isn't good either.
 - We do not have much control over what happens but we can choose our response to them.
 - We should be kind to ourselves when our fundamentally flawed brain can't respond rationally to a situation.
 
-### Satisfaction
+## Satisfaction
 > The philosopher Diogenes was eating bread and lentils for supper. He was seen by the philosopher Aristippus, who lived comfortably by flattering the king. Said Aristippus, "If you would learn to be subservient to the king you would not have to live on lentils."\
 > Said Diogenes, "Learn to live on lentils and you will not have to be subservient to the king."
 
@@ -95,12 +95,12 @@ This has nothing to do with ethics or morals, it is about doing what I want to d
 
 I have observed that not saying/doing what you think you should be saying/doing is what causes the most amount of dissatisfaction. It is suffocating.
 
-#### Takeaways
+### Takeaways
 - Desires give pleasure and satisfaction when fulfilled.
 - Unfulfilled desires are taxing on our brains. More desires, more possibility of suffering.
 - Being able to do/say what we want to do/say is a strong desire.
 
-### Superheroes
+## Superheroes
 > First say to yourself what you would be;
 and then do what you have to do.
 >
@@ -127,12 +127,12 @@ In the context of this discussion, we can say that he realized that a life in hi
 Whether you call all these people superheroes or stupid, one thought that ties them together is:
 > When your life starts to deviate from what you want it to be, there comes a point where it's not worth living.
 
-### Closing words
+## Closing words
 In pop culture, a man who stays in his room all day playing video games, eating junk food and watching pornography - is called a "loser". If life is about having fun, how is he a loser?
 
 If I have failed to convince you that running behind pleasure and avoiding discomfort is not what life is about, I have good news for you. Virtual reality and brain interface tech is rapidly growing and in the next decade, we might reach levels of simulation where we can live in a virtual world where everything happens the way we want it to. Looking forward.
 
-### References
+## References
 
 [^blanche]: [Blanche Monnier - Wikipedia (WARNING: Extremely Disturbing)](https://en.wikipedia.org/wiki/Blanche_Monnier)
 [^loneliness]: [Studies about cognitive decline caused by loneliness](https://scholar.google.co.in/scholar?q=loneliness+and+cognitive+decline&hl=en&as_sdt=0&as_vis=1&oi=scholart)

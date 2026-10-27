@@ -13,20 +13,12 @@ permalink: /playground/
     font-family: 'Lexend', sans-serif;
   }
   
+  /* Title and intro on the shared inner-page scale (see .page-title in common.css) */
   .playground-header {
-    margin-bottom: 3rem;
-  }
-  
-  .playground-title {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-  
-  .playground-subtitle {
-    font-size: 1.2rem;
-    color: var(--midground-color, #666);
-    line-height: 1.5;
+    font-size: var(--reading-size);
+    line-height: 1.6;
+    /* With the container's 2rem, lines the title up with other pages' 3em top padding */
+    padding-top: 1.25em;
   }
 
   .tools-grid {
@@ -86,8 +78,8 @@ permalink: /playground/
 
 <div class="playground-container">
   <header class="playground-header">
-    <h1 class="playground-title">Playground</h1>
-    <p class="playground-subtitle">Small tools, experiments, interactive guides, and useful links.</p>
+    <h1 class="page-title">Playground</h1>
+    <p class="page-intro">Small tools, experiments, interactive guides, and useful links.</p>
   </header>
 
   <div class="tools-grid">

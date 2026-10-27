@@ -2,28 +2,22 @@
 layout: default
 title: Gallery
 permalink: /gallery
+description: Photographs by Somdev Sangwan.
 ---
 
-<div class="gallery" id="gallery">
-    {% for image in site.data.gallery %}
-    <div class="gallery-item-wrapper {% if image.is_wide %}wide{% endif %}"
-        style="grid-row-end: span {{ image.row_span }};">
-        <div class="gallery-item" onclick="openModal('{{ site.baseurl }}{{ image.path }}')"
-            onkeyup="if(event.key === 'Enter') openModal('{{ site.baseurl }}{{ image.path }}')" tabindex="0"
-            role="button" aria-label="View photo {{ image.filename }}">
-            <img loading="lazy" src="{{ site.baseurl }}{{ image.path }}" alt="Photo {{ image.filename }}"
-                onload="this.parentElement.classList.add('img-loaded')">
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<div class="modal" id="modal" style="display: none;" role="dialog" aria-modal="true" aria-label="Image View">
-    <button class="close-button" onclick="closeModal()" aria-label="Close image view">&times;</button>
-    <img id="modal-img" src="" alt="Modal Image">
-</div>
-
 <style>
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
     .gallery {
         --gallery-gap: 15px;
         display: grid;
@@ -48,12 +42,25 @@ permalink: /gallery
     .gallery-item {
         width: 100%;
         height: 100%;
-        background: #e0e0e0;
-        /* Lighter grey for skeleton base */
+        /* Reset native <button> styles so the item looks like a plain tile */
+        display: block;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        color: inherit;
+        text-align: inherit;
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--code-bg);
+        /* Theme-aware skeleton base */
         border-radius: 8px;
         overflow: hidden;
         cursor: pointer;
         position: relative;
+        /* Contain the z-index of the shimmer/img so nothing in the grid can
+           paint above the fixed header / mobile bottom nav */
+        isolation: isolate;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -67,9 +74,9 @@ permalink: /gallery
         width: 100%;
         height: 100%;
         background: linear-gradient(90deg,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                rgba(255, 255, 255, 0) 100%);
+                transparent 0%,
+                color-mix(in srgb, var(--background-color) 40%, transparent) 50%,
+                transparent 100%);
         transform: translateX(-100%);
         animation: shimmer 1.5s infinite;
         z-index: 1;
@@ -85,6 +92,11 @@ permalink: /gallery
         100% {
             transform: translateX(100%);
         }
+    }
+
+    .gallery-item:focus-visible {
+        outline: 3px solid var(--accent-color);
+        outline-offset: 2px;
     }
 
     .gallery-item:hover {
@@ -121,14 +133,16 @@ permalink: /gallery
 
     @media (max-width: 600px) {
         .gallery {
-            grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: 0px;
-            /* Very small row units for narrow 4-column layout */
+            grid-template-columns: repeat(2, 1fr);
+            /* row_span assumes a 300px column on a 25px row+gap pitch (1/12 of
+               the column). Keep that ratio: column = (100vw - 2*8px padding
+               - 8px gap) / 2, so row + gap = (100vw - 24px) / 24. */
+            grid-auto-rows: calc((100vw - 24px) / 24 - 8px);
             gap: 8px;
             padding: 8px;
         }
 
-        /* Wide images maintain their 2-column span */
+        /* Wide images keep their 2-column span, i.e. the full width */
     }
 
     .modal {
@@ -189,33 +203,102 @@ permalink: /gallery
     }
 </style>
 
+<h1 class="sr-only">Gallery</h1>
+
+<div class="gallery" id="gallery">
+    {% for image in site.data.gallery %}
+    {% assign stem = image.filename | remove: '.webp' %}
+    {% assign thumb = site.baseurl | append: '/assets/photos/thumbs/' | append: stem %}
+    <div class="gallery-item-wrapper {% if image.is_wide %}wide{% endif %}"
+        style="grid-row-end: span {{ image.row_span }};">
+        <button type="button" class="gallery-item" data-full="{{ site.baseurl }}{{ image.path }}"
+            aria-label="View photo {{ image.filename }}">
+            <img src="{{ thumb }}-400.webp"
+                srcset="{{ thumb }}-400.webp 400w, {{ thumb }}-800.webp 800w, {{ site.baseurl }}{{ image.path }} {{ image.width }}w"
+                sizes="{% if image.is_wide %}(max-width: 600px) 100vw, 600px{% else %}(max-width: 600px) 50vw, 300px{% endif %}"
+                width="{{ image.width }}" height="{{ image.height }}"
+                {% if forloop.index <= 6 %}loading="eager"{% if forloop.first %} fetchpriority="high"{% endif %}{% else %}loading="lazy"{% endif %}
+                alt="Photo {{ image.filename }}"
+                onload="this.parentElement.classList.add('img-loaded')"
+                onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.removeAttribute('srcset');this.src=this.parentElement.dataset.full}">
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="modal" id="modal" style="display: none;" role="dialog" aria-modal="true" aria-label="Image view">
+    <button type="button" class="close-button" aria-label="Close image view">&times;</button>
+    <img id="modal-img" src="" alt="">
+</div>
+
 <script>
-
-
     // Modal Logic
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modal-img');
-    const closeBtn = document.querySelector('.close-button');
+    const closeBtn = modal.querySelector('.close-button');
+    let opener = null;
+    let inerted = [];
+    let closeTimer = null;
 
-    function openModal(imgSrc) {
+    // Make everything outside the dialog inert while it is open
+    function setBackgroundInert(on) {
+        if (on) {
+            inerted = [];
+            for (let el = modal; el && el !== document.body; el = el.parentElement) {
+                for (const sib of el.parentElement.children) {
+                    if (sib !== el && !sib.inert && !['SCRIPT', 'STYLE'].includes(sib.tagName)) {
+                        sib.inert = true;
+                        inerted.push(sib);
+                    }
+                }
+            }
+        } else {
+            inerted.forEach(el => { el.inert = false; });
+            inerted = [];
+        }
+    }
+
+    function isOpen() {
+        return modal.classList.contains('visible');
+    }
+
+    function openModal(imgSrc, trigger) {
+        clearTimeout(closeTimer);
+        opener = trigger || document.activeElement;
         modal.style.display = 'flex';
         // Force reflow
         void modal.offsetWidth;
         modal.classList.add('visible');
 
         modalImg.src = imgSrc;
+        const thumb = trigger && trigger.querySelector('img');
+        modalImg.alt = thumb ? thumb.alt : '';
         document.body.style.overflow = 'hidden';
+        setBackgroundInert(true);
         closeBtn.focus();
     }
 
     function closeModal() {
+        if (!isOpen()) return;
         modal.classList.remove('visible');
-        setTimeout(() => {
+        setBackgroundInert(false);
+        document.body.style.overflow = '';
+        if (opener && document.contains(opener)) {
+            opener.focus({ preventScroll: true });
+        }
+        opener = null;
+        closeTimer = setTimeout(() => {
             modal.style.display = 'none';
             modalImg.src = '';
-            document.body.style.overflow = 'auto';
         }, 300);
     }
+
+    document.getElementById('gallery').addEventListener('click', (e) => {
+        const item = e.target.closest('.gallery-item');
+        if (item) openModal(item.dataset.full, item);
+    });
+
+    closeBtn.addEventListener('click', closeModal);
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -224,8 +307,13 @@ permalink: /gallery
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'flex') {
+        if (!isOpen()) return;
+        if (e.key === 'Escape') {
             closeModal();
+        } else if (e.key === 'Tab') {
+            // The close button is the dialog's only control: keep focus on it
+            e.preventDefault();
+            closeBtn.focus();
         }
     });
 </script>

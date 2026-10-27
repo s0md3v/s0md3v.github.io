@@ -1,5 +1,17 @@
 baseurl: ""
 safe: false
+# Settings previously forced/defaulted by the github-pages gem, kept so output doesn't change.
+future: true
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  hard_wrap: false
+  gfm_quirks: paragraph_end
+  math_engine: mathjax
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    default_lang: plaintext
 url: "https://somdev.in"
 title: "Somdev Sangwan"
 permalink: pretty
@@ -10,9 +22,13 @@ collections:
     permalink: /blog/:name
   essays:
     output: true
-    permalink: /essays/:name/
+    permalink: /essays/:name
 
 defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/images/profile.jpg
   - scope:
       path: ""
       type: blog
@@ -28,10 +44,11 @@ defaults:
       author: Somdev Sangwan
       type: philosophy
 
-description: "Somdev Sangwan (s0md3v)"
+description: "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics."
 author:
   name: Somdev Sangwan
   twitter: s0md3v
+  url: https://somdev.in
 # Social handles
 social:
   twitter: s0md3v
@@ -52,6 +69,8 @@ redirect_from:
   json: false
 
 jekyll-minifier:
+  # Its CSS compressor mangles var() and env() inside calc() (e.g. "var( -  - blog - font - size)")
+  compress_css: false
   uglifier_args:
     harmony: true
   exclude:
@@ -59,10 +78,6 @@ jekyll-minifier:
 
 sass:
   style: compressed
-
-# Default social image
-image:
-  path: /assets/images/profile.jpg
 
 exclude:
   - "denoise*.html"
@@ -73,5 +88,6 @@ exclude:
   - README.md
   - LICENSE
   - mockups
+  - scripts
   - keys.txt
   - .git
