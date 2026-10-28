@@ -16,3 +16,6 @@ node_modules/
 .env
 .env.local
 .vscode
+
+# Full-size source images for generated assets
+_raw/
