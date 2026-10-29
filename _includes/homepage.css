@@ -51,8 +51,30 @@
   inset: 0;
   z-index: 40;
   pointer-events: none;
-  background: var(--lighting, none);
   mix-blend-mode: multiply;
+}
+
+/* The light and where colour is lost are drawn on squares turned to line up with the
+   lamp's pool, which a gradient can't be on its own */
+.light,
+.dusk {
+  overflow: hidden;
+}
+
+.light::before,
+.dusk::before {
+  content: "";
+  position: absolute;
+  left: var(--pool-x, 50%);
+  top: var(--pool-y, 50%);
+  width: var(--pool-size, 0);
+  height: var(--pool-size, 0);
+  translate: -50% -50%;
+  rotate: var(--pool-slant, 0deg);
+}
+
+.light::before {
+  background: var(--lighting, none);
 }
 
 /* Glow-in-the-dark ink, laid over the labels by the script. Its light adds to the room's,
@@ -73,6 +95,32 @@
   color: transparent;
 }
 
+/* Drawn in ink that can't be seen by day: only its glow is, at night. Laid over the whole
+   object, in pixels of its photo. Its size sets how big the paint's unevenness is. */
+.glow-ink {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  font-size: 14cqi;
+}
+
+.glow svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 0.06em rgb(150 220 130 / 0.5));
+}
+
+.glow .dot {
+  fill: currentColor;
+  stroke: none;
+}
+
 .glow > span {
   position: absolute;
   box-sizing: border-box;
@@ -85,6 +133,40 @@
   mask: url('{{ "/assets/images/table/glow-ink.jpg" | relative_url }}') 0 0 / 4em 4em repeat luminance;
   mask-clip: no-clip;
   transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* In dim light the eye sees less colour, so where the room is dark, what's under the
+   room's light loses some of it: grey, blended in by its saturation only. Screens and
+   glowing ink, above, give off their own. */
+.dusk {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  display: none;
+  mix-blend-mode: saturation;
+  opacity: 0.5;
+}
+
+.dusk::before {
+  background: #808080;
+  mask: var(--dusk, none);
+}
+
+/* The lamp's glare, set by the script: it brightens what's already bright most, so the
+   sheen on the varnish and the paper flare up while dark ink and grain stay dark */
+.glint {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  display: none;
+  background: var(--glint, none);
+  mix-blend-mode: color-dodge;
+}
+
+.dark-mode :is(.dusk, .glint) {
+  display: block;
 }
 
 /* ---- Objects ---- */
@@ -237,6 +319,12 @@ a.obj:focus-visible,
   background: url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
 }
 
+/* Close under the lamp at night, the paper is brighter than its photo. It's matte, so
+   evenly, not in a glint (see .glint). Only the paper: the print stays as dark. */
+.dark-mode #intro .item::before {
+  filter: brightness(1.15);
+}
+
 .intro-text {
   position: absolute;
   z-index: 2;
@@ -378,7 +466,7 @@ a.obj:focus-visible,
 /* ---- About: a polaroid ---- */
 
 #about {
-  --x: -27; --y: -15; --w: 14; --r: -7deg; --h0: 0.2;
+  --x: -31; --y: -18; --w: 14; --r: -7deg; --h0: 0.2;
 }
 
 .polaroid-caption {
@@ -433,7 +521,6 @@ html:not(.dark-mode) .cam-screen {
   box-shadow:
     0 0 1.5cqi 0.6cqi rgb(var(--glow, 190 200 215) / 0.5),
     0 0 5cqi 1.5cqi rgb(var(--glow, 190 200 215) / 0.25);
-  transition: box-shadow 0.15s ease;
   pointer-events: none;
 }
 
@@ -1036,13 +1123,15 @@ html:not(.dark-mode) .phone-screen {
     inset 2em 2em 2em rgba(177, 177, 177, 0.25);
 }
 
-/* Above .light so the icon can glow; --lit is set by the script */
+/* Above .light so the icon can glow; --lit is set by the script. A pixel bigger than the
+   plate: lined up exactly, the plate's white would show along the curved edges, where both
+   only partly cover a pixel. */
 #switch .item::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -1px;
   z-index: 3;
-  border-radius: inherit;
+  border-radius: calc(3em + 1px);
   background: var(--lit, transparent);
   mix-blend-mode: multiply;
   pointer-events: none;

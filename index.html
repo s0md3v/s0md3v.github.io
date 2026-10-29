@@ -33,6 +33,10 @@ layout_style: "homepage"
         <img class="base" src="{{ t }}polaroid.webp" srcset="{{ t }}polaroid-280.webp 280w, {{ t }}polaroid.webp 400w"
           sizes="(max-width: 700px) 38vw, min(16.5vw, 26.4vh)" width="400" height="481" alt="">
         <span class="ink polaroid-caption">{{ n.about.label | escape }}</span>
+        <!-- Drawn on in invisible glow ink -->
+        <span class="glow-ink" aria-hidden="true"><svg viewBox="0 0 400 481" stroke-width="5">
+          <circle class="dot" cx="169" cy="163" r="5" /><circle class="dot" cx="199" cy="163" r="5" /><path d="M166 195C167 206 178 207 181 198C184 207 195 206 197 194" />
+        </svg></span>
       </span></span>
     </a>
 
@@ -101,7 +105,7 @@ layout_style: "homepage"
       <span class="under"><span class="tag t3"><span>{{ n.papers.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}papers.webp" srcset="{{ t }}papers-560.webp 560w, {{ t }}papers.webp 1000w"
-          sizes="(max-width: 700px) 72vw, min(36.5vw, 58.4vh)" width="1000" height="1311" alt="" fetchpriority="low">
+          sizes="(max-width: 700px) 72vw, min(36.5vw, 58.4vh)" width="1000" height="1311" alt="">
         <span class="page" aria-hidden="true"><span class="page-body">
           <span class="page-title">Bypassing XSS Detection Mechanisms</span>
           <span class="page-author">— Somdev Sangwan</span>
@@ -125,6 +129,8 @@ layout_style: "homepage"
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}simone.webp" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.webp 360w"
           sizes="(max-width: 700px) 30vw, min(12.5vw, 20vh)" width="360" height="319" alt="">
+        <!-- A halo, in invisible glow ink, partly on the table -->
+        <span class="glow-ink" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
       </span></span>
       <span class="tag t4"><span>{{ n.philosophy.label | escape }}</span></span>
     </a>
@@ -147,6 +153,8 @@ layout_style: "homepage"
       <span class="lift"><span class="item">
         <img class="base" width="160" height="160" alt="" data-faces="{{ t }}dice-">
         <noscript><img class="base" src="{{ t }}dice-6.webp" width="160" height="160" alt=""></noscript>
+        <!-- Glow-in-the-dark pips, filled in by the script for the face that's up -->
+        <span class="glow-ink" aria-hidden="true"><svg class="pips" viewBox="0 0 160 160"></svg></span>
       </span></span>
       <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
     </a>
@@ -212,6 +220,8 @@ layout_style: "homepage"
     </button>
 
     <div class="light" aria-hidden="true"></div>
+    <div class="dusk" aria-hidden="true"></div>
+    <div class="glint" aria-hidden="true"></div>
     <!-- The labels' writing, glowing at night; the script lays it over each label -->
     <div class="glow" aria-hidden="true"></div>
     <!-- For objects above .light; the script sets the matrices -->
@@ -316,7 +326,14 @@ layout_style: "homepage"
       });
 
       const face = die.querySelector('.base');
-      face.src = `${face.dataset.faces}${1 + pick(6)}.webp`;
+      const faceUp = 1 + pick(6);
+      face.src = `${face.dataset.faces}${faceUp}.webp`;
+      // Where the pips of each face are, in a 3 by 3 grid
+      const PIPS = [[4], [0, 8], [0, 4, 8], [0, 2, 6, 8], [0, 2, 4, 6, 8], [0, 2, 3, 5, 6, 8]];
+      die.querySelector('.pips').innerHTML = PIPS[faceUp - 1].map(at =>
+        `<circle class="dot" cx="${[43, 79, 116][at % 3]}" cy="${[40, 79, 118][Math.floor(at / 3)]}" r="12" />`).join('');
+
+
 
       // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
       const earphones = document.getElementById('uses');
@@ -478,11 +495,13 @@ layout_style: "homepage"
       earphones.addEventListener('pointerenter', swing);
       earphones.addEventListener('focus', swing);
 
-      // Light is off the top left: parallel sunlight by day, a lamp at night. Shadow length
+      // By day, sunlight through a window off the top left, so shadows are parallel. At night,
+      // a desk lamp, its bulb low over the card, so they spread out from it. Shadow length
       // and blur scale with --h0, and must stay shorter than the object's thinnest part or
       // the drop-shadow comes loose from it. A drop-shadow's blur is a standard deviation.
       const LIFT = 1;
       let shade = () => {};
+      let rim = () => {};
       let measure;
 
       function setShadow(el, key, [x, y, blur]) {
@@ -491,43 +510,72 @@ layout_style: "homepage"
         el.style.setProperty(`--${key}b`, blur.toFixed(1) + 'px');
       }
 
-      // Point light at height H: (H² / (r² + H²))^1.5, plus ambient, gamma 2.2. The night
-      // lamp has a shade, so its light falls off as if it hung lower than it does.
-      function litAt(night, box, lampX, lampY, r) {
-        const diagonal = Math.hypot(box.width, box.height);
-        const [height, ambient, exposure, tint] = night
-          ? [0.5 * diagonal, 0.05, 0.75, [255, 210, 160]]
-          : [1.6 * diagonal, 0.55, 1, [255, 251, 244]];
-        const direct = (height * height / (r * r + height * height)) ** 1.5;
-        const value = (exposure * (ambient + (1 - ambient) * direct)) ** (1 / 2.2);
-        return tint.map(c => Math.round(c * value));
+      // Point light at height H, r from under it: (H² / (r² + H²))^1.5, plus ambient. By day,
+      // the window. At night, a desk lamp, shaded, its bulb low over the card, so r is from
+      // under the bulb: its narrow beam falls off more steeply, with a brighter spot from its
+      // reflector in the middle. Its light also comes back off the walls and ceiling, faint,
+      // spread over the whole room and warmer for what it's come off. Only where that runs
+      // out does the fainter light from outside show. The eye takes the lamp, the brightest
+      // light, as nearly white, so paper under it stays white and the outside looks blue.
+      function litAt(night, height, r) {
+        const near = (h, n) => (h * h / (r * r + h * h)) ** n;
+        const lights = night ? [
+          [0.7 * (near(height, 3) + near(0.4 * height, 2)), [255, 226, 192]],
+          [0.7 * 0.08 * near(2.5 * height, 1), [255, 210, 168]],
+          [0.7 * 0.012, [150, 172, 235]],
+        ] : [
+          [0.55 + 0.45 * near(height, 1.5), [255, 251, 244]],
+        ];
+        // They add up as light does, in linear values, then gamma 2.2 for the screen
+        const linear = c => (c / 255) ** 2.2;
+        const value = [0, 1, 2].map(i =>
+          lights.reduce((sum, [amount, tint]) => sum + amount * linear(tint[i]), 0) ** (1 / 2.2));
+        // Past full brightness it can't get any redder, so it goes towards white. Letting
+        // each colour run up to its limit on its own would turn warm light green.
+        const top = Math.max(...value), lit = Math.min(top, 1), over = Math.min(Math.max(top - 1, 0), 1);
+        return value.map(v => Math.round(255 * (v / top * lit + (1 - v / top * lit) * over)));
       }
 
       const rgb = c => `rgb(${c.join(' ')})`;
 
-      function lighting(night, box, lampX, lampY, flat) {
-        if (flat) return rgb(litAt(night, box, lampX, lampY, flat));
-        const far = Math.hypot(box.width - lampX, box.height - lampY);
-        const stops = [];
-        for (let i = 0; i <= 16; i++) {
-          const r = far * i / 16;
-          stops.push(`${rgb(litAt(night, box, lampX, lampY, r))} ${r.toFixed(0)}px`);
+      // The eye loses colour gradually as light dims, from `full` down to `least`
+      const COLOUR = { full: 0.5, least: 0.1 };
+      // `reach` is how far a point is from the middle of the light, as the light sees it
+      function lighting(night, box, reach, stretch, height) {
+        const corners = [[0, 0], [box.width, 0], [0, box.height], [box.width, box.height]];
+        const far = Math.max(...corners.map(([cx, cy]) => reach(cx, cy)));
+        const stops = [], dusk = [];
+        // Closer together in the middle, where the light changes fastest
+        for (let i = 0; i <= 24; i++) {
+          const r = far * (i / 24) ** 2;
+          const lit = litAt(night, height, r);
+          stops.push(`${rgb(lit)} ${r.toFixed(0)}px`);
+          const bright = (0.2126 * lit[0] + 0.7152 * lit[1] + 0.0722 * lit[2]) / 255;
+          const t = Math.min(Math.max((COLOUR.full - bright) / (COLOUR.full - COLOUR.least), 0), 1);
+          dusk.push(`rgb(0 0 0 / ${(t * t * (3 - 2 * t)).toFixed(2)}) ${r.toFixed(0)}px`);
         }
-        return `radial-gradient(circle at ${lampX}px ${lampY}px, ${stops.join(', ')})`;
+        // Drawn along the pool's long side, on a square turned to line up with it
+        const at = `ellipse ${(far * stretch).toFixed(0)}px ${far.toFixed(0)}px at 50% 50%`;
+        const along = list => list.map(stop => stop.replace(/ (\d+)px$/, (_, r) => ` ${(r * stretch).toFixed(0)}px`)).join(', ');
+        return [`radial-gradient(${at}, ${along(stops)})`, `radial-gradient(${at}, ${along(dusk)})`];
       }
 
-      // The labels are written in glow-in-the-dark ink. The room's light can only darken the
-      // writing under it, so at night a copy of it, which gives off light, is laid over
-      // the room's light, placed and turned as each label is. A label on something that is
-      // picked up rises with it.
+      // The labels are written in glow-in-the-dark ink, and some things are drawn on in
+      // ink that's invisible by day. The room's light can only darken what's under it, so
+      // at night a copy of each, which gives off light, is laid over the room's light,
+      // placed and turned as the original is. One on something that is picked up rises
+      // with it.
       const glowing = table.querySelector('.glow');
-      const writing = Array.from(table.querySelectorAll('.ink, .tag > span'));
+      const glint = table.querySelector('.glint');
+      const writing = Array.from(table.querySelectorAll('.ink, .tag > span, .glow-ink'));
       const COPIED = ['fontSize', 'lineHeight', 'letterSpacing', 'textAlign', 'display', 'placeItems',
         'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
       // Each label was written with its own amount of paint, and its own unevenness
       const paints = writing.map(() => [0.8 + Math.random() * 0.2, Math.random() * 4, Math.random() * 4]);
       let risers = [];
-      function glow(night, box) {
+      function glow() {
+        const night = document.documentElement.classList.contains('dark-mode');
+        const box = table.getBoundingClientRect();
         // The copy can't cover the writing exactly, so the writing goes
         writing.forEach(el => el.classList.toggle('glowing', night));
         if (!night) return glowing.replaceChildren();
@@ -539,7 +587,7 @@ layout_style: "homepage"
           const style = getComputedStyle(el);
           const x = rect.left + rect.width / 2 - box.left, y = rect.top + rect.height / 2 - box.top;
           const copy = document.createElement('span');
-          copy.textContent = el.textContent;
+          copy.innerHTML = el.innerHTML;
           COPIED.forEach(key => { copy.style[key] = style[key]; });
           Object.assign(copy.style, {
             left: `${x - el.offsetWidth / 2}px`,
@@ -547,6 +595,7 @@ layout_style: "homepage"
             width: `${el.offsetWidth}px`,
             height: `${el.offsetHeight}px`,
             rotate: `${angle}deg`,
+            visibility: el.closest('.lift')?.closest('.held, .falling') ? 'hidden' : '',
             opacity: paints[i][0].toFixed(2),
             maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
           });
@@ -563,16 +612,43 @@ layout_style: "homepage"
       ['pointerover', 'pointerout', 'focusin', 'focusout'].forEach(type =>
         table.addEventListener(type, () => requestAnimationFrame(rise)));
 
+      // Things with hard, glossy edges, and how wide a band of edge catches the lamp (in u)
+      // and how much it shines. Paper and cloth don't.
+      const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1], playground: [0.25, 1],
+        favorites: [0.3, 0.8], uses: [0.25, 1], blog: [0.2, 0.4] };
+      const rimmed = objects.filter(el => el.id in RIMS);
+      const filters = document.querySelector('.filters');
+      rimmed.forEach(({ id }) => filters.insertAdjacentHTML('beforeend', `
+        <filter id="rim-${id}" color-interpolation-filters="sRGB">
+          <feOffset in="SourceAlpha" result="away" />
+          <feComposite in="SourceAlpha" in2="away" operator="out" />
+          <feGaussianBlur />
+          <feComposite in2="SourceAlpha" operator="in" result="edge" />
+          <feFlood />
+          <feComposite in2="edge" operator="in" />
+          <feBlend in2="SourceGraphic" mode="screen" />
+        </filter>`));
+
       function light() {
         const night = document.documentElement.classList.contains('dark-mode');
         const u = probe.offsetWidth / 100;
         const box = table.getBoundingClientRect();
         const lampX = -15 * u;
         const lampY = -20 * u;
-        const lampZ = 1.1 * Math.hypot(box.width, box.height);
-        // On the long phone table the night falloff leaves the bottom too dark, so the
-        // light from the top is used throughout
-        const flat = night && matchMedia('(max-width: 700px)').matches && Math.hypot(box.width / 2 - lampX, lampY);
+        // At night the bulb is over the card, a little towards the corner the lamp stands
+        // in, and its light, glare and shadows all centre under it
+        const card = document.getElementById('intro').getBoundingClientRect();
+        const [bulbX, bulbY, bulbZ] = [card.left + card.width / 2 - box.left - 12 * u, card.top + card.height / 2 - box.top - 8 * u, 70 * u];
+        const [aim, height] = night
+          ? [[bulbX, bulbY], 1.0 * card.width]
+          : [[lampX, lampY], 1.6 * Math.hypot(box.width, box.height)];
+        // The lamp stands in the top left corner and leans in, so its light lands at a slant
+        // and the pool is drawn out away from it. Sunlight, from far off, falls in a circle.
+        const [stretch, slant] = night ? [1.3, Math.atan2(8, 12)] : [1, 0];
+        const reach = (px, py) => {
+          const [dx, dy] = [px - aim[0], py - aim[1]];
+          return Math.hypot((dx * Math.cos(slant) + dy * Math.sin(slant)) / stretch, dy * Math.cos(slant) - dx * Math.sin(slant));
+        };
 
         measure = function (el) {
           const rect = el.getBoundingClientRect();
@@ -586,17 +662,43 @@ layout_style: "homepage"
         // Measure everything before writing styles, to avoid repeated layouts
         const litAround = selfLit.map(el => {
           const r = el.getBoundingClientRect();
-          return Math.hypot(r.left + r.width / 2 - box.left - lampX, r.top + r.height / 2 - box.top - lampY);
+          return reach(r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top);
         });
         const placed = objects.map(measure);
         const turned = parts.map(el => (parseFloat(getComputedStyle(el.closest('.item')).rotate) || 0) * Math.PI / 180);
         const partsPlaced = parts.map(measure);
+        const rimsPlaced = rimmed.map(measure);
 
-        table.style.setProperty('--lighting', lighting(night, box, lampX, lampY, flat));
-        glow(night, box);
+        const [lit, dusk] = lighting(night, box, reach, stretch, height);
+        table.style.setProperty('--lighting', lit);
+        table.style.setProperty('--dusk', dusk);
+        table.style.setProperty('--pool-x', `${aim[0].toFixed(0)}px`);
+        table.style.setProperty('--pool-y', `${aim[1].toFixed(0)}px`);
+        table.style.setProperty('--pool-size', `${(2 * Math.max(...[[0, 0], [box.width, 0], [0, box.height], [box.width, box.height]]
+          .map(([cx, cy]) => Math.hypot(cx - aim[0], cy - aim[1])))).toFixed(0)}px`);
+        table.style.setProperty('--pool-slant', `${slant}rad`);
+        // The bulb's glare, off the varnish and anything glossy, seen from above: right under
+        // it, fading fast. Neutral, as it's the light itself reflected, not the colour of
+        // what it's off.
+        const glare = Array.from({ length: 9 }, (_, i) => {
+          const r = i / 8 * 1.2 * height;
+          return `rgb(80 78 75 / ${Math.exp(-((r / (0.35 * height)) ** 2)).toFixed(3)}) ${r.toFixed(0)}px`;
+        });
+        table.style.setProperty('--glint', `radial-gradient(circle at ${bulbX}px ${bulbY}px, ${glare.join(', ')})`);
+        // Except on the card: its paper is matte, so it doesn't glint. Cut out where it lies.
+        const face = document.querySelector('#intro .item');
+        let turn = 0;
+        for (let at = face; at !== table; at = at.parentElement) turn += parseFloat(getComputedStyle(at).rotate) || 0;
+        const [cos, sin] = [Math.cos(turn * Math.PI / 180), Math.sin(turn * Math.PI / 180)];
+        const [w, h] = [face.offsetWidth / 2, face.offsetHeight / 2];
+        const [cx, cy] = [card.left + card.width / 2 - box.left, card.top + card.height / 2 - box.top];
+        const corners = [[-w, -h], [w, -h], [w, h], [-w, h], [-w, -h]]
+          .map(([x, y]) => `${(cx + x * cos - y * sin).toFixed(1)}px ${(cy + x * sin + y * cos).toFixed(1)}px`);
+        glint.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${corners.join(', ')})`;
+        glow();
 
         selfLit.forEach((el, i) => {
-          const lit = litAt(night, box, lampX, lampY, flat || litAround[i]);
+          const lit = litAt(night, height, litAround[i]);
           el.style.setProperty('--lit', rgb(lit));
           const filter = document.querySelector(`#room-light-${el.id} feColorMatrix`);
           if (filter) {
@@ -608,10 +710,11 @@ layout_style: "homepage"
         function cast(height, cx, cy) {
           let dx = 0.53, dy = 0.85, length = height * u * 0.5;
           if (night) {
-            const distance = Math.hypot(cx - lampX, cy - lampY) || 1;
-            dx = (cx - lampX) / distance;
-            dy = (cy - lampY) / distance;
-            length = height * u * distance / lampZ;
+            const distance = Math.hypot(cx - bulbX, cy - bulbY) || 1;
+            dx = (cx - bulbX) / distance;
+            dy = (cy - bulbY) / distance;
+            // Far from a low bulb, shadows grow long, but never so long they come loose
+            length = height * u * Math.min(distance / bulbZ, 1);
           }
           return [dx * length, dy * length, 0.5 + length * 0.4];
         }
@@ -621,14 +724,47 @@ layout_style: "homepage"
           const cos = Math.cos(-angle), sin = Math.sin(-angle);
           // g is for tape on the table beside the object
           Object.entries({ s: height + up, h: height + up + LIFT, c: 0.05 + up, g: 0.05 }).forEach(([key, h]) => {
-            const [x, y, blur] = cast(h, cx, cy);
+            let [x, y, blur] = cast(h, cx, cy);
+            // By day, light from all round darkens just where things meet the table, all
+            // the way round. At night there's next to none, and the side towards the lamp is
+            // lit right up to the table, so that's only on the far side: pushed out from
+            // under it no further than its blur.
+            if (night && (key === 'c' || key === 'g')) {
+              const length = Math.hypot(x, y) || 1, out = Math.max(length, blur);
+              [x, y] = [x / length * out, y / length * out];
+            }
             setShadow(el, key, [x * cos - y * sin, x * sin + y * cos, blur]);
           });
           const [rx, ry] = cast(LIFT, cx, cy);
           el.style.setProperty('--rise', `${(-rx * 0.5).toFixed(1)}px ${(-ry * 0.5).toFixed(1)}px`);
         };
 
+        // At night the lamp catches the edges of things that face it. From above, that's a
+        // band along the side towards the bulb: what's left of the object when it's moved a
+        // little away from the bulb. A rounded edge always has a spot that turns the bulb up
+        // to the eye, so how bright it is is just how lit the object is, which the room's
+        // light gives it, or for those above that, its colour here.
+        rim = function (el, { cx, cy } = measure(el)) {
+          const item = el.querySelector('.item');
+          if (!night) return item.style.removeProperty('filter');
+          const [width, shine] = RIMS[el.id];
+          const distance = Math.hypot(cx - bulbX, cy - bulbY) || 1;
+          const [ax, ay] = [(cx - bulbX) / distance * width * u, (cy - bulbY) / distance * width * u];
+          // The filter works in the object's own, turned, space
+          const angle = -(parseFloat(getComputedStyle(item).rotate) || 0) * Math.PI / 180;
+          const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
+          const filter = document.getElementById(`rim-${el.id}`);
+          filter.querySelector('feOffset').setAttribute('dx', (ax * cos - ay * sin).toFixed(2));
+          filter.querySelector('feOffset').setAttribute('dy', (ax * sin + ay * cos).toFixed(2));
+          filter.querySelector('feGaussianBlur').setAttribute('stdDeviation', (0.4 * width * u).toFixed(2));
+          const flood = filter.querySelector('feFlood');
+          flood.setAttribute('flood-color', el.matches('.self-lit') ? rgb(litAt(night, height, reach(cx, cy))) : 'rgb(255 250 242)');
+          flood.setAttribute('flood-opacity', shine);
+          item.style.filter = `url(#rim-${el.id})`;
+        };
+
         objects.forEach((el, i) => shade(el, 0, 0, placed[i]));
+        rimmed.forEach((el, i) => rim(el, rimsPlaced[i]));
         parts.forEach((el, i) => shade(el, 0, turned[i], partsPlaced[i]));
 
         toggle.setAttribute('aria-checked', String(night));
@@ -655,6 +791,8 @@ layout_style: "homepage"
           lift.style.scale = '';
           die.style.removeProperty('--spin');
           shade(die);
+          rim(die);
+          glow();
         })(start);
       }
 
@@ -671,6 +809,7 @@ layout_style: "homepage"
 
       if (!still && 'IntersectionObserver' in window) {
         die.classList.add('held');
+        glow();
         const watch = new IntersectionObserver(([entry]) => {
           if (!entry.isIntersecting) return;
           watch.disconnect();
