@@ -103,7 +103,12 @@ layout_style: "homepage"
       </span></span>
     </div>
 
-    <a class="obj" id="blog" href="{{ n.blog.url | relative_url }}">
+    <a class="obj grounded" id="blog" href="{{ n.blog.url | relative_url }}">
+      <!-- A pile of its pages, loose, kept in it, under its cover: hovered, they slide out
+           a little, each its own way -->
+      <span class="loose" aria-hidden="true"><span>
+        <span class="sheet"></span><span class="sheet"></span><span class="sheet"></span><span class="sheet"></span><span class="sheet"></span>
+      </span></span>
       <span class="lift"><span class="item">
         <!-- CORS, to share the fetch with the cloth's mask -->
         <img class="base" src="{{ t }}notebook.webp" width="640" height="895" alt="" crossorigin="anonymous">

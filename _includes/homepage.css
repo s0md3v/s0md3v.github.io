@@ -1438,6 +1438,51 @@ html:not(.dark-mode) .pi-screen {
   rotate: -2deg;
 }
 
+/* Loose sheets between its pages, under the cover, turned with it. About halfway up it,
+   so their shadow's as long as about half of its. In hundredths of its width. */
+.loose {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(calc(var(--sx, 0px) * 0.45) calc(var(--sy, 0px) * 0.45) calc(var(--sb, 0px) * 0.6)
+    rgba(var(--shadow), var(--cast-alpha)));
+  pointer-events: none;
+}
+
+.loose > span {
+  position: absolute;
+  inset: 0;
+  rotate: calc(var(--r, 0deg) + var(--j, 0deg));
+  container-type: inline-size;
+}
+
+/* Its pages' size: the cover, less what it overhangs them by, and its hinge. Hidden under
+   it, till they're pulled a little way out, up and to the fore-edge, each a different way,
+   one dragging the next. The paper's its own, cream, some a little more yellowed than
+   others; each sheet's edge just shades the one under it. */
+.sheet {
+  position: absolute;
+  left: 7%;
+  top: 2.5%;
+  width: 90%;
+  height: 95%;
+  background: #f4f1e7;
+  box-shadow: 0.15cqi 0.25cqi 0.5cqi rgb(60 50 30 / 0.14);
+  transition: translate 0.3s cubic-bezier(0.4, 0, 0.6, 1), rotate 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+#blog:is(:hover, :focus-visible) .sheet {
+  translate: var(--out);
+  rotate: var(--turn);
+  transition: translate 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) var(--after, 0s),
+    rotate 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) var(--after, 0s);
+}
+
+.sheet:nth-child(1) { --out: 9cqi -2.5cqi; --turn: 3.5deg; background: #f1ecdd; }
+.sheet:nth-child(2) { --out: 4cqi -6.5cqi; --turn: -1.5deg; --after: 0.03s; }
+.sheet:nth-child(3) { --out: 7cqi -4.5cqi; --turn: 1.5deg; --after: 0.06s; background: #f2eee2; }
+.sheet:nth-child(4) { --out: 2.5cqi -3cqi; --turn: 2.5deg; --after: 0.09s; }
+.sheet:nth-child(5) { --out: 5.5cqi -1.5cqi; --turn: -0.5deg; --after: 0.12s; background: #f5f2ea; }
+
 /* ---- Uses: earphones ---- */
 
 #uses {
