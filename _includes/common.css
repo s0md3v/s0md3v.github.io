@@ -2,9 +2,7 @@ div {
   display: block;
 }
 
-/* One reading scale for every inner page (posts included).
-   Everything inside a .wrapper is sized in em off this, so the reader's font size
-   setting (--blog-font-size) scales body, headings, code and line length together. */
+/* Everything in .wrapper is sized in em off --reading-size, so --blog-font-size scales it all */
 :root {
   /* Fluid body size anchored to the reader's chosen --blog-font-size */
   --reading-size: clamp(var(--blog-font-size), calc(var(--blog-font-size) * 0.9 + 0.3vw), calc(var(--blog-font-size) * 1.15));
@@ -19,8 +17,7 @@ div {
   margin: auto;
 }
 
-/* Wider variant for pages with a second column (about, projects, now, uses, favorites).
-   Same scale, centred on the same axis. */
+/* Two-column pages: about, projects, now, uses, favorites */
 .wrapper.wide {
   max-width: 50em;
 }
@@ -147,8 +144,7 @@ pre>code {
   font-family: var(--blog-font-family);
 }
 
-/* Post typography (the reference for every inner page)
-   Sized in em off .wrapper; see the top of this file. */
+/* Post typography: the reference scale for every inner page */
 
 .post-title,
 .page-title {
@@ -174,8 +170,7 @@ pre>code {
   margin-bottom: 2.5em;
 }
 
-/* Plain section headings on inner pages use the post scale; :where() keeps this
-   weaker than the post rules below and any page-specific component */
+/* :where() keeps these weaker than the post rules below and page-specific components */
 :where(.wrapper) :is(h2, h3, h4) {
   text-wrap: balance;
 }
@@ -217,7 +212,6 @@ pre>code {
   font-weight: 600;
 }
 
-/* Headings stay close to body size; weight and space carry the hierarchy */
 .post-content h2,
 .post-content h3,
 .post-content h4 {
@@ -284,7 +278,6 @@ pre>code {
   border-left-width: 3px;
 }
 
-/* Underlined in text colour so links read as links without colouring the paragraph */
 .blog-content a,
 .prose a {
   color: inherit;
@@ -481,7 +474,6 @@ pre>code {
   background: transparent;
 }
 
-/* Current page or section */
 .nav-links a[aria-current] {
   text-decoration: underline;
   text-decoration-thickness: 2px;
@@ -495,13 +487,10 @@ pre>code {
   border: none;
   cursor: pointer;
   padding: 12px;
-  /* Increased touch target */
   color: var(--foreground-color);
   line-height: 0;
   min-width: 44px;
-  /* HIG compliance */
   min-height: 44px;
-  /* HIG compliance */
 }
 
 .settings-wrapper {
@@ -515,15 +504,12 @@ pre>code {
   border: none;
   cursor: pointer;
   padding: 12px;
-  /* Increased touch target */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   vertical-align: middle;
   min-width: 44px;
-  /* HIG compliance */
   min-height: 44px;
-  /* HIG compliance */
 }
 
 .settings-icon img {
@@ -568,7 +554,6 @@ pre>code {
   font-size: 0.9rem;
   color: var(--muted-color);
   font-weight: bold;
-  /* Added to maintain visual weight */
 }
 
 .settings-section {
@@ -592,9 +577,7 @@ pre>code {
   border-radius: 4px;
   cursor: pointer;
   min-height: 44px;
-  /* HIG compliance */
   display: inline-flex;
-  /* content centering */
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
@@ -721,7 +704,6 @@ pre>code {
 p,
 li {
   font-family: var(--blog-font-family);
-  /* Fallback/Default */
 }
 
 .content {
@@ -758,7 +740,6 @@ li {
   }
 }
 
-/* About Page Styles */
 .about-grid {
   display: flex;
   flex-direction: column-reverse;
@@ -884,7 +865,6 @@ li {
   }
 }
 
-/* Papers Page */
 .paper-item {
   margin-bottom: 3em;
 }

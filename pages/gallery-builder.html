@@ -17,7 +17,6 @@ unlisted: true
     </div>
 
     <div class="gallery-grid" id="gallery-grid">
-        <!-- JS will populate this -->
     </div>
 </div>
 
@@ -47,7 +46,6 @@ unlisted: true
     .gallery-grid {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
-        /* 6 columns as requested */
         gap: 15px;
         grid-auto-flow: dense;
         background: #f8f9fa;
@@ -66,7 +64,6 @@ unlisted: true
         display: flex;
         flex-direction: column;
         transition: transform 0.2s, box-shadow 0.2s;
-        /* Default span 1x1 roughly */
         grid-column: span 1;
     }
 
@@ -94,8 +91,6 @@ unlisted: true
         box-sizing: border-box;
     }
 
-
-    /* Dragging styles */
     .grid-item.dragging {
         opacity: 0.5;
         border: 2px dashed #999;
@@ -111,31 +106,22 @@ unlisted: true
         const grid = document.getElementById('gallery-grid');
         const exportBtn = document.getElementById('export-json');
 
-        // Load images (0..100)
-        // We will try to load existing metadata if possible, but mainly we iterate 0-100
+        // Probe 0..100.webp; missing images remove themselves via onerror
         const images = [];
         for (let i = 0; i <= 100; i++) {
             images.push({
                 filename: `${i}.webp`,
                 path: `/assets/photos/${i}.webp`,
                 is_wide: false,
-                row_span: 16 // Default approximation
+                row_span: 16
             });
         }
 
-        // Initialize Grid
         images.forEach(img => {
             const item = createGridItem(img);
-            // We need to check if image exists (since we iterate 0-100 blindly)
-            // A simple way is to use onerror to remove it, or just let it fail visually.
-            // Better: use the existing list from Jekyll if passed, but this is a static page.
-            // For now, let's create them and remove if they fail to load.
             grid.appendChild(item);
         });
 
-        // -----------------------
-        // Drag and Drop Logic
-        // -----------------------
         let draggedItem = null;
 
         function createGridItem(imgData) {
@@ -145,7 +131,6 @@ unlisted: true
             el.dataset.path = imgData.path;
             el.dataset.filename = imgData.filename;
 
-            // Structure
             el.innerHTML = `
             <img src="${imgData.path}" alt="${imgData.filename}" onerror="this.closest('.grid-item').remove()">
             <div class="item-controls">
@@ -153,7 +138,6 @@ unlisted: true
             </div>
         `;
 
-            // DnD Handlers
             el.addEventListener('dragstart', function (e) {
                 draggedItem = this;
                 this.classList.add('dragging');
@@ -177,7 +161,6 @@ unlisted: true
             el.addEventListener('drop', function (e) {
                 e.stopPropagation();
                 if (draggedItem !== this) {
-                    // Reorder in DOM
                     const allItems = Array.from(grid.querySelectorAll('.grid-item'));
                     const fromIndex = allItems.indexOf(draggedItem);
                     const toIndex = allItems.indexOf(this);
@@ -187,7 +170,6 @@ unlisted: true
                     } else {
                         this.before(draggedItem);
                     }
-                    // Trigger pack recalculation if needed
                 }
                 return false;
             });
@@ -197,12 +179,10 @@ unlisted: true
                 grid.querySelectorAll('.grid-item').forEach(i => i.classList.remove('over'));
             });
 
-            // Calculate span on load for visual accuracy & AUTO WIDE
             imgData.imgElement = el.querySelector('img');
             imgData.imgElement.onload = () => {
                 const img = el.querySelector('img');
                 const ratio = img.naturalWidth / img.naturalHeight;
-                // Auto-detect wide if landscape (ratio > 1.2 used as threshold)
                 const autoWide = ratio > 1.2;
                 updateItemSpan(el, autoWide);
             };
@@ -214,8 +194,7 @@ unlisted: true
             const img = item.querySelector('img');
             const ratio = img.naturalWidth / img.naturalHeight;
 
-            // Simulation constants matching production CSS
-            // Column width ~ 300px (desktop)
+            // Must match pages/gallery.html: ~300px column, 10px rows, 15px gap
             let renderWidth = 300;
             if (isWide) renderWidth = 600;
 
@@ -232,14 +211,6 @@ unlisted: true
             }
         }
 
-        // Update spans on wide toggle and load
-        // Already handled by click listener calling updateItemSpan via classList check? 
-        // We need to update the resize logic in the click handler:
-        // (See createGridItem modification below)
-
-        // -----------------------
-        // Export Logic
-        // -----------------------
         exportBtn.addEventListener('click', () => {
             const items = grid.querySelectorAll('.grid-item');
             const galleryData = [];
@@ -248,12 +219,10 @@ unlisted: true
                 const img = item.querySelector('img');
                 const isWide = item.classList.contains('wide');
 
-                // Calculate dimensions/ratio on the fly from the loaded image natural dimensions
                 const width = img.naturalWidth;
                 const height = img.naturalHeight;
                 const ratio = width && height ? width / height : 1;
 
-                // Span Calculation Logic (Python equivalent)
                 let renderWidth = 300;
                 if (isWide) renderWidth = 600;
 

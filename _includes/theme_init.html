@@ -5,8 +5,7 @@
         --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
         --blog-font-family: var(--base-font-family);
 
-        /* Warm off-white paper with warm near-black ink: less glare than pure
-           white/black, while body text stays ~14:1 and muted text >5:1 (WCAG AA). */
+        /* Body text ~14:1, muted text >5:1 (WCAG AA) */
         color-scheme: light;
         --background-color: #f6f3ea;
         --foreground-color: #26231f;
@@ -21,8 +20,7 @@
         --icon-filter: none;
     }
 
-    /* Warm dark grey rather than black, and off-white text rather than white,
-       to avoid halation; same warm hue as the light theme. */
+    /* Off-black/off-white to avoid halation */
     .dark-mode {
         color-scheme: dark;
         --background-color: #1c1b19;
@@ -127,8 +125,7 @@
         console.error("Theme initialization failed:", e);
     }
 
-    // Reader font preferences (also used by assets/js/common.js). Applied here, before
-    // first paint, so saved settings don't cause a layout shift.
+    // Applied before first paint to avoid layout shift; also used by assets/js/common.js
     const DEFAULT_FONT = "lexend";
     const DEFAULT_FONT_SIZE = 1.0;
     const FONT_FAMILIES = {

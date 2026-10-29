@@ -23,26 +23,23 @@ description: Photographs by Somdev Sangwan.
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         grid-auto-rows: 10px;
-        /* Granular rows for flexible height */
         grid-auto-flow: dense;
         gap: var(--gallery-gap);
         padding: var(--gallery-gap);
         width: 100%;
         margin: 0;
         box-sizing: border-box;
-        /* Important for padding */
     }
 
     .gallery-item-wrapper {
         width: 100%;
         height: 100%;
-        /* No initial opacity 0 needed as layout is static */
     }
 
     .gallery-item {
         width: 100%;
         height: 100%;
-        /* Reset native <button> styles so the item looks like a plain tile */
+        /* Reset native <button> styles */
         display: block;
         margin: 0;
         padding: 0;
@@ -53,19 +50,16 @@ description: Photographs by Somdev Sangwan.
         -webkit-appearance: none;
         appearance: none;
         background: var(--code-bg);
-        /* Theme-aware skeleton base */
         border-radius: 8px;
         overflow: hidden;
         cursor: pointer;
         position: relative;
-        /* Contain the z-index of the shimmer/img so nothing in the grid can
-           paint above the fixed header / mobile bottom nav */
+        /* Keeps shimmer/img z-index below the fixed header and mobile nav */
         isolation: isolate;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* Skeleton Shimmer Effect */
     .gallery-item::before {
         content: "";
         position: absolute;
@@ -83,7 +77,6 @@ description: Photographs by Somdev Sangwan.
         /* Above background, below image */
     }
 
-    /* Hide shimmer when image is loaded (handled by JS class or just overlay) */
     .gallery-item.img-loaded::before {
         display: none;
     }
@@ -112,7 +105,6 @@ description: Photographs by Somdev Sangwan.
         display: block;
         transition: transform 0.5s ease, opacity 0.5s ease;
         opacity: 0;
-        /* Start hidden to show skeleton */
         position: relative;
         z-index: 2;
         /* Above skeleton shimmer */
@@ -126,7 +118,6 @@ description: Photographs by Somdev Sangwan.
         transform: scale(1.05);
     }
 
-    /* Grid Spans */
     .gallery-item-wrapper.wide {
         grid-column: span 2;
     }
@@ -134,15 +125,11 @@ description: Photographs by Somdev Sangwan.
     @media (max-width: 600px) {
         .gallery {
             grid-template-columns: repeat(2, 1fr);
-            /* row_span assumes a 300px column on a 25px row+gap pitch (1/12 of
-               the column). Keep that ratio: column = (100vw - 2*8px padding
-               - 8px gap) / 2, so row + gap = (100vw - 24px) / 24. */
+            /* row_span assumes row + gap = column / 12 (300px / 25px); column = (100vw - 24px) / 2 */
             grid-auto-rows: calc((100vw - 24px) / 24 - 8px);
             gap: 8px;
             padding: 8px;
         }
-
-        /* Wide images keep their 2-column span, i.e. the full width */
     }
 
     .modal {
@@ -232,7 +219,6 @@ description: Photographs by Somdev Sangwan.
 </div>
 
 <script>
-    // Modal Logic
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modal-img');
     const closeBtn = modal.querySelector('.close-button');
@@ -266,7 +252,7 @@ description: Photographs by Somdev Sangwan.
         clearTimeout(closeTimer);
         opener = trigger || document.activeElement;
         modal.style.display = 'flex';
-        // Force reflow
+        // Force reflow so the transition runs
         void modal.offsetWidth;
         modal.classList.add('visible');
 

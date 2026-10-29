@@ -5,7 +5,6 @@ description: "Films, shows, books and games I love and recommend."
 permalink: /favorites/
 ---
 <style>
-    /* Favorites Layout - Responsive Grid */
     .favorites-container {
         display: grid;
         grid-template-columns: 1fr;
@@ -13,7 +12,6 @@ permalink: /favorites/
         min-height: 60vh;
     }
 
-    /* Desktop Pattern (Split View) */
     @media (min-width: 900px) {
         .favorites-container {
             grid-template-columns: 1.3fr 1fr;
@@ -34,7 +32,6 @@ permalink: /favorites/
         }
     }
 
-    /* List Column */
     .list-column {
         display: flex;
         flex-direction: column;
@@ -49,16 +46,15 @@ permalink: /favorites/
     .list-section {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem; /* Slightly more gap on mobile for readability */
+        gap: 0.5rem;
     }
 
     @media (min-width: 900px) {
         .list-section {
-            gap: 0.2rem; /* Tight on desktop */
+            gap: 0.2rem;
         }
     }
 
-    /* Typography */
     .section-label {
         font-family: 'Comfortaa', sans-serif;
         font-size: 0.85rem;
@@ -93,7 +89,6 @@ permalink: /favorites/
         opacity: 0.6;
     }
 
-    /* Desktop Hover Effects */
     @media (hover: hover) {
         .list-item:hover {
             color: var(--accent-color);
@@ -105,7 +100,6 @@ permalink: /favorites/
         }
     }
     
-    /* Sticky Note (Desktop) */
     .note-column {
         display: none;
     }
@@ -125,7 +119,6 @@ permalink: /favorites/
         opacity: 1;
     }
     
-    /* Mobile Note (Inline) */
     .mobile-note {
         display: block;
         font-family: 'Reenie Beanie', cursive;
@@ -167,7 +160,6 @@ permalink: /favorites/
     <div class="list-column">
         <h1 class="page-title">Favorites</h1>
 
-        <!-- Watch -->
         <div class="list-section">
             <div class="section-label">Watch</div>
             
@@ -203,7 +195,6 @@ permalink: /favorites/
             <p class="letterboxd-note">Want more movies? Find me on <a href="https://letterboxd.com/s0md3v/">Letterboxd</a>.</p>
         </div>
 
-        <!-- Read -->
         <div class="list-section">
             <div class="section-label">Read</div>
             
@@ -217,7 +208,6 @@ permalink: /favorites/
             <div class="mobile-note">read it after the essay above, should help with the gut punch</div>
         </div>
 
-        <!-- Play -->
         <div class="list-section">
             <div class="section-label">Play</div>
             
@@ -238,7 +228,6 @@ permalink: /favorites/
         </div>
     </div>
 
-    <!-- Sticky Note Area (Desktop Only) -->
     <div class="note-column">
         <div class="sticky-note" id="note-display">Hover an item...</div>
     </div>
@@ -247,7 +236,6 @@ permalink: /favorites/
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Only run hover logic on desktop to save resources/avoid conflicts
         if (window.matchMedia("(min-width: 900px)").matches) {
             const items = document.querySelectorAll('.list-item');
             const noteDisplay = document.getElementById('note-display');

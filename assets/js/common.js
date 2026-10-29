@@ -1,7 +1,5 @@
-// DEFAULT_FONT, DEFAULT_FONT_SIZE, getFontFamily, getPreferredTheme and applyTheme
-// are defined in _includes/theme_init.html, which runs before this script.
+// DEFAULT_FONT, DEFAULT_FONT_SIZE, getFontFamily, getPreferredTheme, applyTheme: see _includes/theme_init.html
 document.addEventListener('DOMContentLoaded', function () {
-    // Mark one button in a group as the active (pressed) option
     function setActiveOption(buttons, activeButton) {
         buttons.forEach(btn => {
             const active = btn === activeButton;
@@ -14,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const links = document.querySelectorAll('a[href^="mailto:"]');
         links.forEach(link => {
             const href = link.getAttribute('href');
-            // Check for [at] in the mailto link or inner text
             if (href.includes('[at]') || link.innerText.includes('[at]')) {
                 const newEmail = href.replace('mailto:', '').replace('[at]', '@');
                 link.setAttribute('href', 'mailto:' + newEmail);
@@ -27,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setupThemeButtons() {
         const themeButtons = document.querySelectorAll('.theme-options button');
-        // Set active state based on current theme
         const currentTheme = getPreferredTheme();
         const activeThemeButton = document.querySelector(`.theme-options button[data-theme="${currentTheme}"]`);
         setActiveOption(themeButtons, activeThemeButton);
@@ -89,8 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('fontSize', newSize);
     }
 
-    // Reflect the saved font in the settings menu. The font and size themselves are
-    // applied before first paint by _includes/theme_init.html.
+    // Only syncs the menu; _includes/theme_init.html applies font and size before first paint
     function loadFontSettings() {
         let font = DEFAULT_FONT;
         try {

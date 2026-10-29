@@ -6,7 +6,6 @@ permalink: /now/
 updated: 2026-09-17
 ---
 <style>
-    /* Now Layout - Responsive Grid */
     .now-container {
         display: grid;
         grid-template-columns: 1fr;
@@ -85,7 +84,6 @@ updated: 2026-09-17
         color: var(--accent-color);
     }
 
-    /* Note Styles */
     .sticky-note {
         font-family: 'Reenie Beanie', cursive;
         color: var(--accent-color);
@@ -132,7 +130,6 @@ updated: 2026-09-17
             <p class="page-intro">Updated <time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: '%-d %B %Y' }}</time></p>
         </div>
 
-        <!-- Working -->
         <div class="list-section">
             <div class="section-label">working</div>
 
@@ -140,7 +137,6 @@ updated: 2026-09-17
             <div class="mobile-note">Building an app for your first brain.</div>
         </div>
 
-        <!-- Learning -->
         <div class="list-section">
             <div class="section-label">learning</div>
 
@@ -154,7 +150,6 @@ updated: 2026-09-17
 
     </div>
 
-    <!-- Sticky Note Area -->
     <div class="note-column">
         <div class="sticky-note" id="note-display">Building an app for your first brain.</div>
     </div>
@@ -188,7 +183,6 @@ updated: 2026-09-17
                 });
             });
 
-            // Show default on load
             setTimeout(() => noteDisplay.classList.add('visible'), 500);
         }
     });

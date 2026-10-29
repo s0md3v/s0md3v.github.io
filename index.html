@@ -14,8 +14,7 @@ layout_style: "homepage"
   <main class="table">
     <h1 class="visually-hidden">Somdev Sangwan (s0md3v) - Security Researcher</h1>
 
-    <!-- In the order they matter: this is the order they are read in, tabbed through, and
-         laid out on a phone -->
+    <!-- Source order is reading and tab order -->
     <section class="obj" id="intro" aria-label="Introduction">
       <span class="lift"><span class="item">
         <span class="intro-text">
@@ -25,13 +24,10 @@ layout_style: "homepage"
           <span class="intro-motto"><span>Has brain</span> <span>Has <del>taste<svg class="strike" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15C35 11 75 10 117 6L111 11C75 14 40 16 2 19L8 22C45 19 85 17 119 13L113 18C80 21 45 23 4 25L10 11C50 9 88 9 118 17" /></svg></del></span></span>
         </span>
       </span></span>
-      <!-- Written under the struck word in ballpoint, as a sum that goes on off the card -->
       <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>screentime</span></span></ins>
     </section>
 
-    <!-- Photographed objects come in two sizes (made by _raw/small.py). `sizes` is how wide
-         each is shown: in vw on phones, and on larger screens in u, which is the smaller
-         of 1vw and 1.6vh. -->
+    <!-- Small sizes are made by _raw/small.py. `sizes` uses u = min(1vw, 1.6vh) above 700px. -->
     <a class="obj" id="about" href="{{ n.about.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}polaroid.webp" srcset="{{ t }}polaroid-280.webp 280w, {{ t }}polaroid.webp 400w"
@@ -53,16 +49,14 @@ layout_style: "homepage"
 
     <a class="obj" id="blog" href="{{ n.blog.url | relative_url }}">
       <span class="lift"><span class="item">
-        <!-- Fetched with CORS, as the mask the cloth is cut to is, so it's only fetched once -->
+        <!-- CORS, to share the fetch with the cloth's mask -->
         <img class="base" src="{{ t }}notebook.webp" width="640" height="895" alt="" crossorigin="anonymous">
         <span class="ink notebook-label">{{ n.blog.label | escape }}</span>
       </span></span>
     </a>
 
-    <!-- Socials: a phone, face up, with a cable plugged into the top -->
     <div class="obj self-lit" id="phone">
       <span class="lift"><span class="item">
-        <!-- On a phone, where it lies in the middle of the table, the cable runs off the side -->
         <svg class="cable" viewBox="-60 -60 240 260" aria-hidden="true">
           <linearGradient id="plug-metal" x1="0" x2="1">
             <stop offset="0" stop-color="#6f747b" /><stop offset="0.35" stop-color="#f3f5f7" />
@@ -104,9 +98,10 @@ layout_style: "homepage"
     </div>
 
     <a class="obj" id="papers" href="{{ n.papers.url | relative_url }}">
+      <span class="under"><span class="tag t3"><span>{{ n.papers.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}papers.webp" srcset="{{ t }}papers-560.webp 560w, {{ t }}papers.webp 1000w"
-          sizes="(max-width: 700px) 72vw, min(36.5vw, 58.4vh)" width="1000" height="1311" alt="">
+          sizes="(max-width: 700px) 72vw, min(36.5vw, 58.4vh)" width="1000" height="1311" alt="" fetchpriority="low">
         <span class="page" aria-hidden="true"><span class="page-body">
           <span class="page-title">Bypassing XSS Detection Mechanisms</span>
           <span class="page-author">— Somdev Sangwan</span>
@@ -123,7 +118,6 @@ layout_style: "homepage"
           <span>The word <b>primary character</b> refers to a character which must be included in a payload. It is advised to URL encode URL unsafe characters such as + and &amp; before using them in payloads.</span>
           <span>While probing, a harmless string should be used instead of {javascript}.</span>
         </span></span>
-        <span class="tag t3"><span>{{ n.papers.label | escape }}</span></span>
       </span></span>
     </a>
 
@@ -140,12 +134,12 @@ layout_style: "homepage"
         <img class="base" src="{{ t }}digicam.webp" srcset="{{ t }}digicam-290.webp 290w, {{ t }}digicam.webp 660w"
           sizes="(max-width: 700px) 39vw, min(15.5vw, 24.8vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
-        <span class="cam-screen"><img class="cam-photo" alt=""><span class="cam-count"></span></span>
+        <span class="cam-screen"><img class="cam-photo" alt="" fetchpriority="low"><span class="cam-count"></span></span>
         <a class="cover" href="{{ n.gallery.url | relative_url }}" aria-label="{{ n.gallery.label | escape }}"></a>
         <button class="cam-btn cam-prev" type="button" aria-label="Previous photo" title="Previous photo"></button>
         <button class="cam-btn cam-next" type="button" aria-label="Next photo" title="Next photo"></button>
       </span></span>
-      <!-- The camera's own link is .cover; this makes its label open the gallery too -->
+      <!-- The camera's link is .cover; this makes the label clickable too -->
       <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
     </div>
 
@@ -166,14 +160,9 @@ layout_style: "homepage"
     </a>
 
     <a class="obj" id="uses" href="{{ n.uses.url | relative_url }}">
-      <!-- The label is taped to the table, and the earphones were dropped on it -->
       <span class="under"><span class="tag t1"><span>{{ n.uses.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
-        <!-- Drawn as the phone's cable is, in pixels of the earbuds' photo: from a 2-pin
-             plug in each socket, round the ear hook, and then where it fell, the right side
-             over the left. The script lays it a little differently each visit; this is how
-             it lies without. The clear sleeve that holds the hook goes a good way down
-             the wire. -->
+        <!-- In pixels of the earbuds' photo. The script re-lays it; this is the fallback. -->
         <svg class="cable" viewBox="137 600 1774 2300" aria-hidden="true">
           <g class="ear-left">
             <path class="ear-hook-edge" stroke-dasharray="2308 100000" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
@@ -202,7 +191,6 @@ layout_style: "homepage"
             <path class="cable-shine" d="M18 -31H108" />
           </g>
         </svg>
-        <!-- One image of both earbuds, shown as two, each dropped at its own angle -->
         <span class="part earbuds">
           <span class="bud bud-left"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
             sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt=""></span>
@@ -224,7 +212,9 @@ layout_style: "homepage"
     </button>
 
     <div class="light" aria-hidden="true"></div>
-    <!-- The room's light, for things that sit above it; the script sets the colour -->
+    <!-- The labels' writing, glowing at night; the script lays it over each label -->
+    <div class="glow" aria-hidden="true"></div>
+    <!-- For objects above .light; the script sets the matrices -->
     <svg class="filters" aria-hidden="true">
       <filter id="room-light-gallery" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
@@ -249,17 +239,15 @@ layout_style: "homepage"
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const pick = n => Math.floor(Math.random() * n);
 
-      // Nothing is put down quite straight, or quite the same way twice
       objects.forEach(el => {
         if (el !== toggle) el.style.setProperty('--j', (Math.random() * 3 - 1.5).toFixed(2) + 'deg');
       });
 
-      // The camera is in playback mode, on a different photo each visit
       const photos = JSON.parse(camera.dataset.photos);
       const screen = camera.querySelector('.cam-photo');
       const count = camera.querySelector('.cam-count');
       let shown = 0;
-      // The light the screen gives off is the colour of what it shows
+      // The glow is the photo's average colour
       const sampler = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
       screen.addEventListener('load', () => {
         sampler.drawImage(screen, 0, 0, 1, 1);
@@ -275,21 +263,16 @@ layout_style: "homepage"
       camera.querySelector('.cam-prev').addEventListener('click', () => showPhoto(shown - 1));
       camera.querySelector('.cam-next').addEventListener('click', () => showPhoto(shown + 1));
 
-      // The phone shows the time where you are
       const phone = document.getElementById('phone');
       const clock = phone.querySelector('.phone-time');
       (function tick() {
         const now = new Date();
-        // A status bar leaves out AM and PM
         clock.textContent = new Intl.DateTimeFormat([], { hour: 'numeric', minute: '2-digit' })
           .formatToParts(now).filter(part => part.type !== 'dayPeriod').map(part => part.value).join('').trim();
         setTimeout(tick, 60000 - now % 60000);
       })();
 
-      // The phone's cable, where both sides are joined, is two wires twisted round each
-      // other. Drawn along its middle: in each half twist, one wire crosses over the
-      // other, from one side to the other, then goes under. When the earphones are picked
-      // up, it's tugged (homepage.css), and the twist goes with it.
+      // Redraws the phone's cable as a twisted pair, for both its resting and tugged paths
       const TWIST = { half: 6.5, apart: 0.8 };
       phone.querySelectorAll('.cable-run').forEach(run => {
         const svg = run.ownerSVGElement, ns = svg.namespaceURI;
@@ -335,17 +318,12 @@ layout_style: "homepage"
       const face = die.querySelector('.base');
       face.src = `${face.dataset.faces}${1 + pick(6)}.webp`;
 
-      // The earphones are dropped a little differently each visit: each earbud lands at
-      // its own angle and spot, and the rest of the cable lies where it falls, over its
-      // label and off the table. In pixels of the earbuds'
-      // photo, as the drawing is (see _raw/earphonecut.py).
+      // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
       const earphones = document.getElementById('uses');
       const swings = [];
       (function () {
         const X0 = 137, Y0 = 600, WIDTH = 1774, HEIGHT = 2300, BUD_HEIGHT = 605;
-        // The plug and its strain relief, then a short straight run before the hook. After
-        // the hook's tight curve, the moulded sleeve eases over a length into a long, gentle
-        // one, and goes on that far.
+        // Lengths along the sleeve; GENTLE is the radius the hook eases into
         const PLUG = 165, STRAIGHT = 60, EASE = 400, TAIL = 700, GENTLE = 2600;
         const random = (low, high) => low + Math.random() * (high - low);
         const along = ([x, y], degrees, distance) => {
@@ -370,13 +348,11 @@ layout_style: "homepage"
           return d;
         }
 
-        // Each earbud, by its half of the photo: the middle and width of that half; where
-        // it lands, and how far it's turned; its socket's face, and which way that faces in
-        // the photo; which way its hook curls, how tightly and how far; where its cable
-        // crosses the label, and then runs off the table. As they lie when put down: out of
-        // each socket, the moulded hook curls up and back over its earbud, and comes down
-        // under it, so each earbud lies on its own wire. Each cable crosses the label where
-        // it hides none of the writing: one over the end of the tape, one between two words.
+        // For each earbud, its half of the photo (`centre`, `width`); where it lands (`at`,
+        // `angle`); its socket, and which way that faces in the photo; which way its hook
+        // curls (`sense`), how tightly and how far (`radius`, `sweep`, in degrees); where
+        // its cable crosses the label, hiding none of the writing (`over`), then runs off
+        // the table (`off`)
         const SIDES = {
           left: {
             centre: [698.5, 1002.5], width: 657, at: [690, 1150], angle: 8, socket: [568, 837], facing: 188,
@@ -387,12 +363,10 @@ layout_style: "homepage"
             sense: -1, radius: 310, sweep: 205, over: [1218, 2330], off: [[1210, 2500], [1200, 2700], [1190, 2950]],
           },
         };
-        // The table's edge
+        // The table's bottom edge
         const EDGE = 2576;
 
-        // From the socket, the plug, a straight run, the hook, and the rest of the sleeve:
-        // walked along in short steps, turning as tightly as each part curves. A point is
-        // kept every 60px, so the curve drawn through them has no corners.
+        // Walks the sleeve from the socket in 10px steps, keeping a point every 60px
         function hook({ centre, at, angle, socket, facing, sense, radius, sweep }) {
           const [dx, dy] = turn(socket, centre, angle);
           const face = [at[0] + dx, at[1] + dy];
@@ -411,7 +385,7 @@ layout_style: "homepage"
           return { face, heading, leaving, points };
         }
 
-        // Steps along a line of points, keeping one every so far
+        // Resamples a polyline at even spacing
         function evenly(points, apart) {
           const out = [points[0]];
           let left = apart;
@@ -430,8 +404,7 @@ layout_style: "homepage"
           return out;
         }
 
-        // Where each lands: anywhere in a good way around its spot, at any angle within
-        // 25° of its own, but never against the other, and with its hook still on the table
+        // Retry until the earbuds are apart and both hooks are on the table
         let spots;
         do {
           spots = Object.fromEntries(Object.entries(SIDES).map(([name, side]) => [name, {
@@ -443,13 +416,10 @@ layout_style: "homepage"
             .every(([x, y]) => x > X0 - 40 && x < X0 + WIDTH + 400 && y > Y0 - 450)));
 
         Object.entries(SIDES).forEach(([name, side], n) => {
-          // The ear hook is moulded, so it keeps its shape, and goes wherever its earbud does
           const placed = { ...side, ...spots[name] };
           const { face, heading, leaving, points } = hook(placed);
           const sleeve = lengths(points).at(-1);
-          // Out of the sleeve, the wire carries straight on a little, then makes its own
-          // way down to the label, from whichever way the sleeve points, wandering a
-          // little; over the label, and off the table.
+          // From the sleeve, a wandering Hermite curve to the label, then off the table
           const out = points.at(-1), ended = along(out, leaving, 100);
           const loose = [out, along(out, leaving, 50), ended];
           const [over, [next]] = [side.over, side.off];
@@ -465,9 +435,7 @@ layout_style: "homepage"
             loose.push([x + wander(t) * free, y + wander(t + 0.3) * free * 0.5]);
           }
           loose.push(...side.off);
-          // Then it settles, as a wire does: it can't bend tightly, so each point eases
-          // towards the middle of its neighbours. Except where it comes out of the sleeve,
-          // where it crosses the label, and off the table.
+          // Relax out tight bends, keeping the ends and the label crossing fixed
           const settled = evenly(loose, 40);
           const crossing = settled.reduce((best, [x, y], i) => Math.abs(y - side.over[1]) < Math.abs(settled[best][1] - side.over[1]) ? i : best, 0);
           for (let round = 0; round < 25; round++) {
@@ -485,7 +453,7 @@ layout_style: "homepage"
           bud.style.rotate = `${placed.angle}deg`;
           earphones.querySelector(`.plug-${name}`).setAttribute('transform',
             `translate(${face[0].toFixed(0)} ${face[1].toFixed(0)}) rotate(${heading.toFixed(1)})`);
-          // The sleeve is drawn over the hook; the wire's edge only shows below it
+          // The wire's edge is hidden along the sleeve
           const paths = earphones.querySelectorAll(`.ear-${name} path`);
           paths.forEach(path => {
             path.setAttribute('d', smooth(points));
@@ -493,9 +461,7 @@ layout_style: "homepage"
             else if (path.hasAttribute('stroke-dasharray')) path.setAttribute('stroke-dasharray', `${sleeve.toFixed(0)} 100000`);
           });
 
-          // Picked up by the earbuds, the loose wire swings sideways, and settles, each side
-          // by its own amount. Most in the middle of its free length; not at all at the
-          // table's edge, or in the sleeve, which is stiff.
+          // Swing on pick up: most mid-way along the free wire, none in the sleeve or past the edge
           const all = lengths(points);
           const free = all[points.findIndex(([x, y], i) => all[i] > sleeve && y >= EDGE)];
           const swung = amount => smooth(points.map(([x, y], i) =>
@@ -512,13 +478,9 @@ layout_style: "homepage"
       earphones.addEventListener('pointerenter', swing);
       earphones.addEventListener('focus', swing);
 
-      // Every object casts a shadow away from the light, which is off the top left of
-      // the table. In the day it is the sun through a window, so shadows are parallel. At
-      // night it is a lamp hanging high above that corner, so shadows spread out a little
-      // from it and grow a little longer further away. Shadow length grows with an object's
-      // thickness (--h0, in u), and so does its softness. A drop-shadow is a copy of the
-      // object's outline, so it has to stay shorter than the object's thinnest part, or it
-      // comes loose from it. A drop-shadow's blur is a standard deviation.
+      // Light is off the top left: parallel sunlight by day, a lamp at night. Shadow length
+      // and blur scale with --h0, and must stay shorter than the object's thinnest part or
+      // the drop-shadow comes loose from it. A drop-shadow's blur is a standard deviation.
       const LIFT = 1;
       let shade = () => {};
       let measure;
@@ -529,11 +491,8 @@ layout_style: "homepage"
         el.style.setProperty(`--${key}b`, blur.toFixed(1) + 'px');
       }
 
-      // How brightly the table is lit at distance r from the point under the light: a
-      // point light falls off with the square of distance and with the angle it strikes
-      // the table at, giving (H² / (r² + H²))^1.5 for a light H above the table. The night
-      // lamp has a shade, so its light falls off as if it hung lower than it does. Add a
-      // little light bounced off the walls, then convert to screen values (gamma 2.2).
+      // Point light at height H: (H² / (r² + H²))^1.5, plus ambient, gamma 2.2. The night
+      // lamp has a shade, so its light falls off as if it hung lower than it does.
       function litAt(night, box, lampX, lampY, r) {
         const diagonal = Math.hypot(box.width, box.height);
         const [height, ambient, exposure, tint] = night
@@ -546,7 +505,8 @@ layout_style: "homepage"
 
       const rgb = c => `rgb(${c.join(' ')})`;
 
-      function lighting(night, box, lampX, lampY) {
+      function lighting(night, box, lampX, lampY, flat) {
+        if (flat) return rgb(litAt(night, box, lampX, lampY, flat));
         const far = Math.hypot(box.width - lampX, box.height - lampY);
         const stops = [];
         for (let i = 0; i <= 16; i++) {
@@ -556,6 +516,53 @@ layout_style: "homepage"
         return `radial-gradient(circle at ${lampX}px ${lampY}px, ${stops.join(', ')})`;
       }
 
+      // The labels are written in glow-in-the-dark ink. The room's light can only darken the
+      // writing under it, so at night a copy of it, which gives off light, is laid over
+      // the room's light, placed and turned as each label is. A label on something that is
+      // picked up rises with it.
+      const glowing = table.querySelector('.glow');
+      const writing = Array.from(table.querySelectorAll('.ink, .tag > span'));
+      const COPIED = ['fontSize', 'lineHeight', 'letterSpacing', 'textAlign', 'display', 'placeItems',
+        'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
+      // Each label was written with its own amount of paint, and its own unevenness
+      const paints = writing.map(() => [0.8 + Math.random() * 0.2, Math.random() * 4, Math.random() * 4]);
+      let risers = [];
+      function glow(night, box) {
+        // The copy can't cover the writing exactly, so the writing goes
+        writing.forEach(el => el.classList.toggle('glowing', night));
+        if (!night) return glowing.replaceChildren();
+        const copies = writing.map((el, i) => {
+          // A turned box's bounds are centred where it is
+          const rect = el.getBoundingClientRect();
+          let angle = 0;
+          for (let at = el; at !== table; at = at.parentElement) angle += parseFloat(getComputedStyle(at).rotate) || 0;
+          const style = getComputedStyle(el);
+          const x = rect.left + rect.width / 2 - box.left, y = rect.top + rect.height / 2 - box.top;
+          const copy = document.createElement('span');
+          copy.textContent = el.textContent;
+          COPIED.forEach(key => { copy.style[key] = style[key]; });
+          Object.assign(copy.style, {
+            left: `${x - el.offsetWidth / 2}px`,
+            top: `${y - el.offsetHeight / 2}px`,
+            width: `${el.offsetWidth}px`,
+            height: `${el.offsetHeight}px`,
+            rotate: `${angle}deg`,
+            opacity: paints[i][0].toFixed(2),
+            maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
+          });
+          return [el.closest('.lift') && el.closest('.obj'), copy];
+        });
+        risers = copies.filter(([obj]) => obj);
+        glowing.replaceChildren(...copies.map(([, copy]) => copy));
+      }
+      function rise() {
+        risers.forEach(([obj, copy]) => {
+          copy.style.translate = obj.matches(':hover, :focus-visible') ? obj.style.getPropertyValue('--rise') : '';
+        });
+      }
+      ['pointerover', 'pointerout', 'focusin', 'focusout'].forEach(type =>
+        table.addEventListener(type, () => requestAnimationFrame(rise)));
+
       function light() {
         const night = document.documentElement.classList.contains('dark-mode');
         const u = probe.offsetWidth / 100;
@@ -563,8 +570,10 @@ layout_style: "homepage"
         const lampX = -15 * u;
         const lampY = -20 * u;
         const lampZ = 1.1 * Math.hypot(box.width, box.height);
+        // On the long phone table the night falloff leaves the bottom too dark, so the
+        // light from the top is used throughout
+        const flat = night && matchMedia('(max-width: 700px)').matches && Math.hypot(box.width / 2 - lampX, lampY);
 
-        // Where an object sits on the table, and how thick it is
         measure = function (el) {
           const rect = el.getBoundingClientRect();
           return {
@@ -574,8 +583,7 @@ layout_style: "homepage"
           };
         };
 
-        // Everything is measured before anything is lit, or the browser would lay the
-        // table out again after each object, to measure the next
+        // Measure everything before writing styles, to avoid repeated layouts
         const litAround = selfLit.map(el => {
           const r = el.getBoundingClientRect();
           return Math.hypot(r.left + r.width / 2 - box.left - lampX, r.top + r.height / 2 - box.top - lampY);
@@ -584,14 +592,12 @@ layout_style: "homepage"
         const turned = parts.map(el => (parseFloat(getComputedStyle(el.closest('.item')).rotate) || 0) * Math.PI / 180);
         const partsPlaced = parts.map(measure);
 
-        table.style.setProperty('--lighting', lighting(night, box, lampX, lampY));
+        table.style.setProperty('--lighting', lighting(night, box, lampX, lampY, flat));
+        glow(night, box);
 
-        // Objects that sit above the room's light, so a screen or an icon can glow, are
-        // lit by hand with the light that falls where they are
         selfLit.forEach((el, i) => {
-          const lit = litAt(night, box, lampX, lampY, litAround[i]);
+          const lit = litAt(night, box, lampX, lampY, flat || litAround[i]);
           el.style.setProperty('--lit', rgb(lit));
-          // Photographed objects are lit through a filter, which keeps their edges clean
           const filter = document.querySelector(`#room-light-${el.id} feColorMatrix`);
           if (filter) {
             const [red, green, blue] = lit.map(c => (c / 255).toFixed(3));
@@ -610,16 +616,14 @@ layout_style: "homepage"
           return [dx * length, dy * length, 0.5 + length * 0.4];
         }
 
-        // `up` is how far above the table the object is held. A part's shadow is drawn
-        // inside its rotated object, so it is turned back the other way.
+        // `up` is height above the table. A part's shadow is unrotated by its object's `angle`.
         shade = function (el, up = 0, angle = 0, { height, cx, cy } = measure(el)) {
           const cos = Math.cos(-angle), sin = Math.sin(-angle);
-          // g is for tape stuck to the table beside the object, which stays put
+          // g is for tape on the table beside the object
           Object.entries({ s: height + up, h: height + up + LIFT, c: 0.05 + up, g: 0.05 }).forEach(([key, h]) => {
             const [x, y, blur] = cast(h, cx, cy);
             setShadow(el, key, [x * cos - y * sin, x * sin + y * cos, blur]);
           });
-          // Picked up, it rises towards the light, away from where its shadow falls
           const [rx, ry] = cast(LIFT, cx, cy);
           el.style.setProperty('--rise', `${(-rx * 0.5).toFixed(1)}px ${(-ry * 0.5).toFixed(1)}px`);
         };
@@ -630,8 +634,7 @@ layout_style: "homepage"
         toggle.setAttribute('aria-checked', String(night));
       }
 
-      // The die is dropped onto the table the first time it comes into view: it falls,
-      // spinning, bounces once and settles. Its shadow shows how high it is.
+      // Drops the die the first time it comes into view
       function drop() {
         const lift = die.querySelector('.lift');
         const HEIGHT = 10, TIME = 650;
@@ -639,7 +642,6 @@ layout_style: "homepage"
         const start = performance.now();
         die.classList.remove('held');
         die.classList.add('falling');
-        // It turns and grows about its centre, which stays put, so it is measured once
         const at = measure(die);
         (function frame(now) {
           const t = Math.min((now - start) / TIME, 1);
@@ -664,6 +666,8 @@ layout_style: "homepage"
       light();
       window.addEventListener('resize', light);
       window.addEventListener('load', light);
+      // The labels' size depends on their font
+      document.fonts?.ready.then(light);
 
       if (!still && 'IntersectionObserver' in window) {
         die.classList.add('held');

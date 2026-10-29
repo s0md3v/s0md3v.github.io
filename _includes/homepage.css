@@ -1,7 +1,4 @@
-/* The homepage is a wooden table with things on it, seen from straight above.
-   Objects are photographed with no shadow so they can be rotated freely. Their
-   shadows are worked out by the script in index.html from where the light is:
-   the window in the day, a lamp off the same corner at night. --h0 is how thick an object is. */
+/* Shadows are cast by the script in index.html. --h0 is an object's thickness, in u. */
 
 :root {
   --shadow: 35, 17, 0;
@@ -25,10 +22,8 @@
   min-height: 520px;
   overflow: hidden;
   isolation: isolate;
-  /* The page is a flex column; on a phone the table is taller than the screen */
   flex-shrink: 0;
-  /* A photo of wood (see _raw/Wood095_2K-JPG), tiled at the same scale as the objects:
-     a board is about 17u wide. It's stored at half its width (_raw/woodcut.py). */
+  /* Stored at half its width (_raw/woodcut.py) */
   background: #cd9c6f url('{{ "/assets/images/table/wood.webp" | relative_url }}') 0 0 / calc(135 * var(--u)) calc(67.5 * var(--u));
 }
 
@@ -50,8 +45,7 @@
 
 /* ---- Light ---- */
 
-/* The light falling on the table, worked out in the script from where the light is,
-   multiplied over everything so colours deepen rather than turn grey */
+/* Set by the script */
 .light {
   position: absolute;
   inset: 0;
@@ -59,6 +53,38 @@
   pointer-events: none;
   background: var(--lighting, none);
   mix-blend-mode: multiply;
+}
+
+/* Glow-in-the-dark ink, laid over the labels by the script. Its light adds to the room's,
+   so it shows most where the table is darkest. Above the camera and phone, below the switch. */
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: 42;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  /* No brighter than it needs to be to read. Dimmed as a whole: the writing's outline
+     overlaps its letters, which would show through each other if they were see-through. */
+  opacity: 0.7;
+}
+
+/* Its writing underneath, which the copy can't cover exactly */
+.table .glowing {
+  color: transparent;
+}
+
+.glow > span {
+  position: absolute;
+  box-sizing: border-box;
+  font-family: "Reenie Beanie", cursive;
+  white-space: nowrap;
+  color: rgb(180 232 155);
+  -webkit-text-stroke: 0.025em currentColor;
+  text-shadow: 0 0 0.06em rgb(150 220 130 / 0.5);
+  /* Glowing as thickly as the paint went on (_raw/glowink.py) */
+  mask: url('{{ "/assets/images/table/glow-ink.jpg" | relative_url }}') 0 0 / 4em 4em repeat luminance;
+  mask-clip: no-clip;
+  transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 /* ---- Objects ---- */
@@ -81,7 +107,7 @@
   transition: filter 0.3s cubic-bezier(0.2, 0.7, 0.3, 1), translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-/* A part of an object that stands taller than the rest casts its own shadow */
+/* A taller part of an object, with its own shadow */
 .part {
   position: absolute;
   inset: 0;
@@ -95,14 +121,11 @@
   height: auto;
 }
 
-/* An object you can pick up: a link, or something with a link and controls of its own */
 :is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible))) .part {
   filter: drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
 }
 
-/* Picking something up: it rises towards the light, and its shadow moves away and
-   softens. It moves rather than grows: a browser redraws text and images separately at
-   each new size, so writing and stuck-on things would shimmer against the object. */
+/* Lifted by moving, not scaling: scaled text and images shimmer against each other */
 a.obj:hover,
 a.obj:focus-visible,
 .obj:has(.cover):is(:hover, :has(:focus-visible)) {
@@ -126,7 +149,6 @@ a.obj:focus-visible,
   position: relative;
   /* --j is a small random tilt, --spin is a die still turning as it lands */
   rotate: calc(var(--r, 0deg) + var(--j, 0deg) + var(--spin, 0deg));
-  /* Writing on an object is sized against the object itself */
   container-type: inline-size;
 }
 
@@ -145,7 +167,6 @@ a.obj:focus-visible,
 
 /* ---- Writing ---- */
 
-/* Marker on paper: the paper's texture shows through the ink */
 .ink,
 .tag > span {
   font-family: "Reenie Beanie", cursive;
@@ -159,7 +180,6 @@ a.obj:focus-visible,
   position: absolute;
 }
 
-/* Masking tape with a label written on it */
 .tag {
   position: absolute;
   left: var(--tx);
@@ -180,9 +200,16 @@ a.obj:focus-visible,
   padding-top: 3cqi;
 }
 
-/* Tape stuck straight onto the table casts a tiny shadow of its own */
-.obj > .tag {
+.obj > .tag,
+.obj > .under > .tag {
   filter: drop-shadow(var(--gx, 0) var(--gy, 1px) var(--gb, 1px) rgba(var(--shadow), 0.3));
+}
+
+/* Tape on the table, turned with its object */
+.obj > .under {
+  position: absolute;
+  inset: 0;
+  rotate: calc(var(--r, 0deg) + var(--j, 0deg));
 }
 
 .t1 { background-image: url('{{ "/assets/images/table/tape-1.webp" | relative_url }}'); }
@@ -192,8 +219,7 @@ a.obj:focus-visible,
 
 /* ---- Intro: a business card ---- */
 
-/* Shown at about twice its real size, so it can be read: it is the one thing on the
-   table that has to be */
+/* About twice its real size, so it can be read */
 #intro {
   --x: 0; --y: -4; --w: 25; --r: -1.2deg; --h0: 0.12;
   z-index: 2;
@@ -215,7 +241,6 @@ a.obj:focus-visible,
   position: absolute;
   z-index: 2;
   inset: 0;
-  /* The corners sit as far in from the sides as from the bottom */
   padding: 0 7% 7%;
   display: flex;
   flex-direction: column;
@@ -224,13 +249,10 @@ a.obj:focus-visible,
   font-size: 4cqi;
   line-height: 1.2;
   color: #2b2722;
-  /* Printed: ink skips the dips in the paper, and goes on a little unevenly. The mask is
-     made from the card's own photo (see _raw/cardcut.py), so it covers the whole card
-     to line up with it. */
+  /* Made from the card's photo by _raw/cardcut.py */
   mask: url('{{ "/assets/images/table/card-ink.jpg" | relative_url }}') 0 0 / 100% 100% no-repeat luminance;
 }
 
-/* Size, not weight, makes the name the first thing read */
 .intro-title {
   font-family: "Source Serif Display", "Source Serif", serif;
   margin-top: auto;
@@ -238,14 +260,11 @@ a.obj:focus-visible,
   font-weight: 500;
   letter-spacing: -0.01em;
   color: #1f1c19;
-  /* Pressed into the paper: it slopes down into each letter, so the edge facing away from
-     the light (top left) is in shade and the far edge catches it */
   text-shadow:
     -0.02em -0.035em 0.02em rgb(35 17 0 / 0.22),
     0.015em 0.03em 0.02em rgb(255 255 255 / 0.45);
 }
 
-/* Real small caps, a little heavier than shrunken capitals, so they hold up when small */
 .intro-role,
 .intro-motto {
   font-size: 1.3em;
@@ -258,8 +277,6 @@ a.obj:focus-visible,
   margin-top: 0.35em;
 }
 
-/* The italic ampersand is the more beautiful one, and it is set a size up to stand as
-   tall as the small caps around it */
 .amp {
   font-size: 1.2em;
   font-style: italic;
@@ -267,17 +284,15 @@ a.obj:focus-visible,
   line-height: 0;
 }
 
-/* Old-style figures sit with lower case, as the year does in a sentence */
 .intro-est {
   margin-top: 0.3em;
   font-size: 1.05em;
   font-style: italic;
-  /* The site turns old-style figures off everywhere (theme_init.html) */
+  /* theme_init.html turns onum off everywhere */
   font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
   color: #5a524a;
 }
 
-/* In the bottom corners */
 .intro-motto {
   margin-top: auto;
   align-self: stretch;
@@ -286,8 +301,6 @@ a.obj:focus-visible,
   font-size: 1.15em;
 }
 
-/* Corrected by hand, in ballpoint: scribbled out in one stroke, back and forth with the pen
-   turning sharply at each end, though not so hard the word can't be read */
 .intro-motto del {
   position: relative;
   text-decoration: none;
@@ -308,11 +321,8 @@ a.obj:focus-visible,
   vector-effect: non-scaling-stroke;
 }
 
-/* What he means instead, in the hand the labels are in: a sum written down from under the
-   struck word, which needs more room than the card has and goes on onto the table. It lies
-   over the card, turned with it, but outside .lift: ink has no thickness to cast a shadow.
-   Ballpoint skips the dips in the card as the print does, and more on varnished wood,
-   where its gaps run with the grain (see _raw/woodink.py). */
+/* Outside .lift so it casts no shadow. Masked by the card's ink on the card and by
+   the wood's (_raw/woodink.py) off it. */
 #intro .pen {
   position: absolute;
   inset: 0;
@@ -329,11 +339,9 @@ a.obj:focus-visible,
   mask-size: 100% 100%, calc(8 * var(--u)), 100% 100%;
   mask-repeat: no-repeat, repeat, no-repeat;
   mask-clip: border-box, no-clip, border-box;
-  /* The card's mask, plus the wood's everywhere off the card */
   mask-composite: add, subtract, add;
 }
 
-/* Set out like a sum: the words in a column, the plus signs hanging to their left */
 .pen-sum {
   position: absolute;
   left: 67%;
@@ -346,7 +354,6 @@ a.obj:focus-visible,
   white-space: nowrap;
 }
 
-/* Plus signs, two quick strokes */
 .plus svg {
   width: 0.5em;
   height: 0.5em;
@@ -357,20 +364,18 @@ a.obj:focus-visible,
   stroke-linecap: round;
 }
 
-/* The sum carries on below the card's edge, not against it */
 .pen-sum > :nth-child(3),
 .pen-sum > :nth-child(4) {
   margin-top: 0.3em;
 }
 
-/* No two lines written at quite the same angle */
 .pen-sum > :nth-child(2) { rotate: -2deg; }
 .pen-sum > :nth-child(4) { rotate: 1deg; translate: 0.05em 0; }
 .pen-sum > :nth-child(6) { rotate: -6deg; translate: 0.35em -0.05em; transform-origin: 0 50%; }
 .pen-sum > :nth-child(3) { rotate: 2deg; }
 .pen-sum > :nth-child(5) { rotate: -8deg; translate: 0.4em 0.02em; }
 
-/* ---- About: polaroid ---- */
+/* ---- About: a polaroid ---- */
 
 #about {
   --x: -27; --y: -15; --w: 14; --r: -7deg; --h0: 0.2;
@@ -385,29 +390,27 @@ a.obj:focus-visible,
   rotate: -2deg;
 }
 
-/* ---- Philosophy: sticker ---- */
+/* ---- Philosophy: a sticker ---- */
 
 #philosophy {
   --x: 22; --y: -23; --w: 11; --r: 8deg; --h0: 0.08;
   --tx: 52%; --ty: 112%; --tw: 12; --tr: -4deg;
 }
 
-/* ---- Gallery: a digital camera lying on its front, playing back photos ---- */
+/* ---- Gallery: a digital camera ---- */
 
-/* It sits above the room's light so its screen can glow at night, and is lit by hand */
+/* Above .light so the screen can glow; lit by #room-light-gallery instead */
 #gallery {
   --x: 41; --y: -15; --w: 14; --r: 7deg; --h0: 2.5;
   --tx: 42%; --ty: 124%; --tw: 9; --tr: -3deg;
   z-index: 41;
 }
 
-/* The room's light on it, a filter the script sets: see #room-light-gallery */
 #gallery .base,
 html:not(.dark-mode) .cam-screen {
   filter: url(#room-light-gallery);
 }
 
-/* Its tape is on the table, but above the room's light with the camera */
 #gallery > .tag {
   filter: url(#room-light-gallery) drop-shadow(var(--gx, 0) var(--gy, 1px) var(--gb, 1px) rgba(var(--shadow), 0.3));
 }
@@ -418,9 +421,6 @@ html:not(.dark-mode) .cam-screen {
   height: 0;
 }
 
-/* At night the screen lights the frame around it, in the colour of the photo. It faces
-   up, so hardly any of its light reaches the table, and what spills sideways is gone
-   within a few millimetres. */
 .cam-glow {
   position: absolute;
   z-index: 1;
@@ -454,7 +454,6 @@ html:not(.dark-mode) .cam-screen {
   box-shadow: inset 0 0 0.6cqi 0.3cqi rgba(0, 0, 0, 0.7);
 }
 
-/* Photos are shown whole, with black bars, the way a camera plays them back */
 .cam-photo {
   display: block;
   width: 100%;
@@ -472,7 +471,6 @@ html:not(.dark-mode) .cam-screen {
   text-shadow: 0 0 1.5cqi rgba(0, 0, 0, 0.8);
 }
 
-/* The glass catches a reflection */
 .cam-screen::after {
   content: "";
   position: absolute;
@@ -489,7 +487,6 @@ html:not(.dark-mode) .cam-screen {
   background: linear-gradient(118deg, rgba(255, 255, 255, 0.04) 0 38%, transparent 38%);
 }
 
-/* The left and right of the d-pad step through the photos */
 .cam-btn {
   position: absolute;
   z-index: 6;
@@ -511,32 +508,32 @@ html:not(.dark-mode) .cam-screen {
   background: radial-gradient(closest-side, rgba(60, 20, 30, 0.22), transparent);
 }
 
-/* Too small to press with a finger: on a phone the whole camera opens the gallery */
+/* Too small to tap; on touch screens the camera just links to the gallery */
 @media not (hover: hover) {
   .cam-btn {
     display: none;
   }
 }
 
-/* ---- Socials: a phone peeking in from the bottom edge, face up ---- */
+/* ---- Socials: a phone ---- */
 
-/* Above the room's light so its screen can glow, and lit by hand like the camera */
+/* Above .light, like #gallery */
 #phone {
   --w: 12; --r: 5deg; --h0: 0.25;
-  /* but clear of the papers on a narrower table */
+  /* Clear of the papers on a narrower table */
   left: min(calc(50% + 33 * var(--u)), calc(100% - 24 * var(--u)));
   top: calc(100% + 0.7 * var(--u));
   z-index: 41;
 }
 
-/* 8 mm thick; the cable is the object's own, lower shadow */
+/* 8 mm thick; #phone's own, lower --h0 is the cable's */
 .phone-body {
   --h0: 1.2;
   position: relative;
   display: block;
 }
 
-/* The screen is under the photo, which has a hole where the glass is */
+/* The screen shows through a hole in the photo */
 #phone .base {
   position: relative;
   z-index: 1;
@@ -567,7 +564,6 @@ html:not(.dark-mode) .phone-screen {
     linear-gradient(170deg, #1d2735, #2c2a40 50%, #4a3a4a);
 }
 
-/* The glass catches a reflection */
 .phone-screen::after {
   content: "";
   position: absolute;
@@ -576,12 +572,10 @@ html:not(.dark-mode) .phone-screen {
   background: linear-gradient(115deg, rgba(255, 255, 255, 0.12) 0 30%, rgba(255, 255, 255, 0.03) 30% 55%, transparent 55%);
 }
 
-/* At night the lit screen is far brighter than anything it could reflect */
 .dark-mode .phone-screen::after {
   content: none;
 }
 
-/* Time on the left, signal, wifi and battery on the right; the camera is between */
 .status-bar {
   display: flex;
   justify-content: space-between;
@@ -604,7 +598,6 @@ html:not(.dark-mode) .phone-screen {
   margin: 14cqi 3cqi 0;
 }
 
-/* The whole cell is the link, so it is easy to hit */
 .table .app {
   display: flex;
   flex-direction: column;
@@ -638,7 +631,6 @@ html:not(.dark-mode) .phone-screen {
   white-space: nowrap;
 }
 
-/* Like a dock: the icon under the pointer swells */
 .app:is(:hover, :focus-visible) .app-icon {
   scale: 1.35;
 }
@@ -655,7 +647,6 @@ html:not(.dark-mode) .phone-screen {
 .app-linkedin svg { width: 60%; }
 .app-mail { --tile: #fff; --glyph: #ea4335; }
 
-/* At night the screen lights the bezel and frame round it, and a little of the table */
 .phone-glow {
   position: absolute;
   z-index: 2;
@@ -676,8 +667,7 @@ html:not(.dark-mode) .phone-screen {
   opacity: 1;
 }
 
-/* A cable from the jack in the top, along the table and off its edge. It is drawn in
-   units of a hundredth of the phone's width. */
+/* Drawn in hundredths of the phone's width */
 .cable {
   position: absolute;
   left: -60cqi;
@@ -707,8 +697,7 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(2.5px * var(--cable-scale, 1));
 }
 
-/* Where both sides are joined, the cable is two wires twisted together, drawn by the
-   page's script: the one underneath in a little shadow */
+/* The twisted pair, drawn by the script */
 .strand-edge,
 .strand,
 .strand-shine {
@@ -755,9 +744,8 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: 0.35;
 }
 
-/* Picking up the earphones tugs their cable, off the table's edge: the slack near the
-   phone is taken up, while the plug stays in its jack. It is pulled a moment after they
-   lift, and settles back more slowly than it was pulled. */
+/* Picking up the earphones tugs the cable a moment after they lift; it settles back
+   more slowly than it was pulled */
 .run-down path {
   transition: d 0.6s cubic-bezier(0.3, 0.6, 0.3, 1);
 }
@@ -775,15 +763,14 @@ html:not(.dark-mode) .phone-screen {
   d: var(--tug);
 }
 
-/* ---- Projects: a USB stick, the stars written on it in gold paint pen ---- */
+/* ---- Projects: a USB stick ---- */
 
-/* Half as big again as a real one, so the writing on it reads */
+/* Half as big again as a real one, so its writing reads */
 #projects {
   --x: -24; --y: 5; --w: 9; --r: -8deg; --h0: 1.1;
   --tx: 42%; --ty: 150%; --tw: 8.5; --tr: -2deg;
 }
 
-/* Opaque metallic paint standing slightly proud of the plastic */
 .paint-pen {
   position: absolute;
   left: 18%;
@@ -801,7 +788,6 @@ html:not(.dark-mode) .phone-screen {
   filter: drop-shadow(0 0.4cqi 0.3cqi rgba(0, 0, 0, 0.55));
 }
 
-/* Coloured in with the same pen, so the points come out rounded */
 .paint-pen svg {
   width: 0.62em;
   height: 0.62em;
@@ -812,7 +798,7 @@ html:not(.dark-mode) .phone-screen {
   rotate: -8deg;
 }
 
-/* ---- Blog: notebook ---- */
+/* ---- Blog: a notebook ---- */
 
 #blog {
   --w: 20; --r: -4deg; --h0: 1.4;
@@ -820,9 +806,7 @@ html:not(.dark-mode) .phone-screen {
   top: calc(100% - 1.5 * var(--u));
 }
 
-/* The cover is cloth: its weave is laid over the photo, which is plain, so the photo
-   stays small. Not over the paper label stuck on it. The tile is a fifth of the cover
-   across, as in the photo it was taken from. */
+/* Cloth weave over the cover, except the label */
 #blog .item::before {
   content: "";
   position: absolute;
@@ -831,8 +815,7 @@ html:not(.dark-mode) .phone-screen {
   mix-blend-mode: overlay;
   mask-image: url('{{ "/assets/images/table/notebook.webp" | relative_url }}'), linear-gradient(#000 0 0);
   mask-size: 100% 100%, 35.9% 16.6%;
-  /* Where the label is: 33.2% from the left and 23.5% from the top, as background
-     positions */
+  /* The label's 33.2% / 23.5% offset, as background positions */
   mask-position: 0 0, 51.8% 28.2%;
   mask-repeat: no-repeat;
   mask-composite: subtract;
@@ -850,16 +833,16 @@ html:not(.dark-mode) .phone-screen {
   rotate: -2deg;
 }
 
-/* ---- Uses: earphones, their cable running off the bottom edge ---- */
+/* ---- Uses: earphones ---- */
 
 #uses {
   --w: 15; --r: -10deg; --h0: 0.25;
-  /* but never off the edge of a narrower table */
+  /* Never off the edge of a narrower table */
   left: max(calc(50% - 41.5 * var(--u)), calc(12.5 * var(--u)));
   top: calc(100% - 7 * var(--u));
 }
 
-/* The earbuds are as thick as the cassette, the cable hardly anything */
+/* As thick as the cassette; the cable is hardly anything */
 .earbuds {
   --h0: 1.6;
 }
@@ -868,9 +851,7 @@ html:not(.dark-mode) .phone-screen {
   aspect-ratio: 1774 / 2300;
 }
 
-/* The cable is the same as the phone's. It's drawn in pixels of the earbuds' photo, 1774
-   across the earphones, so its strokes are 14.2 times as wide as the phone's, which are a
-   hundredth of the phone's width: 15u / 1774 against 12u / 100. */
+/* Drawn in pixels of the earbuds' photo: (12u / 100) / (15u / 1774) = 14.2 */
 #uses .cable {
   --cable-scale: 14.2;
   left: 0;
@@ -879,10 +860,8 @@ html:not(.dark-mode) .phone-screen {
   height: 100%;
 }
 
-/* The clear sleeves round the first few centimetres of cable, that hold it round the ear:
-   a tube, so seen mostly by its edges */
-/* The ear hook is a clear moulded sleeve, with the wire inside it: its rims, its body,
-   and the wire over that, whose own edge only shows below the sleeve. It ends square. */
+/* The ear hook is a clear moulded sleeve: its rims, its body, then the wire inside,
+   whose own edge only shows below the sleeve. It ends square. */
 .ear-hook-edge,
 .ear-hook,
 .ear-left > .cable-edge,
@@ -908,8 +887,7 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(0.4px * var(--cable-scale, 1));
 }
 
-/* Each earbud is its half of the image of both. The script drops them a little
-   differently each visit; this is where they lie without it. */
+/* Each earbud is half of one image. The script moves them; this is the fallback. */
 .bud {
   position: absolute;
   overflow: hidden;
@@ -945,26 +923,15 @@ html:not(.dark-mode) .phone-screen {
   margin-left: -100.61%;
 }
 
-/* The label is taped to the table, turned as the earphones are, under them */
-#uses .under {
-  position: absolute;
-  inset: 0;
-  rotate: calc(var(--r, 0deg) + var(--j, 0deg));
-}
-
-#uses .under > .tag {
-  filter: drop-shadow(var(--gx, 0) var(--gy, 1px) var(--gb, 1px) rgba(var(--shadow), 0.3));
-}
-
 #uses .tag {
   --tx: 60.5%; --ty: 75.2%; --tw: 9; --tr: 4deg;
 }
 
-/* ---- Recommendations: cassette ---- */
+/* ---- Favorites: a cassette ---- */
 
 #favorites {
   --x: -55; --y: 1; --w: 15; --r: 9deg; --h0: 1.4;
-  /* but never off the edge of a narrower table */
+  /* Never off the edge of a narrower table */
   left: max(calc(50% + var(--x) * var(--u)), calc(9 * var(--u)));
 }
 
@@ -976,14 +943,14 @@ html:not(.dark-mode) .phone-screen {
   font-size: 10cqi;
 }
 
-/* ---- Playground: dice ---- */
+/* ---- Playground: a die ---- */
 
 #playground {
   --x: 30; --y: -1; --w: 2.4; --r: 22deg; --h0: 2.4;
   --tx: 50%; --ty: 283%; --tw: 10; --tr: 4deg;
 }
 
-/* Waiting out of sight until it is dropped (see the script) */
+/* Until the script drops it */
 #playground.held .lift {
   opacity: 0;
 }
@@ -992,7 +959,7 @@ html:not(.dark-mode) .phone-screen {
   transition: none;
 }
 
-/* ---- Papers: the first page of a paper, spilling over the bottom right edge ---- */
+/* ---- Papers: the first page of a paper ---- */
 
 #papers {
   --w: 30; --r: -9deg; --h0: 0.12;
@@ -1001,10 +968,10 @@ html:not(.dark-mode) .phone-screen {
 }
 
 #papers .tag {
-  --tx: 10%; --ty: 6%; --tw: 10; --tr: -32deg;
+  --tx: 40%; --ty: -4%; --tw: 10; --tr: 0deg;
 }
 
-/* Printed the way the PDF is: US letter, Arial, an inch of margin */
+/* Matches the PDF: US letter, Arial, 1in margins */
 .page {
   position: absolute;
   left: 2%;
@@ -1041,7 +1008,7 @@ html:not(.dark-mode) .phone-screen {
   margin-top: 1.6cqi;
 }
 
-/* ---- Theme switch: a rocker light switch, sun up for day, moon down for night ---- */
+/* ---- Theme switch: a rocker light switch ---- */
 /* Adapted from a light switch on Uiverse.io by IbrahimIF */
 
 #switch {
@@ -1056,7 +1023,7 @@ html:not(.dark-mode) .phone-screen {
   cursor: pointer;
 }
 
-/* 1em is 1/71 of the plate, so the switch scales as one piece */
+/* 1em is 1/71 of the plate */
 #switch .item {
   font-size: calc(var(--w) * var(--u) / 71);
   width: 71em;
@@ -1069,7 +1036,7 @@ html:not(.dark-mode) .phone-screen {
     inset 2em 2em 2em rgba(177, 177, 177, 0.25);
 }
 
-/* The switch sits above the room's light so its icon can glow, so it is lit here instead */
+/* Above .light so the icon can glow; --lit is set by the script */
 #switch .item::after {
   content: "";
   position: absolute;
@@ -1081,7 +1048,6 @@ html:not(.dark-mode) .phone-screen {
   pointer-events: none;
 }
 
-/* Printed on the rocker halves, the one that is on lit up */
 .sw-icon {
   position: absolute;
   z-index: 4;
@@ -1097,8 +1063,6 @@ html:not(.dark-mode) .phone-screen {
   transition: top 0.25s ease, scale 0.25s ease;
 }
 
-/* Each icon sits on its half of the rocker. A half that sticks out shows its edge,
-   which leaves less of its face showing, so its icon moves and squashes with it */
 .sw-sun { top: 38em; }
 .sw-moon { top: 81em; scale: 1 0.8; }
 .dark-mode .sw-sun { top: 40.5em; scale: 1 0.9; }
@@ -1158,7 +1122,6 @@ html:not(.dark-mode) .sw-sun {
   background: #eee;
 }
 
-/* The raised edge of whichever half sticks out */
 .sw-top i,
 .sw-bottom i {
   position: absolute;
@@ -1192,7 +1155,7 @@ html:not(.dark-mode) .sw-sun {
 .dark-mode .sw-bottom { background: #fff; }
 .dark-mode .sw-bottom i { height: 0; }
 
-/* ---- Phones: a long table, read from the top down ---- */
+/* ---- Phones ---- */
 
 @media (max-width: 700px) {
   .table {
@@ -1202,25 +1165,21 @@ html:not(.dark-mode) .sw-sun {
     background-image: url('{{ "/assets/images/table/wood-small.webp" | relative_url }}');
   }
 
-  /* --y is measured from the top of the table here */
+  /* --y is from the top of the table here */
   .obj {
     top: calc(var(--y) * var(--u));
   }
 
   #intro { --x: 0; --y: 60; --w: 80; translate: -50% 0; }
-
-
-  /* Top to bottom in the order they matter, two to a row */
   #switch { --w: 10; left: calc(100% - 9 * var(--u)); top: calc(11 * var(--u)); }
   #about { --x: -16; --y: 31; --w: 32; }
   #projects { --x: 20; --y: 33; --w: 24; --tw: 21; }
   #blog { --w: 44; --r: -4deg; left: calc(27 * var(--u)); top: calc(170 * var(--u)); }
-  /* The whole phone is on the table here, big enough to tap the apps on */
   #phone { --w: 38; --r: -4deg; left: calc(73 * var(--u)); top: calc(178 * var(--u)); }
   #phone .run-down { display: none; }
   #phone .run-side { display: inline; }
   #papers { --w: 62; --r: 8deg; left: calc(100% - 2 * var(--u)); top: calc(268 * var(--u)); }
-  #papers .tag { --tw: 22; }
+  #papers .tag { --tx: 18%; --tw: 22; }
   #philosophy { --x: -22; --y: 240; --w: 26; --tw: 26; }
   #playground { --x: -6; --y: 268; --w: 6; --tw: 24; }
   #gallery { --x: -20; --y: 304; --w: 36; --tw: 22; }
