@@ -24,7 +24,7 @@ layout_style: "homepage"
           <span class="intro-motto"><span>Has brain</span> <span>Has <del>taste<svg class="strike" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15C35 11 75 10 117 6L111 11C75 14 40 16 2 19L8 22C45 19 85 17 119 13L113 18C80 21 45 23 4 25L10 11C50 9 88 9 118 17" /></svg></del></span></span>
         </span>
       </span></span>
-      <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>screentime</span></span></ins>
+      <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span><span class="retraced">s</span>creentime</span></span></ins>
     </section>
 
     <!-- Small sizes are made by _raw/small.py. `sizes` uses u = min(1vw, 1.6vh) above 700px. -->
@@ -33,17 +33,13 @@ layout_style: "homepage"
         <img class="base" src="{{ t }}polaroid.webp" srcset="{{ t }}polaroid-280.webp 280w, {{ t }}polaroid.webp 400w"
           sizes="(max-width: 700px) 38vw, min(16.5vw, 26.4vh)" width="400" height="481" alt="">
         <span class="ink polaroid-caption">{{ n.about.label | escape }}</span>
-        <!-- Drawn on in invisible glow ink -->
-        <span class="glow-ink" aria-hidden="true"><svg viewBox="0 0 400 481" stroke-width="5">
-          <circle class="dot" cx="169" cy="163" r="5" /><circle class="dot" cx="199" cy="163" r="5" /><path d="M166 195C167 206 178 207 181 198C184 207 195 206 197 194" />
-        </svg></span>
       </span></span>
     </a>
 
     <a class="obj" id="projects" href="{{ n.projects.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}usb.webp" srcset="{{ t }}usb-190.webp 190w, {{ t }}usb.webp 480w"
-          sizes="(max-width: 700px) 26vw, min(9.5vw, 15.2vh)" width="480" height="201" alt="">
+          data-night="{{ t }}usb-night-190.webp 190w, {{ t }}usb-night.webp 480w" sizes="(max-width: 700px) 26vw, min(9.5vw, 15.2vh)" width="480" height="201" alt="">
         <span class="paint-pen">
           <svg viewBox="0 0 24 24" aria-hidden="true"><linearGradient id="paint-pen-gold" x1="0.3" y1="0" x2="0.7" y2="1"><stop offset="0.1" stop-color="#f6e3a1" /><stop offset="0.55" stop-color="#d9b65e" /><stop offset="0.9" stop-color="#f1d68a" /></linearGradient><path d="M12.2 2.6 14.6 9.3 21.4 9.1 16 13.4 18.2 20.3 12.1 16.2 6 20.6 8.1 13.6 2.7 9.4 9.6 9.2Z" /></svg>74k
         </span>
@@ -177,14 +173,14 @@ layout_style: "homepage"
             <path class="ear-hook" stroke-dasharray="2308 100000" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
             <path class="cable-edge" stroke-dasharray="0 2308 100000" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
             <path class="cable-core" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
-            <path class="cable-shine" transform="translate(-9 -7)" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
+            <path class="cable-shine" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
           </g>
           <g class="ear-right">
             <path class="ear-hook-edge" stroke-dasharray="2268 100000" d="M1704 1005C1713 1002 1742 994 1761 987C1779 979 1798 972 1815 962C1832 952 1849 940 1864 927C1879 914 1893 899 1905 883C1917 868 1928 850 1937 833C1946 815 1953 796 1959 777C1964 758 1968 738 1969 718C1971 698 1970 678 1968 658C1966 638 1962 618 1956 599C1950 580 1942 562 1932 544C1923 527 1911 510 1898 495C1886 479 1871 465 1856 453C1840 440 1823 429 1806 420C1788 410 1769 402 1750 397C1731 391 1711 387 1692 385C1672 383 1652 383 1632 385C1612 386 1592 390 1573 396C1554 401 1535 409 1517 418C1500 427 1483 438 1467 451C1452 463 1437 477 1424 492C1411 507 1399 524 1389 541C1379 558 1370 576 1362 594C1354 613 1347 632 1341 651C1336 670 1331 690 1327 709C1323 729 1320 748 1317 768C1314 788 1312 808 1310 828C1308 848 1306 868 1305 888C1303 908 1302 928 1301 947C1300 967 1299 987 1298 1007C1298 1027 1297 1047 1297 1067C1297 1087 1297 1107 1297 1127C1298 1147 1298 1167 1299 1187C1300 1207 1301 1227 1302 1247C1303 1267 1305 1287 1306 1307C1308 1327 1310 1347 1312 1367C1314 1387 1317 1407 1319 1426C1322 1446 1325 1468 1328 1486C1331 1504 1332 1514 1336 1535C1340 1557 1348 1588 1350 1614C1351 1640 1348 1667 1346 1694C1345 1721 1343 1747 1340 1774C1336 1800 1333 1827 1328 1853C1323 1879 1318 1905 1312 1931C1306 1957 1299 1983 1293 2009C1286 2035 1280 2060 1273 2086C1266 2112 1260 2138 1254 2164C1247 2190 1241 2216 1236 2242C1230 2268 1223 2294 1219 2320C1216 2346 1216 2373 1215 2400C1214 2427 1212 2453 1211 2480C1210 2507 1208 2533 1207 2560C1206 2586 1205 2613 1203 2640C1202 2666 1201 2693 1200 2720C1199 2746 1197 2773 1196 2800C1195 2826 1194 2854 1193 2880C1192 2905 1190 2938 1190 2950" />
             <path class="ear-hook" stroke-dasharray="2268 100000" d="M1704 1005C1713 1002 1742 994 1761 987C1779 979 1798 972 1815 962C1832 952 1849 940 1864 927C1879 914 1893 899 1905 883C1917 868 1928 850 1937 833C1946 815 1953 796 1959 777C1964 758 1968 738 1969 718C1971 698 1970 678 1968 658C1966 638 1962 618 1956 599C1950 580 1942 562 1932 544C1923 527 1911 510 1898 495C1886 479 1871 465 1856 453C1840 440 1823 429 1806 420C1788 410 1769 402 1750 397C1731 391 1711 387 1692 385C1672 383 1652 383 1632 385C1612 386 1592 390 1573 396C1554 401 1535 409 1517 418C1500 427 1483 438 1467 451C1452 463 1437 477 1424 492C1411 507 1399 524 1389 541C1379 558 1370 576 1362 594C1354 613 1347 632 1341 651C1336 670 1331 690 1327 709C1323 729 1320 748 1317 768C1314 788 1312 808 1310 828C1308 848 1306 868 1305 888C1303 908 1302 928 1301 947C1300 967 1299 987 1298 1007C1298 1027 1297 1047 1297 1067C1297 1087 1297 1107 1297 1127C1298 1147 1298 1167 1299 1187C1300 1207 1301 1227 1302 1247C1303 1267 1305 1287 1306 1307C1308 1327 1310 1347 1312 1367C1314 1387 1317 1407 1319 1426C1322 1446 1325 1468 1328 1486C1331 1504 1332 1514 1336 1535C1340 1557 1348 1588 1350 1614C1351 1640 1348 1667 1346 1694C1345 1721 1343 1747 1340 1774C1336 1800 1333 1827 1328 1853C1323 1879 1318 1905 1312 1931C1306 1957 1299 1983 1293 2009C1286 2035 1280 2060 1273 2086C1266 2112 1260 2138 1254 2164C1247 2190 1241 2216 1236 2242C1230 2268 1223 2294 1219 2320C1216 2346 1216 2373 1215 2400C1214 2427 1212 2453 1211 2480C1210 2507 1208 2533 1207 2560C1206 2586 1205 2613 1203 2640C1202 2666 1201 2693 1200 2720C1199 2746 1197 2773 1196 2800C1195 2826 1194 2854 1193 2880C1192 2905 1190 2938 1190 2950" />
             <path class="cable-edge" stroke-dasharray="0 2268 100000" d="M1704 1005C1713 1002 1742 994 1761 987C1779 979 1798 972 1815 962C1832 952 1849 940 1864 927C1879 914 1893 899 1905 883C1917 868 1928 850 1937 833C1946 815 1953 796 1959 777C1964 758 1968 738 1969 718C1971 698 1970 678 1968 658C1966 638 1962 618 1956 599C1950 580 1942 562 1932 544C1923 527 1911 510 1898 495C1886 479 1871 465 1856 453C1840 440 1823 429 1806 420C1788 410 1769 402 1750 397C1731 391 1711 387 1692 385C1672 383 1652 383 1632 385C1612 386 1592 390 1573 396C1554 401 1535 409 1517 418C1500 427 1483 438 1467 451C1452 463 1437 477 1424 492C1411 507 1399 524 1389 541C1379 558 1370 576 1362 594C1354 613 1347 632 1341 651C1336 670 1331 690 1327 709C1323 729 1320 748 1317 768C1314 788 1312 808 1310 828C1308 848 1306 868 1305 888C1303 908 1302 928 1301 947C1300 967 1299 987 1298 1007C1298 1027 1297 1047 1297 1067C1297 1087 1297 1107 1297 1127C1298 1147 1298 1167 1299 1187C1300 1207 1301 1227 1302 1247C1303 1267 1305 1287 1306 1307C1308 1327 1310 1347 1312 1367C1314 1387 1317 1407 1319 1426C1322 1446 1325 1468 1328 1486C1331 1504 1332 1514 1336 1535C1340 1557 1348 1588 1350 1614C1351 1640 1348 1667 1346 1694C1345 1721 1343 1747 1340 1774C1336 1800 1333 1827 1328 1853C1323 1879 1318 1905 1312 1931C1306 1957 1299 1983 1293 2009C1286 2035 1280 2060 1273 2086C1266 2112 1260 2138 1254 2164C1247 2190 1241 2216 1236 2242C1230 2268 1223 2294 1219 2320C1216 2346 1216 2373 1215 2400C1214 2427 1212 2453 1211 2480C1210 2507 1208 2533 1207 2560C1206 2586 1205 2613 1203 2640C1202 2666 1201 2693 1200 2720C1199 2746 1197 2773 1196 2800C1195 2826 1194 2854 1193 2880C1192 2905 1190 2938 1190 2950" />
             <path class="cable-core" d="M1704 1005C1713 1002 1742 994 1761 987C1779 979 1798 972 1815 962C1832 952 1849 940 1864 927C1879 914 1893 899 1905 883C1917 868 1928 850 1937 833C1946 815 1953 796 1959 777C1964 758 1968 738 1969 718C1971 698 1970 678 1968 658C1966 638 1962 618 1956 599C1950 580 1942 562 1932 544C1923 527 1911 510 1898 495C1886 479 1871 465 1856 453C1840 440 1823 429 1806 420C1788 410 1769 402 1750 397C1731 391 1711 387 1692 385C1672 383 1652 383 1632 385C1612 386 1592 390 1573 396C1554 401 1535 409 1517 418C1500 427 1483 438 1467 451C1452 463 1437 477 1424 492C1411 507 1399 524 1389 541C1379 558 1370 576 1362 594C1354 613 1347 632 1341 651C1336 670 1331 690 1327 709C1323 729 1320 748 1317 768C1314 788 1312 808 1310 828C1308 848 1306 868 1305 888C1303 908 1302 928 1301 947C1300 967 1299 987 1298 1007C1298 1027 1297 1047 1297 1067C1297 1087 1297 1107 1297 1127C1298 1147 1298 1167 1299 1187C1300 1207 1301 1227 1302 1247C1303 1267 1305 1287 1306 1307C1308 1327 1310 1347 1312 1367C1314 1387 1317 1407 1319 1426C1322 1446 1325 1468 1328 1486C1331 1504 1332 1514 1336 1535C1340 1557 1348 1588 1350 1614C1351 1640 1348 1667 1346 1694C1345 1721 1343 1747 1340 1774C1336 1800 1333 1827 1328 1853C1323 1879 1318 1905 1312 1931C1306 1957 1299 1983 1293 2009C1286 2035 1280 2060 1273 2086C1266 2112 1260 2138 1254 2164C1247 2190 1241 2216 1236 2242C1230 2268 1223 2294 1219 2320C1216 2346 1216 2373 1215 2400C1214 2427 1212 2453 1211 2480C1210 2507 1208 2533 1207 2560C1206 2586 1205 2613 1203 2640C1202 2666 1201 2693 1200 2720C1199 2746 1197 2773 1196 2800C1195 2826 1194 2854 1193 2880C1192 2905 1190 2938 1190 2950" />
-            <path class="cable-shine" transform="translate(-9 -7)" d="M1704 1005C1713 1002 1742 994 1761 987C1779 979 1798 972 1815 962C1832 952 1849 940 1864 927C1879 914 1893 899 1905 883C1917 868 1928 850 1937 833C1946 815 1953 796 1959 777C1964 758 1968 738 1969 718C1971 698 1970 678 1968 658C1966 638 1962 618 1956 599C1950 580 1942 562 1932 544C1923 527 1911 510 1898 495C1886 479 1871 465 1856 453C1840 440 1823 429 1806 420C1788 410 1769 402 1750 397C1731 391 1711 387 1692 385C1672 383 1652 383 1632 385C1612 386 1592 390 1573 396C1554 401 1535 409 1517 418C1500 427 1483 438 1467 451C1452 463 1437 477 1424 492C1411 507 1399 524 1389 541C1379 558 1370 576 1362 594C1354 613 1347 632 1341 651C1336 670 1331 690 1327 709C1323 729 1320 748 1317 768C1314 788 1312 808 1310 828C1308 848 1306 868 1305 888C1303 908 1302 928 1301 947C1300 967 1299 987 1298 1007C1298 1027 1297 1047 1297 1067C1297 1087 1297 1107 1297 1127C1298 1147 1298 1167 1299 1187C1300 1207 1301 1227 1302 1247C1303 1267 1305 1287 1306 1307C1308 1327 1310 1347 1312 1367C1314 1387 1317 1407 1319 1426C1322 1446 1325 1468 1328 1486C1331 1504 1332 1514 1336 1535C1340 1557 1348 1588 1350 1614C1351 1640 1348 1667 1346 1694C1345 1721 1343 1747 1340 1774C1336 1800 1333 1827 1328 1853C1323 1879 1318 1905 1312 1931C1306 1957 1299 1983 1293 2009C1286 2035 1280 2060 1273 2086C1266 2112 1260 2138 1254 2164C1247 2190 1241 2216 1236 2242C1230 2268 1223 2294 1219 2320C1216 2346 1216 2373 1215 2400C1214 2427 1212 2453 1211 2480C1210 2507 1208 2533 1207 2560C1206 2586 1205 2613 1203 2640C1202 2666 1201 2693 1200 2720C1199 2746 1197 2773 1196 2800C1195 2826 1194 2854 1193 2880C1192 2905 1190 2938 1190 2950" />
+            <path class="cable-shine" d="M1704 1005C1713 1002 1742 994 1761 987C1779 979 1798 972 1815 962C1832 952 1849 940 1864 927C1879 914 1893 899 1905 883C1917 868 1928 850 1937 833C1946 815 1953 796 1959 777C1964 758 1968 738 1969 718C1971 698 1970 678 1968 658C1966 638 1962 618 1956 599C1950 580 1942 562 1932 544C1923 527 1911 510 1898 495C1886 479 1871 465 1856 453C1840 440 1823 429 1806 420C1788 410 1769 402 1750 397C1731 391 1711 387 1692 385C1672 383 1652 383 1632 385C1612 386 1592 390 1573 396C1554 401 1535 409 1517 418C1500 427 1483 438 1467 451C1452 463 1437 477 1424 492C1411 507 1399 524 1389 541C1379 558 1370 576 1362 594C1354 613 1347 632 1341 651C1336 670 1331 690 1327 709C1323 729 1320 748 1317 768C1314 788 1312 808 1310 828C1308 848 1306 868 1305 888C1303 908 1302 928 1301 947C1300 967 1299 987 1298 1007C1298 1027 1297 1047 1297 1067C1297 1087 1297 1107 1297 1127C1298 1147 1298 1167 1299 1187C1300 1207 1301 1227 1302 1247C1303 1267 1305 1287 1306 1307C1308 1327 1310 1347 1312 1367C1314 1387 1317 1407 1319 1426C1322 1446 1325 1468 1328 1486C1331 1504 1332 1514 1336 1535C1340 1557 1348 1588 1350 1614C1351 1640 1348 1667 1346 1694C1345 1721 1343 1747 1340 1774C1336 1800 1333 1827 1328 1853C1323 1879 1318 1905 1312 1931C1306 1957 1299 1983 1293 2009C1286 2035 1280 2060 1273 2086C1266 2112 1260 2138 1254 2164C1247 2190 1241 2216 1236 2242C1230 2268 1223 2294 1219 2320C1216 2346 1216 2373 1215 2400C1214 2427 1212 2453 1211 2480C1210 2507 1208 2533 1207 2560C1206 2586 1205 2613 1203 2640C1202 2666 1201 2693 1200 2720C1199 2746 1197 2773 1196 2800C1195 2826 1194 2854 1193 2880C1192 2905 1190 2938 1190 2950" />
           </g>
           <g class="plug-left" transform="translate(584 968) rotate(196.0)">
             <path class="cable-edge relief" d="M120 -30L165 -22V22L120 30Z" />
@@ -201,9 +197,14 @@ layout_style: "homepage"
         </svg>
         <span class="part earbuds">
           <span class="bud bud-left"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
-            sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt=""></span>
+            data-night="{{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
+            sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt="">
+            <!-- Which is which, written on the faceplate in glow ink -->
+            <span class="glow-ink" aria-hidden="true">L</span></span>
           <span class="bud bud-right"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
-            sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt=""></span>
+            data-night="{{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
+            sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt="">
+            <span class="glow-ink" aria-hidden="true">R</span></span>
         </span>
       </span></span>
     </a>
@@ -284,16 +285,55 @@ layout_style: "homepage"
 
       // Redraws the phone's cable as a twisted pair, for both its resting and tugged paths
       const TWIST = { half: 6.5, apart: 0.8 };
+      // A point any distance along a path of M, C and S commands. The browser's own
+      // getPointAtLength measures from the start each time, which over a whole twisted
+      // pair kept a phone busy for most of a second, so the path is measured once here.
+      function walk(d) {
+        const tokens = d.match(/[A-Za-z]|-?\d*\.?\d+/g);
+        const num = () => +tokens[i++];
+        const points = [];
+        let i = 0, command, at, control;
+        while (i < tokens.length) {
+          if (/[A-Za-z]/.test(tokens[i])) command = tokens[i++];
+          if (command === 'M') {
+            at = control = [num(), num()];
+            points.push(at);
+            continue;
+          }
+          const first = command === 'S' ? [2 * at[0] - control[0], 2 * at[1] - control[1]] : [num(), num()];
+          const second = [num(), num()], end = [num(), num()];
+          for (let k = 1; k <= 32; k++) {
+            const t = k / 32, u = 1 - t;
+            points.push([0, 1].map(j => u * u * u * at[j] + 3 * u * u * t * first[j] + 3 * u * t * t * second[j] + t * t * t * end[j]));
+          }
+          [at, control] = [end, second];
+        }
+        const lengths = [0];
+        for (let k = 1; k < points.length; k++) {
+          lengths.push(lengths[k - 1] + Math.hypot(points[k][0] - points[k - 1][0], points[k][1] - points[k - 1][1]));
+        }
+        const length = lengths[lengths.length - 1];
+        return {
+          length,
+          at(s) {
+            s = Math.min(Math.max(s, 0), length);
+            let low = 0, high = lengths.length - 1;
+            while (high - low > 1) {
+              const middle = (low + high) >> 1;
+              if (lengths[middle] <= s) low = middle;
+              else high = middle;
+            }
+            const f = (s - lengths[low]) / (lengths[high] - lengths[low] || 1);
+            return { x: points[low][0] + f * (points[high][0] - points[low][0]), y: points[low][1] + f * (points[high][1] - points[low][1]) };
+          },
+        };
+      }
       phone.querySelectorAll('.cable-run').forEach(run => {
         const svg = run.ownerSVGElement, ns = svg.namespaceURI;
         const middle = run.querySelector('.cable-core').getAttribute('d');
         function twist(d, halves) {
-          const guide = document.createElementNS(ns, 'path');
-          guide.setAttribute('d', d);
-          run.append(guide);
-          const length = guide.getTotalLength();
+          const { length, at } = walk(d);
           halves = halves || Math.round(length / TWIST.half);
-          const at = s => guide.getPointAtLength(Math.min(Math.max(s, 0), length));
           let over = '', under = '';
           for (let k = 0; k < halves; k++) {
             for (let i = 0; i <= 6; i++) {
@@ -307,7 +347,6 @@ layout_style: "homepage"
               under += `${step}${(p.x - nx * off).toFixed(2)} ${(p.y - ny * off).toFixed(2)}`;
             }
           }
-          guide.remove();
           return { over, under, halves };
         }
         const rest = twist(middle);
@@ -319,7 +358,6 @@ layout_style: "homepage"
           path.setAttribute('d', rest[layer]);
           path.style.setProperty('--rest', `path("${rest[layer]}")`);
           if (tug) path.style.setProperty('--tug', `path("${tug[layer]}")`);
-          if (kind === 'strand-shine') path.setAttribute('transform', 'translate(-0.35 -0.45)');
           return path;
         }));
         run.classList.add('twisted');
@@ -337,6 +375,14 @@ layout_style: "homepage"
 
       // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
       const earphones = document.getElementById('uses');
+      // Shade along the wire's far side, laid and swung with the rest of it
+      earphones.querySelectorAll('.ear-left > .cable-core, .ear-right > .cable-core').forEach(core => {
+        core.after(...[1, 2, 3].map(n => {
+          const band = core.cloneNode();
+          band.setAttribute('class', `cable-shade band-${n}`);
+          return band;
+        }));
+      });
       const swings = [];
       (function () {
         const X0 = 137, Y0 = 600, WIDTH = 1774, HEIGHT = 2300, BUD_HEIGHT = 605;
@@ -517,14 +563,15 @@ layout_style: "homepage"
       // spread over the whole room and warmer for what it's come off. Only where that runs
       // out does the fainter light from outside show. The eye takes the lamp, the brightest
       // light, as nearly white, so paper under it stays white and the outside looks blue.
-      function litAt(night, height, r) {
+      // `beam` is how much of the lamp's beam its shade lets through.
+      function litAt(night, height, r, beam = 1) {
         const near = (h, n) => (h * h / (r * r + h * h)) ** n;
         const lights = night ? [
-          [0.7 * (near(height, 3) + near(0.4 * height, 2)), [255, 226, 192]],
-          [0.7 * 0.08 * near(2.5 * height, 1), [255, 210, 168]],
-          [0.7 * 0.012, [150, 172, 235]],
+          [0.7 * beam * (near(height, 3) + 0.4 * near(0.4 * height, 2)), [255, 226, 192]],
+          [0.7 * 0.04 * near(2.5 * height, 1), [255, 218, 186]],
+          [0.7 * 0.018, [140, 165, 235]],
         ] : [
-          [0.55 + 0.45 * near(height, 1.5), [255, 251, 244]],
+          [0.66 + 0.34 * near(height, 1.5), [255, 251, 244]],
         ];
         // They add up as light does, in linear values, then gamma 2.2 for the screen
         const linear = c => (c / 255) ** 2.2;
@@ -533,31 +580,50 @@ layout_style: "homepage"
         // Past full brightness it can't get any redder, so it goes towards white. Letting
         // each colour run up to its limit on its own would turn warm light green.
         const top = Math.max(...value), lit = Math.min(top, 1), over = Math.min(Math.max(top - 1, 0), 1);
-        return value.map(v => Math.round(255 * (v / top * lit + (1 - v / top * lit) * over)));
+        return value.map(v => 255 * (v / top * lit + (1 - v / top * lit) * over));
       }
 
-      const rgb = c => `rgb(${c.join(' ')})`;
+      const rgb = c => `rgb(${c.map(Math.round).join(' ')})`;
 
-      // The eye loses colour gradually as light dims, from `full` down to `least`
+      // The room's light is drawn coarsely and smoothed as it's scaled up, as it changes
+      // slowly. A gradient can't take the lamp's lopsided pool. A little noise, so it's
+      // never banded.
+      const lightCanvas = document.createElement('canvas');
+      const duskCanvas = document.createElement('canvas');
+      table.querySelector('.light').append(lightCanvas);
+      table.querySelector('.dusk').append(duskCanvas);
+      function paint(canvas, step, box, colour) {
+        canvas.width = Math.ceil(box.width / step);
+        canvas.height = Math.ceil(box.height / step);
+        const context = canvas.getContext('2d');
+        const image = context.createImageData(canvas.width, canvas.height);
+        for (let j = 0; j < canvas.height; j++) {
+          for (let i = 0; i < canvas.width; i++) {
+            const pixel = colour((i + 0.5) * box.width / canvas.width, (j + 0.5) * box.height / canvas.height);
+            image.data.set(pixel.map(c => c + Math.random() - 0.5), (j * canvas.width + i) * 4);
+          }
+        }
+        context.putImageData(image, 0, 0);
+      }
+
+      // The eye loses colour gradually as light dims, from `full` down to `least`. It goes
+      // by the light around, not the shade's edge, which it doesn't follow so closely.
       const COLOUR = { full: 0.5, least: 0.1 };
-      // `reach` is how far a point is from the middle of the light, as the light sees it
-      function lighting(night, box, reach, stretch, height) {
-        const corners = [[0, 0], [box.width, 0], [0, box.height], [box.width, box.height]];
-        const far = Math.max(...corners.map(([cx, cy]) => reach(cx, cy)));
-        const stops = [], dusk = [];
-        // Closer together in the middle, where the light changes fastest
-        for (let i = 0; i <= 24; i++) {
-          const r = far * (i / 24) ** 2;
-          const lit = litAt(night, height, r);
-          stops.push(`${rgb(lit)} ${r.toFixed(0)}px`);
+      let painted = '';
+      function lighting(night, box, shaped, height, aim) {
+        // It takes a while, so only when it's changed, not when a phone's address bar
+        // slides away
+        const key = [night, box.width, box.height, height, ...aim].map(String).join();
+        if (key === painted) return;
+        painted = key;
+        paint(lightCanvas, 6, box, (x, y) => [...litAt(night, height, ...shaped(x, y)), 255]);
+        if (!night) return;
+        paint(duskCanvas, 24, box, (x, y) => {
+          const lit = litAt(night, height, shaped(x, y)[0]);
           const bright = (0.2126 * lit[0] + 0.7152 * lit[1] + 0.0722 * lit[2]) / 255;
           const t = Math.min(Math.max((COLOUR.full - bright) / (COLOUR.full - COLOUR.least), 0), 1);
-          dusk.push(`rgb(0 0 0 / ${(t * t * (3 - 2 * t)).toFixed(2)}) ${r.toFixed(0)}px`);
-        }
-        // Drawn along the pool's long side, on a square turned to line up with it
-        const at = `ellipse ${(far * stretch).toFixed(0)}px ${far.toFixed(0)}px at 50% 50%`;
-        const along = list => list.map(stop => stop.replace(/ (\d+)px$/, (_, r) => ` ${(r * stretch).toFixed(0)}px`)).join(', ');
-        return [`radial-gradient(${at}, ${along(stops)})`, `radial-gradient(${at}, ${along(dusk)})`];
+          return [128, 128, 128, 255 * t * t * (3 - 2 * t)];
+        });
       }
 
       // The labels are written in glow-in-the-dark ink, and some things are drawn on in
@@ -573,12 +639,17 @@ layout_style: "homepage"
       // Each label was written with its own amount of paint, and its own unevenness
       const paints = writing.map(() => [0.8 + Math.random() * 0.2, Math.random() * 4, Math.random() * 4]);
       let risers = [];
+      // The die's pips, which turn with it as it lands (see drop()), and their angle at rest
+      let pips = null;
       function glow() {
         const night = document.documentElement.classList.contains('dark-mode');
         const box = table.getBoundingClientRect();
         // The copy can't cover the writing exactly, so the writing goes
         writing.forEach(el => el.classList.toggle('glowing', night));
-        if (!night) return glowing.replaceChildren();
+        if (!night) {
+          pips = null;
+          return glowing.replaceChildren();
+        }
         const copies = writing.map((el, i) => {
           // A turned box's bounds are centred where it is
           const rect = el.getBoundingClientRect();
@@ -595,10 +666,11 @@ layout_style: "homepage"
             width: `${el.offsetWidth}px`,
             height: `${el.offsetHeight}px`,
             rotate: `${angle}deg`,
-            visibility: el.closest('.lift')?.closest('.held, .falling') ? 'hidden' : '',
+            visibility: el.closest('.lift')?.closest('.held') || waiting.has(el.closest('.obj')) ? 'hidden' : '',
             opacity: paints[i][0].toFixed(2),
             maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
           });
+          if (el === die.querySelector('.glow-ink')) pips = { copy, angle: angle - (parseFloat(die.style.getPropertyValue('--spin')) || 0) };
           return [el.closest('.lift') && el.closest('.obj'), copy];
         });
         risers = copies.filter(([obj]) => obj);
@@ -617,6 +689,14 @@ layout_style: "homepage"
       const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1], playground: [0.25, 1],
         favorites: [0.3, 0.8], uses: [0.25, 1], blog: [0.2, 0.4] };
       const rimmed = objects.filter(el => el.id in RIMS);
+      const cables = Array.from(table.querySelectorAll('svg.cable'));
+      // Shiny things have photos for the night too, lit evenly from above and not shining,
+      // as which side the lamp is on is the page's to give. They're fetched when the switch
+      // might be flipped, so they're there when it is.
+      const nightly = Array.from(document.querySelectorAll('img[data-night]'));
+      nightly.forEach(img => img.dataset.day = img.getAttribute('srcset'));
+      ['pointerenter', 'focus'].forEach(type => toggle.addEventListener(type, () =>
+        nightly.forEach(img => Object.assign(new Image(), { sizes: img.sizes, srcset: img.dataset.night })), { once: true }));
       const filters = document.querySelector('.filters');
       rimmed.forEach(({ id }) => filters.insertAdjacentHTML('beforeend', `
         <filter id="rim-${id}" color-interpolation-filters="sRGB">
@@ -629,6 +709,9 @@ layout_style: "homepage"
           <feBlend in2="SourceGraphic" mode="screen" />
         </filter>`));
 
+      // Where the bulb is from the middle of the card, and how high, in u
+      const BULB = [-8, -5, 70];
+
       function light() {
         const night = document.documentElement.classList.contains('dark-mode');
         const u = probe.offsetWidth / 100;
@@ -636,19 +719,30 @@ layout_style: "homepage"
         const lampX = -15 * u;
         const lampY = -20 * u;
         // At night the bulb is over the card, a little towards the corner the lamp stands
-        // in, and its light, glare and shadows all centre under it
+        // in, and its light, glare and shadows all centre under it. Not right over it, or
+        // the card would cast no shadow, which is all that sets it off the white table.
         const card = document.getElementById('intro').getBoundingClientRect();
-        const [bulbX, bulbY, bulbZ] = [card.left + card.width / 2 - box.left - 12 * u, card.top + card.height / 2 - box.top - 8 * u, 70 * u];
+        const [bulbX, bulbY, bulbZ] = [card.left + card.width / 2 - box.left + BULB[0] * u, card.top + card.height / 2 - box.top + BULB[1] * u, BULB[2] * u];
         const [aim, height] = night
           ? [[bulbX, bulbY], 1.0 * card.width]
           : [[lampX, lampY], 1.6 * Math.hypot(box.width, box.height)];
-        // The lamp stands in the top left corner and leans in, so its light lands at a slant
-        // and the pool is drawn out away from it. Sunlight, from far off, falls in a circle.
-        const [stretch, slant] = night ? [1.3, Math.atan2(8, 12)] : [1, 0];
-        const reach = (px, py) => {
+        // The lamp stands in the top left corner and leans in, so its light lands at a slant:
+        // the pool is short on the lamp's side and drawn out on the far side. It ends where
+        // the shade cuts the beam off, softly, as the bulb isn't a point; past that there's
+        // only what leaks through and what comes back off the room. Sunlight, from far off,
+        // falls in a circle.
+        const [short, long, slant] = night ? [0.95, 1.5, Math.atan2(-BULB[1], -BULB[0])] : [1, 1, 0];
+        const [cosS, sinS] = [Math.cos(slant), Math.sin(slant)];
+        // How far a point is from the middle of the light, as the light sees it, and how
+        // much of the beam reaches it
+        const shaped = (px, py) => {
           const [dx, dy] = [px - aim[0], py - aim[1]];
-          return Math.hypot((dx * Math.cos(slant) + dy * Math.sin(slant)) / stretch, dy * Math.cos(slant) - dx * Math.sin(slant));
+          const along = dx * cosS + dy * sinS, across = dy * cosS - dx * sinS;
+          const r = Math.hypot(along / (along < 0 ? short : long), across);
+          const t = Math.min(Math.max((r / height - 0.75) / 0.4, 0), 1);
+          return [r, night ? 1 - 0.9 * t * t * (3 - 2 * t) : 1];
         };
+        const lightAt = (px, py) => litAt(night, height, ...shaped(px, py));
 
         measure = function (el) {
           const rect = el.getBoundingClientRect();
@@ -660,29 +754,32 @@ layout_style: "homepage"
         };
 
         // Measure everything before writing styles, to avoid repeated layouts
-        const litAround = selfLit.map(el => {
+        const selfLight = selfLit.map(el => {
           const r = el.getBoundingClientRect();
-          return reach(r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top);
+          return lightAt(r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top);
         });
         const placed = objects.map(measure);
         const turned = parts.map(el => (parseFloat(getComputedStyle(el.closest('.item')).rotate) || 0) * Math.PI / 180);
         const partsPlaced = parts.map(measure);
         const rimsPlaced = rimmed.map(measure);
+        const cablesPlaced = cables.map(svg => {
+          let turn = 0;
+          for (let at = svg; at !== table; at = at.parentElement) turn += parseFloat(getComputedStyle(at).rotate) || 0;
+          const { cx, cy } = measure(svg);
+          return { cx, cy, turn: turn * Math.PI / 180 };
+        });
 
-        const [lit, dusk] = lighting(night, box, reach, stretch, height);
-        table.style.setProperty('--lighting', lit);
-        table.style.setProperty('--dusk', dusk);
-        table.style.setProperty('--pool-x', `${aim[0].toFixed(0)}px`);
-        table.style.setProperty('--pool-y', `${aim[1].toFixed(0)}px`);
-        table.style.setProperty('--pool-size', `${(2 * Math.max(...[[0, 0], [box.width, 0], [0, box.height], [box.width, box.height]]
-          .map(([cx, cy]) => Math.hypot(cx - aim[0], cy - aim[1])))).toFixed(0)}px`);
-        table.style.setProperty('--pool-slant', `${slant}rad`);
-        // The bulb's glare, off the varnish and anything glossy, seen from above: right under
-        // it, fading fast. Neutral, as it's the light itself reflected, not the colour of
-        // what it's off.
+        lighting(night, box, shaped, height, aim);
+        nightly.forEach(img => {
+          const srcset = night ? img.dataset.night : img.dataset.day;
+          if (img.getAttribute('srcset') !== srcset) img.srcset = srcset;
+        });
+        // The bulb's glare, off the laminate's satin finish and anything glossy, seen from
+        // above: right under it, fading fast, and faint, as white has little left to brighten.
+        // Neutral, as it's the light itself reflected, not the colour of what it's off.
         const glare = Array.from({ length: 9 }, (_, i) => {
           const r = i / 8 * 1.2 * height;
-          return `rgb(80 78 75 / ${Math.exp(-((r / (0.35 * height)) ** 2)).toFixed(3)}) ${r.toFixed(0)}px`;
+          return `rgb(30 29 28 / ${Math.exp(-((r / (0.35 * height)) ** 2)).toFixed(3)}) ${r.toFixed(0)}px`;
         });
         table.style.setProperty('--glint', `radial-gradient(circle at ${bulbX}px ${bulbY}px, ${glare.join(', ')})`);
         // Except on the card: its paper is matte, so it doesn't glint. Cut out where it lies.
@@ -698,7 +795,7 @@ layout_style: "homepage"
         glow();
 
         selfLit.forEach((el, i) => {
-          const lit = litAt(night, height, litAround[i]);
+          const lit = selfLight[i];
           el.style.setProperty('--lit', rgb(lit));
           const filter = document.querySelector(`#room-light-${el.id} feColorMatrix`);
           if (filter) {
@@ -725,14 +822,12 @@ layout_style: "homepage"
           // g is for tape on the table beside the object
           Object.entries({ s: height + up, h: height + up + LIFT, c: 0.05 + up, g: 0.05 }).forEach(([key, h]) => {
             let [x, y, blur] = cast(h, cx, cy);
-            // By day, light from all round darkens just where things meet the table, all
-            // the way round. At night there's next to none, and the side towards the lamp is
-            // lit right up to the table, so that's only on the far side: pushed out from
-            // under it no further than its blur.
-            if (night && (key === 'c' || key === 'g')) {
-              const length = Math.hypot(x, y) || 1, out = Math.max(length, blur);
-              [x, y] = [x / length * out, y / length * out];
-            }
+            // The side towards the sun or the lamp is lit right up to the table, so no shadow
+            // shows there, even where things meet it: each is pushed out from under them at
+            // least as far as its blur, which would otherwise spill round on the lit side, and
+            // half a pixel more, or it shows through the soft pixels along that edge.
+            const length = Math.hypot(x, y) || 1, out = Math.max(length, blur + 0.5);
+            [x, y] = [x / length * out, y / length * out];
             setShadow(el, key, [x * cos - y * sin, x * sin + y * cos, blur]);
           });
           const [rx, ry] = cast(LIFT, cx, cy);
@@ -758,10 +853,28 @@ layout_style: "homepage"
           filter.querySelector('feOffset').setAttribute('dy', (ax * sin + ay * cos).toFixed(2));
           filter.querySelector('feGaussianBlur').setAttribute('stdDeviation', (0.4 * width * u).toFixed(2));
           const flood = filter.querySelector('feFlood');
-          flood.setAttribute('flood-color', el.matches('.self-lit') ? rgb(litAt(night, height, reach(cx, cy))) : 'rgb(255 250 242)');
+          flood.setAttribute('flood-color', el.matches('.self-lit') ? rgb(lightAt(cx, cy)) : 'rgb(255 250 242)');
           flood.setAttribute('flood-opacity', shine);
           item.style.filter = `url(#rim-${el.id})`;
         };
+
+        // A wire is round, so it's lit on the side towards the light, with its shine a
+        // little way over that side, and shaded on the far side, the more so the lower the
+        // light. Its shine is where it turns the light up to the eye: halfway between
+        // straight up and the light. Given in the wire's own, turned, frame.
+        cables.forEach((svg, i) => {
+          const { cx, cy, turn } = cablesPlaced[i];
+          let [lx, ly, elevation] = [-0.53, -0.85, Math.atan(2)];
+          if (night) {
+            const distance = Math.hypot(bulbX - cx, bulbY - cy) || 1;
+            [lx, ly, elevation] = [(bulbX - cx) / distance, (bulbY - cy) / distance, Math.atan2(bulbZ, distance)];
+          }
+          const [cos, sin] = [Math.cos(-turn), Math.sin(-turn)];
+          svg.style.setProperty('--lx', (lx * cos - ly * sin).toFixed(3));
+          svg.style.setProperty('--ly', (lx * sin + ly * cos).toFixed(3));
+          svg.style.setProperty('--glint', Math.sin((Math.PI / 2 - elevation) / 2).toFixed(3));
+          svg.style.setProperty('--shade', Math.cos(elevation).toFixed(3));
+        });
 
         objects.forEach((el, i) => shade(el, 0, 0, placed[i]));
         rimmed.forEach((el, i) => rim(el, rimsPlaced[i]));
@@ -778,6 +891,7 @@ layout_style: "homepage"
         const start = performance.now();
         die.classList.remove('held');
         die.classList.add('falling');
+        glow();
         const at = measure(die);
         (function frame(now) {
           const t = Math.min((now - start) / TIME, 1);
@@ -785,6 +899,7 @@ layout_style: "homepage"
             : t < 0.7 ? HEIGHT * 0.08 * Math.sin(Math.PI * (t - 0.45) / 0.25) : 0;
           lift.style.scale = 1 + up * 0.012;
           die.style.setProperty('--spin', (spin * (1 - t) ** 2).toFixed(1) + 'deg');
+          if (pips) Object.assign(pips.copy.style, { rotate: `${pips.angle + spin * (1 - t) ** 2}deg`, scale: lift.style.scale });
           shade(die, up, 0, at);
           if (t < 1) return requestAnimationFrame(frame);
           die.classList.remove('falling');
@@ -796,13 +911,36 @@ layout_style: "homepage"
         })(start);
       }
 
+      // Each thing is shown once all its pictures are ready: its photos, as they're chosen for
+      // this screen, and the tape and cloth drawn by the stylesheet. One that fails to load is
+      // shown anyway, as it would be.
+      const waiting = new Set();
+      const ready = new Map(objects.filter(el => el !== toggle && el.id !== 'intro').map(el => {
+        const pictures = Array.from(el.querySelectorAll('img:not(.cam-photo)'));
+        el.querySelectorAll('.tag, .item').forEach(at => [null, '::before'].forEach(part => {
+          const url = getComputedStyle(at, part).backgroundImage.match(/url\("?(.+?)"?\)/)?.[1];
+          if (url) pictures.push(Object.assign(new Image(), { src: url }));
+        }));
+        waiting.add(el);
+        return [el, Promise.allSettled(pictures.map(img => img.decode())).then(() => {
+          waiting.delete(el);
+          el.classList.add('spawned');
+          if (document.documentElement.classList.contains('dark-mode')) glow();
+        })];
+      }));
+      clearTimeout(window.spawning);
+
       toggle.addEventListener('click', () => {
         applyTheme(document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark');
         light();
       });
 
       light();
-      window.addEventListener('resize', light);
+      let resized;
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(resized);
+        resized = requestAnimationFrame(light);
+      });
       window.addEventListener('load', light);
       // The labels' size depends on their font
       document.fonts?.ready.then(light);
@@ -815,7 +953,7 @@ layout_style: "homepage"
           watch.disconnect();
           drop();
         }, { threshold: 1 });
-        watch.observe(die.querySelector('.item'));
+        ready.get(die).then(() => watch.observe(die.querySelector('.item')));
       }
     })();
   </script>

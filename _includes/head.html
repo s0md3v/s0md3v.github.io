@@ -25,6 +25,14 @@
   {% endif %}
 
   {% include theme_init.html %}
+  {% if page.layout_style == "homepage" %}
+  <script>
+    // Each thing on the table is hidden until its pictures are ready (see index.html), but
+    // never for long if the page's script doesn't get to it
+    document.documentElement.classList.add('spawning');
+    window.spawning = setTimeout(() => document.documentElement.classList.remove('spawning'), 8000);
+  </script>
+  {% endif %}
 
   <style>
     {% if page.layout_style=="homepage" %}

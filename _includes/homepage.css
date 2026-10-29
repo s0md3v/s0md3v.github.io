@@ -1,7 +1,8 @@
 /* Shadows are cast by the script in index.html. --h0 is an object's thickness, in u. */
 
 :root {
-  --shadow: 35, 17, 0;
+  /* A white table throws back the sky's light into its shadows, so they're cool */
+  --shadow: 28, 34, 44;
   --contact-alpha: 0.5;
   --cast-alpha: 0.5;
   --ink: #23201b;
@@ -23,8 +24,20 @@
   overflow: hidden;
   isolation: isolate;
   flex-shrink: 0;
-  /* Stored at half its width (_raw/woodcut.py) */
-  background: #cd9c6f url('{{ "/assets/images/table/wood.webp" | relative_url }}') 0 0 / calc(135 * var(--u)) calc(67.5 * var(--u));
+  /* White laminate, from a photo of it at its real size (_raw/deskcut.py) */
+  background: #e7e7e4 url('{{ "/assets/images/table/desk.webp" | relative_url }}') 0 0 / calc(48.5 * var(--u)) calc(31.4 * var(--u));
+}
+
+/* Things on a table can't be selected, so a stray drag or Ctrl+A doesn't paint them over.
+   Only what's written on the card can, to copy. */
+.table {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#intro :is(.intro-text, .pen) {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .u-probe {
@@ -38,9 +51,15 @@
   text-decoration: none;
 }
 
-/* Undo the site-wide link hover background */
+/* Undo the site-wide link hover background. Only its colour: the gallery's tape is a link. */
 .table a:hover {
-  background: none;
+  background-color: transparent;
+}
+
+/* Each thing appears, with its tape, all at once when its pictures are ready, rather than
+   its tape and shadow first. Not the card, which is drawn first, nor the switch. */
+.spawning .obj:not(#intro, #switch, .spawned) {
+  visibility: hidden;
 }
 
 /* ---- Light ---- */
@@ -54,27 +73,23 @@
   mix-blend-mode: multiply;
 }
 
-/* The light and where colour is lost are drawn on squares turned to line up with the
-   lamp's pool, which a gradient can't be on its own */
-.light,
-.dusk {
-  overflow: hidden;
+/* At night, till the script draws the lamp's light, a rough pool of it under the bulb
+   (see light() in index.html), rather than the table as it is by day */
+.dark-mode .light:empty {
+  --bulb-y: calc(50% - 9 * var(--u));
+  --pool: calc(25 * var(--u));
+  background: radial-gradient(circle at calc(50% - 8 * var(--u)) var(--bulb-y),
+    rgb(255 232 205), rgb(150 128 106) calc(0.8 * var(--pool)), rgb(34 34 37) calc(1.2 * var(--pool)));
 }
 
-.light::before,
-.dusk::before {
-  content: "";
+/* The light and where colour is lost are drawn by the script, coarsely, and smoothed as
+   they're scaled up */
+.light canvas,
+.dusk canvas {
   position: absolute;
-  left: var(--pool-x, 50%);
-  top: var(--pool-y, 50%);
-  width: var(--pool-size, 0);
-  height: var(--pool-size, 0);
-  translate: -50% -50%;
-  rotate: var(--pool-slant, 0deg);
-}
-
-.light::before {
-  background: var(--lighting, none);
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /* Glow-in-the-dark ink, laid over the labels by the script. Its light adds to the room's,
@@ -148,13 +163,9 @@
   opacity: 0.5;
 }
 
-.dusk::before {
-  background: #808080;
-  mask: var(--dusk, none);
-}
 
 /* The lamp's glare, set by the script: it brightens what's already bright most, so the
-   sheen on the varnish and the paper flare up while dark ink and grain stay dark */
+   satin laminate and glossy things flare up while dark ink stays dark */
 .glint {
   position: absolute;
   inset: 0;
@@ -184,7 +195,7 @@
 .lift {
   display: block;
   filter:
-    drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), var(--contact-alpha)))
+    drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) / var(--round, 1))))
     drop-shadow(var(--sx, 0) var(--sy, 0) var(--sb, 0) rgba(var(--shadow), var(--cast-alpha)));
   transition: filter 0.3s cubic-bezier(0.2, 0.7, 0.3, 1), translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
@@ -216,7 +227,7 @@ a.obj:focus-visible,
 
 :is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible))) .lift {
   filter:
-    drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5)))
+    drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5 / var(--round, 1))))
     drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
   translate: var(--rise, 0 0);
 }
@@ -319,12 +330,6 @@ a.obj:focus-visible,
   background: url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
 }
 
-/* Close under the lamp at night, the paper is brighter than its photo. It's matte, so
-   evenly, not in a glint (see .glint). Only the paper: the print stays as dark. */
-.dark-mode #intro .item::before {
-  filter: brightness(1.15);
-}
-
 .intro-text {
   position: absolute;
   z-index: 2;
@@ -410,7 +415,7 @@ a.obj:focus-visible,
 }
 
 /* Outside .lift so it casts no shadow. Masked by the card's ink on the card and by
-   the wood's (_raw/woodink.py) off it. */
+   the laminate's (_raw/deskink.py) off it. */
 #intro .pen {
   position: absolute;
   inset: 0;
@@ -421,13 +426,19 @@ a.obj:focus-visible,
   color: var(--ballpoint);
   mask-image:
     url('{{ "/assets/images/table/card-ink.jpg" | relative_url }}'),
-    url('{{ "/assets/images/table/wood-ink.jpg" | relative_url }}'),
+    url('{{ "/assets/images/table/desk-ink.jpg" | relative_url }}'),
     linear-gradient(#000 0 0);
   mask-mode: luminance, luminance, alpha;
-  mask-size: 100% 100%, calc(8 * var(--u)), 100% 100%;
+  /* The laminate's skids are the writing's size whatever the card's, and placed so that
+     no word loses a letter it needs */
+  mask-size: 100% 100%, calc(0.16 * var(--w) * var(--u)), 100% 100%;
+  mask-position: 0 0, calc(0.028 * var(--w) * var(--u)) calc(0.132 * var(--w) * var(--u)), 0 0;
   mask-repeat: no-repeat, repeat, no-repeat;
   mask-clip: border-box, no-clip, border-box;
   mask-composite: add, subtract, add;
+  /* Chrome only masks past the box, as no-clip asks, when it's drawn as a layer of its own;
+     otherwise, at most of the card's tilts, the writing on the table isn't masked at all */
+  will-change: transform;
 }
 
 .pen-sum {
@@ -455,6 +466,11 @@ a.obj:focus-visible,
 .pen-sum > :nth-child(3),
 .pen-sum > :nth-child(4) {
   margin-top: 0.3em;
+}
+
+/* Where the pen skidded on the laminate, gone over again */
+.retraced {
+  text-shadow: 0.03em -0.02em 0 currentColor;
 }
 
 .pen-sum > :nth-child(2) { rotate: -2deg; }
@@ -570,8 +586,9 @@ html:not(.dark-mode) .cam-screen {
   box-shadow: inset 0 0 0.6cqi 0.3cqi rgba(0, 0, 0, 0.5);
 }
 
+/* With the room dark, there's nothing bright for the screen to reflect */
 .dark-mode .cam-screen::after {
-  background: linear-gradient(118deg, rgba(255, 255, 255, 0.04) 0 38%, transparent 38%);
+  display: none;
 }
 
 .cam-btn {
@@ -606,7 +623,8 @@ html:not(.dark-mode) .cam-screen {
 
 /* Above .light, like #gallery */
 #phone {
-  --w: 12; --r: 5deg; --h0: 0.25;
+  /* Its cable is round too (see #uses) */
+  --w: 12; --r: 5deg; --h0: 0.25; --round: 2.5;
   /* Clear of the papers on a narrower table */
   left: min(calc(50% + 33 * var(--u)), calc(100% - 24 * var(--u)));
   top: calc(100% + 0.7 * var(--u));
@@ -815,6 +833,50 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(0.6px * var(--cable-scale, 1));
 }
 
+/* A wire is round. Its edge is dark only where it turns from the light, so it's moved
+   towards the far side, all the way when the light is low (--shade, set by the script
+   with --lx, --ly, which way the light is). Its shine moves towards the light (--glint).
+   Each by how wide it is: the edge's rim, or the wire's radius. */
+.ear-left > .cable-edge,
+.ear-right > .cable-edge {
+  --off: calc(-0.45px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
+}
+
+.ear-hook-edge,
+.strand-edge {
+  --off: calc(-0.3px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
+}
+
+.ear-left > .cable-shine,
+.ear-right > .cable-shine {
+  --off: calc(1.25px * var(--cable-scale, 1) * var(--glint, 0.5));
+}
+
+.strand-shine {
+  --off: calc(0.95px * var(--glint, 0.5));
+}
+
+.ear-left > :is(.cable-edge, .cable-shine, .cable-shade),
+.ear-right > :is(.cable-edge, .cable-shine, .cable-shade),
+.ear-hook-edge,
+.strand-edge,
+.strand-shine {
+  translate: calc(var(--lx, -0.53) * var(--off)) calc(var(--ly, -0.85) * var(--off));
+}
+
+/* The far side of the wire, turned from the light: three bands along its far edge, so it
+   darkens gradually towards it */
+.cable-shade {
+  --off: calc((var(--band) / 2 - 1.25) * 1px * var(--cable-scale, 1));
+  stroke: rgb(120 128 140);
+  stroke-opacity: calc(0.3 * var(--shade, 0.45));
+  stroke-width: calc(var(--band) * 1px * var(--cable-scale, 1));
+}
+
+.band-1 { --band: 1.8; }
+.band-2 { --band: 1.1; }
+.band-3 { --band: 0.5; }
+
 .cable .relief {
   fill: rgba(232, 235, 240, 0.95);
   stroke-width: calc(0.6px * var(--cable-scale, 1));
@@ -923,7 +985,11 @@ html:not(.dark-mode) .phone-screen {
 /* ---- Uses: earphones ---- */
 
 #uses {
-  --w: 15; --r: -10deg; --h0: 0.25;
+  /* As high as its cable is thick */
+  --w: 15; --r: -10deg; --h0: 0.4;
+  /* A round wire hides where it meets the table under itself, so from above that shadow
+     is only a faint, soft darkening beside it */
+  --round: 2.5;
   /* Never off the edge of a narrower table */
   left: max(calc(50% - 41.5 * var(--u)), calc(12.5 * var(--u)));
   top: calc(100% - 7 * var(--u));
@@ -1010,6 +1076,18 @@ html:not(.dark-mode) .phone-screen {
   margin-left: -100.61%;
 }
 
+/* Which is which, on each faceplate, in the same marker and size as the label */
+.bud .glow-ink {
+  inset: auto;
+  top: 38%;
+  translate: -50% -50%;
+  font-size: 12.6cqi;
+  line-height: 1;
+}
+
+.bud-left .glow-ink { left: 71.5%; }
+.bud-right .glow-ink { left: 28%; }
+
 #uses .tag {
   --tx: 60.5%; --ty: 75.2%; --tw: 9; --tr: 4deg;
 }
@@ -1050,6 +1128,8 @@ html:not(.dark-mode) .phone-screen {
 
 #papers {
   --w: 30; --r: -9deg; --h0: 0.12;
+  /* Sheets lie flat, with no edge thick enough to darken the table where they meet it */
+  --contact-alpha: 0;
   left: calc(100% + 0 * var(--u));
   top: calc(100% - 7 * var(--u));
 }
@@ -1123,18 +1203,25 @@ html:not(.dark-mode) .phone-screen {
     inset 2em 2em 2em rgba(177, 177, 177, 0.25);
 }
 
-/* Above .light so the icon can glow; --lit is set by the script. A pixel bigger than the
-   plate: lined up exactly, the plate's white would show along the curved edges, where both
-   only partly cover a pixel. */
+/* Above .light so the icon can glow; --lit is set by the script. At night, a pixel bigger
+   than the plate: lined up exactly, the plate's white would show along the curved edges,
+   where both only partly cover a pixel. Not by day: past the plate there's nothing for it
+   to multiply, so that pixel shows the light itself, a bright rim, and the light is so near
+   white that the plate's own edge doesn't show. */
 #switch .item::after {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: 0;
   z-index: 3;
-  border-radius: calc(3em + 1px);
+  border-radius: 3em;
   background: var(--lit, transparent);
   mix-blend-mode: multiply;
   pointer-events: none;
+}
+
+.dark-mode #switch .item::after {
+  inset: -1px;
+  border-radius: calc(3em + 1px);
 }
 
 .sw-icon {
@@ -1185,7 +1272,9 @@ html:not(.dark-mode) .sw-sun {
   width: 100%;
   height: 100%;
   border-radius: 3em;
-  border: 1em solid #ddd;
+  /* Its rim catches the light on the top and left, and is in its own shade on the far sides */
+  border: 1em solid;
+  border-color: #e8e8e8 #c4c4c4 #b8b8b8 #e2e2e2;
   background: #fff;
   box-shadow: 0 0 2em rgba(0, 0, 0, 0.75), -2em -2em 2em rgba(255, 255, 255, 0.75);
 }
@@ -1251,7 +1340,7 @@ html:not(.dark-mode) .sw-sun {
     --u: 1vw;
     height: calc(385 * var(--u));
     min-height: 100svh;
-    background-image: url('{{ "/assets/images/table/wood-small.webp" | relative_url }}');
+    background-image: url('{{ "/assets/images/table/desk-small.webp" | relative_url }}');
   }
 
   /* --y is from the top of the table here */
@@ -1260,6 +1349,11 @@ html:not(.dark-mode) .sw-sun {
   }
 
   #intro { --x: 0; --y: 60; --w: 80; translate: -50% 0; }
+  /* Under the card, which is the width of the pool */
+  .dark-mode .light:empty {
+    --bulb-y: calc(79.5 * var(--u));
+    --pool: calc(80 * var(--u));
+  }
   #switch { --w: 10; left: calc(100% - 9 * var(--u)); top: calc(11 * var(--u)); }
   #about { --x: -16; --y: 31; --w: 32; }
   #projects { --x: 20; --y: 33; --w: 24; --tw: 21; }
