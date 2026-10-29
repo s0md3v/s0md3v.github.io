@@ -174,12 +174,15 @@ layout_style: "homepage"
       </span></span>
     </a>
 
-    <a class="obj" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
+    <a class="obj stuck" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}simone.webp" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.webp 360w"
           sizes="(max-width: 700px) 30vw, min(12.5vw, 20vh)" width="360" height="319" alt="">
-        <!-- A halo, in invisible glow ink, partly on the table -->
-        <span class="glow-ink" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
+        <!-- A halo, in invisible glow ink, partly on the table. Hovered, at night, it turns
+             gold, and sparkles. -->
+        <span class="glow-ink" data-glow="halo" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
+        <!-- Glitter in its laminate, which glints, hovered, by day: drawn by the script -->
+        <canvas class="glitter" aria-hidden="true"></canvas>
       </span></span>
       <span class="tag t4"><span>{{ n.philosophy.label | escape }}</span></span>
     </a>
@@ -468,6 +471,108 @@ layout_style: "homepage"
       }
       plug.addEventListener('click', pull);
       pi.querySelector('.usb-run').addEventListener('click', pull);
+
+      // The sticker's laminate has glitter in it: flakes, each tilted a little its own way,
+      // so each glints only when it's at just the angle to turn the window's light up to
+      // the eye. The eye's about over the pointer, so moving over it, different ones do;
+      // held still, a hand's tremor is enough for a few to twinkle. Not at night: away
+      // from the lamp, it's too dark for any to.
+      const sticker = document.getElementById('philosophy');
+      const vinyl = sticker.querySelector('.item');
+      const glitter = sticker.querySelector('.glitter');
+      const pen = glitter.getContext('2d');
+      const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+      // Where, as a share of its width and height; how it's tilted, as the slope of its
+      // face; and whether it's holographic, as some are, which glint a colour that changes
+      // with the angle, rather than silver
+      const flakes = Array.from({ length: 900 }, () => ({
+        x: Math.random(), y: Math.random(), tx: 0.3 * gauss(), ty: 0.3 * gauss(),
+        holo: Math.random() < 0.3, hue: Math.random() * 360,
+      }));
+      // A glint: a sharp point, soft round it. White, or one of twelve colours.
+      const sprites = [null, ...Array.from({ length: 12 }, (_, i) => i * 30)].map(hue => {
+        const sprite = document.createElement('canvas');
+        sprite.width = sprite.height = 32;
+        const g = sprite.getContext('2d');
+        const glow = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+        glow.addColorStop(0, '#fff');
+        glow.addColorStop(0.15, hue === null ? 'rgb(255 255 255 / 0.9)' : `hsl(${hue} 100% 85% / 0.9)`);
+        glow.addColorStop(0.45, hue === null ? 'rgb(255 255 255 / 0.2)' : `hsl(${hue} 100% 65% / 0.25)`);
+        glow.addColorStop(1, 'rgb(255 255 255 / 0)');
+        g.fillStyle = glow;
+        g.fillRect(0, 0, 32, 32);
+        return sprite;
+      });
+      let eye = [0.5, 0.443], source, glinting = false;
+      function glints(time) {
+        const [w, h] = [glitter.width, glitter.height];
+        pen.clearRect(0, 0, w, h);
+        pen.globalCompositeOperation = 'lighter';
+        const { L, spread, size } = source;
+        // About two and a half of its widths away, and never quite still
+        const shake = still ? [0, 0] : [0.004 * Math.sin(time / 310) + 0.003 * Math.sin(time / 97),
+          0.004 * Math.cos(time / 270) + 0.003 * Math.sin(time / 113)];
+        const [ex, ey, ez] = [eye[0] + shake[0], eye[1] + shake[1], 2.5];
+        flakes.forEach(f => {
+          const [fx, fy] = [f.x, f.y * h / w];
+          const length = Math.hypot(ex - fx, ey - fy, ez);
+          // Halfway between the light and the eye, as a slope
+          const [hx, hy, hz] = [L[0] + (ex - fx) / length, L[1] + (ey - fy) / length, L[2] + ez / length];
+          const [dx, dy] = [f.tx - hx / hz, f.ty - hy / hz];
+          const shine = Math.exp(-(dx * dx + dy * dy) / spread ** 2);
+          if (shine < 0.03) return;
+          const sprite = f.holo ? sprites[1 + Math.floor(((f.hue + Math.atan2(dy, dx) * 90 / Math.PI) % 360 + 360) % 360 / 30)] : sprites[0];
+          const r = (1 + 2.2 * shine) * size;
+          pen.globalAlpha = shine;
+          pen.drawImage(sprite, f.x * w - r, f.y * h - r, 2 * r, 2 * r);
+        });
+        if (glinting && !still) requestAnimationFrame(glints);
+      }
+      function look(e) {
+        const r = vinyl.getBoundingClientRect();
+        const turn = -(parseFloat(getComputedStyle(vinyl).rotate) || 0) * Math.PI / 180;
+        const [x, y] = [e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2];
+        const w = vinyl.offsetWidth;
+        eye = [0.5 + (x * Math.cos(turn) - y * Math.sin(turn)) / w,
+          vinyl.offsetHeight / w / 2 + (x * Math.sin(turn) + y * Math.cos(turn)) / w];
+        if (still) requestAnimationFrame(glints);
+      }
+      function shimmer(e) {
+        if (glinting || document.documentElement.classList.contains('dark-mode')) return;
+        glinting = true;
+        const dpr = devicePixelRatio || 1;
+        glitter.width = Math.round(glitter.offsetWidth * dpr);
+        glitter.height = Math.round(glitter.offsetHeight * dpr);
+        // Which way the window is, and how high, as the wires are told. It's broad, so
+        // each flake catches it over a fair range of angles, softly.
+        const [lx, ly] = ['--lx', '--ly'].map(key => parseFloat(glitter.style.getPropertyValue(key)) || 0);
+        const flat = parseFloat(glitter.style.getPropertyValue('--shade')) || 0.45;
+        source = { L: [lx * flat, ly * flat, Math.sqrt(1 - flat * flat)], spread: 0.08, size: 1.5 * dpr };
+        if (e && e.clientX !== undefined) look(e);
+        else eye = [0.5, vinyl.offsetHeight / vinyl.offsetWidth / 2];
+        requestAnimationFrame(glints);
+      }
+      sticker.addEventListener('pointerenter', shimmer);
+      // Its halo's sparkles, at a few places round it, each twinkling in its own time
+      const ring = sticker.querySelector('.glow-ink path');
+      const around = ring.getTotalLength();
+      const sparkles = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      sparkles.setAttribute('class', 'sparkles');
+      for (let i = 0; i < 9; i++) {
+        const { x, y } = ring.getPointAtLength(around * (i + 0.2 + Math.random() * 0.6) / 9);
+        const sparkle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        sparkle.setAttribute('d', 'M0 -21L2.2 -2.2L21 0L2.2 2.2L0 21L-2.2 2.2L-21 0L-2.2 -2.2Z');
+        Object.assign(sparkle.style, { translate: `${x.toFixed(1)}px ${y.toFixed(1)}px`, rotate: `${pick(30) - 15}deg` });
+        sparkle.style.animationDelay = `${(-Math.random() * 2.4).toFixed(2)}s`;
+        sparkle.style.animationDuration = `${(1.6 + Math.random() * 1.6).toFixed(2)}s`;
+        sparkles.append(sparkle);
+      }
+      ring.after(sparkles);
+      sticker.addEventListener('pointermove', look);
+      sticker.addEventListener('focusin', () => shimmer());
+      ['pointerleave', 'focusout'].forEach(type => sticker.addEventListener(type, () => {
+        if (!sticker.matches(':hover, :focus-visible')) glinting = false;
+      }));
 
       const phone = document.getElementById('phone');
       const clock = phone.querySelector('.phone-time');
@@ -854,6 +959,7 @@ layout_style: "homepage"
           const x = rect.left + rect.width / 2 - box.left, y = rect.top + rect.height / 2 - box.top;
           const copy = document.createElement('span');
           copy.innerHTML = el.innerHTML;
+          if (el.dataset.glow) copy.className = el.dataset.glow;
           COPIED.forEach(key => { copy.style[key] = style[key]; });
           Object.assign(copy.style, {
             left: `${x - el.offsetWidth / 2}px`,
@@ -873,7 +979,7 @@ layout_style: "homepage"
       }
       function rise() {
         risers.forEach(([obj, copy]) => {
-          copy.style.translate = obj.matches(':hover, :focus-visible') ? obj.style.getPropertyValue('--rise') : '';
+          copy.style.translate = obj.matches(':hover, :focus-visible') && !obj.matches('.stuck') ? obj.style.getPropertyValue('--rise') : '';
         });
       }
       ['pointerover', 'pointerout', 'focusin', 'focusout'].forEach(type =>
@@ -884,7 +990,8 @@ layout_style: "homepage"
       const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1], playground: [0.25, 1],
         favorites: [0.3, 0.8], uses: [0.25, 1], blog: [0.2, 0.4] };
       const rimmed = objects.filter(el => el.id in RIMS);
-      const cables = Array.from(table.querySelectorAll('svg.cable'));
+      // And the sticker's glitter, which only needs which way the light is
+      const cables = Array.from(table.querySelectorAll('svg.cable, .glitter'));
       // Shiny things have photos for the night too, lit evenly from above and not shining,
       // as which side the lamp is on is the page's to give. They're fetched when the switch
       // might be flipped, so they're there when it is.

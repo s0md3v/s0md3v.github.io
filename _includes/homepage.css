@@ -214,18 +214,18 @@
   height: auto;
 }
 
-:is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .part {
+:is(a.obj:not(.stuck):is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .part {
   filter: drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
 }
 
 /* Lifted by moving, not scaling: scaled text and images shimmer against each other */
-a.obj:hover,
-a.obj:focus-visible,
+a.obj:not(.stuck):hover,
+a.obj:not(.stuck):focus-visible,
 .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover)) {
   z-index: 30;
 }
 
-:is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .lift {
+:is(a.obj:not(.stuck):is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .lift {
   filter:
     drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5 / var(--round, 1))))
     drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
@@ -496,9 +496,81 @@ a.obj:focus-visible,
 
 /* ---- Philosophy: a sticker ---- */
 
+/* Stuck down, so, hovered, it doesn't lift like the rest */
 #philosophy {
   --x: 22; --y: -23; --w: 11; --r: 8deg; --h0: 0.08;
   --tx: 52%; --ty: 112%; --tw: 12; --tr: -4deg;
+}
+
+/* Glitter in its laminate, over all of it, its white edge too, where a glint hardly shows */
+.glitter {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mask: url('{{ "/assets/images/table/simone-220.webp" | relative_url }}') 0 0 / 100% 100%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+#philosophy:is(:hover, :focus-visible) .glitter {
+  opacity: 1;
+}
+
+.dark-mode .glitter {
+  display: none;
+}
+
+/* At night, hovered, its halo turns gold */
+.glow > .halo {
+  transition: color 0.6s ease, translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.glow > .halo svg {
+  transition: filter 0.6s ease;
+}
+
+.table:has(#philosophy:is(:hover, :focus-visible)) .glow > .halo {
+  color: rgb(255 218 118);
+}
+
+.table:has(#philosophy:is(:hover, :focus-visible)) .glow > .halo svg {
+  filter: drop-shadow(0 0 0.08em rgb(255 196 80 / 0.8)) drop-shadow(0 0 0.35em rgb(255 180 60 / 0.45));
+}
+
+/* And sparkles: a few glints round it, each in its own time */
+.sparkles path {
+  fill: rgb(255 248 225);
+  stroke: none;
+  filter: drop-shadow(0 0 4px rgb(255 214 120));
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: twinkle 2s ease-in-out infinite paused;
+}
+
+.table:has(#philosophy:is(:hover, :focus-visible)) .sparkles path {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@keyframes twinkle {
+  0%, 100% { scale: 0; }
+  12% { scale: 1; }
+  30% { scale: 0.15; }
+  55% { scale: 0; }
+}
+
+/* Held still, but there */
+@media (prefers-reduced-motion: reduce) {
+  .sparkles path {
+    animation: none;
+    scale: 0.6;
+  }
 }
 
 /* ---- Gallery: a digital camera ---- */
