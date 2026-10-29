@@ -214,18 +214,18 @@
   height: auto;
 }
 
-:is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible))) .part {
+:is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .part {
   filter: drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
 }
 
 /* Lifted by moving, not scaling: scaled text and images shimmer against each other */
 a.obj:hover,
 a.obj:focus-visible,
-.obj:has(.cover):is(:hover, :has(:focus-visible)) {
+.obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover)) {
   z-index: 30;
 }
 
-:is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible))) .lift {
+:is(a.obj:is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .lift {
   filter:
     drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5 / var(--round, 1))))
     drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
@@ -482,7 +482,7 @@ a.obj:focus-visible,
 /* ---- About: a polaroid ---- */
 
 #about {
-  --x: -31; --y: -18; --w: 14; --r: -7deg; --h0: 0.2;
+  --x: -27; --y: -18; --w: 14; --r: -7deg; --h0: 0.2;
 }
 
 .polaroid-caption {
@@ -912,39 +912,381 @@ html:not(.dark-mode) .phone-screen {
   d: var(--tug);
 }
 
-/* ---- Projects: a USB stick ---- */
+/* ---- Projects: a Raspberry Pi Zero with a screen ---- */
 
-/* Half as big again as a real one, so its writing reads */
+/* A quarter bigger than a real one, so its screen reads. Above .light, like #gallery, as
+   the screen glows; lit by #room-light-projects instead. Its cable is round (see #uses). */
 #projects {
-  --x: -24; --y: 5; --w: 9; --r: -8deg; --h0: 1.1;
-  --tx: 42%; --ty: 150%; --tw: 8.5; --tr: -2deg;
+  --x: -26; --y: 8; --w: 16.5; --r: -4deg; --h0: 0.5; --round: 2.5;
+  z-index: 41;
 }
 
-.paint-pen {
+/* About 7 mm high, with its screen; #projects' own, lower --h0 is the cable's */
+.pi-board {
+  --h0: 1.1;
+  position: relative;
+  display: block;
+}
+
+#projects .base,
+#projects .cable,
+html:not(.dark-mode) .pi-screen {
+  filter: url(#room-light-projects);
+}
+
+/* Over the glass in the photo. Round the pixels is a black frame, which isn't lit; the
+   pixels, even black ones, are a little, by the backlight, which comes in from the left
+   edge, where the screen's ribbon is, and leaks most at its corners. */
+.pi-screen {
   position: absolute;
-  left: 18%;
-  top: 22%;
+  z-index: 2;
+  left: 14.86%;
+  top: 3.29%;
+  width: 54.68%;
+  height: 70.26%;
+  overflow: hidden;
+  container-type: inline-size;
+  background:
+    radial-gradient(18% 30% at 0 6%, rgb(44 50 64 / 0.6), transparent),
+    radial-gradient(18% 30% at 0 94%, rgb(44 50 64 / 0.6), transparent),
+    linear-gradient(90deg, rgb(24 27 34), rgb(13 15 19) 25%, rgb(11 13 16));
+  box-shadow: inset 0 0 0 1.4cqi #060707;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
+  color: #e9ecef;
+}
+
+.pi-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(112deg, rgba(255, 255, 255, 0.12) 0 34%, rgba(255, 255, 255, 0.035) 34% 58%, transparent 58%);
+}
+
+/* By day, the lip of the screen's metal frame shades the glass along its top and left */
+html:not(.dark-mode) .pi-screen {
+  box-shadow: inset 0 0 0 1.4cqi #060707, inset 1.2cqi 1.4cqi 1.6cqi rgb(0 0 0 / 0.55);
+}
+
+/* With the room dark, there's nothing bright for the glass to reflect, and the light of
+   its letters spreads a little, as bright things in the dark do */
+.dark-mode .pi-screen::after {
+  display: none;
+}
+
+.dark-mode .pi-screen {
+  text-shadow: 0 0 0.8cqi rgb(233 236 239 / 0.35);
+}
+
+.pi-glow {
+  position: absolute;
+  z-index: 1;
+  left: 14.86%;
+  top: 3.29%;
+  width: 54.68%;
+  height: 70.26%;
+  opacity: 0;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 1.2cqi 0.3cqi rgb(150 160 180 / 0.22), 0 0 4cqi 1cqi rgb(150 160 180 / 0.1);
+  pointer-events: none;
+}
+
+.dark-mode .pi-glow {
+  opacity: 1;
+}
+
+/* The way to the projects, so as big as the writing on the other things */
+.pi-title {
+  position: absolute;
+  left: 6cqi;
+  right: 6cqi;
+  top: 5cqi;
+  padding-bottom: 2.6cqi;
+  border-bottom: 0.5cqi solid #343a44;
+  font-size: 11cqi;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: #729fcf;
+}
+
+/* As Raspberry Pi OS colours a path in its prompt */
+.pi-title > span {
+  color: #4e6f96;
+}
+
+.pi-page {
+  position: absolute;
+  left: 6cqi;
+  right: 6cqi;
+  top: 21cqi;
+  bottom: 3cqi;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2.2cqi;
+  visibility: hidden;
+}
+
+.pi-page.pi-shown {
+  visibility: visible;
+}
+
+.pi-page b {
   display: flex;
   align-items: center;
-  gap: 2cqi;
-  font: 25cqi/1 "Reenie Beanie", cursive;
-  -webkit-text-stroke: 0.04em transparent;
-  background: linear-gradient(160deg, #f6e3a1 10%, #c9a14b 40%, #f1d68a 58%, #9d7630 90%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  rotate: -4deg;
-  filter: drop-shadow(0 0.4cqi 0.3cqi rgba(0, 0, 0, 0.55));
+  gap: 0.25em;
+  font-size: 12.5cqi;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.paint-pen svg {
-  width: 0.62em;
-  height: 0.62em;
-  fill: url(#paint-pen-gold);
-  stroke: url(#paint-pen-gold);
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-  rotate: -8deg;
+.pi-page svg {
+  flex: none;
+  width: 0.8em;
+  height: 0.8em;
+  fill: #f2b84b;
+}
+
+.pi-page small {
+  font-size: 6.4cqi;
+  line-height: 1;
+  color: #9aa3ae;
+}
+
+/* The green activity light, which flickers when the Pi reads or writes its card */
+.pi-act {
+  position: absolute;
+  z-index: 3;
+  left: 67.47%;
+  top: 78.42%;
+  width: 2.2%;
+  aspect-ratio: 1.6;
+  translate: -50% -50%;
+  border-radius: 35%;
+  background: radial-gradient(closest-side, #f2ffe8, #6ef58a 45%, rgb(40 210 90 / 0.5) 80%, transparent);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.act .pi-act {
+  opacity: 1;
+}
+
+/* The frame's lower edge, right above it, catches its light, a little way to each side
+   and no further than the frame's corner. In hundredths of the Pi's width: the light is
+   2.2 by 1.4, and the edge 0.6 above it. */
+.pi-act::after {
+  content: "";
+  position: absolute;
+  left: -3.5cqi;
+  right: -1cqi;
+  top: -1cqi;
+  height: 0.45cqi;
+  background: radial-gradient(3.2cqi 50% at calc(100% - 2.1cqi) 50%, rgb(140 255 165 / 0.8), transparent);
+}
+
+/* Its light on the board round it: only on the board, by its own outline, and under the
+   screen, which stands taller and hides it, though its frame catches it. Faint by day. */
+.pi-act-glow {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: radial-gradient(22% 50% at 67.5% 78.4%, rgb(80 255 120 / 0.38), rgb(80 255 120 / 0.12) 45%, transparent);
+  /* The small image, which is all an outline needs, and which the page most often uses */
+  mask: url('{{ "/assets/images/table/pi-560.webp" | relative_url }}') 0 0 / 100% 100%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.act .pi-act-glow {
+  opacity: 0.4;
+}
+
+.dark-mode .act .pi-act-glow {
+  opacity: 1;
+}
+
+/* On the table at night: the light that leaks from the edges of the screen, where its
+   backlight comes in, faint and cool, and that from the activity light, green, which
+   reaches past the board's edge by the power socket. The board hides the rest. */
+.pi-spill {
+  position: absolute;
+  inset: 0;
+  rotate: calc(var(--r, 0deg) + var(--j, 0deg));
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(34% 26% at 41% 34%, rgb(150 165 195 / 0.1), transparent);
+}
+
+.pi-spill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(20% 42% at 67.5% 80%, rgb(80 255 120 / 0.34), rgb(80 255 120 / 0.12) 40%, transparent);
+}
+
+.dark-mode .pi-spill,
+.act .pi-spill::after {
+  opacity: 1;
+}
+
+/* A white PVC cable, opaque, a little under 4 mm across, and its moulded plug */
+#projects .cable {
+  --cable-scale: 1.2;
+  left: -150cqi;
+  top: -20cqi;
+  width: 400cqi;
+  height: 500cqi;
+}
+
+#projects .usb-plug {
+  z-index: 1;
+}
+
+#projects .cable-core {
+  stroke: rgb(238 239 241);
+}
+
+/* Clickable, all of it: it pulls the plug too */
+.usb-run > .cable-edge {
+  --off: calc(-0.45px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
+  pointer-events: stroke;
+}
+
+.usb-run > .cable-shine {
+  --off: calc(1.25px * var(--cable-scale, 1) * var(--glint, 0.5));
+}
+
+.usb-run > :is(.cable-edge, .cable-shine, .cable-shade) {
+  translate: calc(var(--lx, -0.53) * var(--off)) calc(var(--ly, -0.85) * var(--off));
+}
+
+#projects .usb-body {
+  fill: url(#usb-round);
+}
+
+.usb-groove {
+  fill: none;
+  stroke: rgb(120 126 136 / 0.3);
+  stroke-width: 0.45;
+}
+
+.usb-outline {
+  fill: none;
+  stroke: rgb(96 102 112 / 0.3);
+  stroke-width: 0.3;
+}
+
+#projects .usb-metal {
+  fill: url(#plug-metal);
+}
+
+#projects .usb-latch {
+  fill: rgb(52 56 62);
+}
+
+/* ---- Projects: unplugged, and booting ---- */
+
+/* Pushed in, it speeds up till it stops dead in the socket */
+.usb-pull,
+.pi-plug {
+  transition: translate 0.18s cubic-bezier(0.55, 0, 0.8, 0.4);
+}
+
+/* Pulled, it comes free all at once, then the cable drags it to a stop, 11 mm out */
+.out .usb-pull {
+  translate: 0 13px;
+  transition: translate 0.26s cubic-bezier(0.15, 0.85, 0.35, 1);
+}
+
+.out .pi-plug {
+  translate: 0 13cqi;
+  transition: translate 0.26s cubic-bezier(0.15, 0.85, 0.35, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .usb-pull,
+  .pi-plug {
+    transition: none !important;
+  }
+}
+
+/* Over its plug, and only that, so the board's still the way to the projects. Nothing
+   gives it away: no pointer, and the Pi doesn't lift. */
+.pi-plug {
+  position: absolute;
+  z-index: 6;
+  left: 44.4cqi;
+  top: 43.6cqi;
+  width: 13cqi;
+  height: 27.5cqi;
+  padding: 0;
+  border: 0;
+  border-radius: 1.2cqi;
+  background: none;
+}
+
+
+/* With no power, the backlight's out: the glass is as dark as it gets, though by day it
+   still shows the window, and the pixels show nothing. Nothing glows. */
+.off .pi-screen {
+  background: rgb(9 10 11);
+  text-shadow: none;
+}
+
+.off .pi-screen > *,
+.booting .pi-title,
+.booting .pi-page {
+  visibility: hidden;
+}
+
+.off .pi-glow,
+.off .pi-spill {
+  opacity: 0;
+}
+
+/* The console, in a 6 by 11 font on its 240 by 135 pixels: 40 columns and 12 rows, inside
+   the frame, which the screen's own shows round. Lines wrap at the last column, mid-word,
+   as a console's do. */
+.pi-boot {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 1.4cqi;
+  overflow: hidden;
+  clip-path: inset(1.4cqi);
+  background: inherit;
+  box-shadow: inherit;
+  font-size: 4.05cqi;
+  line-height: 4.4cqi;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #aaa;
+}
+
+.pi-boot[hidden] {
+  display: none;
+}
+
+/* Scrolled up by the script, a row at a time */
+.pi-boot > span {
+  display: block;
+  translate: 0 calc(var(--rows, 0) * -4.4cqi);
+}
+
+/* As systemd marks what's started, and the name of it */
+.pi-boot i {
+  font-style: normal;
+  color: #55ff55;
+}
+
+.pi-boot b {
+  font-weight: inherit;
+  color: #fff;
 }
 
 /* ---- Blog: a notebook ---- */
@@ -991,7 +1333,7 @@ html:not(.dark-mode) .phone-screen {
      is only a faint, soft darkening beside it */
   --round: 2.5;
   /* Never off the edge of a narrower table */
-  left: max(calc(50% - 41.5 * var(--u)), calc(12.5 * var(--u)));
+  left: max(calc(50% - 47 * var(--u)), calc(6.5 * var(--u)));
   top: calc(100% - 7 * var(--u));
 }
 
@@ -1095,7 +1437,7 @@ html:not(.dark-mode) .phone-screen {
 /* ---- Favorites: a cassette ---- */
 
 #favorites {
-  --x: -55; --y: 1; --w: 15; --r: 9deg; --h0: 1.4;
+  --x: -55; --y: -6; --w: 15; --r: 9deg; --h0: 1.4;
   /* Never off the edge of a narrower table */
   left: max(calc(50% + var(--x) * var(--u)), calc(9 * var(--u)));
 }
@@ -1355,8 +1697,11 @@ html:not(.dark-mode) .sw-sun {
     --pool: calc(80 * var(--u));
   }
   #switch { --w: 10; left: calc(100% - 9 * var(--u)); top: calc(11 * var(--u)); }
-  #about { --x: -16; --y: 31; --w: 32; }
-  #projects { --x: 20; --y: 33; --w: 24; --tw: 21; }
+  #about { --x: -22; --y: 31; --w: 32; }
+  /* Its plug in a laptop just off the side of the table, so no cable */
+  #projects { --x: 31; --y: 40; --w: 46; --r: 0deg; }
+  #projects .cable,
+  .pi-plug { display: none; }
   #blog { --w: 44; --r: -4deg; left: calc(27 * var(--u)); top: calc(170 * var(--u)); }
   #phone { --w: 38; --r: -4deg; left: calc(73 * var(--u)); top: calc(178 * var(--u)); }
   #phone .run-down { display: none; }

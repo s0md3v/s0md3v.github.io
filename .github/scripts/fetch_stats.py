@@ -175,6 +175,8 @@ def main():
 
     stats = {
         "total_stars": format_number(total_stars),
+        # Exact, for the Pi on the homepage to show
+        "github_stars": total_stars,
         "monthly_downloads": format_downloads(monthly_impact),
         "total_projects": len([r for r in repos if not r['fork'] and r['stargazers_count'] > 100]),
         "last_updated": time.strftime("%d %b %Y")

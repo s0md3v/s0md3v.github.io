@@ -36,16 +36,69 @@ layout_style: "homepage"
       </span></span>
     </a>
 
-    <a class="obj" id="projects" href="{{ n.projects.url | relative_url }}">
+    <!-- A Raspberry Pi Zero with a screen, showing how the projects are doing, as of the
+         last time _data/stats.json was updated -->
+    <div class="obj self-lit" id="projects">
+      <!-- At night, the light that the screen's edges and the activity light throw on the table,
+           under the board -->
+      <span class="pi-spill" aria-hidden="true"></span>
       <span class="lift"><span class="item">
-        <img class="base" src="{{ t }}usb.webp" srcset="{{ t }}usb-190.webp 190w, {{ t }}usb.webp 480w"
-          data-night="{{ t }}usb-night-190.webp 190w, {{ t }}usb-night.webp 480w" sizes="(max-width: 700px) 26vw, min(9.5vw, 15.2vh)" width="480" height="201" alt="">
-        <span class="paint-pen">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><linearGradient id="paint-pen-gold" x1="0.3" y1="0" x2="0.7" y2="1"><stop offset="0.1" stop-color="#f6e3a1" /><stop offset="0.55" stop-color="#d9b65e" /><stop offset="0.9" stop-color="#f1d68a" /></linearGradient><path d="M12.2 2.6 14.6 9.3 21.4 9.1 16 13.4 18.2 20.3 12.1 16.2 6 20.6 8.1 13.6 2.7 9.4 9.6 9.2Z" /></svg>74k
+        <!-- In hundredths of the Pi's width, 1.16 to the millimetre. A micro-USB cable in its
+             data port, so the laptop off the table both powers it and talks to it, the Pi
+             being a USB gadget: the plug's metal, the moulding round it, the strain relief
+             with its grooves, and the cable, lying in a loose sweep as it was left, off the
+             bottom of the table. -->
+        <svg class="cable" viewBox="-150 -20 400 500" aria-hidden="true">
+          <!-- What moves when it's pulled out. The plug's metal is all there, 6.8 mm of it in
+               the socket, under the board, with the two holes its latches catch through. -->
+          <g class="usb-pull">
+            <g class="usb-run">
+              <path class="cable-edge" d="M50.9 70.9C50.9 100 44 122 52 146S96 186 118 226S146 330 150 480" />
+              <path class="cable-core" d="M50.9 70.9C50.9 100 44 122 52 146S96 186 118 226S146 330 150 480" />
+              <path class="cable-shine" d="M50.9 70.9C50.9 100 44 122 52 146S96 186 118 226S146 330 150 480" />
+            </g>
+            <rect class="usb-metal" x="47" y="34.5" width="7.8" height="9.9" rx="0.3" />
+            <path class="usb-latch" d="M48.5 36.1H49.7V37.6H48.5ZM52.1 36.1H53.3V37.6H52.1Z" />
+          </g>
+        </svg>
+        <span class="part pi-board">
+          <img class="base" src="{{ t }}pi.webp" srcset="{{ t }}pi-560.webp 560w, {{ t }}pi.webp 960w"
+            sizes="(max-width: 700px) 46vw, min(16.5vw, 26.4vh)" width="960" height="419" alt="">
+          <span class="pi-glow"></span>
+          <span class="pi-screen" aria-hidden="true">
+            <!-- Where its shell is, which is what it's the way to -->
+            <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}</span>
+            <span class="pi-page pi-shown"><b><svg viewBox="0 0 16 16"><path d="M8 .9l2.2 4.6 5 .6-3.7 3.4 1 5L8 12l-4.5 2.5 1-5L.8 6.1l5-.6z" /></svg><span class="pi-value">{{ site.data.stats.github_stars | default: 0 | divided_by: 1000 }},{{ site.data.stats.github_stars | modulo: 1000 | prepend: "00" | slice: -3, 3 }}</span></b><small>stars on github</small></span>
+            <span class="pi-page"><b><svg viewBox="0 0 16 16"><path d="M6.5 1h3v6.5h3.2L8 12.6 3.3 7.5h3.2zM2 13.6h12V15H2z" /></svg><span class="pi-value">{{ site.data.stats.monthly_downloads }}</span></b><small>downloads a month</small></span>
+            <!-- The console, as it boots, written by the script -->
+            <span class="pi-boot" hidden></span>
+          </span>
+          <!-- The activity light, by the power socket, and its light on the board -->
+          <span class="pi-act"></span>
+          <span class="pi-act-glow"></span>
         </span>
+        <!-- The cable's plug, above the board, as it's about as high, so not in its shadow -->
+        <svg class="cable usb-plug" viewBox="-150 -20 400 500" aria-hidden="true">
+          <!-- Rounded across, so it falls off to each side, more so the side away from the
+               sun, on the right -->
+          <linearGradient id="usb-round">
+            <stop offset="0" stop-color="#c3c7cd" /><stop offset="0.14" stop-color="#eceef1" />
+            <stop offset="0.42" stop-color="#f8f9fa" /><stop offset="0.8" stop-color="#e3e6e9" />
+            <stop offset="1" stop-color="#aeb3ba" />
+          </linearGradient>
+          <g class="usb-pull">
+            <path class="usb-body" d="M47.6 61.4H54.2L53.7 70.9H48.1Z" />
+            <path class="usb-groove" d="M47.8 64.5H54M47.9 66.6H53.9M48 68.7H53.8" />
+            <path class="usb-body" d="M45.4 44.2H56.4Q57.3 44.2 57.2 45.1L56.7 60Q56.6 61.6 55 61.6H46.8Q45.2 61.6 45.1 60L44.6 45.1Q44.5 44.2 45.4 44.2Z" />
+            <path class="usb-outline" d="M47.6 61.4H54.2L53.7 70.9H48.1ZM45.4 44.2H56.4Q57.3 44.2 57.2 45.1L56.7 60Q56.6 61.6 55 61.6H46.8Q45.2 61.6 45.1 60L44.6 45.1Q44.5 44.2 45.4 44.2Z" />
+          </g>
+        </svg>
+        <a class="cover" href="{{ n.projects.url | relative_url }}" aria-label="{{ n.projects.label | escape }}"></a>
+        <!-- Pulling the plug, or anywhere on the cable, turns it off; pushing it back boots
+             it. A secret, so it looks like nothing's there, but it's there for keyboards. -->
+        <button class="pi-plug" type="button" aria-label="Unplug the Raspberry Pi"></button>
       </span></span>
-      <span class="tag t1"><span>{{ n.projects.label | escape }}</span></span>
-    </a>
+    </div>
 
     <a class="obj" id="blog" href="{{ n.blog.url | relative_url }}">
       <span class="lift"><span class="item">
@@ -233,6 +286,9 @@ layout_style: "homepage"
       <filter id="room-light-phone" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
+      <filter id="room-light-projects" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
+      </filter>
     </svg>
     <span class="u-probe" aria-hidden="true"></span>
   </main>
@@ -273,6 +329,145 @@ layout_style: "homepage"
       showPhoto(pick(photos.length));
       camera.querySelector('.cam-prev').addEventListener('click', () => showPhoto(shown - 1));
       camera.querySelector('.cam-next').addEventListener('click', () => showPhoto(shown + 1));
+
+      // The Pi's screen shows the stars and the downloads a month, in turn
+      const pi = document.getElementById('projects');
+      const pages = Array.from(pi.querySelectorAll('.pi-page'));
+      let page = pages[0];
+      // Each time it's plugged in, a new count: whatever was left to do from an earlier
+      // time, it doesn't
+      let power = 0;
+      function later(fn, ms, at = power) {
+        setTimeout(() => { if (at === power) fn(); }, ms);
+      }
+      // The activity light flickers as the Pi reads or writes its card: in a few short,
+      // uneven blinks
+      function flicker() {
+        for (let i = 0, at = 0; i < 2 + pick(4); i++) {
+          later(() => pi.classList.add('act'), at);
+          later(() => pi.classList.remove('act'), at += 20 + pick(60));
+          at += 30 + pick(140);
+        }
+      }
+      // Now and then, as a system does, writing its logs
+      (function idle() {
+        setTimeout(() => { if (!still && !pi.matches('.off, .booting')) flicker(); idle(); }, 2000 + pick(5000));
+      })();
+      // A page is drawn over the last from the top down, as quickly as the Pi can send it
+      function draw(next) {
+        const last = page;
+        page = next;
+        next.classList.add('pi-shown');
+        const wipe = { duration: 90, easing: 'linear', fill: 'forwards' };
+        next.animate({ clipPath: ['inset(0 0 100% 0)', 'inset(0)'] }, wipe);
+        const going = last.animate({ clipPath: ['inset(0)', 'inset(100% 0 0 0)'] }, wipe);
+        going.finished.then(() => { last.classList.remove('pi-shown'); going.cancel(); });
+      }
+      if (!still) setInterval(() => {
+        if (!pi.matches('.off, .booting')) draw(pages[(pages.indexOf(page) + 1) % pages.length]);
+      }, 6000);
+
+      // Pulling its plug turns it off; pushing it back in, it boots. Raspberry Pi OS Lite,
+      // which isn't quiet about it: the kernel's log, and systemd's, on the console. The
+      // screen's driver loads only once the system's up, so by then there's a screenful.
+      const plug = pi.querySelector('.pi-plug');
+      const log = pi.querySelector('.pi-boot');
+      const kernel = (time, text) => `[${time.toFixed(6).padStart(12)}] ${text}`;
+      const started = (unit, name, done = 'Started') => [done, unit, ` - ${name}.`];
+      const EARLY = [
+        kernel(0, 'Booting Linux on physical CPU 0x0'),
+        kernel(0, 'CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387d'),
+        kernel(0, 'Memory: 410148K/458752K available'),
+        kernel(0.024419, 'Calibrating delay loop... 697.95 BogoMIPS (lpj=3489792)'),
+        kernel(1.104732, 'dwc2 20980000.usb: DWC OTG Controller'),
+        kernel(1.493557, 'mmc0: new high speed SDHC card at address aaaa'),
+        kernel(1.501863, ' mmcblk0: p1 p2'),
+        kernel(4.112379, 'EXT4-fs (mmcblk0p2): mounted filesystem 3ad7386b-e1ae-4032-ae33-0c40f5ecc4ac ro with ordered data mode. Quota mode: none.'),
+        started('systemd-journald.service', 'Journal Service'),
+        started('systemd-udevd.service', 'Rule-based Manager for Device Events and Files'),
+        kernel(7.004321, 'fbtft: module is from the staging directory, the quality is unknown, you have been warned.'),
+        kernel(7.311904, 'fb_st7789v spi0.0: fbtft_property_value: rotate = 90'),
+        kernel(7.743877, 'Console: switching to colour frame buffer device 40x12'),
+      ];
+      const LATE = [
+        kernel(7.744203, 'graphics fb1: fb_st7789v frame buffer, 240x135, 63 KiB video memory, 4 KiB buffer memory, fps=33, spi0.0 at 32 MHz'),
+        kernel(8.215702, 'using random self ethernet address'),
+        kernel(8.215730, 'using random host ethernet address'),
+        kernel(8.231116, 'g_ether gadget.0: HOST MAC 7e:31:52:b0:4d:a2'),
+        kernel(8.231424, 'g_ether gadget.0: MAC 1a:f4:09:6c:e3:57'),
+        kernel(8.231788, 'g_ether gadget.0: Ethernet Gadget, version: Memorial Day 2008'),
+        kernel(8.231804, 'g_ether gadget.0: g_ether ready'),
+        kernel(8.774530, 'dwc2 20980000.usb: new device is high-speed'),
+        started('systemd-networkd.service', 'Network Configuration'),
+        started('network.target', 'Network', 'Reached target'),
+        started('ssh.service', 'OpenBSD Secure Shell server'),
+        started('multi-user.target', 'Multi-User System', 'Reached target'),
+      ];
+      function print(line) {
+        const row = document.createElement('span');
+        if (typeof line === 'string') row.textContent = line;
+        else {
+          const [done, unit, name] = line;
+          const ok = document.createElement('i');
+          const bold = document.createElement('b');
+          ok.textContent = '  OK  ';
+          bold.textContent = unit;
+          row.append('[', ok, `] ${done} `, bold, name);
+        }
+        log.append(row);
+        // By whole rows, as a console scrolls
+        const style = getComputedStyle(log);
+        const tall = parseFloat(style.lineHeight);
+        const fits = Math.floor((log.clientHeight - 2 * parseFloat(style.paddingTop)) / tall);
+        const rows = Math.round((row.offsetTop + row.offsetHeight - log.firstChild.offsetTop) / tall);
+        log.style.setProperty('--rows', Math.max(0, rows - fits));
+      }
+      function unplug() {
+        power++;
+        pi.classList.remove('act', 'booting');
+        pi.classList.add('out', 'off');
+        log.hidden = true;
+      }
+      function plugIn() {
+        const at = ++power;
+        pi.classList.remove('out');
+        // It comes on as it goes home, at the end of the push
+        later(() => {
+          pi.classList.remove('off');
+          if (still) return;
+          pi.classList.add('booting');
+          log.replaceChildren();
+          log.style.removeProperty('--rows');
+          // Reading its firmware, then the kernel, then the system, off its card
+          for (let t = 0; t < 2600; t += 80 + pick(160)) later(flicker, t, at);
+          // The screen's driver: the console, then whatever more there is
+          later(() => {
+            EARLY.forEach(print);
+            log.hidden = false;
+            let t = 0;
+            LATE.forEach(line => later(() => print(line), t += 50 + pick(170), at));
+            // The stats, drawn over the console, from the top down, as the pages are
+            later(() => {
+              pages.forEach(el => {
+                el.getAnimations().forEach(a => a.cancel());
+                el.classList.toggle('pi-shown', el === pages[0]);
+              });
+              page = pages[0];
+              pi.classList.remove('booting');
+              const going = log.animate({ clipPath: ['inset(1.4cqi)', 'inset(100% 1.4cqi 1.4cqi)'] }, { duration: 90, easing: 'linear', fill: 'forwards' });
+              going.finished.then(() => { log.hidden = true; going.cancel(); });
+            }, t + 500, at);
+          }, 1000, at);
+        }, still ? 0 : 160, at);
+      }
+      function pull() {
+        const out = !pi.classList.contains('out');
+        if (out) unplug();
+        else plugIn();
+        plug.setAttribute('aria-label', out ? 'Plug the Raspberry Pi back in' : 'Unplug the Raspberry Pi');
+      }
+      plug.addEventListener('click', pull);
+      pi.querySelector('.usb-run').addEventListener('click', pull);
 
       const phone = document.getElementById('phone');
       const clock = phone.querySelector('.phone-time');
@@ -375,8 +570,8 @@ layout_style: "homepage"
 
       // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
       const earphones = document.getElementById('uses');
-      // Shade along the wire's far side, laid and swung with the rest of it
-      earphones.querySelectorAll('.ear-left > .cable-core, .ear-right > .cable-core').forEach(core => {
+      // Shade along the wires' far side, laid and swung with the rest of them (the Pi's too)
+      table.querySelectorAll('.ear-left > .cable-core, .ear-right > .cable-core, .usb-run > .cable-core').forEach(core => {
         core.after(...[1, 2, 3].map(n => {
           const band = core.cloneNode();
           band.setAttribute('class', `cable-shade band-${n}`);
