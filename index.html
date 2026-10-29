@@ -38,7 +38,7 @@ layout_style: "homepage"
 
     <!-- A Raspberry Pi Zero with a screen, showing how the projects are doing, as of the
          last time _data/stats.json was updated -->
-    <div class="obj self-lit" id="projects">
+    <div class="obj grounded self-lit" id="projects">
       <!-- At night, the light that the screen's edges and the activity light throw on the table,
            under the board -->
       <span class="pi-spill" aria-hidden="true"></span>
@@ -70,6 +70,9 @@ layout_style: "homepage"
             <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}</span>
             <span class="pi-page pi-shown"><b><svg viewBox="0 0 16 16"><path d="M8 .9l2.2 4.6 5 .6-3.7 3.4 1 5L8 12l-4.5 2.5 1-5L.8 6.1l5-.6z" /></svg><span class="pi-value">{{ site.data.stats.github_stars | default: 0 | divided_by: 1000 }},{{ site.data.stats.github_stars | modulo: 1000 | prepend: "00" | slice: -3, 3 }}</span></b><small>stars on github</small></span>
             <span class="pi-page"><b><svg viewBox="0 0 16 16"><path d="M6.5 1h3v6.5h3.2L8 12.6 3.3 7.5h3.2zM2 13.6h12V15H2z" /></svg><span class="pi-value">{{ site.data.stats.monthly_downloads }}</span></b><small>downloads a month</small></span>
+            <!-- Hovered, a shell, in which someone at the laptop types ls, and what's in it:
+                 written by the script -->
+            <span class="pi-shell" data-ls="{{ site.data.projects | map: 'title' | sort_natural | join: ' ' }}"></span>
             <!-- The console, as it boots, written by the script -->
             <span class="pi-boot" hidden></span>
           </span>
@@ -174,7 +177,7 @@ layout_style: "homepage"
       </span></span>
     </a>
 
-    <a class="obj stuck" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
+    <a class="obj grounded" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}simone.webp" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.webp 360w"
           sizes="(max-width: 700px) 30vw, min(12.5vw, 20vh)" width="360" height="319" alt="">
@@ -367,7 +370,7 @@ layout_style: "homepage"
         going.finished.then(() => { last.classList.remove('pi-shown'); going.cancel(); });
       }
       if (!still) setInterval(() => {
-        if (!pi.matches('.off, .booting')) draw(pages[(pages.indexOf(page) + 1) % pages.length]);
+        if (!pi.matches('.off, .booting, .shell')) draw(pages[(pages.indexOf(page) + 1) % pages.length]);
       }, 6000);
 
       // Pulling its plug turns it off; pushing it back in, it boots. Raspberry Pi OS Lite,
@@ -427,7 +430,11 @@ layout_style: "homepage"
       }
       function unplug() {
         power++;
-        pi.classList.remove('act', 'booting');
+        typing++;
+        typed = null;
+        // What it had read off its card, it's forgotten
+        cached = false;
+        pi.classList.remove('act', 'booting', 'shell');
         pi.classList.add('out', 'off');
         log.hidden = true;
       }
@@ -470,6 +477,92 @@ layout_style: "homepage"
         plug.setAttribute('aria-label', out ? 'Plug the Raspberry Pi back in' : 'Unplug the Raspberry Pi');
       }
       plug.addEventListener('click', pull);
+
+      // Hovered, it's a shell in ~/projects, and someone at the laptop, logged in over the
+      // cable, types ls: a key at a time, then what's there, all at once. Let go, after a
+      // moment, it's cleared, and the stats are back.
+      const shell = pi.querySelector('.pi-shell');
+      const names = shell.dataset.ls.split(' ');
+      // Laid out as ls does: in as few rows as fit 25 columns, down each column, each as
+      // wide as its longest name and two spaces
+      const listing = (() => {
+        for (let rows = 1; ; rows++) {
+          const columns = Array.from({ length: Math.ceil(names.length / rows) }, (_, c) => names.slice(c * rows, c * rows + rows));
+          const widths = columns.map(column => Math.max(...column.map(name => name.length)) + 2);
+          if (widths.reduce((sum, w) => sum + w, -2) <= 25 || rows === names.length) {
+            return Array.from({ length: rows }, (_, r) => columns.filter(column => r < column.length)
+              .map((column, c, row) => c < row.length - 1 ? column[r].padEnd(widths[c]) : column[r]));
+          }
+        }
+      })();
+      // Whether ls, and what's in ~/projects, have been read off the card since it booted:
+      // once they have, they're kept in memory, so running it again doesn't touch the card
+      let typing = 0, typed = null, cached = false;
+      function prompt(text, cursor) {
+        const row = document.createElement('span');
+        const ps1 = document.createElement('b');
+        ps1.textContent = '~/projects $';
+        row.append(ps1, ` ${text}`);
+        if (cursor) row.append(document.createElement('i'));
+        return row;
+      }
+      function show(rows) {
+        shell.replaceChildren(...rows);
+      }
+      function listed() {
+        show([prompt('ls'), ...listing.map(names => {
+          const row = document.createElement('span');
+          row.append(...names.map(name => Object.assign(document.createElement('b'), { textContent: name })));
+          return row;
+        }), prompt('', true)]);
+      }
+      // Each key a little after the last, then Enter
+      function type(at) {
+        if (at !== typing) return;
+        if (typed === 'ls') {
+          typed = true;
+          if (cached) return listed();
+          // The first time, it reads them, a few small reads close together: one flash of
+          // the activity light, and only then the listing
+          cached = true;
+          later(() => pi.classList.add('act'), 0);
+          later(() => pi.classList.remove('act'), 45);
+          return setTimeout(() => { if (at === typing) listed(); }, 60);
+        }
+        typed = 'ls'.slice(0, typed.length + 1);
+        show([prompt(typed, true)]);
+        setTimeout(() => type(at), typed === 'ls' ? 140 + pick(120) : 90 + pick(130));
+      }
+      const wipe = { duration: 90, easing: 'linear' };
+      function ask() {
+        const at = ++typing;
+        if (pi.matches('.off, .booting')) return;
+        if (typed === null) {
+          pi.classList.add('shell');
+          shell.animate({ clipPath: ['inset(0 0 100% 0)', 'inset(0)'] }, wipe);
+          if (still) {
+            typed = true;
+            return listed();
+          }
+          typed = '';
+          show([prompt('', true)]);
+          setTimeout(() => type(at), 350);
+        } else if (typed !== true) setTimeout(() => type(at), 150);
+      }
+      function leave() {
+        const at = ++typing;
+        setTimeout(() => {
+          if (at !== typing || typed === null) return;
+          typed = null;
+          shell.animate({ clipPath: ['inset(0)', 'inset(100% 0 0 0)'] }, wipe).finished
+            .then(() => { if (typed === null) pi.classList.remove('shell'); });
+        }, 1200);
+      }
+      const cover = pi.querySelector('.cover');
+      cover.addEventListener('pointerenter', ask);
+      cover.addEventListener('focus', ask);
+      cover.addEventListener('pointerleave', leave);
+      cover.addEventListener('blur', leave);
       pi.querySelector('.usb-run').addEventListener('click', pull);
 
       // The sticker's laminate has glitter in it: flakes, each tilted a little its own way,
@@ -979,7 +1072,7 @@ layout_style: "homepage"
       }
       function rise() {
         risers.forEach(([obj, copy]) => {
-          copy.style.translate = obj.matches(':hover, :focus-visible') && !obj.matches('.stuck') ? obj.style.getPropertyValue('--rise') : '';
+          copy.style.translate = obj.matches(':hover, :focus-visible') && !obj.matches('.grounded') ? obj.style.getPropertyValue('--rise') : '';
         });
       }
       ['pointerover', 'pointerout', 'focusin', 'focusout'].forEach(type =>

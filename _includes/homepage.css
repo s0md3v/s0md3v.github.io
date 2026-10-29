@@ -214,18 +214,19 @@
   height: auto;
 }
 
-:is(a.obj:not(.stuck):is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .part {
+:is(a.obj:not(.grounded):is(:hover, :focus-visible), .obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible))) .part {
   filter: drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
 }
 
-/* Lifted by moving, not scaling: scaled text and images shimmer against each other */
-a.obj:not(.stuck):hover,
-a.obj:not(.stuck):focus-visible,
-.obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover)) {
+/* Lifted by moving, not scaling: scaled text and images shimmer against each other.
+   Not what's .grounded, which answers a hover its own way. */
+a.obj:not(.grounded):hover,
+a.obj:not(.grounded):focus-visible,
+.obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible)) {
   z-index: 30;
 }
 
-:is(a.obj:not(.stuck):is(:hover, :focus-visible), .obj:has(.cover):is(:hover, :has(:focus-visible)):not(:has(.pi-plug:is(:hover, :focus-visible), .usb-run:hover))) .lift {
+:is(a.obj:not(.grounded):is(:hover, :focus-visible), .obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible))) .lift {
   filter:
     drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5 / var(--round, 1))))
     drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
@@ -496,7 +497,7 @@ a.obj:not(.stuck):focus-visible,
 
 /* ---- Philosophy: a sticker ---- */
 
-/* Stuck down, so, hovered, it doesn't lift like the rest */
+/* Stuck down, so, hovered, it doesn't lift like the rest: it's .grounded */
 #philosophy {
   --x: 22; --y: -23; --w: 11; --r: 8deg; --h0: 0.08;
   --tx: 52%; --ty: 112%; --tw: 12; --tr: -4deg;
@@ -1288,7 +1289,7 @@ html:not(.dark-mode) .pi-screen {
 }
 
 /* Over its plug, and only that, so the board's still the way to the projects. Nothing
-   gives it away: no pointer, and the Pi doesn't lift. */
+   gives it away, not even a pointer. */
 .pi-plug {
   position: absolute;
   z-index: 6;
@@ -1342,6 +1343,47 @@ html:not(.dark-mode) .pi-screen {
 
 .pi-boot[hidden] {
   display: none;
+}
+
+/* The shell: in a bigger font than the boot's, the size of the stats' small print, so 25
+   columns and 7 rows. Its prompt, and folders, bold and blue, as Raspberry Pi OS has them. */
+.pi-shell {
+  position: absolute;
+  inset: 0;
+  display: none;
+  padding: 1.4cqi;
+  background: inherit;
+  box-shadow: inherit;
+  font-size: 6.4cqi;
+  line-height: 7.6cqi;
+  white-space: pre;
+  color: #e9ecef;
+}
+
+.shell .pi-shell {
+  display: block;
+}
+
+.pi-shell > span {
+  display: block;
+}
+
+.pi-shell b {
+  color: #729fcf;
+}
+
+/* The console's cursor: an underline, flashing five times a second */
+.pi-shell i {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  vertical-align: -0.22em;
+  border-bottom: 0.14em solid;
+  animation: pi-cursor 0.4s steps(1) infinite;
+}
+
+@keyframes pi-cursor {
+  50% { opacity: 0; }
 }
 
 /* Scrolled up by the script, a row at a time */
