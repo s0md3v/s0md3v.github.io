@@ -71,8 +71,6 @@ redirect_from:
 jekyll-minifier:
   # Its CSS compressor mangles var() and env() inside calc() (e.g. "var( -  - blog - font - size)")
   compress_css: false
-  uglifier_args:
-    harmony: true
   exclude:
     - "playground/**/*"
 

@@ -1,7 +1,8 @@
 source "https://rubygems.org"
 
-# Pinned to the Jekyll line github-pages (v232) used, to avoid output drift.
-gem "jekyll", "~> 3.10.0"
+# Jekyll 4, for jekyll-minifier 0.2, which minifies with Terser: Uglifier, before it,
+# couldn't parse JavaScript newer than ES2017. Moving from 3.10 changed no page visibly.
+gem "jekyll", "~> 4.4"
 
 # kramdown 2.x needs this for `input: GFM` (configured in _config.yml).
 gem "kramdown-parser-gfm", "~> 1.1"
@@ -14,5 +15,5 @@ gem "logger"
 group :jekyll_plugins do
   gem "jekyll-seo-tag", "~> 2.8"
   gem "jekyll-redirect-from", "~> 0.16"
-  gem "jekyll-minifier", "~> 0.1"
+  gem "jekyll-minifier", "~> 0.2.2"
 end
