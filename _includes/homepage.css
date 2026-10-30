@@ -344,8 +344,10 @@ a.obj:not(.grounded):focus-visible,
 
 /* The stock's grain, for the ink: the card's own photo, made as bright all over as at its
    top left corner (it's lit 2.1% darker to the right, 1.8% to the bottom, and 1.1% at the
-   corners, dodged away), so the same grain's picked out wherever it is on the card. Its
-   grey's then 0.903 on average, 0.0064 either way. */
+   corners), so the same grain's picked out wherever it is on the card. Its grey's then 0.903
+   on average, 0.0064 either way. That's done as it's darkened to its bottom right corner,
+   by multiplying, and brightened back by each filter's first brightness(): Chrome, drawing
+   on the GPU, dodges by so little far too much, and the ink's grain all goes white. */
 #intro .item::after,
 .intro-skip::after,
 .intro-spread::after {
@@ -353,12 +355,12 @@ a.obj:not(.grounded):focus-visible,
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, #000, rgb(2.367% 2.367% 2.367%)),
-    linear-gradient(to bottom, #000, rgb(2.044% 2.044% 2.044%)),
-    radial-gradient(#000, rgb(0.284% 0.284% 0.284%) 50%, rgb(0.568% 0.568% 0.568%) 70.71%,
-      rgb(0.852% 0.852% 0.852%) 86.6%, rgb(1.136% 1.136% 1.136%)),
+    linear-gradient(to right, rgb(97.633% 97.633% 97.633%), #fff),
+    linear-gradient(to bottom, rgb(97.956% 97.956% 97.956%), #fff),
+    radial-gradient(rgb(98.864% 98.864% 98.864%), rgb(99.146% 99.146% 99.146%) 50%,
+      rgb(99.429% 99.429% 99.429%) 70.71%, rgb(99.714% 99.714% 99.714%) 86.6%, #fff),
     url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
-  background-blend-mode: color-dodge, color-dodge, color-dodge, normal;
+  background-blend-mode: multiply, multiply, multiply, normal;
   /* Clear of the card's edges, which the photo darkens as if they were a dip, and where
      nothing's printed */
   clip-path: inset(4%);
@@ -388,7 +390,7 @@ a.obj:not(.grounded):focus-visible,
 }
 
 .intro-skip::after {
-  filter: grayscale(1) invert(1) brightness(4.3842) contrast(19.835);
+  filter: grayscale(1) brightness(1.05763) invert(1) brightness(4.3842) contrast(19.835);
   mix-blend-mode: multiply;
 }
 
@@ -451,7 +453,7 @@ a.obj:not(.grounded):focus-visible,
 
 .intro-spread::after {
   z-index: 3;
-  filter: grayscale(1) invert(1) brightness(5.233) contrast(57.9);
+  filter: grayscale(1) brightness(1.05763) invert(1) brightness(5.233) contrast(57.9);
   mix-blend-mode: lighten;
 }
 
@@ -461,7 +463,7 @@ a.obj:not(.grounded):focus-visible,
    paper, 0.85 or more, which shows the grain already. */
 #intro .item::after {
   z-index: 4;
-  filter: grayscale(1) brightness(0.53108) contrast(16.777);
+  filter: grayscale(1) brightness(1.05763) brightness(0.53108) contrast(16.777);
   mix-blend-mode: lighten;
 }
 

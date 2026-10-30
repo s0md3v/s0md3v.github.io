@@ -2171,6 +2171,17 @@ layout_style: "homepage"
         const corners = [[-w, -h], [w, -h], [w, h], [-w, h], [-w, -h]]
           .map(([x, y]) => `${(cx + x * cos - y * sin).toFixed(1)}px ${(cy + x * sin + y * cos).toFixed(1)}px`);
         glint.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${corners.join(', ')})`;
+        // Nor does its shadow show past its edges towards the light, the left and the top, by
+        // day or night. A drop-shadow's blur spills round every side, and it's only ever moved
+        // by whole pixels, so along the card's crisp, straight edges there it's a dark line.
+        // Cut off along them, in the card's tilt in its shadow's box, half a pixel in, or it
+        // still shows through the soft pixels along them.
+        const lift = face.parentElement;
+        const tilt = (parseFloat(getComputedStyle(face).rotate) || 0) * Math.PI / 180;
+        const [tc, ts] = [Math.cos(tilt), Math.sin(tilt)];
+        const [PAST, IN] = [50, 0.5];
+        lift.style.clipPath = `polygon(${[[IN - w, IN - h], [w + PAST, IN - h], [w + PAST, h + PAST], [IN - w, h + PAST]]
+          .map(([x, y]) => `${(w + x * tc - y * ts).toFixed(2)}px ${(h + x * ts + y * tc).toFixed(2)}px`).join(', ')})`;
         glow();
 
         selfLit.forEach((el, i) => {
