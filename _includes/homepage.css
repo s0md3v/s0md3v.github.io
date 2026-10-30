@@ -1160,96 +1160,109 @@ html:not(.dark-mode) .phone-screen {
 .app-linkedin svg { width: 60%; }
 .app-mail { --tile: #fff; --glyph: #ea4335; }
 
-/* The scanner app's widget, under the apps, a row wide: what it's playing, and a level
-   that moves only while someone's on the air */
+/* The scanner app's widget, two by two in the grid, beside the last app, as a home
+   screen's are: a solid surface, tinted from the wallpaper, with a level across it that
+   moves only while someone's on the air. Only to be read, so nothing about it answers
+   the pointer, and there's no text to select. */
 .radio-widget {
+  grid-column: 3 / span 2;
+  grid-row: 2 / span 2;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 42cqi;
+  aspect-ratio: 1;
+  padding: 4.4cqi;
+  border-radius: 8cqi;
+  background: #443c5e;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.radio-name {
   display: flex;
   align-items: center;
-  gap: 3cqi;
-  margin: 10cqi 5cqi 0;
-  padding: 3cqi 4.4cqi 3cqi 3cqi;
-  border-radius: 6cqi;
-  background: rgb(255 255 255 / 0.1);
-  box-shadow: 0 0.6cqi 1.2cqi rgba(0, 0, 0, 0.2);
+  gap: 1.4cqi;
+  font-size: 4.2cqi;
+  font-weight: 500;
+  color: rgb(244 242 247 / 0.75);
 }
 
-.radio-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 11cqi;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #1e3a4c;
-  color: #8fd3ff;
-}
-
-.radio-widget svg,
+.radio-name svg,
 .radio-note svg {
-  width: 62%;
+  flex: none;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
 }
 
-:is(.radio-widget, .radio-note, .pi-air) circle {
+.radio-name svg {
+  width: 4.4cqi;
+  color: #cdb8ff;
+}
+
+:is(.radio-name, .radio-note, .pi-air) circle {
   fill: currentColor;
   stroke: none;
 }
 
-.radio-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.6cqi;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.radio-text b {
-  font-size: 4.6cqi;
-  font-weight: 600;
-}
-
-.radio-text small {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 3.7cqi;
-  color: rgb(244 242 247 / 0.7);
-}
-
-/* Live, as players mark it */
-#phone.live .radio-status {
-  color: #ff6b5e;
-}
-
 .radio-level {
   display: flex;
-  align-items: flex-end;
-  gap: 0.8cqi;
-  height: 4.6cqi;
+  align-items: center;
+  justify-content: space-between;
+  height: 11cqi;
+  padding: 0 1cqi;
 }
 
 .radio-level i {
-  width: 0.9cqi;
-  height: 22%;
-  border-radius: 0.45cqi;
-  background: rgb(244 242 247 / 0.55);
+  width: 2.2cqi;
+  height: 12%;
+  border-radius: 1.1cqi;
+  background: #cdb8ff;
+  opacity: 0.55;
 }
 
 #phone.keyed .radio-level i {
+  opacity: 1;
   animation: radio-level 0.42s ease-in-out infinite alternate;
 }
 
 #phone.keyed .radio-level i:nth-child(2) { animation-duration: 0.31s; animation-delay: -0.2s; }
 #phone.keyed .radio-level i:nth-child(3) { animation-duration: 0.37s; animation-delay: -0.1s; }
 #phone.keyed .radio-level i:nth-child(4) { animation-duration: 0.28s; animation-delay: -0.25s; }
+#phone.keyed .radio-level i:nth-child(5) { animation-duration: 0.34s; animation-delay: -0.05s; }
+#phone.keyed .radio-level i:nth-child(6) { animation-duration: 0.4s; animation-delay: -0.3s; }
+#phone.keyed .radio-level i:nth-child(7) { animation-duration: 0.3s; animation-delay: -0.15s; }
 
 @keyframes radio-level {
-  from { height: 22%; }
+  from { height: 12%; }
   to { height: 100%; }
+}
+
+.radio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqi;
+}
+
+.radio-text b {
+  font-size: 6cqi;
+  font-weight: 600;
+}
+
+.radio-text small {
+  font-size: 3.7cqi;
+  color: rgb(244 242 247 / 0.65);
+}
+
+/* Live, as players mark it */
+#phone.live .radio-status {
+  color: #ff8a80;
 }
 
 /* It can't reach the Pi: down from the top, under the status bar, and back up after a
@@ -1267,6 +1280,8 @@ html:not(.dark-mode) .phone-screen {
   background: rgb(43 40 56 / 0.97);
   box-shadow: 0 1cqi 3cqi rgb(0 0 0 / 0.45);
   line-height: 1.1;
+  pointer-events: none;
+  user-select: none;
   translate: 0 -180%;
   transition: translate 0.25s cubic-bezier(0.4, 0, 1, 1);
 }
@@ -1286,7 +1301,7 @@ html:not(.dark-mode) .phone-screen {
 
 .radio-note svg {
   width: 3.8cqi;
-  color: #8fd3ff;
+  color: #cdb8ff;
 }
 
 .radio-note b {
@@ -1307,7 +1322,7 @@ html:not(.dark-mode) .phone-screen {
 
   #phone.keyed .radio-level i {
     animation: none;
-    height: 70%;
+    height: 60%;
   }
 }
 
