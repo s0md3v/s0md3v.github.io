@@ -342,6 +342,30 @@ a.obj:not(.grounded):focus-visible,
   background: url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
 }
 
+/* The light catching the stock's grain, on its ink: the card's own photo, made as bright
+   all over as at its top left corner (it's lit 2.1% darker to the right, 1.8% to the
+   bottom, and 1.1% at the corners, dodged away), then its grain's brightest quarter (grey
+   0.9067 to 0.9168) made 0.19 to 0.28, the rest darker, and kept only where it's brighter
+   than what's under it.
+   That's the dark ink, where it's lifted by the grain; never the paper, 0.85 or more,
+   which shows the grain already. */
+#intro .item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    linear-gradient(to right, #000, rgb(2.367% 2.367% 2.367%)),
+    linear-gradient(to bottom, #000, rgb(2.044% 2.044% 2.044%)),
+    radial-gradient(#000, rgb(0.284% 0.284% 0.284%) 50%, rgb(0.568% 0.568% 0.568%) 70.71%,
+      rgb(0.852% 0.852% 0.852%) 86.6%, rgb(1.136% 1.136% 1.136%)),
+    url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
+  background-blend-mode: color-dodge, color-dodge, color-dodge, normal;
+  filter: grayscale(1) brightness(0.53108) contrast(16.777);
+  mix-blend-mode: lighten;
+  pointer-events: none;
+}
+
 .intro-text {
   position: absolute;
   z-index: 2;
@@ -353,9 +377,7 @@ a.obj:not(.grounded):focus-visible,
   font-family: "Source Serif", serif;
   font-size: 4cqi;
   line-height: 1.2;
-  color: #2b2722;
-  /* Made from the card's photo by _raw/cardcut.py */
-  mask: url('{{ "/assets/images/table/card-ink.jpg" | relative_url }}') 0 0 / 100% 100% no-repeat luminance;
+  color: #3a3530;
 }
 
 .intro-title {
@@ -364,10 +386,14 @@ a.obj:not(.grounded):focus-visible,
   font-size: 2.5em;
   font-weight: 500;
   letter-spacing: -0.01em;
-  color: #1f1c19;
+  color: #2e2a26;
+  /* Pressed into the card: the light's from the top left, as the table's shadows show, so
+     each letter's top left wall is in shade and its bottom right one catches the light.
+     Close to the letters, or the shade reads as a shadow cast by them. Only the name's big
+     enough to show it: on the smaller text it'd be under a pixel, and only softens it. */
   text-shadow:
-    -0.02em -0.035em 0.02em rgb(35 17 0 / 0.22),
-    0.015em 0.03em 0.02em rgb(255 255 255 / 0.45);
+    -0.012em -0.02em 0.012em rgb(35 17 0 / 0.28),
+    0.01em 0.018em 0.01em rgb(255 255 255 / 0.55);
 }
 
 .intro-role,
@@ -426,7 +452,7 @@ a.obj:not(.grounded):focus-visible,
   vector-effect: non-scaling-stroke;
 }
 
-/* Outside .lift so it casts no shadow. Masked by the card's ink on the card and by
+/* Outside .lift so it casts no shadow. Whole on the card, and masked by
    the laminate's (_raw/deskink.py) off it. */
 #intro .pen {
   position: absolute;
@@ -437,10 +463,10 @@ a.obj:not(.grounded):focus-visible,
   text-decoration: none;
   color: var(--ballpoint);
   mask-image:
-    url('{{ "/assets/images/table/card-ink.jpg" | relative_url }}'),
+    linear-gradient(#000 0 0),
     url('{{ "/assets/images/table/desk-ink.jpg" | relative_url }}'),
     linear-gradient(#000 0 0);
-  mask-mode: luminance, luminance, alpha;
+  mask-mode: alpha, luminance, alpha;
   /* The laminate's skids are the writing's size whatever the card's, and placed so that
      no word loses a letter it needs */
   mask-size: 100% 100%, calc(0.16 * var(--w) * var(--u)), 100% 100%;

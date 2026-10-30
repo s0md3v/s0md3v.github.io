@@ -49,12 +49,8 @@
     crossorigin>
   <link rel="preload" href="{{ '/assets/fonts/SourceSerif4-card-italic.woff2' | relative_url }}" as="font"
     type="font/woff2" crossorigin>
-  <!-- The business card is the largest thing on the table, and its text only shows once
-       the ink it is printed through has loaded -->
+  <!-- The business card is the largest thing on the table -->
   <link rel="preload" href="{{ '/assets/images/table/card.webp' | relative_url }}" as="image" fetchpriority="high">
-  <!-- Masks are fetched with CORS, so a preload without it would be fetched again -->
-  <link rel="preload" href="{{ '/assets/images/table/card-ink.jpg' | relative_url }}" as="image" fetchpriority="high"
-    crossorigin>
   {% else %}
   <link rel="preload" href="{{ '/assets/fonts/Comfortaa-ascii.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   {% endif %}
