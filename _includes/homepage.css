@@ -2315,18 +2315,60 @@ html:not(.dark-mode) .pi-screen {
   --tx: 40%; --ty: -4%; --tw: 10; --tr: 0deg;
 }
 
+/* Two sheets of the business card's stock, a little brighter: the page, in front, and
+   one under it, a little turned, showing past it. Each is one card, stood on end and
+   grown till it covers the sheet. */
+#papers .item {
+  aspect-ratio: 1000 / 1311;
+}
+
+#papers .item::before,
+.page::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #e7e0d6 url('{{ "/assets/images/table/card.webp" | relative_url }}') center / cover;
+  filter: brightness(1.05);
+}
+
+/* Turned with its card, so its sides are swapped: 95.2% of the sheets across, 99% of their
+   height down */
+#papers .item::before {
+  left: 51.8%;
+  top: 49.9%;
+  width: calc(100cqi * 1.311 * 0.99);
+  height: 95.2cqi;
+  translate: -50% -50%;
+  rotate: 91.2deg;
+}
+
 /* Matches the PDF: US letter, Arial, 1in margins */
 .page {
   position: absolute;
+  z-index: 1;
   left: 2%;
   top: 4.4%;
   width: 91%;
   height: 94.3%;
   overflow: hidden;
   container-type: inline-size;
+  background: #f2ebe1;
+  /* On the sheet under it */
+  box-shadow: 0 0 0.25cqi rgb(60 45 30 / 0.18);
+}
+
+/* The page is 91% of the sheets across and 94.3% of their height, which is 1311/1000 of
+   their width */
+.page::before {
+  width: calc(100cqi * 0.943 * 1.311 / 0.91);
+  height: 100cqi;
+  translate: -50% -50%;
+  rotate: 90deg;
 }
 
 .page-body {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6cqi;
