@@ -253,7 +253,7 @@ layout_style: "homepage"
 
     <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }},"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-200.webp" | relative_url }}"]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
       <span class="lift"><span class="item">
-        <img class="base rimmed" src="{{ t }}digicam.avif" srcset="{{ t }}digicam-290.avif 290w, {{ t }}digicam.avif 660w"
+        <img class="base rimmed" src="{{ t }}digicam.avif" srcset="{{ t }}digicam-320.avif 320w, {{ t }}digicam.avif 660w"
           sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
         <!-- At night, the screen's light, on the buttons beside it -->
