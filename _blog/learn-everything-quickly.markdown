@@ -53,7 +53,7 @@ In this article, being "good" will be used as a synonym for being just good enou
 
 ## Start
 
-![its better to try](/assets/inline/better-to-try.png)
+![its better to try](/assets/inline/better-to-try.webp)
 
 Develop a habit of taking action. Look around, do you think these people have a device in their pockets that contains the totality of human knowledge? Can you fathom how crazy this is? You can google everything, from how to tie your shoelaces in shape of a flower to how motion detectors work.
 

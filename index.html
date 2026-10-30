@@ -63,8 +63,10 @@ layout_style: "homepage"
           </g>
         </svg>
         <span class="part pi-board">
-          <img class="base" src="{{ t }}pi.webp" srcset="{{ t }}pi-560.webp 560w, {{ t }}pi.webp 960w"
-            sizes="(max-width: 700px) 46vw, (max-aspect-ratio: 4/5) 46vw, min(14vw, 26.4vh)" width="960" height="419" alt="">
+          <!-- CORS, to share the fetch with the light's mask -->
+          <img class="base" src="{{ t }}pi.webp" srcset="{{ t }}pi-340.webp 340w, {{ t }}pi-560.webp 560w, {{ t }}pi.webp 960w"
+            sizes="(max-width: 700px) 46vw, (max-aspect-ratio: 4/5) 46vw, min(14vw, 26.4vh)" width="960" height="419" alt=""
+            crossorigin="anonymous">
           <span class="pi-glow"></span>
           <span class="pi-screen" aria-hidden="true">
             <!-- Where its shell is, which is what it's the way to -->
@@ -235,8 +237,10 @@ layout_style: "homepage"
 
     <a class="obj grounded" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
       <span class="lift"><span class="item">
+        <!-- CORS, to share the fetch with the glitter's mask -->
         <img class="base" src="{{ t }}simone.webp" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.webp 360w"
-          sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt="">
+          sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt=""
+          crossorigin="anonymous">
         <!-- A halo, in invisible glow ink, partly on the table. Hovered, at night, it turns
              gold, and sparkles. -->
         <span class="glow-ink" data-glow="halo" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
@@ -332,13 +336,13 @@ layout_style: "homepage"
           </g>
         </svg>
         <span class="part earbuds">
-          <span class="bud bud-left"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
-            data-night="{{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
+          <span class="bud bud-left"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-190.webp 190w, {{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
+            data-night="{{ t }}earbuds-night-190.webp 190w, {{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
             sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <!-- Which is which, written on the faceplate in glow ink -->
             <span class="glow-ink" aria-hidden="true">L</span></span>
-          <span class="bud bud-right"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
-            data-night="{{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
+          <span class="bud bud-right"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-190.webp 190w, {{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
+            data-night="{{ t }}earbuds-night-190.webp 190w, {{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
             sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <span class="glow-ink" aria-hidden="true">R</span></span>
         </span>

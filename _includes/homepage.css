@@ -1830,7 +1830,7 @@ html:not(.dark-mode) .pi-screen {
   inset: 0;
   background: radial-gradient(22% 50% at 67.5% 78.4%, rgb(80 255 120 / 0.38), rgb(80 255 120 / 0.12) 45%, transparent);
   /* The small image, which is all an outline needs, and which the page most often uses */
-  mask: url('{{ "/assets/images/table/pi-560.webp" | relative_url }}') 0 0 / 100% 100%;
+  mask: url('{{ "/assets/images/table/pi-340.webp" | relative_url }}') 0 0 / 100% 100%;
   mix-blend-mode: screen;
   opacity: 0;
   pointer-events: none;

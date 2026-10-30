@@ -42,11 +42,11 @@ Write-Output "Powershell will print this!"
 
 Despite the `.ps1` extension, Magika detected this script as Python with 100% certainty. However, it is a valid PowerShell script that does not run as a Python program.
 
-![google magika bypass](/assets/inline/with-all_strings.png)
+![google magika bypass](/assets/inline/with-all_strings.webp)
 
 Interestingly, see what happens when I remove 3 "a" characters from `return aaaaaaaaaaaaa`
 
-![google magika quirk](/assets/inline/with-test.png)
+![google magika quirk](/assets/inline/with-test.webp)
 
 This issue has been reported and acknowledged: [https://github.com/google/magika/issues/61](https://github.com/google/magika/issues/61)
 

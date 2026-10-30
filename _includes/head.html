@@ -56,7 +56,7 @@
   <link rel="preload" href="{{ '/assets/images/table/card-ink.jpg' | relative_url }}" as="image" fetchpriority="high"
     crossorigin>
   {% else %}
-  <link rel="preload" href="{{ '/assets/fonts/Comfortaa.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ '/assets/fonts/Comfortaa-ascii.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   {% endif %}
   {% if uses_handwritten_font %}
   <link rel="preload" href="{{ '/assets/fonts/reenie-beanie-ascii.woff2' | relative_url }}" as="font"
@@ -68,13 +68,23 @@
   {% endunless %}
 
   <style>
+    /* The header's nearly always plain ASCII too, which comes in a file of its own */
+    @font-face {
+      font-family: 'Comfortaa';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('{{ "/assets/fonts/Comfortaa-ascii.woff2" | relative_url }}') format('woff2');
+      unicode-range: U+0020-007E;
+    }
+
     @font-face {
       font-family: 'Comfortaa';
       font-style: normal;
       font-weight: 700;
       font-display: swap;
       src: url('{{ "/assets/fonts/Comfortaa.woff2" | relative_url }}') format('woff2');
-      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      unicode-range: U+0000-001F, U+007F-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
 
     /* Handwriting is nearly always plain ASCII, which comes in a file of its own. The

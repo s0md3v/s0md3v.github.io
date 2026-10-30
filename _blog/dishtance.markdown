@@ -30,7 +30,7 @@ Based on this, I wrote code that takes elevation angle, north angle, and satelli
 Realistically, it is unlikely to get accurate angles from a photo. Thus, in addition to, let's say, 30 degrees - the program must accept a range as input e.g., 35-45 degrees.\
 To get around this limitation, we use a different approach.
 
-![calculation](/assets/inline/calculation.png)
+![calculation](/assets/inline/calculation.webp)
 
 **Step 1.** Use the upper limit of elevation angle range as elevation angle to find a set of coordinates with findLocation function. Then, measure the distance between this location and location right under satellite on earth (let's call it center). Finally, create a circle around the center using the said distance as radius.\
 **Step 2.** Do the same process but using the lower limit this time.\
