@@ -132,60 +132,88 @@ description: Photographs by Somdev Sangwan.
         }
     }
 
+    /* Locking the page while a photo's open keeps where it is, and its scrollbar's room */
+    html {
+        scrollbar-gutter: stable;
+    }
+
+    html.modal-open {
+        overflow: hidden;
+    }
+
     .modal {
         display: none;
         outline: none;
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.95);
+        inset: 0;
         z-index: 2000;
-        padding: 20px;
-        box-sizing: border-box;
         cursor: pointer;
-        display: flex;
         align-items: center;
         justify-content: center;
+        /* Swipes are the page's; pinching still zooms in */
+        touch-action: pinch-zoom;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    /* The dark, apart from the photo, so it fades while the photo flies */
+    .modal::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
-    .modal.visible {
-        opacity: 1;
+    .modal.visible::before {
+        opacity: var(--dim, 1);
+    }
+
+    .modal.dragging::before {
+        transition: none;
     }
 
     /* The photo in the camera's bezel, its pink where it frames the screen, and as
-       narrow, so it doesn't tint the photo */
+       narrow, so it doesn't tint the photo. Sized from the photo's own proportions, so
+       the thumbnail can stand in, enlarged, while the photo loads; no bigger than the
+       photo, nor than the window allows, and the window's height as it is right now */
     .modal-screen {
-        position: relative;
-        max-width: 95%;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
-    }
-
-    .modal.visible .modal-screen {
-        transform: scale(1);
-    }
-
-    .modal img {
-        display: block;
-        max-width: 100%;
-        max-height: calc(95vh - 2 * var(--bezel));
         --bezel: clamp(6px, 1.1vmin, 11px);
+        --room: calc(100vw - 2 * max(20px, 4vw) - 2 * var(--bezel));
+        position: relative;
+        display: block;
+        box-sizing: content-box;
+        width: min(calc(var(--w) * 1px), var(--room), calc((95vh - 2 * var(--bezel)) * var(--ar)));
+        width: min(calc(var(--w) * 1px), var(--room), calc((95dvh - 2 * var(--bezel)) * var(--ar)));
+        aspect-ratio: var(--ar);
         border: var(--bezel) solid rgb(172 122 130);
         border-radius: calc(var(--bezel) * 0.8);
-        box-sizing: content-box;
+        background: var(--code-bg) center / 100% 100% no-repeat;
         box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-        object-fit: contain;
+        transform-origin: 0 0;
+    }
+
+    /* Over the thumbnail, once it's all here */
+    .modal-screen img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: transparent;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        -webkit-user-drag: none;
+    }
+
+    .modal-screen img.loaded {
+        opacity: 1;
     }
 
     /* Which one it is, as the camera says it */
     .modal-count {
         position: absolute;
-        top: calc(clamp(6px, 1.1vmin, 11px) + 0.9em);
-        right: calc(clamp(6px, 1.1vmin, 11px) + 1.1em);
+        top: 0.9em;
+        right: 1.1em;
         font: 600 clamp(12px, 1.7vmin, 17px)/1 system-ui, sans-serif;
         letter-spacing: 0.03em;
         color: #fff;
@@ -193,10 +221,8 @@ description: Photographs by Somdev Sangwan.
         pointer-events: none;
     }
 
-    .close-button {
+    .modal-button {
         position: fixed;
-        top: 20px;
-        right: 20px;
         color: white;
         font-size: 3rem;
         line-height: 1;
@@ -204,13 +230,43 @@ description: Photographs by Somdev Sangwan.
         background: none;
         border: none;
         padding: 10px;
-        z-index: 2001;
+        z-index: 1;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        transition: color 0.2s ease;
+        transition: color 0.2s ease, opacity 0.2s ease;
     }
 
-    .close-button:hover {
+    .modal-button:hover {
         color: var(--accent-color);
+    }
+
+    .close-button {
+        top: 20px;
+        right: 20px;
+    }
+
+    .prev-button,
+    .next-button {
+        top: 50%;
+        translate: 0 -50%;
+        font-size: 4rem;
+        padding: 10px 14px 20px;
+    }
+
+    .prev-button {
+        left: max(0px, 2vw - 20px);
+    }
+
+    .next-button {
+        right: max(0px, 2vw - 20px);
+    }
+
+    /* On a touchscreen, a swipe or a tap on either side of the photo: the arrows are
+       there for whoever can't, but not over the photo */
+    @media (hover: none) {
+        .prev-button:not(:focus-visible),
+        .next-button:not(:focus-visible) {
+            opacity: 0;
+        }
     }
 </style>
 
@@ -237,21 +293,33 @@ description: Photographs by Somdev Sangwan.
     {% endfor %}
 </div>
 
-<div class="modal" id="modal" tabindex="-1" style="display: none;" role="dialog" aria-modal="true" aria-label="Image view">
-    <button type="button" class="close-button" aria-label="Close image view">&times;</button>
+<div class="modal" id="modal" tabindex="-1" role="dialog" aria-modal="true" aria-label="Image view">
+    <button type="button" class="modal-button close-button" aria-label="Close image view">&times;</button>
+    <button type="button" class="modal-button prev-button" aria-label="Previous photo">&lsaquo;</button>
+    <button type="button" class="modal-button next-button" aria-label="Next photo">&rsaquo;</button>
     <span class="modal-screen">
-        <img id="modal-img" src="" alt="">
+        <img alt="">
         <span class="modal-count" aria-hidden="true"></span>
     </span>
+    <span class="sr-only" aria-live="polite"></span>
 </div>
 
 <script>
     const modal = document.getElementById('modal');
-    const modalImg = document.getElementById('modal-img');
+    const frame = modal.querySelector('.modal-screen');
+    const count = modal.querySelector('.modal-count');
+    const said = modal.querySelector('[aria-live]');
     const closeBtn = modal.querySelector('.close-button');
-    let opener = null;
+    const prevBtn = modal.querySelector('.prev-button');
+    const nextBtn = modal.querySelector('.next-button');
+    const controls = [prevBtn, nextBtn, closeBtn];
+    const items = Array.from(document.querySelectorAll('.gallery-item'));
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+    let photo = frame.querySelector('img');
+    let index = -1;
     let inerted = [];
-    let closeTimer = null;
+    let preloads = [];
 
     // Make everything outside the dialog inert while it is open
     function setBackgroundInert(on) {
@@ -275,74 +343,253 @@ description: Photographs by Somdev Sangwan.
         return modal.classList.contains('visible');
     }
 
-    function openModal(imgSrc, trigger, quiet) {
-        clearTimeout(closeTimer);
-        opener = trigger || document.activeElement;
+    // The photo the address names, as the homepage's camera links it: #7 is the seventh
+    function linked() {
+        const n = /^#(\d+)$/.exec(location.hash);
+        return n && n[1] >= 1 && n[1] <= items.length ? n[1] - 1 : -1;
+    }
+
+    // Shows the i-th photo: its thumbnail, already here, stands in until it's loaded
+    function show(i) {
+        index = i;
+        const item = items[i];
+        const thumb = item.querySelector('img');
+        const w = +thumb.getAttribute('width');
+        frame.style.setProperty('--w', w);
+        frame.style.setProperty('--ar', w / +thumb.getAttribute('height'));
+        frame.style.backgroundImage = `url("${thumb.currentSrc || thumb.src}")`;
+
+        // A new one each time, so the last photo never shows in this one's frame
+        const img = new Image();
+        img.alt = thumb.alt;
+        img.decoding = 'async';
+        img.onload = () => img.classList.add('loaded');
+        img.src = item.dataset.full;
+        if (img.complete && img.naturalWidth) img.classList.add('loaded');
+        photo.replaceWith(img);
+        photo = img;
+
+        count.textContent = `${i + 1}/${items.length}`;
+        said.textContent = `Photo ${i + 1} of ${items.length}`;
+        // And the ones either side, so stepping to them is instant
+        preloads = [1, -1].map(d => {
+            const next = new Image();
+            next.src = items[(i + d + items.length) % items.length].dataset.full;
+            return next;
+        });
+    }
+
+    // From where something is to where the photo is: for flying between them
+    function from(rect) {
+        const to = frame.getBoundingClientRect();
+        return `translate(${rect.left - to.left}px, ${rect.top - to.top}px) ` +
+            `scale(${rect.width / to.width}, ${rect.height / to.height})`;
+    }
+
+    // Its thumbnail's place, when it's in sight to fly from or back to
+    function thumbRect(i) {
+        const rect = items[i].getBoundingClientRect();
+        return rect.bottom > 0 && rect.top < innerHeight && rect.width ? rect : null;
+    }
+
+    function stopMotion() {
+        frame.getAnimations().forEach(a => a.cancel());
+    }
+
+    function openModal(i, quiet) {
+        stopMotion();
         modal.style.display = 'flex';
-        // Force reflow so the transition runs
+        show(i);
         void modal.offsetWidth;
         modal.classList.add('visible');
-
-        modalImg.src = imgSrc;
-        const thumb = trigger && trigger.querySelector('img');
-        modalImg.alt = thumb ? thumb.alt : '';
-        const items = Array.from(document.querySelectorAll('.gallery-item'));
-        modal.querySelector('.modal-count').textContent =
-            items.includes(trigger) ? `${items.indexOf(trigger) + 1}/${items.length}` : '';
-        document.body.style.overflow = 'hidden';
+        document.documentElement.classList.add('modal-open');
         setBackgroundInert(true);
+
+        // Out of its thumbnail, or where it's out of sight, just closer
+        const rect = thumbRect(i);
+        if (!still.matches) {
+            frame.animate(rect
+                ? [{ transform: from(rect), opacity: 0 }, { opacity: 1, offset: 0.25 }, { transform: 'none', opacity: 1 }]
+                : [{ transform: 'translate(2.5%, 2.5%) scale(0.95)', opacity: 0 }, { transform: 'none', opacity: 1 }],
+                { duration: 350, easing: EASE });
+        }
         // Opened from a link, with nothing pressed yet, the close button would show as
         // focused from the keyboard: the dialog takes focus instead
-        (quiet ? modal : closeBtn).focus();
+        (quiet ? modal : closeBtn).focus({ preventScroll: true });
     }
 
     function closeModal() {
         if (!isOpen()) return;
         modal.classList.remove('visible');
         setBackgroundInert(false);
-        document.body.style.overflow = '';
-        if (opener && document.contains(opener)) {
-            opener.focus({ preventScroll: true });
-        }
-        opener = null;
-        closeTimer = setTimeout(() => {
+        document.documentElement.classList.remove('modal-open');
+        // Back to the one it was on, which may not be the one it opened on
+        const item = items[index];
+        item.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+        item.focus({ preventScroll: true });
+
+        const rect = thumbRect(index);
+        const now = getComputedStyle(frame).transform;
+        stopMotion();
+        const end = () => {
             modal.style.display = 'none';
-            modalImg.src = '';
-        }, 300);
+            modal.classList.remove('dragging');
+            modal.style.removeProperty('--dim');
+            frame.style.transform = '';
+            stopMotion();
+        };
+        frame.style.transform = '';
+        if (still.matches) return end();
+        frame.animate(rect
+            ? [{ transform: now === 'none' ? 'none' : now, opacity: 1 }, { opacity: 1, offset: 0.75 }, { transform: from(rect), opacity: 0 }]
+            : [{ transform: now === 'none' ? 'none' : now, opacity: 1 }, { transform: 'translate(2.5%, 2.5%) scale(0.95)', opacity: 0 }],
+            { duration: 300, easing: EASE, fill: 'forwards' }).onfinish = end;
     }
+
+    // An open photo is a step in the history, so Back closes it rather than the gallery,
+    // and the address names whichever photo it's on
+    function openPhoto(i, quiet) {
+        history.pushState({ photo: true }, '', '#' + (i + 1));
+        openModal(i, quiet);
+    }
+
+    function closePhoto() {
+        if (!isOpen()) return;
+        if (history.state && history.state.photo) history.back();
+        else closeModal();
+    }
+
+    function step(dir) {
+        show((index + dir + items.length) % items.length);
+        history.replaceState(history.state, '', '#' + (index + 1));
+        frame.style.transform = '';
+        stopMotion();
+        if (!still.matches) {
+            frame.animate([{ transform: `translateX(${dir * 40}px)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
+                { duration: 220, easing: EASE });
+        }
+    }
+
+    addEventListener('popstate', () => {
+        const i = linked();
+        if (i < 0) closeModal();
+        else if (isOpen()) { if (i !== index) show(i); }
+        else openModal(i);
+    });
 
     document.getElementById('gallery').addEventListener('click', (e) => {
         const item = e.target.closest('.gallery-item');
-        if (item) openModal(item.dataset.full, item);
+        if (item) openPhoto(items.indexOf(item));
     });
 
-    closeBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closePhoto);
+    prevBtn.addEventListener('click', () => step(-1));
+    nextBtn.addEventListener('click', () => step(1));
 
+    // The dark around it closes it; either side of the photo steps that way
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
+        if (e.target === modal) return closePhoto();
+        if (e.target.closest('.modal-screen')) {
+            const rect = frame.getBoundingClientRect();
+            step(e.clientX < rect.left + rect.width / 2 ? -1 : 1);
         }
     });
+
+    // On a touchscreen the photo follows the finger: across for the next or the last,
+    // down to put it away
+    {
+        let drag = null;
+        let swiped = false;
+        const fingers = new Set();
+        const settle = () => {
+            modal.classList.remove('dragging');
+            modal.style.removeProperty('--dim');
+            const now = frame.style.transform;
+            frame.style.transform = '';
+            if (now && !still.matches) {
+                frame.animate([{ transform: now }, { transform: 'none' }], { duration: 200, easing: EASE });
+            }
+        };
+        modal.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse') return;
+            fingers.add(e.pointerId);
+            // A second finger is a pinch, and zoomed in, a finger looks around
+            if (fingers.size > 1 || (visualViewport && visualViewport.scale > 1.01) ||
+                e.target.closest('button') || !isOpen()) {
+                if (drag) { drag = null; settle(); }
+                return;
+            }
+            drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0, axis: null };
+        });
+        modal.addEventListener('pointermove', (e) => {
+            if (!drag || e.pointerId !== drag.id) return;
+            drag.dx = e.clientX - drag.x;
+            drag.dy = e.clientY - drag.y;
+            if (!drag.axis && Math.hypot(drag.dx, drag.dy) > 10) {
+                drag.axis = Math.abs(drag.dx) > Math.abs(drag.dy) ? 'x' : 'y';
+                stopMotion();
+            }
+            if (drag.axis === 'x') {
+                frame.style.transform = `translateX(${drag.dx}px)`;
+            } else if (drag.axis === 'y') {
+                const dy = Math.max(0, drag.dy);
+                modal.classList.add('dragging');
+                modal.style.setProperty('--dim', 1 - Math.min(dy / innerHeight, 0.5));
+                frame.style.transform = `translateY(${dy}px) scale(${1 - Math.min(dy / innerHeight, 0.5) * 0.3})`;
+            }
+        });
+        const lift = (e) => {
+            fingers.delete(e.pointerId);
+            if (!drag || e.pointerId !== drag.id) return;
+            const { axis, dx, dy } = drag;
+            drag = null;
+            if (!axis) return;
+            swiped = true;
+            setTimeout(() => { swiped = false; });
+            if (e.type === 'pointerup' && axis === 'x' && Math.abs(dx) > 50) {
+                step(dx < 0 ? 1 : -1);
+            } else if (e.type === 'pointerup' && axis === 'y' && dy > 80) {
+                modal.classList.remove('dragging');
+                closePhoto();
+            } else {
+                settle();
+            }
+        };
+        modal.addEventListener('pointerup', lift);
+        modal.addEventListener('pointercancel', lift);
+        // A swipe isn't a tap
+        modal.addEventListener('click', (e) => {
+            if (swiped) { e.stopImmediatePropagation(); swiped = false; }
+        }, true);
+    }
 
     document.addEventListener('keydown', (e) => {
         if (!isOpen()) return;
         if (e.key === 'Escape') {
-            closeModal();
-        } else if (e.key === 'Tab') {
-            // The close button is the dialog's only control: keep focus on it
+            closePhoto();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
             e.preventDefault();
-            closeBtn.focus();
+            step(e.key === 'ArrowLeft' ? -1 : 1);
+        } else if (e.key === 'Tab') {
+            // Round the dialog's own controls
+            e.preventDefault();
+            const at = controls.indexOf(document.activeElement);
+            const next = at < 0 ? (e.shiftKey ? controls.length - 1 : 0) : at + (e.shiftKey ? -1 : 1);
+            controls[(next + controls.length) % controls.length].focus();
         }
     });
 
-    // From the homepage's camera: #7 opens the seventh photo, from where it is
+    // From the homepage's camera, or a photo's own address: open on it, from where it is.
+    // Reloaded on one, the gallery's already the step behind it
     {
-        const linked = /^#(\d+)$/.exec(location.hash);
-        const item = linked && document.querySelectorAll('.gallery-item')[linked[1] - 1];
-        if (linked) history.replaceState(null, '', location.pathname + location.search);
-        if (item) {
-            item.scrollIntoView({ block: 'center' });
-            openModal(item.dataset.full, item, true);
+        const i = linked();
+        if (i >= 0) {
+            if (!(history.state && history.state.photo)) {
+                history.replaceState(null, '', location.pathname + location.search);
+                history.pushState({ photo: true }, '', '#' + (i + 1));
+            }
+            items[i].scrollIntoView({ block: 'center', behavior: 'instant' });
+            openModal(i, true);
         }
     }
 </script>

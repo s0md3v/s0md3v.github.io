@@ -372,7 +372,7 @@ layout_style: "homepage"
         const MENU = ['Slide Show', 'Erase All', 'Protect', 'Rotate', 'Print Order', 'Transfer Order'];
         let shown = pick(photos.length), mode = 'play', zoom = 0, at = [0.5, 0.5], disp = 1;
         let full = -1, page = -1, row = 0, choice = 1, held = false, rested = true, browsed = false, mapped = true;
-        let slides = 0, idle = 0, keyed = false;
+        let slides = 0, keyed = false;
 
         // The glow is the screen's average colour, and the detailed display has a histogram
         const sampler = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
@@ -519,11 +519,6 @@ layout_style: "homepage"
           }
           tint();
           hint();
-          clearTimeout(idle);
-          // Left alone, it turns itself off, as it would. Without a mouse, there's no
-          // pressing ▶ to turn it back on, so there it stays on
-          if (mode !== 'off' && mode !== 'slides' && matchMedia('(hover: hover)').matches)
-            idle = setTimeout(() => { if (held) show(); else off(); }, 180000);
         }
         function say(text, then, ms = 1600) {
           panel.replaceChildren(B('cam-say', text));
@@ -560,7 +555,6 @@ layout_style: "homepage"
         }
 
         function press(key) {
-          clearTimeout(idle);
           if (mode === 'off') {
             // ▶ turns it on, in playback
             if (key === 'play') {
