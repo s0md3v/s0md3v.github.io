@@ -23,6 +23,9 @@ layout_style: "homepage"
           <span class="intro-est">Est. 2017</span>
           <span class="intro-motto"><span>Has brain</span> <span>Has <del>taste<svg class="strike" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15C35 11 75 10 117 6L111 11C75 14 40 16 2 19L8 22C45 19 85 17 119 13L113 18C80 21 45 23 4 25L10 11C50 9 88 9 118 17" /></svg></del></span></span>
         </span>
+        <span class="intro-rim" aria-hidden="true"></span>
+        <span class="intro-spread" aria-hidden="true"></span>
+        <span class="intro-skip" aria-hidden="true"></span>
       </span></span>
       <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span><span class="retraced">s</span>creentime</span></span></ins>
     </section>
@@ -380,6 +383,14 @@ layout_style: "homepage"
       <filter id="room-light-projects" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
+      <!-- The ink squeezed out from the card's type, which the stylesheet blurs first: kept
+           where the blur's more than 30% of the ink, on a ramp (0.5 there, 4 × as steep),
+           so its edge keeps its antialiasing -->
+      <filter id="ink-spread" color-interpolation-filters="sRGB">
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="4" intercept="-0.7" />
+        </feComponentTransfer>
+      </filter>
     </svg>
     <span class="u-probe" aria-hidden="true"></span>
   </main>
@@ -396,6 +407,13 @@ layout_style: "homepage"
       const die = document.getElementById('playground');
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const pick = n => Math.floor(Math.random() * n);
+
+      // The ink spread round the card's type: copies of it, without the pen's strike, that
+      // the stylesheet spreads, in an unbroken rim and further along the paper's fibres
+      const printed = document.querySelector('#intro .intro-text').cloneNode(true);
+      printed.querySelectorAll('svg').forEach(svg => svg.remove());
+      document.querySelector('.intro-spread').append(printed);
+      document.querySelector('.intro-rim').append(printed.cloneNode(true));
 
       objects.forEach(el => {
         if (el !== toggle) el.style.setProperty('--j', (Math.random() * 3 - 1.5).toFixed(2) + 'deg');

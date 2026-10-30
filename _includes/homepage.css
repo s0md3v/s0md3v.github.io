@@ -342,18 +342,16 @@ a.obj:not(.grounded):focus-visible,
   background: url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
 }
 
-/* The light catching the stock's grain, on its ink: the card's own photo, made as bright
-   all over as at its top left corner (it's lit 2.1% darker to the right, 1.8% to the
-   bottom, and 1.1% at the corners, dodged away), then its grain's brightest quarter (grey
-   0.9067 to 0.9168) made 0.19 to 0.28, the rest darker, and kept only where it's brighter
-   than what's under it.
-   That's the dark ink, where it's lifted by the grain; never the paper, 0.85 or more,
-   which shows the grain already. */
-#intro .item::after {
+/* The stock's grain, for the ink: the card's own photo, made as bright all over as at its
+   top left corner (it's lit 2.1% darker to the right, 1.8% to the bottom, and 1.1% at the
+   corners, dodged away), so the same grain's picked out wherever it is on the card. Its
+   grey's then 0.903 on average, 0.0064 either way. */
+#intro .item::after,
+.intro-skip::after,
+.intro-spread::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 3;
   background:
     linear-gradient(to right, #000, rgb(2.367% 2.367% 2.367%)),
     linear-gradient(to bottom, #000, rgb(2.044% 2.044% 2.044%)),
@@ -361,9 +359,110 @@ a.obj:not(.grounded):focus-visible,
       rgb(0.852% 0.852% 0.852%) 86.6%, rgb(1.136% 1.136% 1.136%)),
     url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
   background-blend-mode: color-dodge, color-dodge, color-dodge, normal;
-  filter: grayscale(1) brightness(0.53108) contrast(16.777);
+  /* Clear of the card's edges, which the photo darkens as if they were a dip, and where
+     nothing's printed */
+  clip-path: inset(4%);
+  pointer-events: none;
+}
+
+/* Where the stock dips deepest, the ink, on the type's face, doesn't reach it, and the
+   paper shows through: the card's photo, where its grain's darkest 3% is (grey 0.8917
+   down), more of it the deeper it dips, all of it in the darkest 0.3% (0.8802), and kept
+   only where it's brighter than what's under it, so only in the ink, never on the paper,
+   which is that same photo */
+.intro-skip {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  clip-path: inset(4%);
+  isolation: isolate;
   mix-blend-mode: lighten;
   pointer-events: none;
+}
+
+.intro-skip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
+}
+
+.intro-skip::after {
+  filter: grayscale(1) invert(1) brightness(4.3842) contrast(19.835);
+  mix-blend-mode: multiply;
+}
+
+/* Pressed onto the paper, the ink's squeezed a little past the type's edges: unbroken
+   close to them, and further, thinly, along the fibres it meets, so its edges are ragged
+   with the grain. Two copies of the type, added by the page's script, in slightly thinner
+   ink. The rim's half as far out, everywhere; the spread as far again, and white over it
+   except where the fibres stand highest (grey 0.9028 to 0.9061, the grain's 45th to 70th
+   percentiles, white to none), so it's darker than the paper only there. */
+.intro-rim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  mix-blend-mode: darken;
+  pointer-events: none;
+}
+
+.intro-spread {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  isolation: isolate;
+  mix-blend-mode: darken;
+  pointer-events: none;
+  clip-path: inset(4%);
+}
+
+.intro-spread::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+}
+
+#intro :is(.intro-rim, .intro-spread) .intro-text {
+  mask: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Squeezed out furthest from the heaviest strokes, barely past the hairlines, pooling in
+   the corners inside a letter and rounding off the ones outside: each copy's blurred, and
+   cut off where the blur's 30% of the ink (#ink-spread), so a stroke spreads as much as
+   there's ink near it. As far as 0.06 and 0.12 hundredths of the card's width out from a
+   stroke wider than the blur: sigma's that over 0.5244, where 30% of a blurred edge is. */
+#intro .intro-rim .intro-text {
+  filter: blur(0.1144cqi) url(#ink-spread);
+}
+
+#intro .intro-spread .intro-text {
+  filter: blur(0.2288cqi) url(#ink-spread);
+}
+
+/* Each line's own ink, a little thinner where it's squeezed out: 80% of it, on the paper */
+:is(.intro-rim, .intro-spread) .intro-text,
+:is(.intro-rim, .intro-spread) .intro-text * {
+  -webkit-text-fill-color: color-mix(in srgb, currentColor 80%, #e7e0d6);
+  text-shadow: none;
+}
+
+.intro-spread::after {
+  z-index: 3;
+  filter: grayscale(1) invert(1) brightness(5.233) contrast(57.9);
+  mix-blend-mode: lighten;
+}
+
+/* And the light catching it where it's highest, on the ink there: its brightest quarter
+   (grey 0.9067 to 0.9168) made 0.19 to 0.28, the rest darker, kept only where it's brighter
+   than what's under it. That's the dark ink, where it's lifted by the grain; never the
+   paper, 0.85 or more, which shows the grain already. */
+#intro .item::after {
+  z-index: 4;
+  filter: grayscale(1) brightness(0.53108) contrast(16.777);
+  mix-blend-mode: lighten;
 }
 
 .intro-text {
@@ -378,6 +477,10 @@ a.obj:not(.grounded):focus-visible,
   font-size: 4cqi;
   line-height: 1.2;
   color: #3a3530;
+  /* The rollers never ink the type quite evenly: the film's a little thinner in broad
+     patches, a few across the card. Fractal noise, 0.2 to 0.8, made 0.3 × noise + 0.82,
+     0.88 to 1, drawn once. */
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 613' preserveAspectRatio='none'%3E%3Cfilter id='i' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004' numOctaves='3' seed='8'/%3E%3CfeColorMatrix values='0.3 0 0 0 0.82 0.3 0 0 0 0.82 0.3 0 0 0 0.82 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='1000' height='613' filter='url(%23i)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat luminance;
 }
 
 .intro-title {
