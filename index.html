@@ -1408,10 +1408,18 @@ layout_style: "homepage"
           }
           return spans.filter(([from, to]) => to - from >= 0.15);
         }
-        // Someone on the air, as the Pi and the phone show it
+        // Someone on the air, as the Pi and the phone show it. The receiver records each
+        // call to the card, as it's set to, so the Pi's activity light flickers as it
+        // writes, for as long as they're talking.
+        let writing = 0;
         function air(is) {
           pi.classList.toggle('keyed', is);
           phone.classList.toggle('keyed', is);
+          clearTimeout(writing);
+          if (is && !still) (function write() {
+            flicker();
+            writing = setTimeout(write, 300 + pick(500));
+          })();
         }
         // The calls, shuffled, each heard once before any's heard again, and never twice
         // running
