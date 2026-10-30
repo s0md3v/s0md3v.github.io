@@ -195,15 +195,38 @@ layout_style: "homepage"
       <span class="tag t4"><span>{{ n.philosophy.label | escape }}</span></span>
     </a>
 
-    <div class="obj self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}"{% unless forloop.last %},{% endunless %}{% endfor %}]'>
+    <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }}]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
       <span class="lift"><span class="item">
-        <img class="base" src="{{ t }}digicam.webp" srcset="{{ t }}digicam-290.webp 290w, {{ t }}digicam.webp 660w"
-          sizes="(max-width: 700px) 39vw, min(15.5vw, 24.8vh)" width="660" height="439" alt="">
+        <img class="base rimmed" src="{{ t }}digicam.webp" srcset="{{ t }}digicam-290.webp 290w, {{ t }}digicam.webp 660w"
+          sizes="(max-width: 700px) 39vw, min(17.7vw, 28.3vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
-        <span class="cam-screen"><img class="cam-photo" alt="" fetchpriority="low"><span class="cam-count"></span></span>
+        <!-- At night, the screen's light, on the buttons beside it -->
+        <span class="cam-spill"><span></span></span>
+        <!-- The indicator lamp beside the viewfinder, which blinks green as the camera reads its card -->
+        <span class="cam-lamp"></span>
+        <!-- What's on the screen, the script draws: the photo, the index, the menu, what the camera says -->
+        <span class="cam-screen" aria-hidden="true">
+          <img class="cam-photo" alt="" fetchpriority="low">
+          <span class="cam-index"></span>
+          <span class="cam-info"></span>
+          <span class="cam-panel"></span>
+          <span class="cam-guide"></span>
+        </span>
         <a class="cover" href="{{ n.gallery.url | relative_url }}" aria-label="{{ n.gallery.label | escape }}"></a>
-        <button class="cam-btn cam-prev" type="button" aria-label="Previous photo" title="Previous photo"></button>
-        <button class="cam-btn cam-next" type="button" aria-label="Next photo" title="Next photo"></button>
+        <!-- Its buttons, where they are in the photo. Only the arrows, which go through the
+             photos, are for everyone; the rest are toys, for the pointer only. -->
+        <button class="cam-btn" data-key="left" type="button" aria-label="Previous photo"></button>
+        <button class="cam-btn" data-key="right" type="button" aria-label="Next photo"></button>
+        <button class="cam-btn" data-key="up" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="down" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="set" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="menu" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="disp" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="play" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="wide" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="cam-btn" data-key="tele" type="button" tabindex="-1" aria-hidden="true"></button>
+        <!-- For the pointer, all of the camera right of its screen is buttons: whichever's nearest -->
+        <span class="cam-keys" aria-hidden="true"></span>
       </span></span>
       <!-- The camera's link is .cover; this makes the label clickable too -->
       <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
@@ -289,9 +312,15 @@ layout_style: "homepage"
     <div class="glint" aria-hidden="true"></div>
     <!-- The labels' writing, glowing at night; the script lays it over each label -->
     <div class="glow" aria-hidden="true"></div>
+    <!-- Glowing writing that's more than ink: the sticker's halo, which, hovered, is light -->
+    <div class="glow aura" aria-hidden="true"></div>
     <!-- For objects above .light; the script sets the matrices -->
     <svg class="filters" aria-hidden="true">
       <filter id="room-light-gallery" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
+      </filter>
+      <!-- The room's light and the camera screen's, together, on the buttons beside it -->
+      <filter id="spill-gallery" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
       <filter id="room-light-phone" color-interpolation-filters="sRGB">
@@ -321,25 +350,426 @@ layout_style: "homepage"
         if (el !== toggle) el.style.setProperty('--j', (Math.random() * 3 - 1.5).toFixed(2) + 'deg');
       });
 
-      const photos = JSON.parse(camera.dataset.photos);
-      const screen = camera.querySelector('.cam-photo');
-      const count = camera.querySelector('.cam-count');
-      let shown = 0;
-      // The glow is the photo's average colour
-      const sampler = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-      screen.addEventListener('load', () => {
-        sampler.drawImage(screen, 0, 0, 1, 1);
-        const [red, green, blue] = sampler.getImageData(0, 0, 1, 1).data;
-        camera.style.setProperty('--glow', `${red} ${green} ${blue}`);
-      });
-      function showPhoto(i) {
-        shown = (i + photos.length) % photos.length;
-        screen.src = photos[shown];
-        count.textContent = `${shown + 1}/${photos.length}`;
-      }
-      showPhoto(pick(photos.length));
-      camera.querySelector('.cam-prev').addEventListener('click', () => showPhoto(shown - 1));
-      camera.querySelector('.cam-next').addEventListener('click', () => showPhoto(shown + 1));
+      // The camera, in playback, as a PowerShot of its time does it. Picked up (hovered), it
+      // goes to the index, nine at a time, and its buttons do what they do on the camera.
+      // ▶ would put it in shooting mode, but it's lying on its back, so the lens comes out
+      // into the table.
+      (() => {
+        const photos = JSON.parse(camera.dataset.photos);
+        const screen = camera.querySelector('.cam-screen');
+        const photo = camera.querySelector('.cam-photo');
+        const index = camera.querySelector('.cam-index');
+        const info = camera.querySelector('.cam-info');
+        const panel = camera.querySelector('.cam-panel');
+        const guide = camera.querySelector('.cam-guide');
+        const item = camera.querySelector('.item');
+        const lamp = camera.querySelector('.cam-lamp');
+        const cover = camera.querySelector('.cover');
+        const gallery = cover.href;
+        // Playback zoom, in the camera's steps
+        const ZOOMS = [1, 2, 3, 4, 6, 8, 10];
+        // The screen's width, in its heights
+        const WIDE = 51.8 * 660 / (58.3 * 439);
+        const MENU = ['Slide Show', 'Erase All', 'Protect', 'Rotate', 'Print Order', 'Transfer Order'];
+        let shown = pick(photos.length), mode = 'play', zoom = 0, at = [0.5, 0.5], disp = 1;
+        let full = -1, page = -1, row = 0, choice = 1, held = false, rested = true, browsed = false, mapped = true;
+        let slides = 0, idle = 0, keyed = false;
+
+        // The glow is the screen's average colour, and the detailed display has a histogram
+        const sampler = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        const tones = [], spreads = [];
+        function sample(img, i) {
+          sampler.canvas.width = sampler.canvas.height = 1;
+          sampler.drawImage(img, 0, 0, 1, 1);
+          tones[i] = Array.from(sampler.getImageData(0, 0, 1, 1).data.slice(0, 3));
+          tint();
+        }
+        function histogram(i) {
+          if (spreads[i]) return spreads[i];
+          sampler.canvas.width = sampler.canvas.height = 64;
+          sampler.drawImage(photo, 0, 0, 64, 64);
+          const data = sampler.getImageData(0, 0, 64, 64).data, bins = new Array(48).fill(0);
+          for (let p = 0; p < data.length; p += 4)
+            bins[Math.min(47, Math.floor((0.299 * data[p] + 0.587 * data[p + 1] + 0.114 * data[p + 2]) / 256 * 48))]++;
+          const top = Math.max(...bins);
+          return spreads[i] = 'M0 32' + bins.map((n, b) => `H${b}V${(32 - 30 * n / top).toFixed(1)}`).join('') + 'H48V32Z';
+        }
+        function tint() {
+          let rgb = [34, 36, 42];
+          if (mode === 'play' || mode === 'erase' || mode === 'slides') rgb = tones[shown];
+          if (mode === 'index') {
+            const known = tones.slice(page, page + 9).filter(Boolean);
+            if (known.length) rgb = [0, 1, 2].map(c => 0.75 * known.reduce((sum, t) => sum + t[c], 0) / known.length);
+          }
+          if (!rgb) return;
+          // What the screen gives off is the picture and, under it, the backlight
+          rgb = rgb.map((c, i) => 0.85 * c + BACKLIGHT[i]);
+          camera.style.setProperty('--glow', rgb.map(Math.round).join(' '));
+          // The screen's light, added to the room's
+          const room = roomLight.getAttribute('values').split(' ').map(Number);
+          [0, 6, 12].forEach((at, c) => room[at] += SPILL * rgb[c] / 255);
+          spillLight.setAttribute('values', room.join(' '));
+        }
+        const roomLight = document.querySelector('#room-light-gallery feColorMatrix');
+        const spillLight = document.querySelector('#spill-gallery feColorMatrix');
+        const SPILL = 0.6, BACKLIGHT = [30, 34, 44];
+        // When the room's light changes, so does what it adds to
+        new MutationObserver(tint).observe(roomLight, { attributes: true });
+        const base = camera.querySelector('.base');
+        const lit = () => camera.querySelector('.cam-spill').style.setProperty('--photo', `url("${base.currentSrc}")`);
+        base.complete ? lit() : base.addEventListener('load', lit);
+
+        // The lamp blinks for as long as it's reading
+        let reading = 0;
+        function load(img, src) {
+          if (img.getAttribute('src') === src) return;
+          reading++;
+          lamp.classList.add('reading');
+          const done = () => {
+            img.removeEventListener('load', done);
+            img.removeEventListener('error', done);
+            if (--reading === 0) setTimeout(() => { if (!reading) lamp.classList.remove('reading'); }, 240);
+          };
+          img.addEventListener('load', done);
+          img.addEventListener('error', done);
+          img.src = src;
+        }
+        photo.addEventListener('load', () => {
+          sample(photo, shown);
+          if (mode === 'play' && disp === 2) show();
+        });
+
+        // Where the photo is, zoomed in: in screen heights, and kept inside the screen
+        function place() {
+          const [, , w, h] = photos[shown], z = ZOOMS[zoom];
+          const fit = Math.min(WIDE / (w / h), 1) * z, size = [fit * w / h, fit];
+          return size.map((s, k) => {
+            const room = k ? 1 : WIDE;
+            const edge = s > room ? Math.min(0, Math.max(room - s, room / 2 - at[k] * s)) : (room - s) / 2;
+            at[k] = (room / 2 - edge) / s;
+            return [edge / room * 100, s / room * 100];
+          });
+        }
+        const B = (cls, ...kids) => {
+          const el = document.createElement('span');
+          el.className = cls;
+          el.append(...kids);
+          return el;
+        };
+        const svg = (box, d) => `<svg viewBox="${box}"><path d="${d}"/></svg>`;
+        const KEY = svg('0 0 16 16', 'M5 2.5a3.5 3.5 0 1 1-1 6.85V14h2v-1.5h1.5V11H9V9.35A3.5 3.5 0 0 1 5 2.5zm0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z');
+
+        function show() {
+          camera.dataset.mode = mode;
+          if (mode === 'play' || mode === 'erase' || mode === 'slides') {
+            const [thumb, big] = photos[shown];
+            if (zoom) full = shown;
+            load(photo, full === shown ? big : thumb);
+            if (zoom) {
+              const [[x, w], [y, h]] = place();
+              photo.style.cssText = `position:absolute;max-width:none;left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
+            } else photo.removeAttribute('style');
+          }
+          if (mode === 'index') {
+            const first = shown - shown % 9;
+            if (first !== page) {
+              page = first;
+              index.replaceChildren(...photos.slice(first, first + 9).map(([thumb], k) => {
+                const img = new Image();
+                img.alt = '';
+                img.addEventListener('load', () => sample(img, first + k), { once: true });
+                load(img, thumb);
+                const cell = B('', img);
+                cell.dataset.i = first + k;
+                return cell;
+              }));
+            }
+            index.querySelectorAll('span').forEach(cell => cell.classList.toggle('picked', +cell.dataset.i === shown));
+          }
+
+          info.replaceChildren();
+          if (mode === 'play' && zoom) {
+            // Where in the photo the screen is, unless DISP's hidden it
+            if (mapped) {
+              const [[x, w], [y, h]] = place(), [, , pw, ph] = photos[shown];
+              const map = B('cam-where', B('cam-view'));
+              map.style.aspectRatio = pw / ph;
+              map.firstChild.style.cssText = `left:${-x / w * 100}%;top:${-y / h * 100}%;width:${Math.min(100, 1e4 / w)}%;height:${Math.min(100, 1e4 / h)}%`;
+              info.append(map);
+            }
+          } else if (mode === 'play' && disp) {
+            const [, , w, h] = photos[shown];
+            info.append(B('cam-count', `${shown + 1}/${photos.length}`));
+            const key = B('cam-key');
+            key.innerHTML = KEY;
+            info.append(key);
+            if (disp === 2) {
+              const chart = B('cam-hist');
+              if (photo.complete && photo.naturalWidth) chart.innerHTML = svg('0 0 48 32', histogram(shown));
+              info.append(chart, B('cam-file', `100-${String(shown + 1).padStart(4, '0')}`), B('cam-size', `${w}×${h}`));
+            }
+          }
+
+          panel.replaceChildren();
+          if (mode === 'menu') {
+            const tabs = B('cam-tabs', B('on', '▶'), B('', '⚙'));
+            panel.append(tabs, ...MENU.map((item, i) => B((i ? 'grey' : '') + (i === row ? ' picked' : ''), item)));
+          } else if (mode === 'erase') {
+            panel.append(B('cam-ask', 'Erase?', B('cam-choices', ...['Erase', 'Cancel'].map((c, i) => B(i === choice ? 'picked' : '', c)))));
+          }
+          tint();
+          hint();
+          clearTimeout(idle);
+          // Left alone, it turns itself off, as it would. Without a mouse, there's no
+          // pressing ▶ to turn it back on, so there it stays on
+          if (mode !== 'off' && mode !== 'slides' && matchMedia('(hover: hover)').matches)
+            idle = setTimeout(() => { if (held) show(); else off(); }, 180000);
+        }
+        function say(text, then, ms = 1600) {
+          panel.replaceChildren(B('cam-say', text));
+          camera.dataset.mode = 'say';
+          hint();
+          setTimeout(then, ms);
+        }
+        function off() {
+          mode = 'off';
+          slides++;
+          show();
+        }
+
+        function slide(run, left) {
+          if (run !== slides) return;
+          if (!left) {
+            mode = 'play';
+            return show();
+          }
+          setTimeout(() => {
+            if (run !== slides) return;
+            const turn = () => {
+              shown = (shown + 1) % photos.length;
+              show();
+              photo.decode().catch(() => {}).then(() => {
+                if (run !== slides) return;
+                if (!still) photo.animate({ opacity: [0, 1] }, 300);
+                slide(run, left - 1);
+              });
+            };
+            if (still) turn();
+            else photo.animate({ opacity: [1, 0] }, 300).finished.then(turn);
+          }, 3000);
+        }
+
+        function press(key) {
+          clearTimeout(idle);
+          if (mode === 'off') {
+            // ▶ turns it on, in playback
+            if (key === 'play') {
+              mode = 'play';
+              zoom = 0;
+              show();
+            }
+            return;
+          }
+          if (mode === 'error' || camera.dataset.mode === 'say') return;
+          if (mode === 'slides') {
+            slides++;
+            mode = 'play';
+            return show();
+          }
+          if (key === 'play') {
+            // Shooting mode: the lens comes out, against the table
+            mode = 'error';
+            zoom = 0;
+            camera.dataset.mode = 'error';
+            panel.replaceChildren();
+            hint();
+            setTimeout(() => {
+              panel.replaceChildren(B('cam-say', 'Lens error, restart camera'));
+              setTimeout(off, 2400);
+            }, 900);
+            return;
+          }
+          const step = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] }[key];
+          if (mode === 'play') {
+            if (step && zoom) {
+              const [[, w], [, h]] = place();
+              at = at.map((a, k) => a + step[k] * 0.5 * (k ? 100 / h : 100 / w));
+            } else if (key === 'left' || key === 'right') {
+              shown = (shown + step[0] + photos.length) % photos.length;
+              browsed = true;
+            } else if (key === 'down') {
+              mode = 'erase';
+              choice = 1;
+            } else if (key === 'menu') {
+              mode = 'menu';
+              row = 0;
+            } else if (key === 'disp') {
+              // Zoomed in, it shows or hides where in the photo the screen is
+              if (zoom) mapped = !mapped;
+              else disp = (disp + 1) % 3;
+            }
+            else if (key === 'tele') zoom = Math.min(zoom + 1, ZOOMS.length - 1);
+            else if (key === 'wide') {
+              if (zoom) zoom--;
+              else mode = 'index';
+            }
+            if (!zoom) at = [0.5, 0.5];
+          } else if (mode === 'index') {
+            if (step) {
+              shown = (shown + step[0] + 3 * step[1] + photos.length) % photos.length;
+              browsed = true;
+            } else if (key === 'set' || key === 'tele') mode = 'play';
+            // Not what the camera does, but what's expected: this one, in detail
+            else if (key === 'disp') {
+              mode = 'play';
+              disp = 2;
+            } else if (key === 'menu') {
+              mode = 'menu';
+              row = 0;
+            }
+          } else if (mode === 'menu') {
+            if (key === 'up' || key === 'down') row = (row + step[1] + MENU.length) % MENU.length;
+            else if (key === 'menu') mode = 'play';
+            else if (key === 'set' && row === 0) {
+              // Through all of them once, from this one, and back: it doesn't repeat, as set
+              mode = 'slides';
+              show();
+              return slide(++slides, photos.length - 1);
+            }
+          } else if (mode === 'erase') {
+            if (key === 'left' || key === 'right') choice = 1 - choice;
+            else if (key === 'menu' || key === 'set' && choice) mode = 'play';
+            else if (key === 'set') {
+              mode = 'play';
+              return say('Protected!', show);
+            }
+          }
+          show();
+        }
+
+        // What the button the pointer's on would do, now, in a strip along the foot of the
+        // screen, as the camera's own guides are
+        let hovered = null;
+        const LABELS = { left: '◀', right: '▶', up: '▲', down: '▼', set: 'SET', menu: 'MENU', disp: 'DISP', wide: 'W', tele: 'T' };
+        function does(key) {
+          if (mode === 'slides') return 'Stop';
+          if (key === 'play') return 'Shooting mode';
+          const arrow = ['left', 'right', 'up', 'down'].includes(key);
+          if (mode === 'play' && zoom)
+            return arrow ? 'Move' : { wide: 'Zoom out', tele: zoom < ZOOMS.length - 1 && 'Zoom in', menu: 'Menu',
+              disp: mapped ? 'Hide position' : 'Show position' }[key];
+          if (mode === 'play')
+            return { left: 'Previous', right: 'Next', down: 'Erase', menu: 'Menu', wide: 'Index', tele: 'Zoom in',
+              disp: ['Show info', 'Detailed view', 'Hide info'][disp] }[key];
+          if (mode === 'index') return arrow ? 'Select' : { set: 'Open', tele: 'Open', disp: 'Details', menu: 'Menu' }[key];
+          if (mode === 'menu') return { up: 'Select', down: 'Select', set: row === 0 && 'Start', menu: 'Back' }[key];
+          if (mode === 'erase') return { left: 'Select', right: 'Select', set: choice ? 'Cancel' : 'Erase', menu: 'Cancel' }[key];
+        }
+        function hint() {
+          guide.hidden = !hovered || mode === 'off' || mode === 'error' || camera.dataset.mode === 'say';
+          if (guide.hidden) return;
+          const what = does(hovered);
+          guide.className = 'cam-guide' + (what ? '' : ' grey');
+          guide.replaceChildren(hovered === 'play' ? B('boxed', '▶') : B('', LABELS[hovered]), what || '');
+        }
+
+        const buttons = Array.from(camera.querySelectorAll('.cam-btn'));
+        buttons.forEach(button => button.addEventListener('click', () => press(button.dataset.key)));
+        // For the pointer, a button reaches a little past its edge, to the nearest of them:
+        // a near miss presses it, and anything further opens the gallery
+        const keys = camera.querySelector('.cam-keys');
+        const REACH = 1.5;
+        function nearest(e) {
+          const x = e.offsetX + (e.target === keys ? keys.offsetLeft : 0), y = e.offsetY;
+          let best = null, far = REACH;
+          for (const button of buttons) {
+            const style = getComputedStyle(button);
+            const [bx, by] = ['--bx', '--by'].map((v, k) => parseFloat(style.getPropertyValue(v)) / 100 * (k ? item.offsetHeight : item.offsetWidth));
+            const d = Math.hypot((x - bx) / (button.offsetWidth / 2), (y - by) / (button.offsetHeight / 2));
+            if (d < far) [best, far] = [button, d];
+          }
+          return best;
+        }
+        const release = () => buttons.forEach(button => button.classList.remove('pressed'));
+        item.addEventListener('pointermove', e => {
+          if (e.target !== keys && e.target !== cover) return;
+          const button = nearest(e), key = button && button.dataset.key;
+          // Out of reach, the click goes through to the link
+          keys.style.pointerEvents = button ? '' : 'none';
+          if (key !== hovered) {
+            hovered = key;
+            release();
+            hint();
+          }
+        });
+        item.addEventListener('pointerleave', () => {
+          hovered = null;
+          release();
+          hint();
+        });
+        keys.addEventListener('pointerdown', e => { if (e.button === 0) nearest(e)?.classList.add('pressed'); });
+        keys.addEventListener('pointerup', release);
+        keys.addEventListener('click', e => {
+          const button = nearest(e);
+          if (button) press(button.dataset.key);
+        });
+        // With the camera focused, the arrows are its arrows
+        cover.addEventListener('keydown', e => {
+          keyed = e.key === 'Enter';
+          const key = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }[e.key];
+          // Up and down only where they go somewhere: not to Erase?, which needs FUNC/SET
+          if (!key || (key === 'up' || key === 'down') && mode !== 'index' && !(mode === 'play' && zoom)) return;
+          e.preventDefault();
+          const button = camera.querySelector(`[data-key="${key}"]`);
+          button.classList.add('pressed');
+          setTimeout(() => button.classList.remove('pressed'), 120);
+          press(key);
+        });
+
+        // Picked up, it goes to the index; put down a while, it opens the one picked
+        function pickUp() {
+          held = true;
+          if (rested && mode === 'play' && !zoom) {
+            mode = 'index';
+            show();
+          }
+          rested = false;
+        }
+        function putDown() {
+          held = false;
+          setTimeout(() => {
+            if (held) return;
+            rested = true;
+            browsed = false;
+            if (mode === 'index') {
+              mode = 'play';
+              show();
+            }
+          }, 1500);
+        }
+        item.addEventListener('pointerenter', pickUp);
+        item.addEventListener('pointerleave', putDown);
+        cover.addEventListener('focus', pickUp);
+        cover.addEventListener('blur', putDown);
+        // Over the index, the pointer picks
+        item.addEventListener('pointermove', e => {
+          if (mode !== 'index') return;
+          const cell = document.elementsFromPoint(e.clientX, e.clientY).find(el => el.parentElement === index);
+          if (cell && +cell.dataset.i !== shown) {
+            shown = +cell.dataset.i;
+            show();
+          }
+        });
+        // Clicked on the screen, or after going through them, it opens that photo in the
+        // gallery; anywhere else, the gallery
+        cover.addEventListener('click', e => {
+          const on = keyed ? browsed : document.elementsFromPoint(e.clientX, e.clientY).includes(screen);
+          keyed = false;
+          cover.href = gallery + (on && (mode === 'play' || mode === 'index') ? `#${shown + 1}` : '');
+        });
+
+        show();
+      })();
 
       // The Pi's screen shows the stars and the downloads a month, in turn
       const pi = document.getElementById('projects');
@@ -1030,6 +1460,7 @@ layout_style: "homepage"
       // placed and turned as the original is. One on something that is picked up rises
       // with it.
       const glowing = table.querySelector('.glow');
+      const aura = table.querySelector('.aura');
       const glint = table.querySelector('.glint');
       const writing = Array.from(table.querySelectorAll('.ink, .tag > span, .glow-ink'));
       const COPIED = ['fontSize', 'lineHeight', 'letterSpacing', 'textAlign', 'display', 'placeItems',
@@ -1046,6 +1477,7 @@ layout_style: "homepage"
         writing.forEach(el => el.classList.toggle('glowing', night));
         if (!night) {
           pips = null;
+          aura.replaceChildren();
           return glowing.replaceChildren();
         }
         const copies = writing.map((el, i) => {
@@ -1069,11 +1501,17 @@ layout_style: "homepage"
             opacity: paints[i][0].toFixed(2),
             maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
           });
+          // Not in .glow, which it can't be brighter than: it dims itself to match, by --paint
+          if (copy.className === 'halo') {
+            copy.style.setProperty('--paint', copy.style.opacity);
+            copy.style.removeProperty('opacity');
+          }
           if (el === die.querySelector('.glow-ink')) pips = { copy, angle: angle - (parseFloat(die.style.getPropertyValue('--spin')) || 0) };
           return [el.closest('.lift') && el.closest('.obj'), copy];
         });
         risers = copies.filter(([obj]) => obj);
-        glowing.replaceChildren(...copies.map(([, copy]) => copy));
+        glowing.replaceChildren(...copies.map(([, copy]) => copy).filter(copy => copy.className !== 'halo'));
+        aura.replaceChildren(...copies.map(([, copy]) => copy).filter(copy => copy.className === 'halo'));
       }
       function rise() {
         risers.forEach(([obj, copy]) => {
@@ -1240,8 +1678,12 @@ layout_style: "homepage"
         // to the eye, so how bright it is is just how lit the object is, which the room's
         // light gives it, or for those above that, its colour here.
         rim = function (el, { cx, cy } = measure(el)) {
-          const item = el.querySelector('.item');
-          if (!night) return item.style.removeProperty('filter');
+          // On the whole object, or where that'd cut off light blended over it from what it's
+          // over (in Chromium, a filter does), on its photo, marked .rimmed, which keeps its
+          // own filters and adds this by --rim
+          const item = el.querySelector('.rimmed') || el.querySelector('.item');
+          const set = value => item.matches('.rimmed') ? item.style.setProperty('--rim', value) : item.style.filter = value;
+          if (!night) return set('');
           const [width, shine] = RIMS[el.id];
           const distance = Math.hypot(cx - bulbX, cy - bulbY) || 1;
           const [ax, ay] = [(cx - bulbX) / distance * width * u, (cy - bulbY) / distance * width * u];
@@ -1255,7 +1697,7 @@ layout_style: "homepage"
           const flood = filter.querySelector('feFlood');
           flood.setAttribute('flood-color', el.matches('.self-lit') ? rgb(lightAt(cx, cy)) : 'rgb(255 250 242)');
           flood.setAttribute('flood-opacity', shine);
-          item.style.filter = `url(#rim-${el.id})`;
+          set(`url(#rim-${el.id})`);
         };
 
         // A wire is round, so it's lit on the side towards the light, with its shine a

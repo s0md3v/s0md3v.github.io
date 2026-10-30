@@ -134,6 +134,7 @@ description: Photographs by Somdev Sangwan.
 
     .modal {
         display: none;
+        outline: none;
         position: fixed;
         top: 0;
         left: 0;
@@ -155,18 +156,41 @@ description: Photographs by Somdev Sangwan.
         opacity: 1;
     }
 
-    .modal img {
+    /* The photo in the camera's bezel, its pink where it frames the screen, and as
+       narrow, so it doesn't tint the photo */
+    .modal-screen {
+        position: relative;
         max-width: 95%;
-        max-height: 95vh;
-        border-radius: 4px;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-        object-fit: contain;
         transform: scale(0.95);
         transition: transform 0.3s ease;
     }
 
-    .modal.visible img {
+    .modal.visible .modal-screen {
         transform: scale(1);
+    }
+
+    .modal img {
+        display: block;
+        max-width: 100%;
+        max-height: calc(95vh - 2 * var(--bezel));
+        --bezel: clamp(6px, 1.1vmin, 11px);
+        border: var(--bezel) solid rgb(172 122 130);
+        border-radius: calc(var(--bezel) * 0.8);
+        box-sizing: content-box;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        object-fit: contain;
+    }
+
+    /* Which one it is, as the camera says it */
+    .modal-count {
+        position: absolute;
+        top: calc(clamp(6px, 1.1vmin, 11px) + 0.9em);
+        right: calc(clamp(6px, 1.1vmin, 11px) + 1.1em);
+        font: 600 clamp(12px, 1.7vmin, 17px)/1 system-ui, sans-serif;
+        letter-spacing: 0.03em;
+        color: #fff;
+        text-shadow: 0 0 0.25em rgba(0, 0, 0, 0.8);
+        pointer-events: none;
     }
 
     .close-button {
@@ -213,9 +237,12 @@ description: Photographs by Somdev Sangwan.
     {% endfor %}
 </div>
 
-<div class="modal" id="modal" style="display: none;" role="dialog" aria-modal="true" aria-label="Image view">
+<div class="modal" id="modal" tabindex="-1" style="display: none;" role="dialog" aria-modal="true" aria-label="Image view">
     <button type="button" class="close-button" aria-label="Close image view">&times;</button>
-    <img id="modal-img" src="" alt="">
+    <span class="modal-screen">
+        <img id="modal-img" src="" alt="">
+        <span class="modal-count" aria-hidden="true"></span>
+    </span>
 </div>
 
 <script>
@@ -248,7 +275,7 @@ description: Photographs by Somdev Sangwan.
         return modal.classList.contains('visible');
     }
 
-    function openModal(imgSrc, trigger) {
+    function openModal(imgSrc, trigger, quiet) {
         clearTimeout(closeTimer);
         opener = trigger || document.activeElement;
         modal.style.display = 'flex';
@@ -259,9 +286,14 @@ description: Photographs by Somdev Sangwan.
         modalImg.src = imgSrc;
         const thumb = trigger && trigger.querySelector('img');
         modalImg.alt = thumb ? thumb.alt : '';
+        const items = Array.from(document.querySelectorAll('.gallery-item'));
+        modal.querySelector('.modal-count').textContent =
+            items.includes(trigger) ? `${items.indexOf(trigger) + 1}/${items.length}` : '';
         document.body.style.overflow = 'hidden';
         setBackgroundInert(true);
-        closeBtn.focus();
+        // Opened from a link, with nothing pressed yet, the close button would show as
+        // focused from the keyboard: the dialog takes focus instead
+        (quiet ? modal : closeBtn).focus();
     }
 
     function closeModal() {
@@ -302,4 +334,15 @@ description: Photographs by Somdev Sangwan.
             closeBtn.focus();
         }
     });
+
+    // From the homepage's camera: #7 opens the seventh photo, from where it is
+    {
+        const linked = /^#(\d+)$/.exec(location.hash);
+        const item = linked && document.querySelectorAll('.gallery-item')[linked[1] - 1];
+        if (linked) history.replaceState(null, '', location.pathname + location.search);
+        if (item) {
+            item.scrollIntoView({ block: 'center' });
+            openModal(item.dataset.full, item, true);
+        }
+    }
 </script>

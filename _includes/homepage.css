@@ -524,9 +524,15 @@ a.obj:not(.grounded):focus-visible,
   display: none;
 }
 
-/* At night, hovered, its halo turns gold */
+/* At night, hovered, its halo turns gold: no longer ink, but light, so in a layer of its
+   own, .aura, which isn't dimmed as the ink's is. At rest it dims itself to match. */
+.glow.aura {
+  opacity: 1;
+}
+
 .glow > .halo {
-  transition: color 0.6s ease, translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+  opacity: calc(var(--paint, 1) * 0.7);
+  transition: color 0.6s ease, opacity 0.6s ease, translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 .glow > .halo svg {
@@ -534,11 +540,15 @@ a.obj:not(.grounded):focus-visible,
 }
 
 .table:has(#philosophy:is(:hover, :focus-visible)) .glow > .halo {
-  color: rgb(255 218 118);
+  opacity: 1;
+  color: rgb(255 204 92);
 }
 
 .table:has(#philosophy:is(:hover, :focus-visible)) .glow > .halo svg {
-  filter: drop-shadow(0 0 0.08em rgb(255 196 80 / 0.8)) drop-shadow(0 0 0.35em rgb(255 180 60 / 0.45));
+  filter:
+    drop-shadow(0 0 0.06em rgb(255 200 90))
+    drop-shadow(0 0 0.3em rgb(255 176 60 / 0.7))
+    drop-shadow(0 0 0.9em rgb(255 150 40 / 0.35));
 }
 
 /* And sparkles: a few glints round it, each in its own time */
@@ -578,14 +588,15 @@ a.obj:not(.grounded):focus-visible,
 
 /* Above .light so the screen can glow; lit by #room-light-gallery instead */
 #gallery {
-  --x: 41; --y: -15; --w: 14; --r: 7deg; --h0: 2.5;
+  /* A little bigger than to scale, for its buttons */
+  --x: 39.5; --y: -11.5; --w: 16; --r: 7deg; --h0: 2.5;
   --tx: 42%; --ty: 124%; --tw: 9; --tr: -3deg;
   z-index: 41;
 }
 
 #gallery .base,
 html:not(.dark-mode) .cam-screen {
-  filter: url(#room-light-gallery);
+  filter: url(#room-light-gallery) var(--rim, );
 }
 
 #gallery > .tag {
@@ -606,15 +617,23 @@ html:not(.dark-mode) .cam-screen {
   width: 51.8%;
   height: 58.3%;
   opacity: 0;
-  mix-blend-mode: screen;
   box-shadow:
-    0 0 1.5cqi 0.6cqi rgb(var(--glow, 190 200 215) / 0.5),
-    0 0 5cqi 1.5cqi rgb(var(--glow, 190 200 215) / 0.25);
+    0 0 2cqi 0.9cqi rgb(var(--glow, 190 200 215) / 0.6),
+    0 0 7cqi 2.5cqi rgb(var(--glow, 190 200 215) / 0.3);
   pointer-events: none;
 }
 
 .dark-mode .cam-glow {
   opacity: 1;
+}
+
+/* Firefox spreads a soft shadow wider than Chromium does, so there, a fainter one */
+@supports (-moz-appearance: none) {
+  .cam-glow {
+    box-shadow:
+      0 0 2cqi 0.9cqi rgb(var(--glow, 190 200 215) / 0.42),
+      0 0 7cqi 2.5cqi rgb(var(--glow, 190 200 215) / 0.2);
+  }
 }
 
 .cam-screen {
@@ -626,8 +645,24 @@ html:not(.dark-mode) .cam-screen {
   height: 58.3%;
   overflow: hidden;
   container-type: inline-size;
+  /* An LCD: even its black pixels pass some of the backlight, which comes in along the
+     bottom edge and leaks most at its corners. Round them is a black frame, unlit. */
+  background:
+    radial-gradient(26% 34% at 0 100%, rgb(46 52 66 / 0.6), transparent),
+    radial-gradient(26% 34% at 100% 100%, rgb(46 52 66 / 0.6), transparent),
+    linear-gradient(0deg, rgb(25 28 35), rgb(16 18 23) 35%, rgb(13 15 19));
+  box-shadow: inset 0 0 0 0.9cqi #060707, inset 0 0 0.6cqi 1.2cqi rgba(0, 0, 0, 0.6);
+}
+
+/* And the photo's darks, too, aren't darker than the backlight lets them be */
+.cam-photo,
+.cam-index img {
+  filter: contrast(0.93) brightness(1.03);
+}
+
+/* Off, the backlight's out, and the glass is as dark as it gets */
+#gallery[data-mode="off"] .cam-screen {
   background: #050505;
-  box-shadow: inset 0 0 0.6cqi 0.3cqi rgba(0, 0, 0, 0.7);
 }
 
 .cam-photo {
@@ -635,16 +670,6 @@ html:not(.dark-mode) .cam-screen {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.cam-count {
-  position: absolute;
-  top: 4cqi;
-  right: 5cqi;
-  font: 600 6.5cqi/1 system-ui, sans-serif;
-  letter-spacing: 0.04em;
-  color: #fff;
-  text-shadow: 0 0 1.5cqi rgba(0, 0, 0, 0.8);
 }
 
 .cam-screen::after {
@@ -664,30 +689,337 @@ html:not(.dark-mode) .cam-screen {
   display: none;
 }
 
+/* What's on the screen. White, outlined in black to read over any photo, as cameras do */
+.cam-info,
+.cam-panel,
+.cam-index {
+  position: absolute;
+  inset: 0;
+  font: 600 6.5cqi/1 system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  color: #fff;
+  text-shadow: 0 0 1.5cqi rgba(0, 0, 0, 0.8);
+}
+
+.cam-file,
+.cam-count {
+  position: absolute;
+  top: 4cqi;
+}
+
+.cam-file { left: 5cqi; }
+.cam-count { right: 5cqi; }
+
+.cam-key {
+  position: absolute;
+  left: 4.5cqi;
+  bottom: 3.5cqi;
+  width: 8.5cqi;
+  filter: drop-shadow(0 0 0.8cqi rgba(0, 0, 0, 0.8));
+}
+
+.cam-key svg,
+.cam-hist svg {
+  display: block;
+  width: 100%;
+  fill: currentColor;
+}
+
+/* The detailed display: a histogram of the photo's brightness, and its size */
+.cam-hist {
+  position: absolute;
+  left: 5cqi;
+  top: 13cqi;
+  width: 26cqi;
+  height: 17cqi;
+  padding: 1cqi;
+  border: 0.4cqi solid rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.cam-hist svg {
+  height: 100%;
+}
+
+.cam-size {
+  position: absolute;
+  right: 5cqi;
+  bottom: 4cqi;
+}
+
+/* Zoomed in, where on the photo the screen is */
+.cam-where {
+  position: absolute;
+  right: 4cqi;
+  bottom: 4cqi;
+  height: 16cqi;
+  border: 0.4cqi solid rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.cam-view {
+  position: absolute;
+  outline: 0.4cqi solid #f5a623;
+}
+
+/* Nine at a time, the one picked framed */
+.cam-index {
+  display: none;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: 3cqi;
+  padding: 4cqi 5cqi;
+}
+
+.cam-index > span {
+  display: flex;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.cam-index img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.cam-index .picked img {
+  outline: 0.9cqi solid #f5a623;
+  outline-offset: 0.5cqi;
+}
+
+/* The menu, and what the camera asks and says */
+.cam-panel {
+  display: none;
+  text-shadow: none;
+}
+
+.cam-panel > span:not(.cam-say, .cam-ask) {
+  display: block;
+  padding: 1.6cqi 6cqi;
+}
+
+#gallery[data-mode="menu"] .cam-panel {
+  display: block;
+  padding-top: 1cqi;
+  background: #141518;
+}
+
+.cam-panel > .grey {
+  color: #6d6f75;
+}
+
+.cam-panel .picked {
+  background: #f5a623;
+  color: #fff;
+}
+
+.cam-panel .cam-tabs {
+  display: flex;
+  gap: 2cqi;
+  margin-bottom: 1.5cqi;
+  padding: 0 4cqi;
+  border-bottom: 0.4cqi solid #f5a623;
+}
+
+.cam-tabs > span {
+  padding: 1cqi 3cqi;
+  color: #6d6f75;
+}
+
+.cam-tabs > .on {
+  background: #f5a623;
+  color: #fff;
+}
+
+.cam-say,
+.cam-ask {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4cqi;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8cqi;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.cam-choices {
+  display: flex;
+  gap: 3cqi;
+}
+
+.cam-choices > span {
+  min-width: 22cqi;
+  padding: 1.6cqi 2cqi;
+  border: 0.4cqi solid #f5a623;
+}
+
+#gallery:is([data-mode="erase"], [data-mode="say"], [data-mode="error"]) .cam-panel {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#gallery[data-mode="index"] .cam-index {
+  display: grid;
+}
+
+#gallery:is([data-mode="index"], [data-mode="menu"], [data-mode="error"], [data-mode="off"]) .cam-photo {
+  visibility: hidden;
+}
+
+/* Off, its screen's just dark glass */
+#gallery[data-mode="off"] .cam-glow {
+  opacity: 0;
+}
+
+.cam-lamp {
+  position: absolute;
+  z-index: 2;
+  left: 45.95%;
+  top: 9.4%;
+  width: 2%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(closest-side, rgb(215 255 200), rgb(70 225 90) 55%, rgb(30 170 60 / 0.6));
+  box-shadow: 0 0 1cqi 0.3cqi rgb(70 230 100 / 0.55);
+  pointer-events: none;
+}
+
+.cam-lamp.reading {
+  animation: cam-blink 0.18s steps(1) infinite;
+}
+
+@keyframes cam-blink {
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cam-lamp.reading {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* What the button under the pointer would do */
+.cam-guide {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  gap: 3cqi;
+  align-items: center;
+  padding: 2cqi 4.5cqi;
+  font: 600 5.6cqi/1 system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.cam-guide[hidden] {
+  display: none;
+}
+
+.cam-guide > span {
+  font-weight: 700;
+}
+
+.cam-guide .boxed {
+  padding: 0.3cqi 1cqi;
+  border: 0.4cqi solid;
+  font-size: 0.75em;
+}
+
+.cam-guide.grey {
+  color: #8a8c92;
+}
+
+/* At night, the screen's light falls on the buttons beside it, most on the nearest. Lit,
+   a surface shows its own colour times the light on it, so: the photo, lit by the room and
+   the screen together (#spill-gallery), over the photo lit by the room alone. Blending the
+   light in instead, Chromium drops under a filtered object, and Firefox overdoes. */
+.cam-spill {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: none;
+  mask-image: linear-gradient(to right, transparent 67%, #000 71%, rgb(0 0 0 / 0.2) 92%);
+  pointer-events: none;
+}
+
+.cam-spill > span {
+  position: absolute;
+  inset: 0;
+  background: var(--photo) 0 0 / 100% 100%;
+  filter: url(#spill-gallery);
+  mask-image:
+    radial-gradient(2.5cqi 2.5cqi at 75.8% 49%, #000 85%, transparent),
+    radial-gradient(7.8cqi 7.8cqi at 82% 66.1%, #000 90%, transparent),
+    radial-gradient(2.6cqi 2.6cqi at 76.1% 82.6%, #000 85%, transparent),
+    radial-gradient(2.6cqi 2.6cqi at 87.7% 82.6%, #000 85%, transparent),
+    /* The zoom lever's above the screen, so it gets less */
+    radial-gradient(8.2cqi 2.6cqi at 83.1% 14.8%, rgb(0 0 0 / 0.4) 85%, transparent);
+}
+
+.dark-mode .cam-spill {
+  display: block;
+}
+
+#gallery[data-mode="off"] .cam-spill {
+  opacity: 0;
+}
+
+.cam-keys {
+  position: absolute;
+  z-index: 7;
+  left: 68%;
+  top: 0;
+  width: 32%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Its buttons, where they are in the photo */
 .cam-btn {
   position: absolute;
   z-index: 6;
-  top: 65%;
-  width: 6%;
-  aspect-ratio: 1;
+  left: var(--bx);
+  top: var(--by);
+  width: var(--bw, 4.8%);
+  aspect-ratio: var(--ba, 1);
   translate: -50% -50%;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: none;
-  cursor: pointer;
+  /* The pointer's .cam-keys' */
+  pointer-events: none;
 }
 
-.cam-prev { left: 76.4%; }
-.cam-next { left: 87.6%; }
+.cam-btn[data-key="left"] { --bx: 76.5%; --by: 66.1%; }
+.cam-btn[data-key="right"] { --bx: 87.5%; --by: 66.1%; }
+.cam-btn[data-key="up"] { --bx: 82%; --by: 58.1%; }
+.cam-btn[data-key="down"] { --bx: 82%; --by: 74%; }
+.cam-btn[data-key="set"] { --bx: 82%; --by: 66.1%; --bw: 5.4%; }
+.cam-btn[data-key="menu"] { --bx: 75.8%; --by: 49%; }
+.cam-btn[data-key="disp"] { --bx: 76.1%; --by: 82.6%; }
+.cam-btn[data-key="play"] { --bx: 87.7%; --by: 82.6%; }
+/* The zoom lever, a rocker: W, toward the index, and T */
+.cam-btn:is([data-key="wide"], [data-key="tele"]) { --by: 14.8%; --bw: 7.9%; --ba: 1.73; border-radius: 40%; }
+.cam-btn[data-key="wide"] { --bx: 78.4%; }
+.cam-btn[data-key="tele"] { --bx: 87.9%; }
 
-.cam-btn:active {
+.cam-btn:active,
+.cam-btn.pressed {
   background: radial-gradient(closest-side, rgba(60, 20, 30, 0.22), transparent);
 }
 
 /* Too small to tap; on touch screens the camera just links to the gallery */
 @media not (hover: hover) {
-  .cam-btn {
+  .cam-btn,
+  .cam-keys {
     display: none;
   }
 }
