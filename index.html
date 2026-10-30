@@ -1757,10 +1757,18 @@ layout_style: "homepage"
       // this screen, and the tape and cloth drawn by the stylesheet. One that fails to load is
       // shown anyway, as it would be.
       const waiting = new Set();
+      // Of an image-set, the one the browser draws: the first as dense as the screen, or the
+      // densest
+      function drawn(image) {
+        const set = [...image.matchAll(/url\("?(.+?)"?\)\s*([\d.]+)(?:x|dppx)/g)].map(([, url, x]) => [url, +x]);
+        if (!set.length) return image.match(/url\("?(.+?)"?\)/)?.[1];
+        set.sort((a, b) => a[1] - b[1]);
+        return (set.find(([, x]) => x >= devicePixelRatio) || set.at(-1))[0];
+      }
       const ready = new Map(objects.filter(el => el !== toggle && el.id !== 'intro').map(el => {
         const pictures = Array.from(el.querySelectorAll('img:not(.cam-photo)'));
         el.querySelectorAll('.tag, .item').forEach(at => [null, '::before'].forEach(part => {
-          const url = getComputedStyle(at, part).backgroundImage.match(/url\("?(.+?)"?\)/)?.[1];
+          const url = drawn(getComputedStyle(at, part).backgroundImage);
           if (url) pictures.push(Object.assign(new Image(), { src: url }));
         }));
         waiting.add(el);

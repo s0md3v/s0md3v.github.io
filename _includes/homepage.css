@@ -9,6 +9,12 @@
   --ballpoint: rgb(30 45 115);
 }
 
+/* The site keeps a scrollbar on every page, so they don't shift going from a short one to a
+   long one. The table fits the window, so here, only when there's something to scroll. */
+html:has(.table) {
+  overflow-y: auto;
+}
+
 .dark-mode {
   --shadow: 0, 0, 0;
   --contact-alpha: 0.6;
@@ -474,11 +480,12 @@ a.obj:not(.grounded):focus-visible,
   text-shadow: 0.03em -0.02em 0 currentColor;
 }
 
+/* The lines under the card, written a little further right than the one on it */
 .pen-sum > :nth-child(2) { rotate: -2deg; }
-.pen-sum > :nth-child(4) { rotate: 1deg; translate: 0.05em 0; }
-.pen-sum > :nth-child(6) { rotate: -6deg; translate: 0.35em -0.05em; transform-origin: 0 50%; }
-.pen-sum > :nth-child(3) { rotate: 2deg; }
-.pen-sum > :nth-child(5) { rotate: -8deg; translate: 0.4em 0.02em; }
+.pen-sum > :nth-child(4) { rotate: 1deg; translate: 0.65em 0; }
+.pen-sum > :nth-child(6) { rotate: -6deg; translate: 0.95em -0.05em; transform-origin: 0 50%; }
+.pen-sum > :nth-child(3) { rotate: 2deg; translate: 0.6em 0; }
+.pen-sum > :nth-child(5) { rotate: -8deg; translate: 1em 0.02em; }
 
 /* ---- About: a polaroid ---- */
 
@@ -1748,7 +1755,9 @@ html:not(.dark-mode) .pi-screen {
   content: "";
   position: absolute;
   inset: 0;
-  background: url('{{ "/assets/images/table/notebook-cloth.jpg" | relative_url }}') 0 0 / 20% auto;
+  /* Drawn at 46-92px, so for each pixel density, a tile shrunk ahead, properly: Chrome,
+     shrinking a tile on something turned, aliases the weave into waves */
+  background: image-set(url('{{ "/assets/images/table/notebook-cloth-64.jpg" | relative_url }}') 1x, url('{{ "/assets/images/table/notebook-cloth-96.jpg" | relative_url }}') 1.5x, url('{{ "/assets/images/table/notebook-cloth.jpg" | relative_url }}') 2x) 0 0 / 20% auto;
   mix-blend-mode: overlay;
   mask-image: url('{{ "/assets/images/table/notebook.webp" | relative_url }}'), linear-gradient(#000 0 0);
   mask-size: 100% 100%, 35.9% 16.6%;
