@@ -117,31 +117,64 @@ layout_style: "homepage"
       </span></span>
     </a>
 
-    <div class="obj self-lit" id="phone">
+    <div class="obj self-lit unplugged" id="phone">
       <span class="lift"><span class="item">
         <svg class="cable" viewBox="-60 -60 240 260" aria-hidden="true">
           <linearGradient id="plug-metal" x1="0" x2="1">
             <stop offset="0" stop-color="#6f747b" /><stop offset="0.35" stop-color="#f3f5f7" />
             <stop offset="0.6" stop-color="#b9bec4" /><stop offset="1" stop-color="#5d6268" />
           </linearGradient>
-          <g class="cable-run run-down" data-tug="M28 -21C28 -35 9 -41 -9 -33S-26 -4 -24 32S-18 120 -22 200">
-            <path class="cable-edge" d="M28 -21C28 -38 5 -45 -14 -35S-31 -3 -28 32S-21 120 -26 200" />
-            <path class="cable-core" d="M28 -21C28 -38 5 -45 -14 -35S-31 -3 -28 32S-21 120 -26 200" />
-            <path class="cable-shine" d="M28 -21C28 -38 5 -45 -14 -35S-31 -3 -28 32S-21 120 -26 200" transform="translate(-0.6 -0.5)" />
+          <!-- Brushed aluminium, matte, so it's soft across; and the strain relief, frosted -->
+          <linearGradient id="plug-brushed" x1="0" x2="1">
+            <stop offset="0" stop-color="#8e9399" /><stop offset="0.28" stop-color="#d5d8db" />
+            <stop offset="0.45" stop-color="#e9ebed" /><stop offset="0.72" stop-color="#c3c7cb" />
+            <stop offset="1" stop-color="#868b91" />
+          </linearGradient>
+          <linearGradient id="plug-frost" x1="0" x2="1">
+            <stop offset="0" stop-color="#c9cdd3" stop-opacity="0.85" /><stop offset="0.4" stop-color="#f7f8f9" stop-opacity="0.92" />
+            <stop offset="1" stop-color="#bfc4cb" stop-opacity="0.85" />
+          </linearGradient>
+          <linearGradient id="plug-gold" x1="0" x2="1">
+            <stop offset="0" stop-color="#7a5a24" /><stop offset="0.35" stop-color="#f4dd9c" />
+            <stop offset="0.6" stop-color="#c9a256" /><stop offset="1" stop-color="#6e5020" />
+          </linearGradient>
+          <!-- The earphones' cable, off the bottom of the table. Out of the phone, its plug
+               lies where it was left, by the phone's corner, the cable slack (data-loose);
+               picking up the earbuds drags it a little further along. In between, it's held
+               up over the jack, straight, its pin clear of it (data-lift). -->
+          <g class="cable-run run-down" data-tug="M28 -27C28 -40 6 -46 -18 -42C-42 -37 -55 -30 -56 -8S-57 30 -50 60S-40 130 -38 200"
+            data-lift="M28 -48C28 -64 2 -68 -22 -60C-44 -53 -58 -36 -58 -8S-60 30 -52 60S-42 130 -40 200"
+            data-loose="M-19.84 -33.41C-32.06 -37.86 -44 -42 -52 -34C-57 -29 -58 -20 -58 -8S-60 30 -52 60S-42 130 -40 200"
+            data-loose-tug="M-24.56 -32.12C-36.15 -35.23 -47 -38 -54 -30C-57.5 -26 -58 -18 -58 -8S-60 30 -52 60S-42 130 -40 200">
+            <path class="cable-edge" d="M28 -27C28 -44 4 -52 -20 -46C-44 -40 -58 -32 -58 -8S-60 30 -52 60S-42 130 -40 200" />
+            <path class="cable-core" d="M28 -27C28 -44 4 -52 -20 -46C-44 -40 -58 -32 -58 -8S-60 30 -52 60S-42 130 -40 200" />
+            <path class="cable-shine" d="M28 -27C28 -44 4 -52 -20 -46C-44 -40 -58 -32 -58 -8S-60 30 -52 60S-42 130 -40 200" transform="translate(-0.6 -0.5)" />
           </g>
-          <g class="cable-run run-side">
-            <path class="cable-edge" d="M28 -21C28 -36 40 -46 64 -46S112 -38 160 -45" />
-            <path class="cable-core" d="M28 -21C28 -36 40 -46 64 -46S112 -38 160 -45" />
-            <path class="cable-shine" d="M28 -21C28 -36 40 -46 64 -46S112 -38 160 -45" transform="translate(-0.5 -0.6)" />
+          <g class="cable-run run-side" data-lift="M28 -48C28 -60 44 -56 64 -50S112 -40 160 -45"
+            data-loose="M75.84 -33.41C83.4 -36.15 96 -44 112 -42S136 -40 160 -45">
+            <path class="cable-edge" d="M28 -27C28 -38 40 -46 64 -46S112 -38 160 -45" />
+            <path class="cable-core" d="M28 -27C28 -38 40 -46 64 -46S112 -38 160 -45" />
+            <path class="cable-shine" d="M28 -27C28 -38 40 -46 64 -46S112 -38 160 -45" transform="translate(-0.5 -0.6)" />
           </g>
-          <rect class="cable-edge relief" x="25.6" y="-22" width="4.8" height="8" rx="1.6" />
-          <rect class="plug" x="24.6" y="-15" width="6.8" height="15.5" rx="1.2" />
-          <path class="plug-ring" d="M24.6 -11.5h6.8M24.6 -10.5h6.8" />
+          <!-- A 3.5 mm plug, in the jack on the phone's top edge, at 28 0.5: its gold-plated
+               pin, 14 mm of it, is under the phone till it's pulled out. Sleeve, ring and
+               tip, with black insulating bands between them; a brushed aluminium barrel, 7 mm
+               across; and a frosted strain relief, where the cable leaves it. -->
+          <g class="jack">
+            <path class="pin" d="M25.65 0.5H30.35V15.3H25.65ZM26.05 16.1H29.95V17.6Q29.95 19.6 28 19.9Q26.05 19.6 26.05 17.6Z" />
+            <path class="pin-band" d="M25.65 10.9H30.35V11.7H25.65ZM25.65 15.3H30.35V16.1H25.65Z" />
+            <path class="relief" d="M25.2 -17.2H30.8L30.3 -27.5Q30.25 -28 29.8 -28H26.2Q25.75 -28 25.7 -27.5Z" />
+            <rect class="plug" x="23.3" y="-17.5" width="9.4" height="18" rx="0.8" />
+            <path class="grain grain-bright" d="M24.6 -17V0 M25.9 -17V0 M27.3 -17V0 M28.4 -17V0 M29.8 -17V0 M31.3 -17V0" />
+            <path class="grain grain-dull" d="M24.1 -17V0 M25.3 -17V0 M26.6 -17V0 M28.9 -17V0 M30.5 -17V0 M31.9 -17V0" />
+          </g>
         </svg>
         <span class="part phone-body">
           <span class="phone-screen">
             <span class="status-bar">
               <span class="phone-time"></span>
+              <!-- Plugged in, the phone says so -->
+              <svg class="headset" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.6 7.2V5.4a3.4 3.4 0 0 1 6.8 0v1.8" fill="none" stroke="currentColor" stroke-width="0.9" /><rect x="1" y="5.6" width="2" height="3.4" rx="0.6" /><rect x="7" y="5.6" width="2" height="3.4" rx="0.6" /></svg>
               <svg viewBox="0 0 40 10" aria-hidden="true"><path d="M1 9h1.6V7H1zM4 9h1.6V5.5H4zM7 9h1.6V4H7zM10 9h1.6V2.5H10z" /><path d="M15.5 3.4a6 6 0 0 1 8 0l-1 1.1a4.5 4.5 0 0 0-6 0zM17.4 5.5a3.2 3.2 0 0 1 4.2 0L19.5 8z" /><rect x="28" y="2.2" width="10" height="5.6" rx="1.3" fill="none" stroke="currentColor" stroke-width="0.9" /><rect x="29.4" y="3.6" width="5.8" height="2.8" rx="0.4" /><path d="M38.6 4h0.9v2h-0.9z" /></svg>
             </span>
             <span class="apps">
@@ -156,6 +189,8 @@ layout_style: "homepage"
           sizes="(max-width: 700px) 44vw, (max-aspect-ratio: 4/5) 44vw, min(12.8vw, 24vh)" width="600" height="1260" alt="">
           <span class="phone-glow"></span>
         </span>
+        <!-- Over the earphones' plug, wherever it is: pushed into the jack, or pulled out -->
+        <button class="phone-plug" type="button" aria-label="Plug the earphones into the phone"></button>
       </span></span>
     </div>
 
@@ -763,6 +798,60 @@ layout_style: "homepage"
         show();
       })();
 
+      // A plug, in the hand. Pulled, it grips, giving a little, till it comes free all at
+      // once; out, it follows the hand, and near enough the socket, it's pushed home. A
+      // click without a drag, and a keyboard, do either in one go. way() is the way it
+      // comes out, on the screen; out of the socket, reach(dx, dy) is how far out the
+      // hand's moved it, from 0, in, to 1, where it lies. hold(t) shows it there, and
+      // put(inside) puts it in or out, from wherever it is.
+      function plug(button, { plugged, way, reach, hold, put }) {
+        const GRIP = 24, GIVE = 3;
+        let drag = null, dragged = false;
+        const end = inside => {
+          drag = null;
+          dragged = true;
+          document.documentElement.classList.remove('grabbing');
+          put(inside);
+        };
+        button.addEventListener('pointerdown', e => {
+          if (e.button !== 0) return;
+          const { x, y } = way(), length = Math.hypot(x, y);
+          drag = { id: e.pointerId, x: e.clientX, y: e.clientY, ux: x / length, uy: y / length, length, in: plugged() };
+          dragged = false;
+          button.setPointerCapture(e.pointerId);
+        });
+        button.addEventListener('pointermove', e => {
+          if (!drag || e.pointerId !== drag.id) return;
+          const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+          if (!drag.moved) {
+            if (Math.hypot(dx, dy) < 4) return;
+            drag.moved = true;
+            document.documentElement.classList.add('grabbing');
+          }
+          // How far it's been pulled out, along the way it comes
+          const out = dx * drag.ux + dy * drag.uy;
+          if (drag.in) {
+            if (out < GRIP) return hold(Math.max(0, out) / GRIP * GIVE / drag.length);
+          } else {
+            const t = reach ? reach(dx, dy) : Math.min(1, 1 + out / drag.length);
+            if (t > 0.15) return hold(t);
+          }
+          end(!drag.in);
+        });
+        const up = e => {
+          if (!drag || e.pointerId !== drag.id) return;
+          // Let go, it's back where it was: in, or down
+          if (drag.moved) end(drag.in);
+          else drag = null;
+        };
+        button.addEventListener('pointerup', up);
+        button.addEventListener('pointercancel', up);
+        button.addEventListener('click', () => {
+          if (dragged) dragged = false;
+          else put(!plugged());
+        });
+      }
+
       // The Pi's screen shows the stars and the downloads a month, in turn
       const pi = document.getElementById('projects');
       const pages = Array.from(pi.querySelectorAll('.pi-page'));
@@ -803,7 +892,7 @@ layout_style: "homepage"
       // Pulling its plug turns it off; pushing it back in, it boots. Raspberry Pi OS Lite,
       // which isn't quiet about it: the kernel's log, and systemd's, on the console. The
       // screen's driver loads only once the system's up, so by then there's a screenful.
-      const plug = pi.querySelector('.pi-plug');
+      const piPlug = pi.querySelector('.pi-plug');
       const log = pi.querySelector('.pi-boot');
       const kernel = (time, text) => `[${time.toFixed(6).padStart(12)}] ${text}`;
       const started = (unit, name, done = 'Started') => [done, unit, ` - ${name}.`];
@@ -901,9 +990,27 @@ layout_style: "homepage"
         const out = !pi.classList.contains('out');
         if (out) unplug();
         else plugIn();
-        plug.setAttribute('aria-label', out ? 'Plug the Raspberry Pi back in' : 'Unplug the Raspberry Pi');
+        piPlug.setAttribute('aria-label', out ? 'Plug the Raspberry Pi back in' : 'Unplug the Raspberry Pi');
       }
-      plug.addEventListener('click', pull);
+      const unhold = () => {
+        pi.classList.remove('dragging');
+        pi.style.removeProperty('--pull');
+      };
+      plug(piPlug, {
+        plugged: () => !pi.classList.contains('out'),
+        way() {
+          const m = pi.querySelector('.usb-plug').getScreenCTM();
+          return { x: 13 * m.c, y: 13 * m.d };
+        },
+        hold(t) {
+          pi.classList.add('dragging');
+          pi.style.setProperty('--pull', t);
+        },
+        put(inside) {
+          unhold();
+          if (inside === pi.classList.contains('out')) pull();
+        },
+      });
 
       // Hovered, it's a shell in ~/projects, and someone at the laptop, logged in over the
       // cable, types ls: a key at a time, then what's there, all at once. Let go, after a
@@ -1148,18 +1255,23 @@ layout_style: "homepage"
           },
         };
       }
+      // Each run's twisted pair, plugged in, held up over the jack, and out, for the plug
+      // on its way: a point at a time, every seventh starting a half twist
+      const strands = [];
       phone.querySelectorAll('.cable-run').forEach(run => {
         const svg = run.ownerSVGElement, ns = svg.namespaceURI;
         const middle = run.querySelector('.cable-core').getAttribute('d');
+        // A half twist every TWIST.half from the plug, whichever way the cable goes, so the
+        // same points of it can be moved between them; the shorter its way, the more of it
+        // is off the table, gathered at the end
         function twist(d, halves) {
-          const { length, at } = walk(d);
-          halves = halves || Math.round(length / TWIST.half);
+          const { at } = walk(d);
           let over = '', under = '';
           for (let k = 0; k < halves; k++) {
             for (let i = 0; i <= 6; i++) {
-              const s = (k + i / 6) * length / halves;
+              const s = (k + i / 6) * TWIST.half;
               const p = at(s), q = at(s - 0.5), r = at(s + 0.5);
-              const across = Math.hypot(r.x - q.x, r.y - q.y);
+              const across = Math.hypot(r.x - q.x, r.y - q.y) || 1;
               const nx = -(r.y - q.y) / across, ny = (r.x - q.x) / across;
               const off = TWIST.apart * Math.cos(Math.PI * i / 6);
               const step = i ? 'L' : 'M';
@@ -1167,10 +1279,12 @@ layout_style: "homepage"
               under += `${step}${(p.x - nx * off).toFixed(2)} ${(p.y - ny * off).toFixed(2)}`;
             }
           }
-          return { over, under, halves };
+          return { over, under };
         }
-        const rest = twist(middle);
-        const tug = run.dataset.tug && twist(run.dataset.tug, rest.halves);
+        const ways = [middle, run.dataset.tug, run.dataset.lift, run.dataset.loose, run.dataset.looseTug];
+        const halves = Math.ceil(Math.max(...ways.filter(Boolean).map(d => walk(d).length)) / TWIST.half);
+        const [rest, tug, lift, loose, looseTug] = ways.map(d => d && twist(d, halves));
+        const numbers = d => d.match(/-?\d*\.?\d+/g).map(Number);
         run.replaceChildren(...[['under', 'strand-edge'], ['under', 'strand'], ['over', 'strand-edge'],
           ['over', 'strand'], ['over', 'strand-shine']].map(([layer, kind]) => {
           const path = document.createElementNS(ns, 'path');
@@ -1178,10 +1292,130 @@ layout_style: "homepage"
           path.setAttribute('d', rest[layer]);
           path.style.setProperty('--rest', `path("${rest[layer]}")`);
           if (tug) path.style.setProperty('--tug', `path("${tug[layer]}")`);
+          path.style.setProperty('--loose', `path("${loose[layer]}")`);
+          if (looseTug) path.style.setProperty('--loose-tug', `path("${looseTug[layer]}")`);
+          strands.push({ path, ends: [rest, lift, loose].map(d => numbers(d[layer])) });
           return path;
         }));
         run.classList.add('twisted');
       });
+
+      // The earphones: out of the phone, where they were left, till they're plugged in.
+      // In a hand, the plug's picked up, carried over, held up straight over the jack, and
+      // pushed in, and it's only then that the phone says so. Pulled, it comes straight
+      // out till it's clear, and is put down. All the way, it's t: 0 in, LIFT held up over
+      // the jack, its pin CLEAR of it, and 1 down. Its cable leaves it CORD from its tip.
+      (() => {
+        const earPlug = phone.querySelector('.phone-plug');
+        const LIFT = 0.4, CLEAR = 21, CORD = 27.5;
+        let at = 1, tween = 0, down;
+        // Where it's left, which is the stylesheet's, and depends on the layout
+        function measure() {
+          const style = getComputedStyle(phone);
+          down = ['dx', 'dy', 'turn'].map(key => parseFloat(style.getPropertyValue(`--loose-${key}`)));
+        }
+        // Its tip, from where it is in the jack, and which way it's turned. Between held up
+        // and down, where its cable leaves it goes straight, as the cable's drawn, and it's
+        // turned round that, so they stay together.
+        function pose(t) {
+          if (t <= LIFT) return { dx: 0, dy: -CLEAR * t / LIFT, turn: 0 };
+          const u = (t - LIFT) / (1 - LIFT);
+          const [dx, dy, turn] = down, r = turn * Math.PI / 180, a = u * r;
+          const from = [28, 0.5 - CLEAR - CORD];
+          const to = [28 + dx + CORD * Math.sin(r), 0.5 + dy - CORD * Math.cos(r)];
+          const leaves = [from[0] + u * (to[0] - from[0]), from[1] + u * (to[1] - from[1])];
+          return { dx: leaves[0] - CORD * Math.sin(a) - 28, dy: leaves[1] + CORD * Math.cos(a) - 0.5, turn: u * turn };
+        }
+        function show(t) {
+          if (Math.abs(t - at) > 0.004) swing(0.45, 120);
+          at = t;
+          const { dx, dy, turn } = pose(t);
+          phone.classList.add('moving');
+          phone.style.setProperty('--dx', dx);
+          phone.style.setProperty('--dy', dy);
+          phone.style.setProperty('--turn', turn);
+          const [i, u] = t <= LIFT ? [0, t / LIFT] : [1, (t - LIFT) / (1 - LIFT)];
+          strands.forEach(({ path, ends }) => {
+            const from = ends[i], to = ends[i + 1];
+            let d = '';
+            for (let k = 0; k < from.length; k += 2) {
+              d += `${k % 14 ? 'L' : 'M'}${(from[k] + u * (to[k] - from[k])).toFixed(2)} ${(from[k + 1] + u * (to[k + 1] - from[k + 1])).toFixed(2)}`;
+            }
+            path.style.d = `path("${d}")`;
+          });
+        }
+        // Back to the stylesheet's, which has it where it now is
+        function rest() {
+          phone.classList.toggle('unplugged', at > 0);
+          phone.classList.toggle('connected', at === 0);
+          phone.classList.remove('moving');
+          ['dx', 'dy', 'turn'].forEach(key => phone.style.removeProperty(`--${key}`));
+          strands.forEach(({ path }) => path.style.removeProperty('d'));
+        }
+        // Pulled free, or pushed home, quickly, the push speeding up till it stops dead;
+        // carried, or put down, unhurried
+        const EASE = {
+          pull: u => 1 - (1 - u) ** 3,
+          push: u => u ** 2.4,
+          carry: u => u < 0.5 ? 4 * u ** 3 : 1 - (-2 * u + 2) ** 3 / 2,
+        };
+        function go(to) {
+          cancelAnimationFrame(tween);
+          measure();
+          // Out of the jack, it's not connected, however little
+          if (to > 0) phone.classList.remove('connected');
+          earPlug.setAttribute('aria-label', to ? 'Plug the earphones into the phone' : 'Unplug the earphones from the phone');
+          // By way of held up over the jack, if it's crossed
+          const legs = (at - LIFT) * (to - LIFT) < 0 ? [[at, LIFT], [LIFT, to]] : [[at, to]];
+          const step = () => {
+            if (!legs.length) return rest();
+            const [a, b] = legs.shift();
+            const near = Math.max(a, b) <= LIFT;
+            const ease = near ? (b < a ? EASE.push : EASE.pull) : EASE.carry;
+            const ms = still ? 0 : Math.abs(b - a) * (near ? 170 / LIFT : 480 / (1 - LIFT));
+            const start = performance.now();
+            const frame = now => {
+              const u = ms ? Math.min(1, (now - start) / ms) : 1;
+              show(a + ease(u) * (b - a));
+              if (u < 1) tween = requestAnimationFrame(frame);
+              else step();
+            };
+            tween = requestAnimationFrame(frame);
+          };
+          step();
+        }
+        // Where the middle of its barrel is on the screen, t of the way
+        function grip(t, m) {
+          const { dx, dy, turn } = pose(t), r = turn * Math.PI / 180;
+          return new DOMPoint(28 + dx + 9 * Math.sin(r), 0.5 + dy - 9 * Math.cos(r)).matrixTransform(m);
+        }
+        let path = [], from;
+        plug(earPlug, {
+          plugged: () => at === 0,
+          way() {
+            // It stays where the hand has it
+            cancelAnimationFrame(tween);
+            measure();
+            const m = phone.querySelector('.cable').getScreenCTM();
+            path = Array.from({ length: 61 }, (_, k) => [k / 60, grip(k / 60, m)]);
+            from = grip(at, m);
+            // Pulled out, straight, as if all the way were that way
+            const [a, b] = [grip(LIFT, m), grip(0, m)];
+            return { x: (a.x - b.x) / LIFT, y: (a.y - b.y) / LIFT };
+          },
+          // Wherever on its way it's nearest the hand
+          reach(dx, dy) {
+            let best = 1, nearest = Infinity;
+            path.forEach(([t, p]) => {
+              const d = Math.hypot(p.x - from.x - dx, p.y - from.y - dy);
+              if (d < nearest) [best, nearest] = [t, d];
+            });
+            return best;
+          },
+          hold: show,
+          put: inside => go(inside ? 0 : 1),
+        });
+      })();
 
       const face = die.querySelector('.base');
       const faceUp = 1 + pick(6);
@@ -1350,16 +1584,20 @@ layout_style: "homepage"
           const swung = amount => smooth(points.map(([x, y], i) =>
             [x + amount * Math.sin(Math.PI * Math.min(Math.max(all[i] - sleeve, 0) / (free - sleeve), 1)), y]));
           const size = random(24, 36);
-          const frames = [[0, 0], [0.18, 1], [0.4, -0.64], [0.62, 0.35], [0.82, -0.15], [1, 0]]
-            .map(([offset, amount]) => ({ offset, d: `path("${swung(size * amount)}")`, easing: 'ease-in-out' }));
-          swings.push(() => paths.forEach(path => path.animate(frames, { duration: 1400, delay: n * 80 })));
+          swings.push((scale, after) => {
+            const frames = [[0, 0], [0.18, 1], [0.4, -0.64], [0.62, 0.35], [0.82, -0.15], [1, 0]]
+              .map(([offset, amount]) => ({ offset, d: `path("${swung(size * scale * amount)}")`, easing: 'ease-in-out' }));
+            paths.forEach(path => path.animate(frames, { duration: 1400, delay: after + n * 80 }));
+          });
         });
       })();
-      const swing = () => {
-        if (!still && !earphones.querySelector('.ear-left path').getAnimations().length) swings.forEach(play => play());
+      // Picked up, they swing; and a little, a moment later, when their plug's moved, as
+      // it's the same cable, under the table
+      const swing = (scale = 1, after = 0) => {
+        if (!still && !earphones.querySelector('.ear-left path').getAnimations().length) swings.forEach(play => play(scale, after));
       };
-      earphones.addEventListener('pointerenter', swing);
-      earphones.addEventListener('focus', swing);
+      earphones.addEventListener('pointerenter', () => swing());
+      earphones.addEventListener('focus', () => swing());
 
       // By day, sunlight through a window off the top left, so shadows are parallel. At night,
       // a desk lamp, its bulb low over the card, so they spread out from it. Shadow length

@@ -1290,34 +1290,145 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(0.6px * var(--cable-scale, 1));
 }
 
-.cable .plug {
-  fill: url(#plug-metal);
-  stroke: rgba(70, 74, 80, 0.6);
+#phone .relief {
+  fill: url(#plug-frost);
+  stroke: rgba(130, 136, 146, 0.5);
   stroke-width: 0.3;
 }
 
-.cable .plug-ring {
-  stroke: rgba(60, 64, 70, 0.55);
-  stroke-width: 0.35;
+#phone .plug {
+  fill: url(#plug-brushed);
+  stroke: rgba(70, 74, 80, 0.55);
+  stroke-width: 0.3;
 }
 
-/* Picking up the earphones tugs the cable a moment after they lift; it settles back
-   more slowly than it was pulled */
-.run-down path {
-  transition: d 0.6s cubic-bezier(0.3, 0.6, 0.3, 1);
+/* Its grain, along it */
+#phone .grain {
+  stroke-width: 0.18;
+}
+
+#phone .grain-bright {
+  stroke: rgba(255, 255, 255, 0.35);
+}
+
+#phone .grain-dull {
+  stroke: rgba(60, 64, 70, 0.14);
+}
+
+.cable .pin {
+  fill: url(#plug-gold);
+  stroke: rgba(80, 60, 20, 0.5);
+  stroke-width: 0.25;
+}
+
+.cable .pin-band {
+  fill: rgb(28 28 30);
+}
+
+/* ---- Socials: the earphones, plugged in or not ---- */
+
+/* The plug, as far from the jack as --dx, --dy, its tip, and turned --turn degrees round
+   it: in, nowhere, and out, where it was left, past the phone's corner, pointing across */
+#phone {
+  --dx: 0; --dy: 0; --turn: 0;
+  --loose-dx: -22; --loose-dy: -24.5; --loose-turn: -70;
+}
+
+#phone.unplugged {
+  --dx: var(--loose-dx); --dy: var(--loose-dy); --turn: var(--loose-turn);
+}
+
+#phone .jack {
+  transform: translate(calc(28px + var(--dx) * 1px), calc(0.5px + var(--dy) * 1px)) rotate(calc(var(--turn) * 1deg)) translate(-28px, -0.5px);
+}
+
+.phone-plug {
+  position: absolute;
+  z-index: 2;
+  left: 20cqi;
+  top: -30cqi;
+  width: 16cqi;
+  height: 32cqi;
+  padding: 0;
+  border: 0;
+  border-radius: 1.2cqi;
+  background: none;
+  transform-origin: 8cqi 30.5cqi;
+  transform: translate(calc(var(--dx) * 1cqi), calc(var(--dy) * 1cqi)) rotate(calc(var(--turn) * 1deg));
+  touch-action: none;
 }
 
 .twisted path {
   d: var(--rest);
 }
 
-.table:has(#uses:is(:hover, :focus-visible)) .run-down path {
-  d: path("M28 -21C28 -35 9 -41 -9 -33S-26 -4 -24 32S-18 120 -22 200");
-  transition: d 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s;
+#phone.unplugged .twisted path {
+  d: var(--loose);
 }
 
-.table:has(#uses:is(:hover, :focus-visible)) .twisted path {
+/* Without the script, the cable as it's drawn, to where the plug lies */
+#phone.unplugged .run-down:not(.twisted) path {
+  d: path("M-19.84 -33.41C-32.06 -37.86 -44 -42 -52 -34C-57 -29 -58 -20 -58 -8S-60 30 -52 60S-42 130 -40 200");
+}
+
+#phone.unplugged .run-side:not(.twisted) path {
+  d: path("M75.84 -33.41C83.4 -36.15 96 -44 112 -42S136 -40 160 -45");
+}
+
+/* Picking up the earphones tugs the cable a moment after they lift; it settles back
+   more slowly than it was pulled. Out of the phone, it's the plug that's dragged. */
+#phone :is(.jack, .phone-plug, .cable-run path) {
+  transition: transform 0.6s cubic-bezier(0.3, 0.6, 0.3, 1), d 0.6s cubic-bezier(0.3, 0.6, 0.3, 1);
+}
+
+.table:has(#uses:is(:hover, :focus-visible)) #phone:not(.unplugged) .run-down path {
+  d: path("M28 -27C28 -40 6 -46 -18 -42C-42 -37 -55 -30 -56 -8S-57 30 -50 60S-40 130 -38 200");
+}
+
+.table:has(#uses:is(:hover, :focus-visible)) #phone:not(.unplugged) .run-down.twisted path {
   d: var(--tug);
+}
+
+.table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged {
+  --dx: -26; --dy: -25.5; --turn: -75;
+}
+
+.table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged .run-down.twisted path {
+  d: var(--loose-tug);
+}
+
+.table:has(#uses:is(:hover, :focus-visible)) #phone :is(.jack, .phone-plug, .cable-run path) {
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s, d 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s;
+}
+
+/* In the hand, or on its way in or out, it's where the script puts it */
+#phone.moving :is(.jack, .phone-plug, .cable-run path) {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #phone :is(.jack, .phone-plug, .cable-run path) {
+    transition: none !important;
+  }
+}
+
+/* While one's in hand, wherever the pointer goes */
+html.grabbing,
+html.grabbing * {
+  cursor: grabbing !important;
+}
+
+.headset {
+  margin: 0 auto 0 1.4cqi;
+}
+
+.status-bar svg.headset {
+  width: 3.6cqi;
+}
+
+/* Only once it's all the way in */
+#phone:not(.connected) .headset {
+  visibility: hidden;
 }
 
 /* ---- Projects: a Raspberry Pi Zero with a screen ---- */
@@ -1616,6 +1727,17 @@ html:not(.dark-mode) .pi-screen {
   transition: translate 0.26s cubic-bezier(0.15, 0.85, 0.35, 1);
 }
 
+/* In the hand, it's where the hand is, --pull of the way out */
+#projects.dragging .usb-pull {
+  translate: 0 calc(var(--pull) * 13px);
+  transition: none;
+}
+
+#projects.dragging .pi-plug {
+  translate: 0 calc(var(--pull) * 13cqi);
+  transition: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .usb-pull,
   .pi-plug {
@@ -1636,6 +1758,7 @@ html:not(.dark-mode) .pi-screen {
   border: 0;
   border-radius: 1.2cqi;
   background: none;
+  touch-action: none;
 }
 
 
@@ -2204,6 +2327,9 @@ html:not(.dark-mode) .sw-sun {
   #phone { --w: 38; --r: -4deg; left: calc(73 * var(--u)); top: calc(178 * var(--u)); }
   #phone .run-down { display: none; }
   #phone .run-side { display: inline; }
+  /* Out, its cable off to the side: it fell the other way */
+  #phone { --loose-dx: 22; --loose-dy: -24.5; --loose-turn: 70; }
+  .table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged { --dx: var(--loose-dx); --dy: var(--loose-dy); --turn: var(--loose-turn); }
   #papers { --w: 62; --r: 8deg; left: calc(100% - 2 * var(--u)); top: calc(268 * var(--u)); }
   #papers .tag { --tx: 18%; --tw: 22; }
   #philosophy { --x: -22; --y: 240; --w: 26; --tw: 26; }
