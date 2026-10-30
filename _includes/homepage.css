@@ -619,10 +619,10 @@ html:not(.dark-mode) .cam-screen {
 .cam-glow {
   position: absolute;
   z-index: 1;
-  left: 10.2%;
-  top: 28%;
-  width: 51.8%;
-  height: 58.3%;
+  left: 9.92%;
+  top: 27.68%;
+  width: 52.42%;
+  height: 59.23%;
   opacity: 0;
   box-shadow:
     0 0 2cqi 0.9cqi rgb(var(--glow, 190 200 215) / 0.6),
@@ -646,10 +646,12 @@ html:not(.dark-mode) .cam-screen {
 .cam-screen {
   position: absolute;
   z-index: 2;
-  left: 10.2%;
-  top: 28%;
-  width: 51.8%;
-  height: 58.3%;
+  /* Out to the middle of the dark frame round the photo's screen, which is white: only to
+     its edge, a sliver of white shows where the edge falls between pixels */
+  left: 9.92%;
+  top: 27.68%;
+  width: 52.42%;
+  height: 59.23%;
   overflow: hidden;
   container-type: inline-size;
   /* An LCD: even its black pixels pass some of the backlight, which comes in along the

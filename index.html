@@ -195,7 +195,7 @@ layout_style: "homepage"
       <span class="tag t4"><span>{{ n.philosophy.label | escape }}</span></span>
     </a>
 
-    <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }}]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
+    <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }},"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-200.webp" | relative_url }}"]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
       <span class="lift"><span class="item">
         <img class="base rimmed" src="{{ t }}digicam.webp" srcset="{{ t }}digicam-290.webp 290w, {{ t }}digicam.webp 660w"
           sizes="(max-width: 700px) 39vw, min(17.7vw, 28.3vh)" width="660" height="439" alt="">
@@ -368,8 +368,8 @@ layout_style: "homepage"
         const gallery = cover.href;
         // Playback zoom, in the camera's steps
         const ZOOMS = [1, 2, 3, 4, 6, 8, 10];
-        // The screen's width, in its heights
-        const WIDE = 51.8 * 660 / (58.3 * 439);
+        // The screen's width, in its heights: 346 by 260 of the photo's pixels
+        const WIDE = 346 / 260;
         const MENU = ['Slide Show', 'Erase All', 'Protect', 'Rotate', 'Print Order', 'Transfer Order'];
         let shown = pick(photos.length), mode = 'play', zoom = 0, at = [0.5, 0.5], disp = 1;
         let full = -1, page = -1, row = 0, choice = 1, held = false, rested = true, browsed = false, mapped = true;
@@ -474,11 +474,12 @@ layout_style: "homepage"
             const first = shown - shown % 9;
             if (first !== page) {
               page = first;
-              index.replaceChildren(...photos.slice(first, first + 9).map(([thumb], k) => {
+              // Small as they are, the smallest thumbnails
+              index.replaceChildren(...photos.slice(first, first + 9).map(([, , , , small], k) => {
                 const img = new Image();
                 img.alt = '';
                 img.addEventListener('load', () => sample(img, first + k), { once: true });
-                load(img, thumb);
+                load(img, small);
                 const cell = B('', img);
                 cell.dataset.i = first + k;
                 return cell;

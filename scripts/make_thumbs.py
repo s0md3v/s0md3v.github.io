@@ -5,8 +5,9 @@ Usage (from the repo root, after adding photos to assets/photos/):
     python3 scripts/make_thumbs.py .
 
 Requires Pillow (pip install Pillow). For every assets/photos/<n>.webp it writes
-assets/photos/thumbs/<n>-400.webp and <n>-800.webp, which pages/gallery.html
-serves through srcset. Thumbnails newer than their source are left alone, so
+assets/photos/thumbs/<n>-200.webp, <n>-400.webp and <n>-800.webp: pages/gallery.html
+serves the 400 and 800 through srcset, and the homepage's camera shows the 200 in its
+index and the 400 on its screen. Thumbnails newer than their source are left alone, so
 re-running it only processes new or changed photos.
 """
 import glob
@@ -15,7 +16,7 @@ import sys
 
 from PIL import Image, ImageOps
 
-WIDTHS = (400, 800)
+WIDTHS = (200, 400, 800)
 QUALITY = 78
 
 root = sys.argv[1] if len(sys.argv) > 1 else '.'
