@@ -1338,16 +1338,16 @@ layout_style: "homepage"
       // earphones in. Static, and now and then, someone on the air: while they're talking
       // the static's held down, as a receiver does under a signal, and when they let go
       // it's back. While it's streaming, the Pi's screen shows the receiver at work, and the
-      // phone's widget, what's playing. With the Pi unplugged, the phone plays what it had
-      // buffered, says it can't reach it, and there's only static till it's back.
+      // phone's widget, what's playing. With the Pi unplugged, the voice is gone at once,
+      // the phone says it can't reach it, and there's only static till it's back.
       // A page can only make sound once there's been a click or a key, so the earphones'
       // plug wakes it, and nothing's fetched till then.
       const radio = (() => {
-        // How loud the static is, held down, and the voices; how much the phone buffers
-        const STATIC = 0.3, UNDER = 0.15, VOICE = 1, BUFFER = 2000;
+        // How loud the static is, held down, and the voices
+        const STATIC = 0.3, UNDER = 0.15, VOICE = 1;
         const base = phone.dataset.radio, count = +phone.dataset.calls;
         const status = phone.querySelector('.radio-status');
-        let audio = null, out, hiss, voices, playing = null, bag = [], last = 0, next = 0, lost = 0, noting = 0;
+        let audio = null, out, hiss, voices, playing = null, bag = [], last = 0, next = 0, noting = 0;
         let on = false, streaming = false, marks = [];
         // Each time it starts or stops streaming, a new count, so a call that was on its way
         // isn't heard after
@@ -1410,7 +1410,7 @@ layout_style: "homepage"
         }
         // Someone on the air, as the Pi and the phone show it
         function air(is) {
-          pi.classList.toggle('keyed', is && streaming);
+          pi.classList.toggle('keyed', is);
           phone.classList.toggle('keyed', is);
         }
         // The calls, shuffled, each heard once before any's heard again, and never twice
@@ -1479,10 +1479,7 @@ layout_style: "homepage"
           if (now === streaming) return;
           streaming = now;
           turn++;
-          clearTimeout(lost);
           pi.classList.toggle('on-air', streaming);
-          // What it's still to play, the Pi's already heard
-          if (!streaming) pi.classList.remove('keyed');
           phone.classList.toggle('live', streaming);
           if (streaming) {
             clearTimeout(noting);
@@ -1490,13 +1487,9 @@ layout_style: "homepage"
             status.textContent = 'Live';
             wait(1500 + Math.random() * 2500);
           } else if (on) {
-            // What it had buffered, it plays out
-            clearTimeout(next);
-            lost = setTimeout(() => {
-              hush();
-              status.textContent = 'No signal';
-              notify();
-            }, BUFFER);
+            hush();
+            status.textContent = 'No signal';
+            notify();
           }
         }
         new MutationObserver(tune).observe(pi, { attributes: true, attributeFilter: ['class'] });
