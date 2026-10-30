@@ -511,9 +511,12 @@ layout_style: "homepage"
         function show() {
           camera.dataset.mode = mode;
           if (mode === 'play' || mode === 'erase' || mode === 'slides') {
-            const [thumb, big] = photos[shown];
+            const [thumb, big, w, h, small] = photos[shown];
             if (zoom) full = shown;
-            load(photo, full === shown ? big : thumb);
+            // The smallest thumbnail, 200 pixels wide, unless the screen's showing more
+            // pixels across than that
+            const across = Math.min(screen.clientWidth, screen.clientHeight * w / h) * devicePixelRatio;
+            load(photo, full === shown ? big : across <= 200 ? small : thumb);
             if (zoom) {
               const [[x, w], [y, h]] = place();
               photo.style.cssText = `position:absolute;max-width:none;left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
