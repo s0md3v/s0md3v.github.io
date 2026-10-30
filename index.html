@@ -68,7 +68,9 @@ layout_style: "homepage"
           <span class="pi-glow"></span>
           <span class="pi-screen" aria-hidden="true">
             <!-- Where its shell is, which is what it's the way to -->
-            <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}</span>
+            <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}<!-- Streaming to the
+              phone, the receiver's at work: someone on the air, it shows -->
+              <svg class="pi-air" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7" /><path class="far" d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg></span>
             <span class="pi-page pi-shown"><b><svg viewBox="0 0 16 16"><path d="M8 .9l2.2 4.6 5 .6-3.7 3.4 1 5L8 12l-4.5 2.5 1-5L.8 6.1l5-.6z" /></svg><span class="pi-value">{{ site.data.stats.github_stars | default: 0 | divided_by: 1000 }},{{ site.data.stats.github_stars | modulo: 1000 | prepend: "00" | slice: -3, 3 }}</span></b><small>stars on github</small></span>
             <span class="pi-page"><b><svg viewBox="0 0 16 16"><path d="M6.5 1h3v6.5h3.2L8 12.6 3.3 7.5h3.2zM2 13.6h12V15H2z" /></svg><span class="pi-value">{{ site.data.stats.monthly_downloads }}</span></b><small>downloads a month</small></span>
             <!-- Hovered, a shell, in which someone at the laptop types ls, and what's in it:
@@ -117,7 +119,7 @@ layout_style: "homepage"
       </span></span>
     </a>
 
-    <div class="obj self-lit unplugged" id="phone">
+    <div class="obj self-lit unplugged" id="phone" data-radio="{{ '/assets/audio/' | relative_url }}" data-calls="15">
       <span class="lift"><span class="item">
         <svg class="cable" viewBox="-60 -60 240 260" aria-hidden="true">
           <linearGradient id="plug-metal" x1="0" x2="1">
@@ -183,6 +185,18 @@ layout_style: "homepage"
               <a class="app app-instagram" href="https://www.instagram.com/s0md3v" target="_blank" rel="noopener"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" /></svg></span><span class="app-name">Instagram</span></a>
               <a class="app app-linkedin" href="https://www.linkedin.com/in/s0md3v" target="_blank" rel="noopener"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg></span><span class="app-name">LinkedIn</span></a>
               <a class="app app-mail" href="mailto:s0md3v[at]gmail.com"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></svg></span><span class="app-name">Gmail</span></a>
+            </span>
+            <!-- The scanner's stream, from the Pi, in the app that plays it: its widget, under
+                 the apps, and when it can't reach the Pi, a heads-up notification -->
+            <span class="radio-widget" aria-hidden="true">
+              <span class="radio-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg></span>
+              <span class="radio-text"><b>Airband</b><small><span class="radio-status">Paused</span> · pi-zero.local</small></span>
+              <span class="radio-level"><i></i><i></i><i></i><i></i></span>
+            </span>
+            <span class="radio-note" aria-hidden="true">
+              <small><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg>Airband · now</small>
+              <b>Can't reach pi-zero.local</b>
+              <span>No signal. Retrying…</span>
             </span>
           </span>
           <img class="base" src="{{ t }}phone.webp" srcset="{{ t }}phone-320.webp 320w, {{ t }}phone.webp 600w"
@@ -923,6 +937,7 @@ layout_style: "homepage"
         started('systemd-networkd.service', 'Network Configuration'),
         started('network.target', 'Network', 'Reached target'),
         started('ssh.service', 'OpenBSD Secure Shell server'),
+        started('rtl_airband.service', 'SDR AM/NFM demodulator'),
         started('multi-user.target', 'Multi-User System', 'Reached target'),
       ];
       function print(line) {
@@ -1318,6 +1333,199 @@ layout_style: "homepage"
         run.classList.add('twisted');
       });
 
+      // A scanner: an SDR dongle on the laptop, off the table, which the Pi listens through
+      // over their USB link, streaming what it hears to the phone, where it's heard with the
+      // earphones in. Static, and now and then, someone on the air: while they're talking
+      // the static's held down, as a receiver does under a signal, and when they let go
+      // it's back. While it's streaming, the Pi's screen shows the receiver at work, and the
+      // phone's widget, what's playing. With the Pi unplugged, the phone plays what it had
+      // buffered, says it can't reach it, and there's only static till it's back.
+      // A page can only make sound once there's been a click or a key, so the earphones'
+      // plug wakes it, and nothing's fetched till then.
+      const radio = (() => {
+        // How loud the static is, held down, and the voices; how much the phone buffers
+        const STATIC = 0.3, UNDER = 0.15, VOICE = 1, BUFFER = 2000;
+        const base = phone.dataset.radio, count = +phone.dataset.calls;
+        const status = phone.querySelector('.radio-status');
+        let audio = null, out, hiss, voices, playing = null, bag = [], last = 0, next = 0, lost = 0, noting = 0;
+        let on = false, streaming = false, marks = [];
+        // Each time it starts or stops streaming, a new count, so a call that was on its way
+        // isn't heard after
+        let turn = 0;
+        const fetched = {};
+        const load = name => fetched[name] ||= fetch(base + name)
+          .then(response => response.arrayBuffer()).then(data => audio.decodeAudioData(data));
+        function wake() {
+          if (!window.AudioContext) return;
+          if (!audio) {
+            // Earphones in, the phone plays out loud, whatever its silent switch
+            if (navigator.audioSession) navigator.audioSession.type = 'playback';
+            audio = new AudioContext();
+            out = audio.createGain();
+            out.gain.value = 0;
+            out.connect(audio.destination);
+            hiss = audio.createGain();
+            hiss.gain.value = STATIC;
+            hiss.connect(out);
+            voices = audio.createGain();
+            voices.gain.value = VOICE;
+            voices.connect(out);
+            // The static's been on all along: it's come in somewhere in its loop. MP3s
+            // can come decoded with a little silence at either end, which would be heard
+            // each time round, so it loops between its first and last sounds.
+            load('static.mp3').then(buffer => {
+              const data = buffer.getChannelData(0), loud = i => Math.abs(data[i]) > 0.02;
+              let start = 0, end = data.length - 1;
+              while (start < end && !loud(start)) start++;
+              while (end > start && !loud(end)) end--;
+              const source = audio.createBufferSource();
+              source.buffer = buffer;
+              source.loop = true;
+              source.loopStart = start / buffer.sampleRate;
+              source.loopEnd = (end + 1) / buffer.sampleRate;
+              source.connect(hiss);
+              source.start(0, source.loopStart + Math.random() * (source.loopEnd - source.loopStart));
+            }).catch(() => {});
+          }
+          audio.resume().catch(() => {});
+        }
+        ['pointerdown', 'pointerup', 'keydown', 'click'].forEach(type =>
+          phone.querySelector('.phone-plug').addEventListener(type, wake));
+        // When someone's on the air in a call: a twentieth of a second at a time, and
+        // pauses shorter than a breath are part of it. Anything shorter than a word is
+        // the recording's own noise.
+        function keyed(buffer) {
+          const data = buffer.getChannelData(0), step = Math.round(buffer.sampleRate / 20), spans = [];
+          for (let i = 0; i < data.length; i += step) {
+            let sum = 0;
+            const end = Math.min(i + step, data.length);
+            for (let j = i; j < end; j++) sum += data[j] * data[j];
+            if (Math.sqrt(sum / (end - i)) < 0.02) continue;
+            const [from, to] = [i / buffer.sampleRate, end / buffer.sampleRate];
+            const span = spans[spans.length - 1];
+            if (span && from - span[1] < 0.25) span[1] = to;
+            else spans.push([from, to]);
+          }
+          return spans.filter(([from, to]) => to - from >= 0.15);
+        }
+        // Someone on the air, as the Pi and the phone show it
+        function air(is) {
+          pi.classList.toggle('keyed', is && streaming);
+          phone.classList.toggle('keyed', is);
+        }
+        // The calls, shuffled, each heard once before any's heard again, and never twice
+        // running
+        function nextCall() {
+          if (!bag.length) {
+            bag = Array.from({ length: count }, (_, i) => i + 1);
+            for (let i = bag.length - 1; i > 0; i--) {
+              const j = pick(i + 1);
+              [bag[i], bag[j]] = [bag[j], bag[i]];
+            }
+            if (bag[0] === last) bag.push(bag.shift());
+          }
+          return last = bag.shift();
+        }
+        // The next call, a few seconds after the last: fetched meanwhile
+        function wait(ms, mine = turn) {
+          const call = load(`call-${nextCall()}.mp3`);
+          next = setTimeout(() => call.then(buffer => play(buffer, mine)).catch(() => wait(ms, mine)), ms);
+        }
+        function play(buffer, mine) {
+          if (!streaming || mine !== turn) return;
+          const source = audio.createBufferSource(), level = audio.createGain(), at = audio.currentTime + 0.05;
+          source.buffer = buffer;
+          source.connect(level).connect(voices);
+          source.start(at);
+          keyed(buffer).forEach(([from, to]) => {
+            hiss.gain.setTargetAtTime(UNDER, at + from, 0.015);
+            hiss.gain.setTargetAtTime(STATIC, at + to, 0.04);
+            marks.push(setTimeout(air, (at + from - audio.currentTime) * 1000, true),
+              setTimeout(air, (at + to - audio.currentTime) * 1000, false));
+          });
+          playing = { source, level };
+          source.onended = () => {
+            if (playing?.source !== source) return;
+            playing = null;
+            marks = [];
+            if (streaming && mine === turn) wait(3000 + Math.random() * 12000);
+          };
+        }
+        // Whatever's being said, cut off, and the static as it is between calls
+        function hush() {
+          clearTimeout(next);
+          marks.forEach(clearTimeout);
+          marks = [];
+          air(false);
+          if (!audio) return;
+          const now = audio.currentTime;
+          hiss.gain.cancelScheduledValues(now);
+          hiss.gain.setTargetAtTime(STATIC, now, 0.04);
+          if (playing) {
+            playing.level.gain.setTargetAtTime(0, now, 0.005);
+            playing.source.stop(now + 0.05);
+          }
+          playing = null;
+        }
+        // The app says it can't reach the Pi, for a few seconds, as a heads-up notification
+        function notify() {
+          phone.classList.add('noted');
+          clearTimeout(noting);
+          noting = setTimeout(() => phone.classList.remove('noted'), 5000);
+        }
+        // From the earphones and the Pi, whether it's streaming, and what the phone says
+        function tune() {
+          const now = on && !pi.matches('.off, .booting');
+          if (now === streaming) return;
+          streaming = now;
+          turn++;
+          clearTimeout(lost);
+          pi.classList.toggle('on-air', streaming);
+          // What it's still to play, the Pi's already heard
+          if (!streaming) pi.classList.remove('keyed');
+          phone.classList.toggle('live', streaming);
+          if (streaming) {
+            clearTimeout(noting);
+            phone.classList.remove('noted');
+            status.textContent = 'Live';
+            wait(1500 + Math.random() * 2500);
+          } else if (on) {
+            // What it had buffered, it plays out
+            clearTimeout(next);
+            lost = setTimeout(() => {
+              hush();
+              status.textContent = 'No signal';
+              notify();
+            }, BUFFER);
+          }
+        }
+        new MutationObserver(tune).observe(pi, { attributes: true, attributeFilter: ['class'] });
+        return {
+          on() {
+            if (on || !audio) return;
+            on = true;
+            audio.resume().catch(() => {});
+            out.gain.setTargetAtTime(1, audio.currentTime, 0.01);
+            tune();
+            // The Pi's off: the phone can't reach it
+            if (!streaming) {
+              status.textContent = 'No signal';
+              notify();
+            }
+          },
+          off() {
+            if (!on) return;
+            on = false;
+            tune();
+            hush();
+            status.textContent = 'Paused';
+            out.gain.setTargetAtTime(0, audio.currentTime, 0.005);
+            // And, out of earshot, it rests
+            setTimeout(() => { if (!on) audio.suspend(); }, 100);
+          },
+        };
+      })();
+
       // The earphones: out of the phone, where they were left, till they're plugged in.
       // In a hand, the plug's picked up, carried over, held up straight over the jack, and
       // pushed in, and it's only then that the phone says so. Pulled, it comes straight
@@ -1386,6 +1594,7 @@ layout_style: "homepage"
           if (Math.abs(t - at) > 0.004) swing(0.45, 120);
           cancelAnimationFrame(settling);
           at = t;
+          if (t > 0) radio.off();
           const { dx, dy, turn } = pose(t);
           phone.classList.add('moving');
           phone.style.setProperty('--dx', dx);
@@ -1399,6 +1608,7 @@ layout_style: "homepage"
           phone.classList.toggle('unplugged', at > 0);
           phone.classList.toggle('connected', at === 0);
           phone.classList.remove('moving');
+          if (at === 0) radio.on();
           ['dx', 'dy', 'turn'].forEach(key => phone.style.removeProperty(`--${key}`));
           if (STYLED_D) strands.forEach(({ path }) => path.style.removeProperty('d'));
           else settle();
