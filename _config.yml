@@ -69,7 +69,8 @@ redirect_from:
   json: false
 
 jekyll-minifier:
-  # Its CSS compressor mangles var() and env() inside calc() (e.g. "var( -  - blog - font - size)")
+  # Its CSS compressor mangles var() and env() inside calc() (e.g. "var( -  - blog - font - size)"),
+  # so _plugins/minify_css.rb minifies <style> tags instead
   compress_css: false
   exclude:
     - "playground/**/*"
