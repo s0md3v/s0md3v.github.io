@@ -1376,8 +1376,10 @@ html:not(.dark-mode) .phone-screen {
 }
 
 /* Picking up the earphones tugs the cable a moment after they lift; it settles back
-   more slowly than it was pulled. Out of the phone, it's the plug that's dragged. */
-#phone :is(.jack, .phone-plug, .cable-run path) {
+   more slowly than it was pulled. Out of the phone, it's the plug that's dragged. Where
+   it's grabbed goes straight there: it can't be seen, and in Safari, while it moved,
+   the cable under it wasn't drawn. */
+#phone :is(.jack, .cable-run path) {
   transition: transform 0.6s cubic-bezier(0.3, 0.6, 0.3, 1), d 0.6s cubic-bezier(0.3, 0.6, 0.3, 1);
 }
 
@@ -1397,17 +1399,17 @@ html:not(.dark-mode) .phone-screen {
   d: var(--loose-tug);
 }
 
-.table:has(#uses:is(:hover, :focus-visible)) #phone :is(.jack, .phone-plug, .cable-run path) {
+.table:has(#uses:is(:hover, :focus-visible)) #phone :is(.jack, .cable-run path) {
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s, d 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s;
 }
 
 /* In the hand, or on its way in or out, it's where the script puts it */
-#phone.moving :is(.jack, .phone-plug, .cable-run path) {
+#phone.moving :is(.jack, .cable-run path) {
   transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #phone :is(.jack, .phone-plug, .cable-run path) {
+  #phone :is(.jack, .cable-run path) {
     transition: none !important;
   }
 }

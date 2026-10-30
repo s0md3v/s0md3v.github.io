@@ -219,6 +219,12 @@ description: Photographs by Somdev Sangwan.
         color: #fff;
         text-shadow: 0 0 0.25em rgba(0, 0, 0, 0.8);
         pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    /* Zoomed in, it's the photo, not which one it is */
+    .modal.zoomed .modal-count {
+        opacity: 0;
     }
 
     .modal-button {
@@ -320,6 +326,8 @@ description: Photographs by Somdev Sangwan.
     let index = -1;
     let inerted = [];
     let preloads = [];
+    // Zoomed in: how far, from where the photo was, and where it's moved to
+    let zoom = null;
 
     // Make everything outside the dialog inert while it is open
     function setBackgroundInert(on) {
@@ -352,6 +360,10 @@ description: Photographs by Somdev Sangwan.
     // Shows the i-th photo: its thumbnail, already here, stands in until it's loaded
     function show(i) {
         index = i;
+        if (zoom) {
+            unzoomed();
+            frame.style.transform = '';
+        }
         const item = items[i];
         const thumb = item.querySelector('img');
         const w = +thumb.getAttribute('width');
@@ -396,6 +408,62 @@ description: Photographs by Somdev Sangwan.
         frame.getAnimations().forEach(a => a.cancel());
     }
 
+    // From where it was to wherever it's now been put
+    function glide(was) {
+        if (!still.matches) {
+            frame.animate([{ transform: was || 'none' }, { transform: frame.style.transform || 'none' }],
+                { duration: 300, easing: EASE });
+        }
+    }
+
+    // Zoomed in, it's moved with the finger, but no further than its edges, and where
+    // it's narrower or shorter than the window, it's in the middle that way
+    function place() {
+        const { rect, s } = zoom;
+        const fit = (t, start, size, room) => size * s <= room
+            ? (room - size * s) / 2 - start
+            : Math.min(-start, Math.max(room - size * s - start, t));
+        zoom.x = fit(zoom.x, rect.left, rect.width, innerWidth);
+        zoom.y = fit(zoom.y, rect.top, rect.height, innerHeight);
+        frame.style.transform = `translate(${zoom.x}px, ${zoom.y}px) scale(${s})`;
+    }
+
+    // In on where it was tapped, to the photo's own size, or twice, or four times at most
+    function zoomAt(x, y) {
+        stopMotion();
+        const rect = frame.getBoundingClientRect();
+        const s = Math.min(Math.max(+frame.style.getPropertyValue('--w') / rect.width, 2), 4);
+        zoom = { rect, s, x: (x - rect.left) * (1 - s), y: (y - rect.top) * (1 - s) };
+        modal.classList.add('zoomed');
+        place();
+        glide();
+    }
+
+    function unzoomed() {
+        zoom = null;
+        modal.classList.remove('zoomed');
+    }
+
+    function zoomOut() {
+        stopMotion();
+        const was = frame.style.transform;
+        unzoomed();
+        frame.style.transform = '';
+        glide(was);
+    }
+
+    // Turned, the photo's somewhere else
+    let wide = innerWidth;
+    addEventListener('resize', () => {
+        if (innerWidth === wide) return;
+        wide = innerWidth;
+        if (zoom) {
+            stopMotion();
+            unzoomed();
+            frame.style.transform = '';
+        }
+    });
+
     function openModal(i, quiet) {
         stopMotion();
         modal.style.display = 'flex';
@@ -431,6 +499,7 @@ description: Photographs by Somdev Sangwan.
         const rect = thumbRect(index);
         const now = getComputedStyle(frame).transform;
         stopMotion();
+        unzoomed();
         const end = () => {
             modal.style.display = 'none';
             modal.classList.remove('dragging');
@@ -486,17 +555,39 @@ description: Photographs by Somdev Sangwan.
     prevBtn.addEventListener('click', () => step(-1));
     nextBtn.addEventListener('click', () => step(1));
 
-    // The dark around it closes it; either side of the photo steps that way
+    // The dark around it closes it; either side of the photo steps that way. On a
+    // touchscreen, tapped twice, it zooms in there, so a tap on it waits a moment for a
+    // second; zoomed in, a tap's nothing, and two zoom it back out
+    let touching = false;
+    let tapped = null;
+    modal.addEventListener('pointerdown', (e) => { touching = e.pointerType !== 'mouse'; });
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) return closePhoto();
-        if (e.target.closest('.modal-screen')) {
+        const onPhoto = !!e.target.closest('.modal-screen');
+        if (e.target !== modal && !onPhoto) return;
+        const { clientX: x, clientY: y } = e;
+        const stepFrom = () => {
             const rect = frame.getBoundingClientRect();
-            step(e.clientX < rect.left + rect.width / 2 ? -1 : 1);
+            step(x < rect.left + rect.width / 2 ? -1 : 1);
+        };
+        if (!touching) return onPhoto ? stepFrom() : closePhoto();
+        const again = tapped && Math.hypot(x - tapped.x, y - tapped.y) < 40;
+        clearTimeout(tapped && tapped.timer);
+        tapped = null;
+        if (again) {
+            if (zoom) zoomOut();
+            else if (onPhoto) zoomAt(x, y);
+        } else if (!zoom && !onPhoto) {
+            closePhoto();
+        } else {
+            tapped = { x, y, timer: setTimeout(() => {
+                tapped = null;
+                if (!zoom && isOpen()) stepFrom();
+            }, 250) };
         }
     });
 
     // On a touchscreen the photo follows the finger: across for the next or the last,
-    // down to put it away
+    // down to put it away, and zoomed in, anywhere, to look around it
     {
         let drag = null;
         let swiped = false;
@@ -516,7 +607,10 @@ description: Photographs by Somdev Sangwan.
             // A second finger is a pinch, and zoomed in, a finger looks around
             if (fingers.size > 1 || (visualViewport && visualViewport.scale > 1.01) ||
                 e.target.closest('button') || !isOpen()) {
-                if (drag) { drag = null; settle(); }
+                if (drag) {
+                    drag = null;
+                    if (!zoom) settle();
+                }
                 return;
             }
             drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0, axis: null };
@@ -525,11 +619,16 @@ description: Photographs by Somdev Sangwan.
             if (!drag || e.pointerId !== drag.id) return;
             drag.dx = e.clientX - drag.x;
             drag.dy = e.clientY - drag.y;
-            if (!drag.axis && Math.hypot(drag.dx, drag.dy) > 10) {
-                drag.axis = Math.abs(drag.dx) > Math.abs(drag.dy) ? 'x' : 'y';
+            if (!drag.axis && Math.hypot(drag.dx, drag.dy) > (zoom ? 4 : 10)) {
+                drag.axis = zoom ? 'around' : Math.abs(drag.dx) > Math.abs(drag.dy) ? 'x' : 'y';
                 stopMotion();
+                if (zoom) drag.from = [zoom.x, zoom.y];
             }
-            if (drag.axis === 'x') {
+            if (drag.axis === 'around') {
+                zoom.x = drag.from[0] + drag.dx;
+                zoom.y = drag.from[1] + drag.dy;
+                place();
+            } else if (drag.axis === 'x') {
                 frame.style.transform = `translateX(${drag.dx}px)`;
             } else if (drag.axis === 'y') {
                 const dy = Math.max(0, drag.dy);
@@ -546,6 +645,7 @@ description: Photographs by Somdev Sangwan.
             if (!axis) return;
             swiped = true;
             setTimeout(() => { swiped = false; });
+            if (axis === 'around') return;
             if (e.type === 'pointerup' && axis === 'x' && Math.abs(dx) > 50) {
                 step(dx < 0 ? 1 : -1);
             } else if (e.type === 'pointerup' && axis === 'y' && dy > 80) {

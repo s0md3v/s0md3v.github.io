@@ -1255,6 +1255,22 @@ layout_style: "homepage"
           },
         };
       }
+      // Safari draws a path only from its d attribute, and won't move it from the
+      // stylesheet, so there the script moves the cables as the stylesheet would
+      const STYLED_D = CSS.supports('d', 'path("M0 0")');
+      // The stylesheet's cubic-bezier(), as a function of how far along it is
+      const bezier = (x1, y1, x2, y2) => x => {
+        if (x <= 0 || x >= 1) return x <= 0 ? 0 : 1;
+        const at = (t, a, b) => 3 * a * t * (1 - t) ** 2 + 3 * b * t * t * (1 - t) + t ** 3;
+        let low = 0, high = 1;
+        for (let i = 0; i < 20; i++) {
+          const t = (low + high) / 2;
+          if (at(t, x1, x2) < x) low = t;
+          else high = t;
+        }
+        return at((low + high) / 2, y1, y2);
+      };
+      const EASE_IN_OUT = bezier(0.42, 0, 0.58, 1);
       // Each run's twisted pair, plugged in, held up over the jack, and out, for the plug
       // on its way: a point at a time, every seventh starting a half twist
       const strands = [];
@@ -1294,7 +1310,9 @@ layout_style: "homepage"
           if (tug) path.style.setProperty('--tug', `path("${tug[layer]}")`);
           path.style.setProperty('--loose', `path("${loose[layer]}")`);
           if (looseTug) path.style.setProperty('--loose-tug', `path("${looseTug[layer]}")`);
-          strands.push({ path, ends: [rest, lift, loose].map(d => numbers(d[layer])) });
+          const all = { rest, tug, lift, loose, looseTug };
+          const poses = Object.fromEntries(Object.keys(all).filter(way => all[way]).map(way => [way, numbers(all[way][layer])]));
+          strands.push({ path, poses, ends: [poses.rest, poses.lift, poses.loose], now: poses.rest });
           return path;
         }));
         run.classList.add('twisted');
@@ -1326,8 +1344,47 @@ layout_style: "homepage"
           const leaves = [from[0] + u * (to[0] - from[0]), from[1] + u * (to[1] - from[1])];
           return { dx: leaves[0] - CORD * Math.sin(a) - 28, dy: leaves[1] + CORD * Math.cos(a) - 0.5, turn: u * turn };
         }
+        // A strand u of the way from one of its poses to another
+        function draw(strand, from, to, u) {
+          let d = '';
+          strand.now = from.map((v, k) => v + u * (to[k] - v));
+          for (let k = 0; k < from.length; k += 2) {
+            d += `${k % 14 ? 'L' : 'M'}${strand.now[k].toFixed(2)} ${strand.now[k + 1].toFixed(2)}`;
+          }
+          if (STYLED_D) strand.path.style.d = `path("${d}")`;
+          else strand.path.setAttribute('d', d);
+        }
+        // Where Safari has the stylesheet's plug but not its cable: plugged in or left
+        // out, and tugged while the earphones are picked up. Tugged, quickly, a moment
+        // after they lift; let go, more slowly.
+        const uses = document.getElementById('uses');
+        const TUGGED = bezier(0.2, 0.7, 0.3, 1), SETTLED = bezier(0.3, 0.6, 0.3, 1);
+        let settling = 0;
+        function settle(now) {
+          cancelAnimationFrame(settling);
+          if (STYLED_D || phone.classList.contains('moving')) return;
+          const tugged = uses.matches(':hover, :focus-visible');
+          const out = phone.classList.contains('unplugged');
+          const [ms, delay, ease] = tugged ? [350, 50, TUGGED] : [600, 0, SETTLED];
+          const legs = strands.map(strand => {
+            const { poses } = strand;
+            return [strand.now, out ? (tugged && poses.looseTug) || poses.loose : (tugged && poses.tug) || poses.rest];
+          });
+          const start = performance.now() + delay;
+          const frame = time => {
+            const u = now || still ? 1 : Math.min(Math.max((time - start) / ms, 0), 1);
+            strands.forEach((strand, j) => draw(strand, ...legs[j], ease(u)));
+            if (u < 1) settling = requestAnimationFrame(frame);
+          };
+          if (now) frame();
+          else settling = requestAnimationFrame(frame);
+        }
+        settle(true);
+        ['pointerenter', 'pointerleave', 'focusin', 'focusout'].forEach(type =>
+          uses.addEventListener(type, () => requestAnimationFrame(() => settle())));
         function show(t) {
           if (Math.abs(t - at) > 0.004) swing(0.45, 120);
+          cancelAnimationFrame(settling);
           at = t;
           const { dx, dy, turn } = pose(t);
           phone.classList.add('moving');
@@ -1335,14 +1392,7 @@ layout_style: "homepage"
           phone.style.setProperty('--dy', dy);
           phone.style.setProperty('--turn', turn);
           const [i, u] = t <= LIFT ? [0, t / LIFT] : [1, (t - LIFT) / (1 - LIFT)];
-          strands.forEach(({ path, ends }) => {
-            const from = ends[i], to = ends[i + 1];
-            let d = '';
-            for (let k = 0; k < from.length; k += 2) {
-              d += `${k % 14 ? 'L' : 'M'}${(from[k] + u * (to[k] - from[k])).toFixed(2)} ${(from[k + 1] + u * (to[k + 1] - from[k + 1])).toFixed(2)}`;
-            }
-            path.style.d = `path("${d}")`;
-          });
+          strands.forEach(strand => draw(strand, strand.ends[i], strand.ends[i + 1], u));
         }
         // Back to the stylesheet's, which has it where it now is
         function rest() {
@@ -1350,7 +1400,8 @@ layout_style: "homepage"
           phone.classList.toggle('connected', at === 0);
           phone.classList.remove('moving');
           ['dx', 'dy', 'turn'].forEach(key => phone.style.removeProperty(`--${key}`));
-          strands.forEach(({ path }) => path.style.removeProperty('d'));
+          if (STYLED_D) strands.forEach(({ path }) => path.style.removeProperty('d'));
+          else settle();
         }
         // Pulled free, or pushed home, quickly, the push speeding up till it stops dead;
         // carried, or put down, unhurried
@@ -1584,17 +1635,33 @@ layout_style: "homepage"
           const swung = amount => smooth(points.map(([x, y], i) =>
             [x + amount * Math.sin(Math.PI * Math.min(Math.max(all[i] - sleeve, 0) / (free - sleeve), 1)), y]));
           const size = random(24, 36);
+          const SWAY = [[0, 0], [0.18, 1], [0.4, -0.64], [0.62, 0.35], [0.82, -0.15], [1, 0]];
           swings.push((scale, after) => {
-            const frames = [[0, 0], [0.18, 1], [0.4, -0.64], [0.62, 0.35], [0.82, -0.15], [1, 0]]
-              .map(([offset, amount]) => ({ offset, d: `path("${swung(size * scale * amount)}")`, easing: 'ease-in-out' }));
-            paths.forEach(path => path.animate(frames, { duration: 1400, delay: after + n * 80 }));
+            if (STYLED_D) {
+              const frames = SWAY.map(([offset, amount]) => ({ offset, d: `path("${swung(size * scale * amount)}")`, easing: 'ease-in-out' }));
+              return paths.forEach(path => path.animate(frames, { duration: 1400, delay: after + n * 80 }));
+            }
+            // In Safari, a frame at a time, the same way
+            const start = performance.now() + after + n * 80;
+            const frame = time => {
+              const u = Math.min(Math.max((time - start) / 1400, 0), 1);
+              const k = SWAY.findIndex(([offset]) => offset >= u) || 1;
+              const [[o0, a0], [o1, a1]] = [SWAY[k - 1], SWAY[k]];
+              const d = swung(size * scale * (a0 + EASE_IN_OUT((u - o0) / (o1 - o0)) * (a1 - a0)));
+              paths.forEach(path => path.setAttribute('d', d));
+              if (u < 1) requestAnimationFrame(frame);
+            };
+            requestAnimationFrame(frame);
           });
         });
       })();
       // Picked up, they swing; and a little, a moment later, when their plug's moved, as
       // it's the same cable, under the table
+      let swaying = 0;
       const swing = (scale = 1, after = 0) => {
-        if (!still && !earphones.querySelector('.ear-left path').getAnimations().length) swings.forEach(play => play(scale, after));
+        if (still || performance.now() < swaying || earphones.querySelector('.ear-left path').getAnimations().length) return;
+        swaying = performance.now() + after + 80 + 1400;
+        swings.forEach(play => play(scale, after));
       };
       earphones.addEventListener('pointerenter', () => swing());
       earphones.addEventListener('focus', () => swing());
