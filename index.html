@@ -205,7 +205,7 @@ layout_style: "homepage"
               <span>No signal. Retrying…</span>
             </span>
           </span>
-          <img class="base" src="{{ t }}phone.webp" srcset="{{ t }}phone-320.webp 320w, {{ t }}phone.webp 600w"
+          <img class="base" src="{{ t }}phone.avif" srcset="{{ t }}phone-320.webp 320w, {{ t }}phone.avif 600w"
           sizes="(max-width: 700px) 44vw, (max-aspect-ratio: 4/5) 44vw, min(12.8vw, 24vh)" width="600" height="1260" alt="">
           <span class="phone-glow"></span>
         </span>
@@ -239,7 +239,7 @@ layout_style: "homepage"
     <a class="obj grounded" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
       <span class="lift"><span class="item">
         <!-- CORS, to share the fetch with the glitter's mask -->
-        <img class="base" src="{{ t }}simone.webp" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.webp 360w"
+        <img class="base" src="{{ t }}simone.avif" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.avif 360w"
           sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt=""
           crossorigin="anonymous">
         <!-- A halo, in invisible glow ink, partly on the table. Hovered, at night, it turns
@@ -253,7 +253,7 @@ layout_style: "homepage"
 
     <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }},"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-200.webp" | relative_url }}"]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
       <span class="lift"><span class="item">
-        <img class="base rimmed" src="{{ t }}digicam.webp" srcset="{{ t }}digicam-290.webp 290w, {{ t }}digicam.webp 660w"
+        <img class="base rimmed" src="{{ t }}digicam.avif" srcset="{{ t }}digicam-290.avif 290w, {{ t }}digicam.avif 660w"
           sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
         <!-- At night, the screen's light, on the buttons beside it -->
@@ -298,7 +298,7 @@ layout_style: "homepage"
 
     <a class="obj" id="favorites" href="{{ n.favorites.url | relative_url }}">
       <span class="lift"><span class="item">
-        <img class="base" src="{{ t }}cassette.webp" srcset="{{ t }}cassette-310.webp 310w, {{ t }}cassette.webp 440w"
+        <img class="base" src="{{ t }}cassette.avif" srcset="{{ t }}cassette-310.avif 310w, {{ t }}cassette.avif 440w"
           sizes="(max-width: 700px) 42vw, (max-aspect-ratio: 4/5) 42vw, min(14vw, 26.4vh)" width="440" height="293" alt="">
         <span class="ink cassette-label">{{ n.favorites.label | escape }}</span>
       </span></span>
@@ -337,13 +337,13 @@ layout_style: "homepage"
           </g>
         </svg>
         <span class="part earbuds">
-          <span class="bud bud-left"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-190.webp 190w, {{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
-            data-night="{{ t }}earbuds-night-190.webp 190w, {{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
+          <span class="bud bud-left"><img src="{{ t }}earbuds.avif" srcset="{{ t }}earbuds-190.avif 190w, {{ t }}earbuds-400.avif 400w, {{ t }}earbuds.avif 720w"
+            data-night="{{ t }}earbuds-night-190.avif 190w, {{ t }}earbuds-night-400.avif 400w, {{ t }}earbuds-night.avif 720w"
             sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <!-- Which is which, written on the faceplate in glow ink -->
             <span class="glow-ink" aria-hidden="true">L</span></span>
-          <span class="bud bud-right"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-190.webp 190w, {{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
-            data-night="{{ t }}earbuds-night-190.webp 190w, {{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
+          <span class="bud bud-right"><img src="{{ t }}earbuds.avif" srcset="{{ t }}earbuds-190.avif 190w, {{ t }}earbuds-400.avif 400w, {{ t }}earbuds.avif 720w"
+            data-night="{{ t }}earbuds-night-190.avif 190w, {{ t }}earbuds-night-400.avif 400w, {{ t }}earbuds-night.avif 720w"
             sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <span class="glow-ink" aria-hidden="true">R</span></span>
         </span>
@@ -1147,6 +1147,15 @@ layout_style: "homepage"
       const vinyl = sticker.querySelector('.item');
       const glitter = sticker.querySelector('.glitter');
       const pen = glitter.getContext('2d');
+      // The Pi's light and the glitter are masked by the outline of the image they're over:
+      // the same file the image took for this screen, so it's fetched once, and again
+      // should the screen take another
+      for (const [img, masked] of [[pi.querySelector('.pi-board > .base'), pi.querySelector('.pi-act-glow')],
+        [sticker.querySelector('.base'), glitter]]) {
+        const fit = () => { masked.style.maskImage = `url("${img.currentSrc}")`; };
+        img.addEventListener('load', fit);
+        if (img.complete && img.currentSrc) fit();
+      }
       const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
       // Where, as a share of its width and height; how it's tilted, as the slope of its
       // face; and whether it's holographic, as some are, which glint a colour that changes

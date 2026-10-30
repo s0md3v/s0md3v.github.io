@@ -36,7 +36,7 @@ html:has(.table) {
   isolation: isolate;
   flex-shrink: 0;
   /* White laminate, from a photo of it at its real size (_raw/deskcut.py) */
-  background: #e7e7e4 url('{{ "/assets/images/table/desk.webp" | relative_url }}') 0 0 / calc(48.5 * var(--u)) calc(31.4 * var(--u));
+  background: #e7e7e4 url('{{ "/assets/images/table/desk.avif" | relative_url }}') 0 0 / calc(48.5 * var(--u)) calc(31.4 * var(--u));
 }
 
 /* Things on a table can't be selected, so a stray drag or Ctrl+A doesn't paint them over.
@@ -317,10 +317,10 @@ a.obj:not(.grounded):focus-visible,
   rotate: calc(var(--r, 0deg) + var(--j, 0deg));
 }
 
-.t1 { background-image: url('{{ "/assets/images/table/tape-1.webp" | relative_url }}'); }
+.t1 { background-image: url('{{ "/assets/images/table/tape-1.avif" | relative_url }}'); }
 .t2 { background-image: url('{{ "/assets/images/table/tape-2.webp" | relative_url }}'); }
-.t3 { background-image: url('{{ "/assets/images/table/tape-3.webp" | relative_url }}'); }
-.t4 { background-image: url('{{ "/assets/images/table/tape-4.webp" | relative_url }}'); }
+.t3 { background-image: url('{{ "/assets/images/table/tape-3.avif" | relative_url }}'); }
+.t4 { background-image: url('{{ "/assets/images/table/tape-4.avif" | relative_url }}'); }
 
 /* ---- Intro: a business card ---- */
 
@@ -650,7 +650,9 @@ a.obj:not(.grounded):focus-visible,
   inset: 0;
   width: 100%;
   height: 100%;
-  mask: url('{{ "/assets/images/table/simone-220.webp" | relative_url }}') 0 0 / 100% 100%;
+  /* By the sticker's outline: its image, whichever file it took, set by the script; till
+     then, none of it */
+  mask: linear-gradient(#0000 0 0) 0 0 / 100% 100%;
   mix-blend-mode: screen;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1958,8 +1960,9 @@ html:not(.dark-mode) .pi-screen {
   z-index: 1;
   inset: 0;
   background: radial-gradient(22% 50% at 67.5% 78.4%, rgb(80 255 120 / 0.38), rgb(80 255 120 / 0.12) 45%, transparent);
-  /* The small image, which is all an outline needs, and which the page most often uses */
-  mask: url('{{ "/assets/images/table/pi-340.webp" | relative_url }}') 0 0 / 100% 100%;
+  /* By the board's outline: its image, whichever file it took, set by the script; till
+     then, none of it */
+  mask: linear-gradient(#0000 0 0) 0 0 / 100% 100%;
   mix-blend-mode: screen;
   opacity: 0;
   pointer-events: none;
