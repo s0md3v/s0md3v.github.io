@@ -22,8 +22,13 @@ html:has(.table) {
 }
 
 .table {
-  /* 1u is 1/100th of a 16:10 frame that fits the viewport */
-  --u: min(1vw, 1.6svh);
+  /* 1u is 1/100th of a 16:10 frame that fits the viewport; where it's the window's
+     width that limits it, a little less, so there's table to spare at the sides */
+  --u: min(0.85vw, 1.6svh);
+  /* Where things are: across, as on a 2:1 window, which leaves margins at the sides;
+     down, still the whole height, if not too sparse */
+  --uy: min(1.6svh, 1.25 * var(--u));
+  --ux: min(0.76vw, var(--uy));
   position: relative;
   height: 100svh;
   min-height: 520px;
@@ -191,8 +196,8 @@ html:has(.table) {
 .obj {
   --h0: 0.3;
   position: absolute;
-  left: calc(50% + var(--x, 0) * var(--u));
-  top: calc(50% + var(--y, 0) * var(--u));
+  left: calc(50% + var(--x, 0) * var(--ux));
+  top: calc(50% + var(--y, 0) * var(--uy));
   width: calc(var(--w) * var(--u));
   translate: -50% -50%;
   display: block;
@@ -596,7 +601,7 @@ a.obj:not(.grounded):focus-visible,
 /* Above .light so the screen can glow; lit by #room-light-gallery instead */
 #gallery {
   /* A little bigger than to scale, for its buttons */
-  --x: 39.5; --y: -11.5; --w: 16; --r: 7deg; --h0: 2.5;
+  --x: 45; --y: -11.5; --w: 17.5; --r: 7deg; --h0: 2.5;
   --tx: 42%; --ty: 124%; --tw: 9; --tr: -3deg;
   z-index: 41;
 }
@@ -980,16 +985,6 @@ html:not(.dark-mode) .cam-screen {
   opacity: 0;
 }
 
-.cam-keys {
-  position: absolute;
-  z-index: 7;
-  left: 68%;
-  top: 0;
-  width: 32%;
-  height: 100%;
-  cursor: pointer;
-}
-
 /* Its buttons, where they are in the photo */
 .cam-btn {
   position: absolute;
@@ -1003,7 +998,7 @@ html:not(.dark-mode) .cam-screen {
   border: 0;
   border-radius: 50%;
   background: none;
-  /* The pointer's .cam-keys' */
+  /* The pointer's the link's, which knows which button it's near */
   pointer-events: none;
 }
 
@@ -1027,8 +1022,7 @@ html:not(.dark-mode) .cam-screen {
 
 /* Too small to tap; on touch screens the camera just links to the gallery */
 @media not (hover: hover) {
-  .cam-btn,
-  .cam-keys {
+  .cam-btn {
     display: none;
   }
 }
@@ -1040,7 +1034,7 @@ html:not(.dark-mode) .cam-screen {
   /* Its cable is round too (see #uses) */
   --w: 12; --r: 5deg; --h0: 0.25; --round: 2.5;
   /* Clear of the papers on a narrower table */
-  left: min(calc(50% + 33 * var(--u)), calc(100% - 24 * var(--u)));
+  left: min(calc(50% + 33 * var(--ux)), calc(100% - 24 * var(--u)));
   top: calc(100% + 0.7 * var(--u));
   z-index: 41;
 }
@@ -1835,7 +1829,7 @@ html:not(.dark-mode) .pi-screen {
      is only a faint, soft darkening beside it */
   --round: 2.5;
   /* Never off the edge of a narrower table */
-  left: max(calc(50% - 47 * var(--u)), calc(6.5 * var(--u)));
+  left: max(calc(50% - 47 * var(--ux)), calc(6.5 * var(--u)));
   top: calc(100% - 7 * var(--u));
 }
 
@@ -1941,7 +1935,7 @@ html:not(.dark-mode) .pi-screen {
 #favorites {
   --x: -55; --y: -6; --w: 15; --r: 9deg; --h0: 1.4;
   /* Never off the edge of a narrower table */
-  left: max(calc(50% + var(--x) * var(--u)), calc(9 * var(--u)));
+  left: max(calc(50% + var(--x) * var(--ux)), calc(10 * var(--u)));
 }
 
 .cassette-label {
@@ -1955,7 +1949,7 @@ html:not(.dark-mode) .pi-screen {
 /* ---- Playground: a die ---- */
 
 #playground {
-  --x: 30; --y: -1; --w: 2.4; --r: 22deg; --h0: 2.4;
+  --x: 26; --y: -1; --w: 2.4; --r: 22deg; --h0: 2.4;
   --tx: 50%; --ty: 283%; --tw: 10; --tr: 4deg;
 }
 
@@ -2177,11 +2171,13 @@ html:not(.dark-mode) .sw-sun {
 .dark-mode .sw-bottom { background: #fff; }
 .dark-mode .sw-bottom i { height: 0; }
 
-/* ---- Phones ---- */
+/* ---- Phones, and upright tablets, which the table's too wide for ---- */
 
-@media (max-width: 700px) {
+@media (max-width: 700px), (max-aspect-ratio: 4/5) {
   .table {
     --u: 1vw;
+    --ux: var(--u);
+    --uy: var(--u);
     height: calc(385 * var(--u));
     min-height: 100svh;
     background-image: url('{{ "/assets/images/table/desk-small.webp" | relative_url }}');

@@ -27,11 +27,12 @@ layout_style: "homepage"
       <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span><span class="retraced">s</span>creentime</span></span></ins>
     </section>
 
-    <!-- Small sizes are made by _raw/small.py. `sizes` uses u = min(1vw, 1.6vh) above 700px. -->
+    <!-- Small sizes are made by _raw/small.py. `sizes` uses u = min(0.85vw, 1.6vh) above 700px, and on
+         an upright tablet, the phones' layout. -->
     <a class="obj" id="about" href="{{ n.about.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}polaroid.webp" srcset="{{ t }}polaroid-280.webp 280w, {{ t }}polaroid.webp 400w"
-          sizes="(max-width: 700px) 38vw, min(16.5vw, 26.4vh)" width="400" height="481" alt="">
+          sizes="(max-width: 700px) 38vw, (max-aspect-ratio: 4/5) 38vw, min(14vw, 26.4vh)" width="400" height="481" alt="">
         <span class="ink polaroid-caption">{{ n.about.label | escape }}</span>
       </span></span>
     </a>
@@ -63,7 +64,7 @@ layout_style: "homepage"
         </svg>
         <span class="part pi-board">
           <img class="base" src="{{ t }}pi.webp" srcset="{{ t }}pi-560.webp 560w, {{ t }}pi.webp 960w"
-            sizes="(max-width: 700px) 46vw, min(16.5vw, 26.4vh)" width="960" height="419" alt="">
+            sizes="(max-width: 700px) 46vw, (max-aspect-ratio: 4/5) 46vw, min(14vw, 26.4vh)" width="960" height="419" alt="">
           <span class="pi-glow"></span>
           <span class="pi-screen" aria-hidden="true">
             <!-- Where its shell is, which is what it's the way to -->
@@ -152,7 +153,7 @@ layout_style: "homepage"
             </span>
           </span>
           <img class="base" src="{{ t }}phone.webp" srcset="{{ t }}phone-320.webp 320w, {{ t }}phone.webp 600w"
-          sizes="(max-width: 700px) 44vw, min(15vw, 24vh)" width="600" height="1260" alt="">
+          sizes="(max-width: 700px) 44vw, (max-aspect-ratio: 4/5) 44vw, min(12.8vw, 24vh)" width="600" height="1260" alt="">
           <span class="phone-glow"></span>
         </span>
       </span></span>
@@ -162,7 +163,7 @@ layout_style: "homepage"
       <span class="under"><span class="tag t3"><span>{{ n.papers.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}papers.webp" srcset="{{ t }}papers-560.webp 560w, {{ t }}papers.webp 1000w"
-          sizes="(max-width: 700px) 72vw, min(36.5vw, 58.4vh)" width="1000" height="1311" alt="">
+          sizes="(max-width: 700px) 72vw, (max-aspect-ratio: 4/5) 72vw, min(31vw, 58.4vh)" width="1000" height="1311" alt="">
         <span class="page" aria-hidden="true"><span class="page-body">
           <span class="page-title">Bypassing XSS Detection Mechanisms</span>
           <span class="page-author">— Somdev Sangwan</span>
@@ -185,7 +186,7 @@ layout_style: "homepage"
     <a class="obj grounded" id="philosophy" href="{{ n.philosophy.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}simone.webp" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.webp 360w"
-          sizes="(max-width: 700px) 30vw, min(12.5vw, 20vh)" width="360" height="319" alt="">
+          sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt="">
         <!-- A halo, in invisible glow ink, partly on the table. Hovered, at night, it turns
              gold, and sparkles. -->
         <span class="glow-ink" data-glow="halo" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
@@ -198,7 +199,7 @@ layout_style: "homepage"
     <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.webp" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }},"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-200.webp" | relative_url }}"]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
       <span class="lift"><span class="item">
         <img class="base rimmed" src="{{ t }}digicam.webp" srcset="{{ t }}digicam-290.webp 290w, {{ t }}digicam.webp 660w"
-          sizes="(max-width: 700px) 39vw, min(17.7vw, 28.3vh)" width="660" height="439" alt="">
+          sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
         <!-- At night, the screen's light, on the buttons beside it -->
         <span class="cam-spill"><span></span></span>
@@ -225,8 +226,6 @@ layout_style: "homepage"
         <button class="cam-btn" data-key="play" type="button" tabindex="-1" aria-hidden="true"></button>
         <button class="cam-btn" data-key="wide" type="button" tabindex="-1" aria-hidden="true"></button>
         <button class="cam-btn" data-key="tele" type="button" tabindex="-1" aria-hidden="true"></button>
-        <!-- For the pointer, all of the camera right of its screen is buttons: whichever's nearest -->
-        <span class="cam-keys" aria-hidden="true"></span>
       </span></span>
       <!-- The camera's link is .cover; this makes the label clickable too -->
       <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
@@ -245,7 +244,7 @@ layout_style: "homepage"
     <a class="obj" id="favorites" href="{{ n.favorites.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}cassette.webp" srcset="{{ t }}cassette-310.webp 310w, {{ t }}cassette.webp 440w"
-          sizes="(max-width: 700px) 42vw, min(16.5vw, 26.4vh)" width="440" height="293" alt="">
+          sizes="(max-width: 700px) 42vw, (max-aspect-ratio: 4/5) 42vw, min(14vw, 26.4vh)" width="440" height="293" alt="">
         <span class="ink cassette-label">{{ n.favorites.label | escape }}</span>
       </span></span>
     </a>
@@ -285,12 +284,12 @@ layout_style: "homepage"
         <span class="part earbuds">
           <span class="bud bud-left"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
             data-night="{{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
-            sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt="">
+            sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <!-- Which is which, written on the faceplate in glow ink -->
             <span class="glow-ink" aria-hidden="true">L</span></span>
           <span class="bud bud-right"><img src="{{ t }}earbuds.webp" srcset="{{ t }}earbuds-400.webp 400w, {{ t }}earbuds.webp 720w"
             data-night="{{ t }}earbuds-night-400.webp 400w, {{ t }}earbuds-night.webp 720w"
-            sizes="(max-width: 700px) 23vw, min(11.3vw, 18vh)" width="720" height="333" alt="">
+            sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <span class="glow-ink" aria-hidden="true">R</span></span>
         </span>
       </span></span>
@@ -677,26 +676,23 @@ layout_style: "homepage"
         const buttons = Array.from(camera.querySelectorAll('.cam-btn'));
         buttons.forEach(button => button.addEventListener('click', () => press(button.dataset.key)));
         // For the pointer, a button reaches a little past its edge, to the nearest of them:
-        // a near miss presses it, and anything further opens the gallery
-        const keys = camera.querySelector('.cam-keys');
+        // a near miss presses it, and anything further opens the gallery. The link takes
+        // every click, and doesn't go where one's for a button.
         const REACH = 1.5;
         function nearest(e) {
-          const x = e.offsetX + (e.target === keys ? keys.offsetLeft : 0), y = e.offsetY;
+          if (e.target !== cover) return null;
           let best = null, far = REACH;
           for (const button of buttons) {
             const style = getComputedStyle(button);
             const [bx, by] = ['--bx', '--by'].map((v, k) => parseFloat(style.getPropertyValue(v)) / 100 * (k ? item.offsetHeight : item.offsetWidth));
-            const d = Math.hypot((x - bx) / (button.offsetWidth / 2), (y - by) / (button.offsetHeight / 2));
+            const d = Math.hypot((e.offsetX - bx) / (button.offsetWidth / 2), (e.offsetY - by) / (button.offsetHeight / 2));
             if (d < far) [best, far] = [button, d];
           }
           return best;
         }
         const release = () => buttons.forEach(button => button.classList.remove('pressed'));
         item.addEventListener('pointermove', e => {
-          if (e.target !== keys && e.target !== cover) return;
-          const button = nearest(e), key = button && button.dataset.key;
-          // Out of reach, the click goes through to the link
-          keys.style.pointerEvents = button ? '' : 'none';
+          const key = nearest(e)?.dataset.key ?? null;
           if (key !== hovered) {
             hovered = key;
             release();
@@ -708,12 +704,8 @@ layout_style: "homepage"
           release();
           hint();
         });
-        keys.addEventListener('pointerdown', e => { if (e.button === 0) nearest(e)?.classList.add('pressed'); });
-        keys.addEventListener('pointerup', release);
-        keys.addEventListener('click', e => {
-          const button = nearest(e);
-          if (button) press(button.dataset.key);
-        });
+        cover.addEventListener('pointerdown', e => { if (e.button === 0) nearest(e)?.classList.add('pressed'); });
+        cover.addEventListener('pointerup', release);
         // With the camera focused, the arrows are its arrows
         cover.addEventListener('keydown', e => {
           keyed = e.key === 'Enter';
@@ -764,6 +756,11 @@ layout_style: "homepage"
         // Clicked on the screen, or after going through them, it opens that photo in the
         // gallery; anywhere else, the gallery
         cover.addEventListener('click', e => {
+          const button = !keyed && nearest(e);
+          if (button) {
+            e.preventDefault();
+            return press(button.dataset.key);
+          }
           const on = keyed ? browsed : document.elementsFromPoint(e.clientX, e.clientY).includes(screen);
           keyed = false;
           cover.href = gallery + (on && (mode === 'play' || mode === 'index') ? `#${shown + 1}` : '');
