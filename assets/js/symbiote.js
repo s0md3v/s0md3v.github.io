@@ -3,7 +3,8 @@
    and feeds. Pull hard enough and a tentacle necks and snaps, and what's left crawls home.
    At night it glows, the colour of the ink on the table's labels, which is no coincidence:
    it's been out. It's lit as a light would be: what shines through it adds up along the line
-   of sight, and it sparks where it's stirred, like the sea does. Its prints, and the trail to the nearest of them, only show in the dark.
+   of sight, and it sparks where it's stirred, like the sea does. And it knows who's in the
+   Polaroid: point at him and see. Its prints, and the trail to the nearest of them, only show in the dark.
 
    The way its tentacles move is adapted from Venom Button by exteestudio, which draws them in
    3D with WebGL; here they're flat, on a canvas, and light comes from the table.
@@ -455,7 +456,7 @@
   function step(dt) {
     if (!still) time += dt;
     blob.grow += (1 - blob.grow) * (1 - Math.exp(-dt * 1.4));
-    const e = edge(cur.x, cur.y), present = cur.present && blob.grow > 0.6;
+    const e = edge(cur.x, cur.y), present = cur.present && blob.grow > 0.6 && !(leap && leap.off);
     const inside = present && e.d < -4;
     blob.over += ((inside ? 1 : 0) - blob.over) * (1 - Math.exp(-dt * 6));
     flow += dt * (1 + 2 * aware + 2.5 * blob.over);
@@ -479,7 +480,9 @@
     for (const f of flashes) f.age += dt;
     while (flashes.length && flashes[0].age > 1.4) flashes.shift();
     // It doesn't care for daylight. By night it spreads out, and it's braver.
-    spring(blob, 'size', 'sizeV', glow.night ? 1.08 : 0.94, 3, 0.45, dt);
+    gone += ((leap && leap.off ? 1 : 0) - gone) * (1 - Math.exp(-dt * 8));
+    const gathering = leap && !leap.off ? 0.84 : 1;
+    spring(blob, 'size', 'sizeV', (glow.night ? 1.08 : 0.94) * gathering * (1 - 0.3 * gone), leap ? 9 : 3, 0.45, dt);
     const reach = P.reach * (glow.night ? 1.15 : 1);
     aware = present && !inside ? ease(P.awareness * (glow.night ? 1.15 : 1), 18, e.d) : 0;
 
@@ -1033,6 +1036,531 @@
     ctx.globalAlpha = 1;
   }
 
+  // ---- The leap ----
+  // Point at the Polaroid and it's across the table and onto the man in it: it lands on his
+  // face, runs over it, pulls itself together round his head, and what's looking out of the
+  // photo isn't him. Move away and it all goes the other way, and it's home. So it's all
+  // worked out from how far along it is, and how far along it is follows the pointer, which
+  // can change its mind at any moment.
+  const LEAP = { crouch: 0.35, fly: 0.42 };
+  // From when it lands: run over him; pulled together; eyes; mouth; tongue
+  const FACE = { spread: 0.16, gather: 0.82, eyes: 1.02, jaw: 1.42, tongue: 1.85 };
+  const BACK = 1.7;
+  // His head in the photo, in shares of the Polaroid, turned as it is: tilted, and looking off
+  // to the left of the frame, so what's on his face wraps round a skull turned that way
+  const HEAD = { x: 0.492, y: 0.357, size: 0.19, tilt: 8 * Math.PI / 180, yaw: -0.38 };
+  const CLIP = 'inset(6.95% 6.95% 20% 7.35%)';
+  let hovered = false, leap = null, gone = 0, kit = null;
+  const about = document.getElementById('about'), polaroid = about && about.querySelector('.item');
+
+  const wrap = (u, v) => {
+    const round = Math.sqrt(Math.max(1 - u * u * 0.9, 0));
+    return [u * Math.cos(HEAD.yaw) + round * Math.sin(HEAD.yaw), v];
+  };
+  const lipUp = u => 0.1 + 0.2 * (1 - Math.abs(u / 0.66) ** 1.5);
+  const lipDown = u => 0.1 + 0.98 * Math.sqrt(Math.max(1 - (u / 0.66) ** 2, 0));
+  function mouthPath(c) {
+    c.beginPath();
+    for (let i = 0; i <= 48; i++) { const u = -0.66 + (1.32 * i) / 48; c.lineTo(...wrap(u, lipUp(u))); }
+    for (let i = 48; i >= 0; i--) { const u = -0.66 + (1.32 * i) / 48; c.lineTo(...wrap(u, lipDown(u))); }
+    c.closePath();
+  }
+  function eyesPath(c) {
+    c.beginPath();
+    for (const s of [1, -1]) {
+      const curve = (...p) => c.bezierCurveTo(...wrap(p[0] * s, p[1]), ...wrap(p[2] * s, p[3]), ...wrap(p[4] * s, p[5]));
+      c.moveTo(...wrap(0.07 * s, -0.13));
+      curve(0.2, -0.3, 0.42, -0.46, 0.76, -0.68);
+      curve(0.76, -0.42, 0.66, -0.2, 0.5, -0.1);
+      curve(0.4, -0.05, 0.34, -0.12, 0.27, -0.04);
+      curve(0.2, 0, 0.1, -0.04, 0.07, -0.13);
+      c.closePath();
+    }
+  }
+  function headPath(c, j) {
+    const chin = 0.86 + 0.36 * j, wide = 0.5 + 0.12 * j;
+    c.beginPath();
+    c.moveTo(0, -1.02);
+    c.bezierCurveTo(0.52, -1.02, 0.88, -0.74, 0.88, -0.3);
+    c.bezierCurveTo(0.88, -0.02, 0.82, 0.22, 0.74, 0.4);
+    c.bezierCurveTo(0.68, 0.62, wide + 0.08, chin - 0.2, 0.28, chin);
+    c.quadraticCurveTo(0, chin + 0.07, -0.28, chin);
+    c.bezierCurveTo(-wide - 0.08, chin - 0.2, -0.68, 0.62, -0.74, 0.4);
+    c.bezierCurveTo(-0.82, 0.22, -0.88, -0.02, -0.88, -0.3);
+    c.bezierCurveTo(-0.88, -0.74, -0.52, -1.02, 0, -1.02);
+    c.closePath();
+  }
+
+  // What it does on landing: its shape's a sum of soft balls, cut off at a level, so where two
+  // come close they run together with a neck between them, as a liquid does
+  function buildRun(W, H, cx, cy, R) {
+    const N = W * H, G = new Float32Array(N), A = new Float32Array(N).fill(9), S = new Float32Array(N);
+    const arrive = r => 0.12 * clamp((r - R * 0.5) / (R * 1.4), 0, 1) ** 1.3;
+    const ball = (px, py, r) => {
+      const reach = r * 2.2, inv = 1 / (reach * reach), time = arrive(Math.hypot(px - cx, py - cy));
+      for (let y = Math.max(Math.floor(py - reach), 2); y <= Math.min(Math.ceil(py + reach), H - 3); y++) {
+        for (let x = Math.max(Math.floor(px - reach), 2); x <= Math.min(Math.ceil(px + reach), W - 3); x++) {
+          const dx = x - px, dy = y - py, q = 1 - (dx * dx + dy * dy) * inv;
+          if (q <= 0) continue;
+          const i = y * W + x;
+          G[i] += q * q * q;
+          if (time < A[i]) A[i] = time;
+        }
+      }
+    };
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * 6.28 + rand(-0.3, 0.3), r = i ? rand(0.25, 0.4) * R : 0;
+      ball(cx + Math.cos(a) * r, cy + Math.sin(a) * r, R * rand(0.42, 0.6));
+    }
+    for (let i = 0, n = 11; i < n; i++) {
+      const reach = R * rand(1, 1.85), width = R * rand(0.09, 0.15);
+      let a = ((i + rand(0.15, 0.85)) / n) * 6.28, go = R * 0.5;
+      const curl = rand(-0.5, 0.5);
+      let x = cx + Math.cos(a) * go, y = cy + Math.sin(a) * go;
+      while (go < reach) {
+        const f = (go - R * 0.5) / (reach - R * 0.5), r = Math.max(width * (1 - 0.7 * f), 1.1), hop = Math.max(r * 0.7, 1);
+        ball(x, y, r);
+        a += (curl * hop) / R;
+        x += Math.cos(a) * hop; y += Math.sin(a) * hop; go += hop;
+      }
+      ball(x, y, width * 0.95);
+      // Spat from the end of it
+      for (let k = 0; k < 3; k++) {
+        const far = rand(0.08, 0.5) * R, b = a + rand(-0.2, 0.2), r = rand(0.015, 0.05) * R, px = x + Math.cos(b) * far, py = y + Math.sin(b) * far, L = Math.ceil(r) + 1;
+        for (let v = -L; v <= L; v++) for (let u = -L; u <= L; u++) {
+          const q = 1 - (u * u + v * v) / (r * r), at = Math.round(py + v) * W + Math.round(px + u);
+          if (q > 0 && at > 0 && at < N) { S[at] = Math.max(S[at], Math.sqrt(q) * 0.75); A[at] = Math.min(A[at], arrive(reach + far)); }
+        }
+      }
+    }
+    return { G, A, S };
+  }
+
+  // The head, in a space where its top's at -1 and it's about as wide. Drawn on a mask and
+  // read back, so it's the same stuff as everything else here, and lit the same: all the eyes
+  // and the mouth are is where it's drawn itself back, to show what's behind.
+  function buildHead(W, H, cx, cy, k) {
+    const mask = document.createElement('canvas');
+    mask.width = W; mask.height = H;
+    const c = mask.getContext('2d', { willReadFrequently: true }), N = W * H, FAR = W + 60;
+    const soft = (draw, blur) => {
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.clearRect(0, 0, W, H);
+      c.shadowColor = '#000'; c.shadowBlur = blur * 2; c.shadowOffsetX = FAR; c.shadowOffsetY = 0;
+      const co = Math.cos(HEAD.tilt) * k, si = Math.sin(HEAD.tilt) * k;
+      c.setTransform(co, si, -si, co, cx - FAR, cy);
+      c.fillStyle = c.strokeStyle = '#000';
+      c.lineCap = c.lineJoin = 'round';
+      draw();
+      c.shadowColor = 'transparent';
+      const d = c.getImageData(0, 0, W, H).data, out = new Float32Array(N);
+      for (let i = 0; i < N; i++) out[i] = d[i * 4 + 3] / 255;
+      return out;
+    };
+    // Lumpy, and reaching: nothing about it's a clean outline. And it's got down his neck, into
+    // the black of the hoodie, and it's not stopped there.
+    const lumps = Array.from({ length: 30 }, () => [rand(0, 6.28), rand(0.04, 0.1)]);
+    const reaching = Array.from({ length: 9 }, (_, i) => ({ s: i % 2 ? 1 : -1, y: rand(-0.7, 0.3), far: rand(0.14, 0.5), bend: rand(-0.24, 0.24), w: rand(0.014, 0.028) }));
+    const body = j => () => {
+      headPath(c, j);
+      c.fill();
+      for (const [a, r] of lumps) {
+        c.beginPath();
+        c.arc(Math.cos(a) * 0.8, Math.sin(a) * (a > 3.14 ? 0.96 : 0.82 + 0.3 * j) - 0.02, r, 0, 6.29);
+        c.fill();
+      }
+      c.lineWidth = 0.62;
+      c.beginPath(); c.moveTo(0.06, 0.5); c.lineTo(0.42, 1.5); c.stroke();
+      for (const t of reaching) {
+        c.lineWidth = t.w;
+        c.beginPath();
+        c.moveTo(t.s * 0.74, t.y);
+        c.quadraticCurveTo(t.s * (0.8 + t.far * 0.5), t.y + t.bend, t.s * (0.8 + t.far), t.y + t.bend * 0.4 + 0.14);
+        c.stroke();
+        c.beginPath(); c.arc(t.s * (0.8 + t.far), t.y + t.bend * 0.4 + 0.14, t.w * 1.5, 0, 6.29); c.fill();
+      }
+    };
+    const shut = soft(body(0), 0.8), opened = soft(body(1), 0.8);
+    const wideShut = soft(() => { headPath(c, 0); c.fill(); }, k * 0.15), wideOpen = soft(() => { headPath(c, 1); c.fill(); }, k * 0.15);
+    const mouth = soft(() => { mouthPath(c); c.fill(); }, 0.7), eyes = soft(() => { eyesPath(c); c.fill(); }, 0.7);
+    const seam = soft(() => {
+      c.lineWidth = 0.018;
+      c.beginPath();
+      for (let i = 0; i <= 32; i++) { const u = -0.7 + (1.4 * i) / 32; c.lineTo(...wrap(u, lipUp(u) + 0.01)); }
+      c.stroke();
+    }, 0.7);
+    // Ropes of it across the corners of the mouth, stretched as it opened
+    const ropes = soft(() => {
+      for (const s of [1, -1]) for (const [u, w] of [[0.59, 0.02], [0.51, 0.028], [0.42, 0.016]]) {
+        const v = u + rand(-0.03, 0.03), top = lipUp(u) - 0.02, low = lipDown(v) + 0.02;
+        c.lineWidth = w;
+        c.beginPath();
+        c.moveTo(...wrap(s * u, top));
+        c.quadraticCurveTo(...wrap(s * (u + v) / 2, (top + low) / 2 + rand(-0.05, 0.1)), ...wrap(s * v, low));
+        c.stroke();
+      }
+    }, 0.7);
+    // What moves under its skin: a brow, lips, tendons, and fibres back over its skull
+    const fibres = soft(() => {
+      const stroke = (w, a, b, e, f, g2, h, i2, l) => {
+        for (const s of [1, -1]) {
+          c.lineWidth = w;
+          c.beginPath();
+          c.moveTo(...wrap(s * a, b));
+          c.bezierCurveTo(...wrap(s * e, f), ...wrap(s * g2, h), ...wrap(s * i2, l));
+          c.stroke();
+        }
+      };
+      stroke(0.05, 0.03, -0.26, 0.2, -0.46, 0.48, -0.62, 0.8, -0.8);
+      stroke(0.04, 0.02, -0.52, 0.2, -0.7, 0.4, -0.84, 0.62, -0.88);
+      stroke(0.03, 0.01, -0.72, 0.12, -0.86, 0.26, -0.96, 0.42, -0.98);
+      stroke(0.035, 0.5, 0.02, 0.62, 0, 0.74, -0.12, 0.84, -0.34);
+      stroke(0.03, 0.3, 0.08, 0.5, 0.1, 0.66, 0.16, 0.8, 0.1);
+      stroke(0.03, 0.7, 0.12, 0.74, 0.3, 0.7, 0.5, 0.6, 0.72);
+    }, k * 0.03);
+    const lips = soft(() => {
+      c.lineWidth = 0.05; mouthPath(c); c.stroke();
+      c.lineWidth = 0.04; eyesPath(c); c.stroke();
+    }, k * 0.025);
+    const C = new Float32Array(N), J = new Float32Array(N), E = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      const hole = clamp(mouth[i] * 3 - ropes[i] * 3.2, 0, 1) * 3, skin = fibres[i] * 0.95 + lips[i] * 1.1;
+      C[i] = 0.42 + (shut[i] - 0.5) * 0.9 + wideShut[i] * 1.5 + (skin - lips[i] * 0.6) * shut[i] - seam[i] * 3;
+      J[i] = 0.42 + (opened[i] - 0.5) * 0.9 + wideOpen[i] * 1.5 + skin * opened[i] - hole - C[i];
+      E[i] = Math.min(eyes[i] * 3.4, 3.2);
+    }
+    const smooth = field => {
+      const out = field.slice();
+      for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+        const i = y * W + x;
+        out[i] = (field[i] * 4 + field[i - 1] + field[i + 1] + field[i - W] + field[i + W]) / 8;
+      }
+      field.set(out);
+    };
+    smooth(C); smooth(J);
+    return { C, J, E };
+  }
+
+  // What the wet of it reflects: the sky that's in the photo, broad and soft, from over his
+  // shoulder by day, and at night just the lamp
+  function buildRoom(night) {
+    const w = 96, h = 96, room = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const u = x / w, v = y / h;
+      room[y * w + x] = night ? bell(u - 0.32, 0.05) * bell(v - 0.16, 0.05) : 0.04 + 0.96 * bell(u - 0.3, 0.2) * bell(v - 0.12, 0.2);
+    }
+    return { room, w, h, night };
+  }
+
+  // What's behind it: drawn once, each on a sheet of its own
+  function sheet(K, draw) {
+    const out = document.createElement('canvas');
+    out.width = K.back.width; out.height = K.back.height;
+    const c = out.getContext('2d');
+    place(K, c);
+    draw(c);
+    return out;
+  }
+  function place(K, c) {
+    const co = Math.cos(HEAD.tilt) * K.U, si = Math.sin(HEAD.tilt) * K.U;
+    c.setTransform(co * K.px, si * K.px, -si * K.px, co * K.px, K.fx * K.px, K.fy * K.px);
+  }
+  function tooth(c, x, root, length, lean, w, dim) {
+    const tip = root + length, gr = c.createLinearGradient(0, root, 0, tip);
+    gr.addColorStop(0, `rgb(${[150, 158, 132].map(v => v * dim | 0)})`);
+    gr.addColorStop(0.4, `rgb(${[222, 226, 204].map(v => v * dim | 0)})`);
+    gr.addColorStop(1, `rgb(${[250, 251, 240].map(v => v * dim | 0)})`);
+    c.fillStyle = gr;
+    c.beginPath();
+    c.moveTo(x - w, root);
+    c.quadraticCurveTo(x - w * 0.5 + lean * 0.2, root + length * 0.6, x + lean, tip);
+    c.quadraticCurveTo(x + w * 0.8 + lean * 0.2, root + length * 0.5, x + w, root);
+    c.closePath();
+    c.fill();
+  }
+  const row = (c, n, span, root, length, lean, w, dim) => {
+    for (let i = 0; i < n; i++) {
+      const u = -span + (2 * span * (i + 0.5)) / n, x = wrap(u, 0)[0], next = wrap(u + 0.04, 0)[0];
+      tooth(c, x, root(u), length(u), lean(u), w * clamp((next - x) / 0.04, 0.45, 1.15), dim);
+    }
+  };
+  function buildSheets(K) {
+    K.upper = sheet(K, c => {
+      row(c, 15, 0.56, u => lipUp(u) + 0.03, () => 0.17, u => -u * 0.08, 0.024, 0.46);
+      row(c, 12, 0.6, u => lipUp(u) - 0.02, u => 0.15 + 0.2 * (1 - (u / 0.6) ** 2), u => -u * 0.13, 0.036, 1);
+    });
+    K.lower = sheet(K, c => {
+      row(c, 13, 0.52, u => lipDown(u) - 0.02, () => -0.15, u => -u * 0.08, 0.024, 0.46);
+      row(c, 11, 0.55, u => lipDown(u) + 0.03, u => -(0.16 + 0.13 * (1 - (u / 0.55) ** 2)), u => -u * 0.1, 0.034, 1);
+    });
+    K.whites = sheet(K, c => {
+      eyesPath(c);
+      const gr = c.createLinearGradient(0, -0.7, 0, 0);
+      gr.addColorStop(0, 'rgb(250, 251, 246)');
+      gr.addColorStop(1, 'rgb(214, 222, 210)');
+      c.fillStyle = gr;
+      c.fill();
+    });
+  }
+
+  // Everything's made the first time it's needed, then kept for as long as the window's size is
+  function build() {
+    const box = table.getBoundingClientRect(), r = polaroid.getBoundingClientRect(), w = polaroid.offsetWidth, h = polaroid.offsetHeight;
+    const g = 0.5, W = Math.round(w / g), H = Math.round(h / g), px = Math.min(devicePixelRatio || 1, 2) * 1.5;
+    const stage = document.createElement('div');
+    stage.className = 'goo-face';
+    stage.setAttribute('aria-hidden', 'true');
+    const midX = r.left + r.width / 2 - box.left, midY = r.top + r.height / 2 - box.top, turned = getComputedStyle(polaroid).rotate;
+    Object.assign(stage.style, { left: `${midX - w / 2}px`, top: `${midY - h / 2}px`, width: `${w}px`, height: `${h}px`, rotate: turned, clipPath: CLIP });
+    const layer = (cw, ch) => { const el = document.createElement('canvas'); el.width = cw; el.height = ch; return el; };
+    const back = layer(Math.round(w * px), Math.round(h * px)), skin = layer(W, H), top = layer(back.width, back.height);
+    stage.append(back, skin, top);
+    const fly = layer(Math.round(box.width * Math.min(dpr, 1.5)), Math.round(box.height * Math.min(dpr, 1.5)));
+    fly.className = 'goo-leap';
+    table.append(fly, stage);
+    const U = w * HEAD.size, fx = w * HEAD.x, fy = h * HEAD.y, N = W * H, a = (parseFloat(turned) || 0) * Math.PI / 180;
+    const ox = fx - w / 2, oy = fy - h / 2;
+    const c = skin.getContext('2d'), image = c.createImageData(W, H);
+    const cx = fx / g, cy = fy / g, K = { stage, skin, back, top, fly, c, fc: fly.getContext('2d'), bc: back.getContext('2d'), tc: top.getContext('2d'), image, data: new Uint32Array(image.data.buffer), rgba: image.data,
+      W, H, g, U, fx, fy, cx, cy, px, flyScale: fly.width / box.width, height: new Float32Array(N), glowing: new Float32Array(N),
+      landX: midX + ox * Math.cos(a) - oy * Math.sin(a), landY: midY + ox * Math.sin(a) + oy * Math.cos(a),
+      run: buildRun(W, H, cx, cy, U * 0.92 / g), head: buildHead(W, H, cx, cy, U / g), M: new Float32Array(N), env: buildRoom(glow.night), tails: Array.from({ length: 5 }, () => rand(0, 6.28)) };
+    for (let i = 0; i < 200; i++) {
+      const b = rand(0, 6.28), d = Math.sqrt(Math.random()) * U * 1.1 / g, at = Math.round(cy + Math.sin(b) * d) * W + Math.round(cx + Math.cos(b) * d);
+      if (at > 0 && at < N) K.M[at] = rand(0.3, 1);
+    }
+    buildSheets(K);
+    return K;
+  }
+
+  // Lit a pixel at a time, as nothing else will do it. Where it's flat it shows the sky behind
+  // whoever took the photo, and where it curves away it catches it from the side, strongly,
+  // the way the edge of any water does. At night it still stands in front of what's behind
+  // it: it's what it gives off that shows.
+  function paintSkin(t) {
+    const K = kit, { W, H, cx, cy, height, glowing, rgba: px, M } = K, { G, S, A } = K.run, { C, J, E } = K.head;
+    if (K.env.night !== glow.night) K.env = buildRoom(glow.night);
+    const { room, w: EW, h: EH, night } = K.env;
+    // It hits, flattens further than it can hold, and draws back a little
+    const iso = 0.42 + 0.55 * Math.exp(-t * 20) - 0.09 * Math.exp(-t * 6) * Math.cos(t * 17);
+    const spreading = t < 0.22, m = ease(FACE.spread, FACE.gather, t), zoom = 1 + 1.5 * m, solid = m >= 1;
+    const open = ease(FACE.gather + 0.02, FACE.eyes, t), jaw = ease(FACE.eyes + 0.08, FACE.jaw, t);
+    K.open = open; K.jaw = jaw; K.m = m;
+    K.data.fill(0);
+    for (let i = 0, y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++, i++) {
+        let value = C[i] + J[i] * jaw - E[i] * open, dot = 0;
+        if (!solid) {
+          const px2 = Math.round(cx + (x - cx) * zoom), py2 = Math.round(cy + (y - cy) * zoom);
+          const k = px2 > 1 && px2 < W - 2 && py2 > 1 && py2 < H - 2 ? py2 * W + px2 : -1;
+          value = (k < 0 ? 0 : G[k]) * (1 - m) + value * m;
+          if (k >= 0) dot = S[k] * (1 - m) * (spreading ? clamp((t - A[k]) / 0.03, 0, 1) : 1);
+        }
+        const over = (value - iso) / 0.5;
+        let v = 0, deep = 0;
+        if (over > 0) {
+          v = over >= 1 ? 1 + 0.1 * Math.min(over - 1, 7) : Math.sqrt(1 - (1 - over) * (1 - over));
+          if (spreading) v *= clamp((t - A[i]) / 0.03, 0, 1);
+          deep = 1 - Math.exp(-over * 0.17);
+          if (M[i]) deep += 1 + M[i] * (0.5 + 0.5 * Math.sin(time * 6 + x));
+        }
+        height[i] = v > dot ? v : dot;
+        glowing[i] = deep;
+      }
+    }
+    const K2 = 6.4, far = EH * 0.5, lx = -0.42, ly = -0.62, hz = 1.66, hl = 1 / Math.sqrt(lx * lx + ly * ly + hz * hz), rx = EW / W, ry = EH / H;
+    for (let y = 1; y < H - 1; y++) {
+      const line = y * W;
+      for (let x = 1; x < W - 1; x++) {
+        const i = line + x, h = height[i];
+        if (h < 0.006) continue;
+        const nx = (height[i - 1] - height[i + 1]) * K2, ny = (height[i - W] - height[i + W]) * K2;
+        const c = 1 / Math.sqrt(nx * nx + ny * ny + 1), o = i * 4, steep = 1 - c, fresnel = steep * steep * steep;
+        const seen = room[clamp((y * ry - ny * c * far) | 0, 0, EH - 1) * EW + clamp((x * rx - nx * c * far) | 0, 0, EW - 1)];
+        const facing = Math.max((nx * lx + ny * ly + hz) * c * hl, 0), f2 = facing * facing, f4 = f2 * f2, f8 = f4 * f4, spec = f8 * f8 * f8 * f8 * f8;
+        const reflect = (0.2 + 0.8 * fresnel) * seen, body = 1 - Math.exp(-h * 9), spark = Math.max(glowing[i] - 1, 0);
+        let r, g, b, a;
+        if (night) {
+          const deep = Math.min(glowing[i], 1), em = body * (0.08 + 0.34 * deep + 0.34 * steep + spark * 0.26), lamp = reflect * 0.8 + spec * 0.3;
+          r = 7 + 180 * em + 255 * lamp; g = 20 + 232 * em + 228 * lamp; b = 15 + 155 * em + 196 * lamp;
+          a = 1 - Math.exp(-h * 7);
+        } else {
+          const lit = spec * 0.8 + reflect * 0.9, thin = 1 - body;
+          r = (12 + 29 * thin + 15 * spark) * (1 - lit) + 226 * lit;
+          g = (30 + 86 * thin + 22 * spark) * (1 - lit) + 232 * lit;
+          b = (24 + 58 * thin + 13 * spark) * (1 - lit) + 222 * lit;
+          a = Math.max(1 - Math.exp(-h * 16), lit);
+        }
+        px[o] = r; px[o + 1] = g; px[o + 2] = b; px[o + 3] = 255 * a;
+      }
+    }
+    K.c.putImageData(K.image, 0, 0);
+  }
+
+  function paintBack() {
+    const K = kit, c = K.bc, night = glow.night;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, K.back.width, K.back.height);
+    if (K.m < 0.95) return;
+    place(K, c);
+    mouthPath(c);
+    const throat = c.createRadialGradient(-0.1, 0.6, 0.02, -0.1, 0.55, 0.7);
+    throat.addColorStop(0, night ? 'rgb(120, 190, 120)' : 'rgb(62, 18, 24)');
+    throat.addColorStop(0.45, night ? 'rgb(32, 74, 50)' : 'rgb(26, 8, 12)');
+    throat.addColorStop(1, 'rgb(5, 7, 6)');
+    c.fillStyle = throat;
+    c.fill();
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.drawImage(K.upper, 0, 0);
+    const down = (K.jaw - 1) * 0.5 * K.U * K.px;
+    c.drawImage(K.lower, -Math.sin(HEAD.tilt) * down, Math.cos(HEAD.tilt) * down);
+    if (K.open > 0.01) {
+      if (night) { c.shadowColor = 'rgba(190, 240, 165, 0.8)'; c.shadowBlur = 12 * K.px; }
+      c.drawImage(K.whites, 0, 0);
+      c.shadowBlur = 0;
+    }
+  }
+
+  // Out over its lower lip, and it doesn't hang still
+  function paintTongue(t) {
+    const K = kit, c = K.tc, night = glow.night;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, K.top.width, K.top.height);
+    const out = ease(FACE.jaw - 0.15, FACE.tongue, t);
+    if (out < 0.01) return;
+    place(K, c);
+    const P = 30, xs = [], ys = [], [base] = wrap(0, 0);
+    for (let i = 0; i <= P; i++) {
+      const s = i / P;
+      xs.push(base + Math.sin(s * 4.2 - time * 2.6) * 0.1 * s + Math.sin(time * 1.3) * 0.05 * s);
+      ys.push(0.72 + s * (0.16 + 0.72 * out));
+    }
+    const width = s => (0.135 - 0.03 * s) * Math.sqrt(Math.max(1 - s ** 4, 0)) * ease(0, 0.08, s + 0.05);
+    c.beginPath();
+    for (let i = 0; i <= P; i++) c.lineTo(xs[i] + width(i / P), ys[i]);
+    for (let i = P; i >= 0; i--) c.lineTo(xs[i] - width(i / P), ys[i]);
+    c.closePath();
+    const flesh = c.createLinearGradient(0, 0.72, 0, 1.6);
+    flesh.addColorStop(0, night ? 'rgb(90, 150, 100)' : 'rgb(74, 22, 30)');
+    flesh.addColorStop(1, night ? 'rgb(190, 238, 165)' : 'rgb(168, 72, 84)');
+    c.fillStyle = flesh;
+    c.fill();
+    c.lineCap = 'round';
+    c.strokeStyle = 'rgba(0, 0, 0, 0.26)';
+    c.lineWidth = 0.014;
+    c.beginPath();
+    for (let i = 3; i < P - 2; i++) c.lineTo(xs[i], ys[i]);
+    c.stroke();
+    c.strokeStyle = 'rgba(255, 255, 255, 0.38)';
+    c.lineWidth = 0.012;
+    c.beginPath();
+    for (let i = 6; i < P - 3; i++) c.lineTo(xs[i] - width(i / P) * 0.5, ys[i]);
+    c.stroke();
+  }
+
+  // Over the table, in a high arc. From above all that shows of height is a shadow left
+  // behind, and that it's a little nearer the eye.
+  function paintFlight(z) {
+    const K = kit, c = K.fc, night = glow.night, box = table.getBoundingClientRect(), from = canvas.getBoundingClientRect();
+    c.setTransform(K.flyScale, 0, 0, K.flyScale, 0, 0);
+    c.clearRect(0, 0, box.width, box.height);
+    if (z === null) return;
+    const x0 = from.left - box.left + blob.x * scale, y0 = from.top - box.top + blob.y * scale;
+    const f = z * z * (3 - 2 * z), x = x0 + (K.landX - x0) * f, y = y0 + (K.landY - y0) * f, up = Math.sin(Math.PI * z), r0 = BODY * blob.size * scale * 0.62, r = r0 * (1 + 0.42 * up);
+    const sx = x - glow.x * up * r0 * 2.6, sy = y - glow.y * up * r0 * 2.6, sr = r0 * (1 + 0.8 * up);
+    if (!night) {
+      const shadow = c.createRadialGradient(sx, sy, 0, sx, sy, sr);
+      shadow.addColorStop(0, `rgba(${glow.shadow}, ${(0.5 - 0.22 * up).toFixed(3)})`);
+      shadow.addColorStop(1, `rgba(${glow.shadow}, 0)`);
+      c.fillStyle = shadow;
+      c.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
+    } else {
+      const pool = c.createRadialGradient(sx, sy, 0, sx, sy, sr * 2.4);
+      pool.addColorStop(0, `rgba(${INK}, ${(0.24 - 0.14 * up).toFixed(3)})`);
+      pool.addColorStop(1, `rgba(${INK}, 0)`);
+      c.fillStyle = pool;
+      c.fillRect(sx - sr * 2.4, sy - sr * 2.4, sr * 4.8, sr * 4.8);
+    }
+    // Strings of it, pulling out behind, till they give
+    const tail = ease(0.5, 0.1, z), L = Math.hypot(x - x0, y - y0) || 1, nx = -(y - y0) / L, ny = (x - x0) / L;
+    if (tail > 0.01) {
+      for (const a of K.tails) {
+        const ax = x0 + Math.cos(a) * r0, ay = y0 + Math.sin(a) * r0, off = Math.sin(a * 3) * r * 0.6, wide = r * 0.22 * tail, px = x + nx * off, py = y + ny * off;
+        c.fillStyle = night ? `rgba(${INK}, ${(0.4 * tail).toFixed(3)})` : `rgba(${DARK}, ${tail.toFixed(3)})`;
+        c.beginPath();
+        c.moveTo(ax, ay);
+        c.quadraticCurveTo((ax + px) / 2 + nx * wide, (ay + py) / 2 + ny * wide - up * r, px + nx * wide, py + ny * wide);
+        c.lineTo(px - nx * wide, py - ny * wide);
+        c.quadraticCurveTo((ax + px) / 2 - nx * wide, (ay + py) / 2 - ny * wide - up * r, ax, ay);
+        c.fill();
+      }
+    }
+    c.beginPath();
+    const heading = Math.atan2(y - y0, x - x0), stretch = 1 + 0.4 * up;
+    for (let i = 0; i <= 56; i++) {
+      const a = (i / 56) * 6.283, q = r * (1 + 0.09 * Math.sin(3 * a + z * 11) + 0.05 * Math.sin(5 * a - z * 17));
+      const u = Math.cos(a) * q * stretch, v = (Math.sin(a) * q) / stretch;
+      c.lineTo(x + u * Math.cos(heading) - v * Math.sin(heading), y + u * Math.sin(heading) + v * Math.cos(heading));
+    }
+    c.closePath();
+    const lx = x + glow.x * r * 0.35, ly = y + glow.y * r * 0.35, body = c.createRadialGradient(lx, ly, r * 0.1, x, y, r * 1.1);
+    if (night) {
+      body.addColorStop(0, 'rgb(186, 236, 162)');
+      body.addColorStop(0.7, 'rgb(112, 170, 112)');
+      body.addColorStop(1, 'rgb(58, 104, 74)');
+    } else {
+      body.addColorStop(0, 'rgb(30, 72, 54)');
+      body.addColorStop(0.6, rgb(DARK));
+      body.addColorStop(1, 'rgb(11, 32, 24)');
+    }
+    c.fillStyle = body;
+    c.fill();
+    if (!night) {
+      c.fillStyle = shine(0.75);
+      c.beginPath();
+      c.ellipse(x + glow.x * r * 0.54, y + glow.y * r * 0.54, r * 0.17, r * 0.07, Math.atan2(glow.y, glow.x) + Math.PI / 2, 0, 6.29);
+      c.fill();
+    }
+  }
+
+  function setHovered(on) {
+    hovered = on;
+    if (!on || leap) return;
+    if (about.matches('.blank') || blob.grow < 0.8) return;
+    kit = kit || build();
+    kit.stage.style.display = kit.fly.style.display = 'block';
+    leap = { t: 0, off: false, last: performance.now() };
+    requestAnimationFrame(leapFrame);
+    wake();
+  }
+
+  function leapFrame(now) {
+    const L = leap, dt = Math.min((now - L.last) / 1000, 0.05), landed = LEAP.crouch + LEAP.fly, end = landed + FACE.tongue;
+    L.last = now;
+    L.t = clamp(L.t + (hovered ? dt : -dt * BACK), 0, end);
+    const fly = L.t - LEAP.crouch, hit = L.t - landed;
+    if (L.t < LEAP.crouch) {
+      glow.stirred = Math.max(glow.stirred, 0.5 + L.t);
+      if (L.off) { L.off = false; ripple(0, 1); ripple(3, 1); blob.sizeV += 1.2; }
+    } else if (!L.off) {
+      // Off it goes: it lets go of everything and the dish rings with it
+      L.off = true;
+      releaseAll(true);
+      for (let i = 0; i < 6; i++) ripple(i * 1.05, 1.2);
+      flash(blob.x, blob.y, 1);
+      blob.sizeV -= 1.4;
+    }
+    paintFlight(L.off && fly < LEAP.fly ? fly / LEAP.fly : null);
+    if (hit >= 0) { paintSkin(hit); paintBack(); paintTongue(hit); } else if (L.was >= 0) kit.c.clearRect(0, 0, kit.W, kit.H), kit.bc.clearRect(0, 0, kit.back.width, kit.back.height), kit.tc.clearRect(0, 0, kit.top.width, kit.top.height);
+    L.was = hit;
+    if (L.t <= 0 && !hovered) {
+      kit.stage.style.display = kit.fly.style.display = 'none';
+      leap = null;
+      return;
+    }
+    requestAnimationFrame(leapFrame);
+  }
+
   // ---- The table ----
 
   function layout() {
@@ -1147,7 +1675,10 @@
     if (still) draw();
   }
   new MutationObserver(read).observe(obj, { attributes: true, attributeFilter: ['style'] });
-  new ResizeObserver(layout).observe(table);
+  new ResizeObserver(() => {
+    if (kit && !leap) { kit.stage.remove(); kit.fly.remove(); kit = null; }
+    layout();
+  }).observe(table);
   dish.querySelector('img').addEventListener('load', layout);
   addEventListener('load', layout);
 
@@ -1164,6 +1695,12 @@
     if (cur.present) wake();
   }, { passive: true });
   root.addEventListener('pointerleave', () => { cur.present = false; });
+  if (polaroid) {
+    about.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') setHovered(true); });
+    about.addEventListener('pointerleave', () => setHovered(false));
+    about.addEventListener('focus', () => { if (about.matches(':focus-visible')) setHovered(true); });
+    about.addEventListener('blur', () => setHovered(false));
+  }
   addEventListener('blur', () => { cur.present = false; });
 
   // Runs while it can be seen, and at half speed when it's only itself to mind
@@ -1177,7 +1714,7 @@
     let n = 0;
     while (acc >= SUB && n < 14) { step(SUB); acc -= SUB; n++; }
     if (n === 14) acc = 0;
-    const busy = cur.present || strands.some(s => s.kind !== 'probe') || drops.length;
+    const busy = cur.present || leap || strands.some(s => s.kind !== 'probe') || drops.length;
     if (busy || !(frames++ & 1)) draw();
   }
   function wake() {

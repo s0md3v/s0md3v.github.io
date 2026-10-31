@@ -2434,8 +2434,7 @@ layout_style: "homepage"
       if (!still && 'IntersectionObserver' in window) {
         // The polaroid comes out blank, and develops only once it can be seen: so not till
         // its photo's here, and not in a tab no one's looking at. If there's no photo, it's
-        // left as it is. Hovered, it comes up once more, and sees that through whatever the
-        // pointer does: its last layer clearing is what ends either.
+        // left as it is. Its last layer clearing ends it. (Hovered, it's symbiote.js's.)
         const polaroid = document.getElementById('about');
         const film = polaroid.querySelector('.polaroid-film i');
         polaroid.classList.add('blank');
@@ -2450,10 +2449,7 @@ layout_style: "homepage"
           polaroid.style.setProperty('--photo', `url("${shot.currentSrc}")`);
           seen.observe(shot);
         });
-        film.addEventListener('animationend', () => polaroid.classList.remove('blank', 'developing', 'replaying'));
-        const again = () => { if (!polaroid.matches('.blank')) polaroid.classList.add('replaying'); };
-        polaroid.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') again(); });
-        polaroid.addEventListener('focus', () => { if (polaroid.matches(':focus-visible')) again(); });
+        film.addEventListener('animationend', () => polaroid.classList.remove('blank', 'developing'));
       }
     })();
   </script>

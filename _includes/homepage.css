@@ -756,8 +756,7 @@ a.obj:not(.grounded):focus-visible,
     7.38% 76.09%, 7.3% 62.37%, 7.25% 51.98%, 7.48% 50.73%, 7.5% 27.03%, 7.43% 18.71%, 7.25% 15.8%);
 }
 
-.blank .polaroid-film,
-.replaying .polaroid-film {
+.blank .polaroid-film {
   display: block;
 }
 
@@ -826,29 +825,6 @@ a.obj:not(.grounded):focus-visible,
 
 @keyframes polaroid-clear {
   to { opacity: 0; }
-}
-
-/* Hovered, it goes a little of the way back, colder and paler but never to the milk, and
-   comes up again */
-.replaying .polaroid-film::before,
-.replaying .polaroid-film::after,
-.replaying .polaroid-film i:nth-child(3) {
-  display: none;
-}
-
-.replaying .polaroid-film i:nth-child(1) {
-  --back: 0.85;
-  animation: polaroid-recede 2.2s ease-in-out both;
-}
-
-.replaying .polaroid-film i:nth-child(2) {
-  --back: 0.35;
-  animation: polaroid-recede 1.6s ease-in-out both;
-}
-
-@keyframes polaroid-recede {
-  from, to { opacity: 0; }
-  20% { opacity: var(--back); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2651,6 +2627,29 @@ html:not(.dark-mode) .pi-screen {
   position: absolute;
   z-index: 43;
   pointer-events: none;
+}
+
+/* What takes over the man in the Polaroid, over .light, in the window of the photo, turned
+   with it. And on its way there, over the table. Only here while they're needed. */
+.goo-face,
+.goo-leap {
+  position: absolute;
+  z-index: 43;
+  display: none;
+  pointer-events: none;
+}
+
+.goo-leap {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.goo-face canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /* At night all that's on it is the light it gives off, which adds to the room's */
