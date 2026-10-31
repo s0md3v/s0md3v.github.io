@@ -90,8 +90,8 @@ layout_style: "homepage"
             <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}<!-- Streaming to the
               phone, the receiver's at work: someone on the air, it shows -->
               <svg class="pi-air" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7" /><path class="far" d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg></span>
-            <span class="pi-page pi-shown"><b><svg viewBox="0 0 16 16"><path d="M8 .9l2.2 4.6 5 .6-3.7 3.4 1 5L8 12l-4.5 2.5 1-5L.8 6.1l5-.6z" /></svg><span class="pi-value">{{ site.data.stats.github_stars | default: 0 | divided_by: 1000 }},{{ site.data.stats.github_stars | modulo: 1000 | prepend: "00" | slice: -3, 3 }}</span></b><small>stars on github</small></span>
-            <span class="pi-page"><b><svg viewBox="0 0 16 16"><path d="M6.5 1h3v6.5h3.2L8 12.6 3.3 7.5h3.2zM2 13.6h12V15H2z" /></svg><span class="pi-value">{{ site.data.stats.monthly_downloads }}</span></b><small>downloads a month</small></span>
+            <span class="pi-page pi-shown"><b><svg viewBox="0 0 16 16"><path d="M8 .9l2.2 4.6 5 .6-3.7 3.4 1 5L8 12l-4.5 2.5 1-5L.8 6.1l5-.6z" /></svg><span>{{ site.data.stats.github_stars | default: 0 | divided_by: 1000 }},{{ site.data.stats.github_stars | modulo: 1000 | prepend: "00" | slice: -3, 3 }}</span></b><small>stars on github</small></span>
+            <span class="pi-page"><b><svg viewBox="0 0 16 16"><path d="M6.5 1h3v6.5h3.2L8 12.6 3.3 7.5h3.2zM2 13.6h12V15H2z" /></svg><span>{{ site.data.stats.monthly_downloads }}</span></b><small>downloads a month</small></span>
             <!-- Hovered, a shell, in which someone at the laptop types ls, and what's in it:
                  written by the script -->
             <span class="pi-shell" data-ls="{{ site.data.projects | map: 'title' | sort_natural | join: ' ' }}"></span>
@@ -205,7 +205,7 @@ layout_style: "homepage"
               <a class="app app-linkedin" href="https://www.linkedin.com/in/s0md3v" target="_blank" rel="noopener"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg></span><span class="app-name">LinkedIn</span></a>
               <a class="app app-mail" href="mailto:s0md3v[at]gmail.com"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></svg></span><span class="app-name">Gmail</span></a>
               <!-- The app that plays the scanner's stream from the Pi: its widget, two by two,
-                   with how loud it is, and whether it's playing -->
+                   with a level that moves while someone's on the air, and whether it's playing -->
               <span class="radio-widget" aria-hidden="true">
                 <span class="radio-name"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg>Airband</span>
                 <span class="radio-level"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
@@ -419,6 +419,15 @@ layout_style: "homepage"
       const camera = document.getElementById('gallery');
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const pick = n => Math.floor(Math.random() * n);
+      // How far a thing's turned, in degrees: on what it's on, and all told, on the table
+      const rotation = el => parseFloat(getComputedStyle(el).rotate) || 0;
+      function totalTurn(el) {
+        let turn = 0;
+        for (let at = el; at !== table; at = at.parentElement) turn += rotation(at);
+        return turn;
+      }
+      // Where the middle of a box is, in the table's own box
+      const midpoint = (rect, box) => [rect.left + rect.width / 2 - box.left, rect.top + rect.height / 2 - box.top];
 
       // The ink spread round the card's type: copies of it, without the pen's strike, that
       // the stylesheet spreads, in an unbroken rim and further along the paper's fibres
@@ -950,7 +959,8 @@ layout_style: "homepage"
       // Each time it's plugged in, a new count: whatever was left to do from an earlier
       // time, it doesn't
       let power = 0;
-      function later(fn, ms, at = power) {
+      function later(fn, ms) {
+        const at = power;
         setTimeout(() => { if (at === power) fn(); }, ms);
       }
       // The activity light flickers as the Pi reads or writes its card: in a few short,
@@ -1047,7 +1057,7 @@ layout_style: "homepage"
         log.hidden = true;
       }
       function plugIn() {
-        const at = ++power;
+        power++;
         pi.classList.remove('out');
         // It comes on as it goes home, at the end of the push
         later(() => {
@@ -1057,13 +1067,13 @@ layout_style: "homepage"
           log.replaceChildren();
           log.style.removeProperty('--rows');
           // Reading its firmware, then the kernel, then the system, off its card
-          for (let t = 0; t < 2600; t += 80 + pick(160)) later(flicker, t, at);
+          for (let t = 0; t < 2600; t += 80 + pick(160)) later(flicker, t);
           // The screen's driver: the console, then whatever more there is
           later(() => {
             EARLY.forEach(print);
             log.hidden = false;
             let t = 0;
-            LATE.forEach(line => later(() => print(line), t += 50 + pick(170), at));
+            LATE.forEach(line => later(() => print(line), t += 50 + pick(170)));
             // The stats, drawn over the console, from the top down, as the pages are
             later(() => {
               pages.forEach(el => {
@@ -1074,9 +1084,9 @@ layout_style: "homepage"
               pi.classList.remove('booting');
               const going = log.animate({ clipPath: ['inset(1.4cqi)', 'inset(100% 1.4cqi 1.4cqi)'] }, { duration: 90, easing: 'linear', fill: 'forwards' });
               going.finished.then(() => { log.hidden = true; going.cancel(); });
-            }, t + 500, at);
-          }, 1000, at);
-        }, still ? 0 : 160, at);
+            }, t + 500);
+          }, 1000);
+        }, still ? 0 : 160);
       }
       function pull() {
         const out = !pi.classList.contains('out');
@@ -1258,12 +1268,14 @@ layout_style: "homepage"
       }
       function look(e) {
         const r = vinyl.getBoundingClientRect();
-        const turn = -(parseFloat(getComputedStyle(vinyl).rotate) || 0) * Math.PI / 180;
+        const turn = -rotation(vinyl) * Math.PI / 180;
         const [x, y] = [e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2];
         const w = vinyl.offsetWidth;
         eye = [0.5 + (x * Math.cos(turn) - y * Math.sin(turn)) / w,
           vinyl.offsetHeight / w / 2 + (x * Math.sin(turn) + y * Math.cos(turn)) / w];
-        if (still) requestAnimationFrame(glints);
+        // Held still, it's only drawn as the eye moves: once shimmer() has found the light,
+        // and not at night, for the same reason it won't
+        if (still && source && !document.documentElement.classList.contains('dark-mode')) requestAnimationFrame(glints);
       }
       function shimmer(e) {
         if (glinting || document.documentElement.classList.contains('dark-mode')) return;
@@ -1274,9 +1286,9 @@ layout_style: "homepage"
         // Which way the window is, and how high, as the wires are told. It's broad, so
         // each flake catches it over a fair range of angles, softly.
         const [lx, ly] = ['--lx', '--ly'].map(key => parseFloat(glitter.style.getPropertyValue(key)) || 0);
-        const flat = parseFloat(glitter.style.getPropertyValue('--shade')) || 0.45;
+        const flat = parseFloat(glitter.style.getPropertyValue('--shade'));
         source = { L: [lx * flat, ly * flat, Math.sqrt(1 - flat * flat)], spread: 0.08, size: 1.5 * dpr };
-        if (e && e.clientX !== undefined) look(e);
+        if (e) look(e);
         else eye = [0.5, vinyl.offsetHeight / vinyl.offsetWidth / 2];
         requestAnimationFrame(glints);
       }
@@ -1311,7 +1323,7 @@ layout_style: "homepage"
         setTimeout(tick, 60000 - now % 60000);
       })();
 
-      // Redraws the phone's cable as a braid, for both its resting and tugged paths: all that
+      // Redraws the phone's cable as a braid, for each of the ways it lies: all that
       // shows of it, from _raw/braidflat.py, so each point of it can follow the cable's curves.
       // A strand's outline, and the whole's along one side, each point how far along and how
       // far across. Each strand's half a repeat on from the last, and its mirror image; so
@@ -1384,7 +1396,6 @@ layout_style: "homepage"
       // way: its outline, its strands, and the line down its middle
       const strands = [];
       phone.querySelectorAll('.cable-run').forEach(run => {
-        const svg = run.ownerSVGElement, ns = svg.namespaceURI;
         const middle = run.querySelector('.cable-core').getAttribute('d');
         // From the plug, whichever way the cable goes, so the same points of it can be moved
         // between them; the shorter its way, the more of it is off the table, running on
@@ -1393,7 +1404,7 @@ layout_style: "homepage"
           const { at, length } = walk(d);
           const [start, next, before, end] = [at(0), at(1), at(length - 1), at(length)];
           const on = s => {
-            const p = at(Math.min(Math.max(s, 0), length));
+            const p = at(s);
             const [ahead, way] = s < 0 ? [s, [next.x - start.x, next.y - start.y]] : [Math.max(s - length, 0), [end.x - before.x, end.y - before.y]];
             return { x: p.x + ahead * way[0], y: p.y + ahead * way[1] };
           };
@@ -1426,7 +1437,7 @@ layout_style: "homepage"
         const numbers = d => d.match(/-?\d*\.?\d+/g).map(Number);
         run.replaceChildren(...[['edge', 'braid-edge', Infinity], ['core', 'braid-core', BRAID.strand.length * 2],
           ['middle', 'strand-shade', Infinity], ['middle', 'strand-shine', Infinity]].map(([layer, kind, every]) => {
-          const path = document.createElementNS(ns, 'path');
+          const path = document.createElementNS(run.namespaceURI, 'path');
           path.setAttribute('class', kind);
           path.setAttribute('d', rest[layer]);
           path.style.setProperty('--rest', `path("${rest[layer]}")`);
@@ -1451,11 +1462,11 @@ layout_style: "homepage"
       // A page can only make sound once there's been a click or a key, so the earphones'
       // plug wakes it, and nothing's fetched till then.
       const radio = (() => {
-        // How loud the static is, held down, and the voices
-        const STATIC = 0.3, UNDER = 0.15, VOICE = 1;
+        // How loud the static is, and held down
+        const STATIC = 0.3, UNDER = 0.15;
         const base = phone.dataset.radio, count = +phone.dataset.calls;
         const status = phone.querySelector('.radio-status');
-        let audio = null, out, hiss, voices, playing = null, bag = [], last = 0, next = 0, noting = 0;
+        let audio = null, out, hiss, playing = null, bag = [], last = 0, next = 0, noting = 0;
         let on = false, streaming = false, marks = [];
         // Each time it starts or stops streaming, a new count, so a call that was on its way
         // isn't heard after
@@ -1475,9 +1486,6 @@ layout_style: "homepage"
             hiss = audio.createGain();
             hiss.gain.value = STATIC;
             hiss.connect(out);
-            voices = audio.createGain();
-            voices.gain.value = VOICE;
-            voices.connect(out);
             // The static's been on all along: it's come in somewhere in its loop. MP3s
             // can come decoded with a little silence at either end, which would be heard
             // each time round, so it loops between its first and last sounds.
@@ -1519,14 +1527,14 @@ layout_style: "homepage"
         // Someone on the air, as the Pi and the phone show it. The receiver records each
         // call to the card, as it's set to, so the Pi's activity light flickers as it
         // writes, for as long as they're talking.
-        let writing = 0;
+        let recording = 0;
         function air(is) {
           pi.classList.toggle('keyed', is);
           phone.classList.toggle('keyed', is);
-          clearTimeout(writing);
+          clearTimeout(recording);
           if (is && !still) (function write() {
             flicker();
-            writing = setTimeout(write, 300 + pick(500));
+            recording = setTimeout(write, 300 + pick(500));
           })();
         }
         // The calls, shuffled, each heard once before any's heard again, and never twice
@@ -1548,10 +1556,10 @@ layout_style: "homepage"
           next = setTimeout(() => call.then(buffer => play(buffer, mine)).catch(() => wait(ms, mine)), ms);
         }
         function play(buffer, mine) {
-          if (!streaming || mine !== turn) return;
+          if (mine !== turn) return;
           const source = audio.createBufferSource(), level = audio.createGain(), at = audio.currentTime + 0.05;
           source.buffer = buffer;
-          source.connect(level).connect(voices);
+          source.connect(level).connect(out);
           source.start(at);
           keyed(buffer).forEach(([from, to]) => {
             hiss.gain.setTargetAtTime(UNDER, at + from, 0.015);
@@ -1564,7 +1572,7 @@ layout_style: "homepage"
             if (playing?.source !== source) return;
             playing = null;
             marks = [];
-            if (streaming && mine === turn) wait(3000 + Math.random() * 12000);
+            if (mine === turn) wait(3000 + Math.random() * 12000);
           };
         }
         // Whatever's being said, cut off, and the static as it is between calls
@@ -1583,8 +1591,10 @@ layout_style: "homepage"
           }
           playing = null;
         }
-        // The app says it can't reach the Pi, for a few seconds, as a heads-up notification
+        // The app says it can't reach the Pi: in its widget, and for a few seconds, as a
+        // heads-up notification
         function notify() {
+          status.textContent = 'No signal';
           phone.classList.add('noted');
           clearTimeout(noting);
           noting = setTimeout(() => phone.classList.remove('noted'), 5000);
@@ -1604,7 +1614,6 @@ layout_style: "homepage"
             wait(1500 + Math.random() * 2500);
           } else if (on) {
             hush();
-            status.textContent = 'No signal';
             notify();
           }
         }
@@ -1617,10 +1626,7 @@ layout_style: "homepage"
             out.gain.setTargetAtTime(1, audio.currentTime, 0.01);
             tune();
             // The Pi's off: the phone can't reach it
-            if (!streaming) {
-              status.textContent = 'No signal';
-              notify();
-            }
+            if (!streaming) notify();
           },
           off() {
             if (!on) return;
@@ -1635,6 +1641,8 @@ layout_style: "homepage"
         };
       })();
 
+      const earphones = document.getElementById('uses');
+
       // The earphones: out of the phone, where they were left, till they're plugged in.
       // In a hand, the plug's picked up, carried over, held up straight over the jack, and
       // pushed in, and it's only then that the phone says so. Pulled, it comes straight
@@ -1645,7 +1653,7 @@ layout_style: "homepage"
         const LIFT = 0.4, CLEAR = 21, CORD = 27.5;
         let at = 1, tween = 0, down;
         // Where it's left, which is the stylesheet's, and depends on the layout
-        function measure() {
+        function readDown() {
           const style = getComputedStyle(phone);
           down = ['dx', 'dy', 'turn'].map(key => parseFloat(style.getPropertyValue(`--loose-${key}`)));
         }
@@ -1674,13 +1682,12 @@ layout_style: "homepage"
         // Where Safari has the stylesheet's plug but not its cable: plugged in or left
         // out, and tugged while the earphones are picked up. Tugged, quickly, a moment
         // after they lift; let go, more slowly.
-        const uses = document.getElementById('uses');
         const TUGGED = bezier(0.2, 0.7, 0.3, 1), SETTLED = bezier(0.3, 0.6, 0.3, 1);
         let settling = 0;
         function settle(now) {
           cancelAnimationFrame(settling);
           if (STYLED_D || phone.classList.contains('moving')) return;
-          const tugged = uses.matches(':hover, :focus-visible');
+          const tugged = earphones.matches(':hover, :focus-visible');
           const out = phone.classList.contains('unplugged');
           const [ms, delay, ease] = tugged ? [350, 50, TUGGED] : [600, 0, SETTLED];
           const legs = strands.map(strand => {
@@ -1698,7 +1705,7 @@ layout_style: "homepage"
         }
         settle(true);
         ['pointerenter', 'pointerleave', 'focusin', 'focusout'].forEach(type =>
-          uses.addEventListener(type, () => requestAnimationFrame(() => settle())));
+          earphones.addEventListener(type, () => requestAnimationFrame(() => settle())));
         function show(t) {
           if (Math.abs(t - at) > 0.004) swing(0.45, 120);
           cancelAnimationFrame(settling);
@@ -1731,7 +1738,7 @@ layout_style: "homepage"
         };
         function go(to) {
           cancelAnimationFrame(tween);
-          measure();
+          readDown();
           // Out of the jack, it's not connected, however little
           if (to > 0) phone.classList.remove('connected');
           earPlug.setAttribute('aria-label', to ? 'Plug the earphones into the phone to listen to the scanner' : 'Unplug the earphones from the phone');
@@ -1765,7 +1772,7 @@ layout_style: "homepage"
           way() {
             // It stays where the hand has it
             cancelAnimationFrame(tween);
-            measure();
+            readDown();
             const m = phone.querySelector('.cable').getScreenCTM();
             path = Array.from({ length: 61 }, (_, k) => [k / 60, grip(k / 60, m)]);
             from = grip(at, m);
@@ -1787,8 +1794,6 @@ layout_style: "homepage"
         });
       })();
 
-      // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
-      const earphones = document.getElementById('uses');
       // Shade along the wires' far side, laid and swung with the rest of them (the Pi's too)
       table.querySelectorAll('.ear-left > .cable-core, .ear-right > .cable-core, .usb-run > .cable-core').forEach(core => {
         core.after(...[1, 2, 3].map(n => {
@@ -1797,6 +1802,7 @@ layout_style: "homepage"
           return band;
         }));
       });
+      // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
       const swings = [];
       (function () {
         const X0 = 137, Y0 = 600, WIDTH = 1774, HEIGHT = 2300, BUD_HEIGHT = 605;
@@ -1979,10 +1985,7 @@ layout_style: "homepage"
       // a desk lamp, its bulb low over the card, so they spread out from it. Shadow length
       // and blur scale with --h0, and must stay shorter than the object's thinnest part or
       // the drop-shadow comes loose from it. A drop-shadow's blur is a standard deviation.
-      const LIFT = 1;
-      let shade = () => {};
-      let rim = () => {};
-      let measure;
+      const PICKED_UP = 1;
 
       function setShadow(el, key, [x, y, blur]) {
         el.style.setProperty(`--${key}x`, x.toFixed(1) + 'px');
@@ -2047,7 +2050,7 @@ layout_style: "homepage"
       function lighting(night, box, shaped, height, aim) {
         // It takes a while, so only when it's changed, not when a phone's address bar
         // slides away
-        const key = [night, box.width, box.height, height, ...aim].map(String).join();
+        const key = [night, box.width, box.height, height, ...aim].join();
         if (key === painted) return;
         painted = key;
         paint(lightCanvas, 6, box, (x, y) => [...litAt(night, height, ...shaped(x, y)), 255]);
@@ -2086,10 +2089,9 @@ layout_style: "homepage"
         const copies = writing.map((el, i) => {
           // A turned box's bounds are centred where it is
           const rect = el.getBoundingClientRect();
-          let angle = 0;
-          for (let at = el; at !== table; at = at.parentElement) angle += parseFloat(getComputedStyle(at).rotate) || 0;
+          const angle = totalTurn(el);
           const style = getComputedStyle(el);
-          const x = rect.left + rect.width / 2 - box.left, y = rect.top + rect.height / 2 - box.top;
+          const [x, y] = midpoint(rect, box);
           const copy = document.createElement('span');
           copy.innerHTML = el.innerHTML;
           if (el.dataset.glow) copy.className = el.dataset.glow;
@@ -2126,8 +2128,7 @@ layout_style: "homepage"
         const box = table.getBoundingClientRect();
         const card = intro.getBoundingClientRect();
         const lift = stock.parentElement;
-        let turn = 0;
-        for (let at = stock; at !== table; at = at.parentElement) turn += parseFloat(getComputedStyle(at).rotate) || 0;
+        const turn = totalTurn(stock);
         const [cos, sin] = [Math.cos(turn * Math.PI / 180), Math.sin(turn * Math.PI / 180)];
         const [w, h] = [stock.offsetWidth / 2, stock.offsetHeight / 2];
         const held = new DOMMatrix(getComputedStyle(stock).transform);
@@ -2136,11 +2137,12 @@ layout_style: "homepage"
           return [point.x / point.w, point.y / point.w];
         };
         const [tx, ty] = getComputedStyle(lift).translate.split(' ').map(n => parseFloat(n) || 0);
-        const [cx, cy] = [card.left + card.width / 2 - box.left + tx, card.top + card.height / 2 - box.top + (ty || 0)];
+        const [midX, midY] = midpoint(card, box);
+        const [cx, cy] = [midX + tx, midY + (ty || 0)];
         const corners = [[-w, -h], [w, -h], [w, h], [-w, h], [-w, -h]].map(([x, y]) => seen(x, y))
           .map(([x, y]) => `${(cx + x * cos - y * sin).toFixed(1)}px ${(cy + x * sin + y * cos).toFixed(1)}px`);
         glint.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${corners.join(', ')})`;
-        const tilt = (parseFloat(getComputedStyle(stock).rotate) || 0) * Math.PI / 180;
+        const tilt = rotation(stock) * Math.PI / 180;
         const [tc, ts] = [Math.cos(tilt), Math.sin(tilt)];
         const [PAST, IN] = [50, 0.5];
         const past = ([x, y], [toX, toY]) => {
@@ -2204,16 +2206,15 @@ layout_style: "homepage"
         const night = document.documentElement.classList.contains('dark-mode');
         const u = probe.offsetWidth / 100;
         const box = table.getBoundingClientRect();
-        const lampX = -15 * u;
-        const lampY = -20 * u;
         // At night the bulb is over the card, a little towards the corner the lamp stands
         // in, and its light, glare and shadows all centre under it. Not right over it, or
         // the card would cast no shadow, which is all that sets it off the white table.
-        const card = document.getElementById('intro').getBoundingClientRect();
-        const [bulbX, bulbY, bulbZ] = [card.left + card.width / 2 - box.left + BULB[0] * u, card.top + card.height / 2 - box.top + BULB[1] * u, BULB[2] * u];
+        const card = intro.getBoundingClientRect();
+        const [cardX, cardY] = midpoint(card, box);
+        const [bulbX, bulbY, bulbZ] = [cardX + BULB[0] * u, cardY + BULB[1] * u, BULB[2] * u];
         const [aim, height] = night
           ? [[bulbX, bulbY], 1.0 * card.width]
-          : [[lampX, lampY], 1.6 * Math.hypot(box.width, box.height)];
+          : [[-15 * u, -20 * u], 1.6 * Math.hypot(box.width, box.height)];
         // The lamp stands in the top left corner and leans in, so its light lands at a slant:
         // the pool is short on the lamp's side and drawn out on the far side. It ends where
         // the shade cuts the beam off, softly, as the bulb isn't a point; past that there's
@@ -2232,33 +2233,24 @@ layout_style: "homepage"
         };
         const lightAt = (px, py) => litAt(night, height, ...shaped(px, py));
 
-        measure = function (el) {
-          const rect = el.getBoundingClientRect();
-          return {
-            height: parseFloat(getComputedStyle(el).getPropertyValue('--h0')) || 0.2,
-            cx: rect.left + rect.width / 2 - box.left,
-            cy: rect.top + rect.height / 2 - box.top,
-          };
+        const measure = el => {
+          const [cx, cy] = midpoint(el.getBoundingClientRect(), box);
+          return { height: parseFloat(getComputedStyle(el).getPropertyValue('--h0')) || 0.2, cx, cy };
         };
 
         // Measure everything before writing styles, to avoid repeated layouts
-        const selfLight = selfLit.map(el => {
-          const r = el.getBoundingClientRect();
-          return lightAt(r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top);
-        });
+        const selfLight = selfLit.map(el => lightAt(...midpoint(el.getBoundingClientRect(), box)));
         // The phone's cable has the light of where it lies: on a narrow table it leaves by the
         // side, a long way up the phone and nearer the bulb. Otherwise, as the phone does.
         const cableRun = [...table.querySelectorAll('#phone .run-side')].map(run => run.getBoundingClientRect()).find(run => run.width);
-        const cableLight = cableRun ? lightAt(cableRun.left + cableRun.width / 2 - box.left, cableRun.top + cableRun.height / 2 - box.top) : selfLight[selfLit.findIndex(el => el.id === 'phone')];
+        const cableLight = cableRun ? lightAt(...midpoint(cableRun, box)) : selfLight[selfLit.findIndex(el => el.id === 'phone')];
         const placed = objects.map(measure);
-        const turned = parts.map(el => (parseFloat(getComputedStyle(el.closest('.item')).rotate) || 0) * Math.PI / 180);
+        const turned = parts.map(el => rotation(el.closest('.item')) * Math.PI / 180);
         const partsPlaced = parts.map(measure);
         const rimsPlaced = rimmed.map(measure);
         const cablesPlaced = cables.map(svg => {
-          let turn = 0;
-          for (let at = svg; at !== table; at = at.parentElement) turn += parseFloat(getComputedStyle(at).rotate) || 0;
           const { cx, cy } = measure(svg);
-          return { cx, cy, turn: turn * Math.PI / 180 };
+          return { cx, cy, turn: totalTurn(svg) * Math.PI / 180 };
         });
 
         lighting(night, box, shaped, height, aim);
@@ -2277,7 +2269,7 @@ layout_style: "homepage"
         lay();
         glow();
 
-        const roomLight = (name, lit) => {
+        const setRoomLight = (name, lit) => {
           const filter = document.querySelector(`#room-light-${name} feColorMatrix`);
           if (filter) {
             const [red, green, blue] = lit.map(c => (c / 255).toFixed(3));
@@ -2286,9 +2278,9 @@ layout_style: "homepage"
         };
         selfLit.forEach((el, i) => {
           el.style.setProperty('--lit', rgb(selfLight[i]));
-          roomLight(el.id, selfLight[i]);
+          setRoomLight(el.id, selfLight[i]);
         });
-        roomLight('cable', cableLight);
+        setRoomLight('cable', cableLight);
 
         function cast(height, cx, cy) {
           let dx = 0.53, dy = 0.85, length = height * u * 0.5;
@@ -2302,15 +2294,14 @@ layout_style: "homepage"
           return [dx * length, dy * length, 0.5 + length * 0.4];
         }
 
-        // `up` is height above the table. A part's shadow is unrotated by its object's `angle`.
-        shade = function (el, up = 0, angle = 0, { height, cx, cy } = measure(el)) {
+        // A part's shadow is unrotated by its object's `angle`.
+        const shade = (el, angle, { height, cx, cy }) => {
           const cos = Math.cos(-angle), sin = Math.sin(-angle);
-          // g is for tape on the table beside the object
           // Lifted, a thing moves off the table as far by night as by day. Its shadow barely
           // shifts under a high bulb, but it's as much nearer the eye.
-          const [rx, ry] = cast(LIFT, cx, cy);
-          const raise = Math.max(Math.hypot(rx, ry), LIFT * u * 0.5) / (Math.hypot(rx, ry) || 1);
-          Object.entries({ s: height + up, h: height + up + LIFT, c: 0.05 + up, g: 0.05 }).forEach(([key, h]) => {
+          const [rx, ry] = cast(PICKED_UP, cx, cy);
+          const raise = Math.max(Math.hypot(rx, ry), PICKED_UP * u * 0.5) / (Math.hypot(rx, ry) || 1);
+          Object.entries({ s: height, h: height + PICKED_UP, c: 0.05 }).forEach(([key, h]) => {
             let [x, y, blur] = cast(h, cx, cy);
             if (key === 'h') [x, y] = [x + rx * (raise - 1), y + ry * (raise - 1)];
             // The side towards the sun or the lamp is lit right up to the table, so no shadow
@@ -2329,7 +2320,7 @@ layout_style: "homepage"
         // little away from the bulb. A rounded edge always has a spot that turns the bulb up
         // to the eye, so how bright it is is just how lit the object is, which the room's
         // light gives it, or for those above that, its colour here.
-        rim = function (el, { cx, cy } = measure(el)) {
+        const rim = (el, { cx, cy }) => {
           // On the whole object, or where that'd cut off light blended over it from what it's
           // over (in Chromium, a filter does), on its photo, marked .rimmed, which keeps its
           // own filters and adds this by --rim
@@ -2340,7 +2331,7 @@ layout_style: "homepage"
           const distance = Math.hypot(cx - bulbX, cy - bulbY) || 1;
           const [ax, ay] = [(cx - bulbX) / distance * width * u, (cy - bulbY) / distance * width * u];
           // The filter works in the object's own, turned, space
-          const angle = -(parseFloat(getComputedStyle(item).rotate) || 0) * Math.PI / 180;
+          const angle = -rotation(item) * Math.PI / 180;
           const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
           const filter = document.getElementById(`rim-${el.id}`);
           filter.querySelector('feOffset').setAttribute('dx', (ax * cos - ay * sin).toFixed(2));
@@ -2370,9 +2361,9 @@ layout_style: "homepage"
           svg.style.setProperty('--shade', Math.cos(elevation).toFixed(3));
         });
 
-        objects.forEach((el, i) => shade(el, 0, 0, placed[i]));
+        objects.forEach((el, i) => shade(el, 0, placed[i]));
         rimmed.forEach((el, i) => rim(el, rimsPlaced[i]));
-        parts.forEach((el, i) => shade(el, 0, turned[i], partsPlaced[i]));
+        parts.forEach((el, i) => shade(el, turned[i], partsPlaced[i]));
 
         toggle.setAttribute('aria-checked', String(night));
       }

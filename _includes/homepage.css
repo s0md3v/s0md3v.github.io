@@ -46,7 +46,7 @@ html:has(.table) {
   user-select: none;
 }
 
-#intro :is(.intro-text, .pen) {
+#intro :is(.intro-text, .pen, .intro-pen, .intro-note) {
   -webkit-user-select: text;
   user-select: text;
 }
@@ -59,7 +59,6 @@ html:has(.table) {
 
 .table a {
   color: inherit;
-  text-decoration: none;
 }
 
 /* Undo the site-wide link hover background. Only its colour: the gallery's tape is a link. */
@@ -75,12 +74,17 @@ html:has(.table) {
 
 /* ---- Light ---- */
 
-/* Set by the script */
-.light {
+.light,
+.dusk,
+.glint {
   position: absolute;
   inset: 0;
   z-index: 40;
   pointer-events: none;
+}
+
+/* Set by the script */
+.light {
   mix-blend-mode: multiply;
 }
 
@@ -96,7 +100,8 @@ html:has(.table) {
 /* The light and where colour is lost are drawn by the script, coarsely, and smoothed as
    they're scaled up */
 .light canvas,
-.dusk canvas {
+.dusk canvas,
+.goo-face canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -142,14 +147,8 @@ html:has(.table) {
   filter: drop-shadow(0 0 0.06em rgb(150 220 130 / 0.5));
 }
 
-.glow .dot {
-  fill: currentColor;
-  stroke: none;
-}
-
 .glow > span {
   position: absolute;
-  box-sizing: border-box;
   font-family: "Reenie Beanie", cursive;
   white-space: nowrap;
   color: rgb(180 232 155);
@@ -165,10 +164,6 @@ html:has(.table) {
    room's light loses some of it: grey, blended in by its saturation only. Screens and
    glowing ink, above, give off their own. */
 .dusk {
-  position: absolute;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
   display: none;
   mix-blend-mode: saturation;
   opacity: 0.5;
@@ -178,10 +173,6 @@ html:has(.table) {
 /* The lamp's glare, set by the script: it brightens what's already bright most, so the
    satin laminate and glossy things flare up while dark ink stays dark */
 .glint {
-  position: absolute;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
   display: none;
   background: var(--glint, none);
   mix-blend-mode: color-dodge;
@@ -194,7 +185,6 @@ html:has(.table) {
 /* ---- Objects ---- */
 
 .obj {
-  --h0: 0.3;
   position: absolute;
   left: calc(50% + var(--x, 0) * var(--ux));
   top: calc(50% + var(--y, 0) * var(--uy));
@@ -225,19 +215,18 @@ html:has(.table) {
   height: auto;
 }
 
-:is(a.obj:not(.grounded):is(:hover, :focus-visible), .obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible))) .part {
+a.obj:not(.grounded):is(:hover, :focus-visible) .part {
   filter: drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
 }
 
 /* Lifted by moving, not scaling: scaled text and images shimmer against each other.
    Not what's .grounded, which answers a hover its own way. */
 a.obj:not(.grounded):hover,
-a.obj:not(.grounded):focus-visible,
-.obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible)) {
+a.obj:not(.grounded):focus-visible {
   z-index: 30;
 }
 
-:is(a.obj:not(.grounded):is(:hover, :focus-visible), .obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible)), #intro:is(:hover, :has(:focus-visible))) .lift {
+:is(a.obj:not(.grounded):is(:hover, :focus-visible), #intro:is(:hover, :has(:focus-visible))) .lift {
   filter:
     drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5 / var(--round, 1))))
     drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
@@ -307,7 +296,7 @@ a.obj:not(.grounded):focus-visible,
 
 .obj > .tag,
 .obj > .under > .tag {
-  filter: drop-shadow(var(--gx, 0) var(--gy, 1px) var(--gb, 1px) rgba(var(--shadow), 0.3));
+  filter: drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), 0.3));
 }
 
 /* Tape on the table, turned with its object */
@@ -353,7 +342,6 @@ a.obj:not(.grounded):focus-visible,
   right: 0;
   width: 12cqi;
   height: 12cqi;
-  padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
@@ -378,8 +366,6 @@ a.obj:not(.grounded):focus-visible,
   white-space: nowrap;
   color: var(--ballpoint);
   pointer-events: none;
-  -webkit-user-select: text;
-  user-select: text;
 }
 
 .pen-sum > :nth-child(2) {
@@ -428,8 +414,6 @@ a.obj:not(.grounded):focus-visible,
   font: 7cqi/0.95 "Reenie Beanie", cursive;
   white-space: nowrap;
   color: var(--ballpoint);
-  -webkit-user-select: text;
-  user-select: text;
 }
 
 #intro .item::before {
@@ -498,7 +482,8 @@ a.obj:not(.grounded):focus-visible,
    ink. The rim's half as far out, everywhere; the spread as far again, and white over it
    except where the fibres stand highest (grey 0.9028 to 0.9061, the grain's 45th to 70th
    percentiles, white to none), so it's darker than the paper only there. */
-.intro-rim {
+.intro-rim,
+.intro-spread {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -507,12 +492,7 @@ a.obj:not(.grounded):focus-visible,
 }
 
 .intro-spread {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
   isolation: isolate;
-  mix-blend-mode: darken;
-  pointer-events: none;
   clip-path: inset(4%);
 }
 
@@ -940,7 +920,7 @@ html:not(.dark-mode) .cam-screen {
 }
 
 #gallery > .tag {
-  filter: url(#room-light-gallery) drop-shadow(var(--gx, 0) var(--gy, 1px) var(--gb, 1px) rgba(var(--shadow), 0.3));
+  filter: url(#room-light-gallery) drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), 0.3));
 }
 
 .filters {
@@ -949,22 +929,24 @@ html:not(.dark-mode) .cam-screen {
   height: 0;
 }
 
-.cam-glow {
+.cam-glow,
+.cam-screen {
   position: absolute;
-  z-index: 1;
+  /* Out to the middle of the dark frame round the photo's screen, which is white: only to
+     its edge, a sliver of white shows where the edge falls between pixels */
   left: 9.92%;
   top: 27.68%;
   width: 52.42%;
   height: 59.23%;
+}
+
+.cam-glow {
+  z-index: 1;
   opacity: 0;
   box-shadow:
     0 0 2cqi 0.9cqi rgb(var(--glow, 190 200 215) / 0.6),
     0 0 7cqi 2.5cqi rgb(var(--glow, 190 200 215) / 0.3);
   pointer-events: none;
-}
-
-.dark-mode .cam-glow {
-  opacity: 1;
 }
 
 /* Firefox spreads a soft shadow wider than Chromium does, so there, a fainter one */
@@ -977,14 +959,7 @@ html:not(.dark-mode) .cam-screen {
 }
 
 .cam-screen {
-  position: absolute;
   z-index: 2;
-  /* Out to the middle of the dark frame round the photo's screen, which is white: only to
-     its edge, a sliver of white shows where the edge falls between pixels */
-  left: 9.92%;
-  top: 27.68%;
-  width: 52.42%;
-  height: 59.23%;
   overflow: hidden;
   container-type: inline-size;
   /* An LCD: even its black pixels pass some of the backlight, which comes in along the
@@ -1014,11 +989,16 @@ html:not(.dark-mode) .cam-screen {
   object-fit: contain;
 }
 
-.cam-screen::after {
+.cam-screen::after,
+.phone-screen::after,
+.pi-screen::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+.cam-screen::after {
   background: linear-gradient(118deg, rgba(255, 255, 255, 0.14) 0 38%, rgba(255, 255, 255, 0.04) 38% 60%, transparent 60%);
 }
 
@@ -1322,7 +1302,6 @@ html:not(.dark-mode) .cam-screen {
   width: var(--bw, 4.8%);
   aspect-ratio: var(--ba, 1);
   translate: -50% -50%;
-  padding: 0;
   border: 0;
   border-radius: 50%;
   background: none;
@@ -1390,13 +1369,17 @@ html:not(.dark-mode) .phone-screen {
   filter: url(#room-light-cable);
 }
 
-.phone-screen {
+.phone-screen,
+.phone-glow {
   position: absolute;
   left: 2.4%;
   right: 2.2%;
   top: 1.9%;
   bottom: 1.9%;
   border-radius: 10% / 4%;
+}
+
+.phone-screen {
   overflow: hidden;
   container-type: inline-size;
   display: flex;
@@ -1409,10 +1392,6 @@ html:not(.dark-mode) .phone-screen {
 }
 
 .phone-screen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
   background: linear-gradient(115deg, rgba(255, 255, 255, 0.12) 0 30%, rgba(255, 255, 255, 0.03) 30% 55%, transparent 55%);
 }
 
@@ -1502,7 +1481,6 @@ html:not(.dark-mode) .phone-screen {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-sizing: border-box;
   width: 42cqi;
   aspect-ratio: 1;
   padding: 4.4cqi;
@@ -1658,23 +1636,13 @@ html:not(.dark-mode) .phone-screen {
 }
 
 .phone-glow {
-  position: absolute;
   z-index: 2;
-  left: 2.4%;
-  right: 2.2%;
-  top: 1.9%;
-  bottom: 1.9%;
-  border-radius: 10% / 4%;
   opacity: 0;
   mix-blend-mode: screen;
   box-shadow:
     0 0 1.5cqi 0.8cqi rgb(120 115 160 / 0.45),
     0 0 6cqi 2cqi rgb(120 115 160 / 0.22);
   pointer-events: none;
-}
-
-.dark-mode .phone-glow {
-  opacity: 1;
 }
 
 /* Drawn in hundredths of the phone's width */
@@ -1742,8 +1710,7 @@ html:not(.dark-mode) .phone-screen {
    towards the far side, all the way when the light is low (--shade, set by the script
    with --lx, --ly, which way the light is). Its shine moves towards the light (--glint).
    Each by how wide it is: the edge's rim, or the wire's radius. */
-.ear-left > .cable-edge,
-.ear-right > .cable-edge {
+:is(.ear-left, .ear-right, .usb-run) > .cable-edge {
   --off: calc(-0.45px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
 }
 
@@ -1755,8 +1722,7 @@ html:not(.dark-mode) .phone-screen {
   --off: -1.5px;
 }
 
-.ear-left > .cable-shine,
-.ear-right > .cable-shine {
+:is(.ear-left, .ear-right, .usb-run) > .cable-shine {
   --off: calc(1.25px * var(--cable-scale, 1) * var(--glint, 0.5));
 }
 
@@ -1764,8 +1730,7 @@ html:not(.dark-mode) .phone-screen {
   --off: calc(1.2px * var(--glint, 0.5));
 }
 
-.ear-left > :is(.cable-edge, .cable-shine, .cable-shade),
-.ear-right > :is(.cable-edge, .cable-shine, .cable-shade),
+:is(.ear-left, .ear-right, .usb-run) > :is(.cable-edge, .cable-shine, .cable-shade),
 .ear-hook-edge,
 .strand-shade,
 .strand-shine {
@@ -1849,7 +1814,6 @@ html:not(.dark-mode) .phone-screen {
   top: -30cqi;
   width: 16cqi;
   height: 32cqi;
-  padding: 0;
   border: 0;
   border-radius: 1.2cqi;
   background: none;
@@ -1955,16 +1919,21 @@ html:not(.dark-mode) .pi-screen {
   filter: url(#room-light-projects);
 }
 
-/* Over the glass in the photo. Round the pixels is a black frame, which isn't lit; the
-   pixels, even black ones, are a little, by the backlight, which comes in from the left
-   edge, where the screen's ribbon is, and leaks most at its corners. */
-.pi-screen {
+/* Over the glass in the photo */
+.pi-screen,
+.pi-glow {
   position: absolute;
-  z-index: 2;
   left: 14.86%;
   top: 3.29%;
   width: 54.68%;
   height: 70.26%;
+}
+
+/* Round the pixels is a black frame, which isn't lit; the pixels, even black ones, are a
+   little, by the backlight, which comes in from the left edge, where the screen's ribbon
+   is, and leaks most at its corners. */
+.pi-screen {
+  z-index: 2;
   overflow: hidden;
   container-type: inline-size;
   background:
@@ -1977,10 +1946,6 @@ html:not(.dark-mode) .pi-screen {
 }
 
 .pi-screen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
   background: linear-gradient(112deg, rgba(255, 255, 255, 0.12) 0 34%, rgba(255, 255, 255, 0.035) 34% 58%, transparent 58%);
 }
 
@@ -2000,18 +1965,16 @@ html:not(.dark-mode) .pi-screen {
 }
 
 .pi-glow {
-  position: absolute;
   z-index: 1;
-  left: 14.86%;
-  top: 3.29%;
-  width: 54.68%;
-  height: 70.26%;
   opacity: 0;
   mix-blend-mode: screen;
   box-shadow: 0 0 1.2cqi 0.3cqi rgb(150 160 180 / 0.22), 0 0 4cqi 1cqi rgb(150 160 180 / 0.1);
   pointer-events: none;
 }
 
+/* Before .off .pi-glow, further down, which has to win */
+.dark-mode .cam-glow,
+.dark-mode .phone-glow,
 .dark-mode .pi-glow {
   opacity: 1;
 }
@@ -2223,16 +2186,7 @@ html:not(.dark-mode) .pi-screen {
 
 /* Clickable, all of it: it pulls the plug too */
 .usb-run > .cable-edge {
-  --off: calc(-0.45px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
   pointer-events: stroke;
-}
-
-.usb-run > .cable-shine {
-  --off: calc(1.25px * var(--cable-scale, 1) * var(--glint, 0.5));
-}
-
-.usb-run > :is(.cable-edge, .cable-shine, .cable-shade) {
-  translate: calc(var(--lx, -0.53) * var(--off)) calc(var(--ly, -0.85) * var(--off));
 }
 
 #projects .usb-body {
@@ -2305,7 +2259,6 @@ html:not(.dark-mode) .pi-screen {
   top: 43.6cqi;
   width: 13cqi;
   height: 27.5cqi;
-  padding: 0;
   border: 0;
   border-radius: 1.2cqi;
   background: none;
@@ -2331,18 +2284,22 @@ html:not(.dark-mode) .pi-screen {
   opacity: 0;
 }
 
+.pi-boot,
+.pi-shell {
+  position: absolute;
+  inset: 0;
+  padding: 1.4cqi;
+  background: inherit;
+  box-shadow: inherit;
+}
+
 /* The console, in a 6 by 11 font on its 240 by 135 pixels: 40 columns and 12 rows, inside
    the frame, which the screen's own shows round. Lines wrap at the last column, mid-word,
    as a console's do. */
 .pi-boot {
-  position: absolute;
-  inset: 0;
   display: block;
-  padding: 1.4cqi;
   overflow: hidden;
   clip-path: inset(1.4cqi);
-  background: inherit;
-  box-shadow: inherit;
   font-size: 4.05cqi;
   line-height: 4.4cqi;
   white-space: pre-wrap;
@@ -2357,12 +2314,7 @@ html:not(.dark-mode) .pi-screen {
 /* The shell: in a bigger font than the boot's, the size of the stats' small print, so 25
    columns and 7 rows. Its prompt, and folders, bold and blue, as Raspberry Pi OS has them. */
 .pi-shell {
-  position: absolute;
-  inset: 0;
   display: none;
-  padding: 1.4cqi;
-  background: inherit;
-  box-shadow: inherit;
   font-size: 6.4cqi;
   line-height: 7.6cqi;
   white-space: pre;
@@ -2558,10 +2510,6 @@ html:not(.dark-mode) .pi-screen {
   overflow: hidden;
 }
 
-.part .bud img {
-  max-width: none;
-}
-
 .bud-left {
   left: 12.65%;
   top: 10.76%;
@@ -2572,7 +2520,6 @@ html:not(.dark-mode) .pi-screen {
 
 .bud-left img {
   width: 199.39%;
-  margin-left: 0;
 }
 
 .bud-right {
@@ -2642,13 +2589,6 @@ html:not(.dark-mode) .pi-screen {
 }
 
 .goo-leap {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.goo-face canvas {
-  position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
@@ -2748,7 +2688,6 @@ html:not(.dark-mode) .pi-screen {
 
 .page-body {
   position: relative;
-  box-sizing: border-box;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -2882,10 +2821,8 @@ html:not(.dark-mode) .pi-screen {
   left: calc(100% - 5 * var(--u));
   top: calc(6 * var(--u));
   z-index: 45;
-  padding: 0;
   border: 0;
   background: none;
-  font: inherit;
   cursor: pointer;
 }
 
@@ -3049,7 +2986,7 @@ html:not(.dark-mode) .sw-sun {
     top: calc(var(--y) * var(--u));
   }
 
-  #intro { --x: 0; --y: 60; --w: 80; translate: -50% 0; }
+  #intro { --y: 60; --w: 80; translate: -50% 0; }
   /* Under the card, which is the width of the pool */
   .dark-mode .light:empty {
     --bulb-y: calc(79.5 * var(--u));
@@ -3061,7 +2998,7 @@ html:not(.dark-mode) .sw-sun {
   #projects { --x: 31; --y: 40; --w: 46; --r: 0deg; }
   #projects .cable,
   .pi-plug { display: none; }
-  #blog { --w: 44; --r: -4deg; left: calc(27 * var(--u)); top: calc(170 * var(--u)); }
+  #blog { --w: 44; left: calc(27 * var(--u)); top: calc(170 * var(--u)); }
   #phone { --w: 38; --r: -4deg; left: calc(73 * var(--u)); top: calc(178 * var(--u)); }
   #phone .run-down { display: none; }
   #phone .run-side { display: inline; }

@@ -53,28 +53,27 @@
   const rand = (a, b) => a + Math.random() * (b - a);
   const turn = a => Math.atan2(Math.sin(a), Math.cos(a));
   const bell = (x, w) => Math.exp(-((x / w) ** 2));
+  // Where a box's middle is, from the corner of another
+  const middle = (r, box) => [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
+  // A canvas, at the size a browser gives one till it's told otherwise
+  const layer = (w = 300, h = 150) => { const el = document.createElement('canvas'); el.width = w; el.height = h; return el; };
 
   const ctx = canvas.getContext('2d');
-  const shape = document.createElement('canvas');
+  const shape = layer();
   const sil = shape.getContext('2d');
-  const low = document.createElement('canvas'), lo = low.getContext('2d');
-  const spill = document.createElement('canvas'), pool = spill.getContext('2d');
+  const low = layer(), lo = low.getContext('2d');
+  const spill = layer(), pool = spill.getContext('2d');
   let sinceNight = 0, lastNight = 0;
 
-  let scale = 1, dpr = 1, rect = null;
+  let scale = 1, dpr = 1;
   let time = still ? 40 : rand(0, 100), frames = 0;
   const strands = [], drops = [], ripples = [];
   const blob = { x: MID, y: MID, tx: MID, ty: MID, next: 3, lean: 0, la: 0, grow: still ? 1 : 0.2, size: 1, sizeV: 0, over: 0 };
-  const cur = { x: -1e4, y: -1e4, vx: 0, present: false };
+  const cur = { x: -1e4, y: -1e4, present: false };
   const tracks = [], flashes = [];
   let flow = rand(0, 50);
   const glow = { x: -0.53, y: -0.85, cast: [8, 12, 4], touch: [1, 1, 1], shadow: '28, 34, 44', night: null, n: 0, stirred: 0.25 };
   let lastSnap = -1, lastSpawn = -1, lastMicro = -1, nextProbe = 2.2, lastFeel = 6, lastProbeAt = Math.random() * 6.28, aware = 0;
-
-  function spring(o, k, v, target, w, z, dt) {
-    o[v] += (w * w * (target - o[k]) - 2 * z * w * o[v]) * dt;
-    o[k] += o[v] * dt;
-  }
 
   // ---- What it hears ----
   // It lives in that dish; nothing's keeping it there. And it can't stand noise. Earphones in,
@@ -101,14 +100,14 @@
   function plot() {
     const box = table.getBoundingClientRect(), r = polaroid.getBoundingClientRect(), d = dish.getBoundingClientRect();
     const w = polaroid.offsetWidth, h = polaroid.offsetHeight, a = (parseFloat(getComputedStyle(polaroid).rotate) || 0) * Math.PI / 180, co = Math.cos(a), si = Math.sin(a);
-    const mx = r.left + r.width / 2 - box.left, my = r.top + r.height / 2 - box.top, dx = d.left + d.width / 2 - box.left, dy = d.top + d.height / 2 - box.top;
+    const [mx, my] = middle(r, box), [dx, dy] = middle(d, box);
     const world = (u, v) => [mx + u * co - v * si, my + u * si + v * co], hw = w / 2, hh = h / 2;
     const lx = (dx - mx) * co + (dy - my) * si, ly = -(dx - mx) * si + (dy - my) * co, sideways = Math.abs(lx) / hw > Math.abs(ly) / hh;
     const eu = sideways ? Math.sign(lx) * hw : clamp(lx, -hw * 0.55, hw * 0.55), ev = sideways ? clamp(ly, -hh * 0.55, hh * 0.55) : Math.sign(ly) * hh;
     const nu = sideways ? Math.sign(lx) : 0, nv = sideways ? 0 : Math.sign(ly), R = BODY * scale * (glow.night ? 1.08 : 0.94);
     const nx = nu * co - nv * si, ny = nu * si + nv * co, [ex, ey] = world(eu, ev);
     Object.assign(den, { R, dx, dy, ex, ey, nx, ny, quad: [world(-hw, -hh), world(hw, -hh), world(hw, hh), world(-hw, hh)],
-      x0: dx, y0: dy, hx: ex - nx * R * 0.86, hy: ey - ny * R * 0.86, px: ex - nx * R * 0.3, py: ey - ny * R * 0.3 });
+      hx: ex - nx * R * 0.86, hy: ey - ny * R * 0.86, px: ex - nx * R * 0.3, py: ey - ny * R * 0.3 });
   }
   function sizeDen() {
     const box = table.getBoundingClientRect(), s = Math.min(dpr, 1.5);
@@ -118,7 +117,7 @@
   }
   function openDen() {
     if (!den.canvas) {
-      den.canvas = document.createElement('canvas');
+      den.canvas = layer();
       den.canvas.className = 'goo-leap';
       den.canvas.setAttribute('aria-hidden', 'true');
       den.c = den.canvas.getContext('2d');
@@ -163,7 +162,7 @@
     strands.length = 0;
   }
   function home() {
-    Object.assign(den, { out: false, state: null, press: 0, lean: 0, smear: 0, p: 0 });
+    Object.assign(den, { out: false, state: null, smear: 0, p: 0 });
     den.canvas.style.display = 'none';
     canvas.style.translate = canvas.style.scale = '';
     const from = canvas.getBoundingClientRect(), box = table.getBoundingClientRect();
@@ -177,14 +176,14 @@
   function roam(dt) {
     const go = (x, y, f) => { den.x = den.x0 + (x - den.x0) * f; den.y = den.y0 + (y - den.y0) * f; };
     const from = (x, y) => { den.x0 = x; den.y0 = y; den.t = 0; };
-    let up = 0, smear = 0, heading = den.tilt;
+    let up = 0, smear = 0;
     den.bulge += ((['hidden', 'peek'].includes(den.state) || (den.state === 'squeeze' && den.t > 0.3) ? 1 : 0) - den.bulge) * (1 - Math.exp(-dt * 7));
     den.p += (((den.state === 'hidden' && hovered) || den.state === 'peek' ? 1 : 0) - den.p) * (1 - Math.exp(-dt * 6));
     if (den.state === 'dash') {
       den.t += dt / den.trip;
       const f = Math.min(den.t, 1);
       go(den.ex, den.ey, f);
-      heading = den.tilt = Math.atan2(den.ey - den.y0, den.ex - den.x0);
+      den.tilt = Math.atan2(den.ey - den.y0, den.ex - den.x0);
       // Let go, nothing's holding it to the curve, and it pulls itself in as it flies
       up = 0.55 * Math.sin(Math.PI * f); smear = 1.35 - 1.05 * f;
       if (f >= 1) { from(den.ex, den.ey); den.state = 'squeeze'; }
@@ -192,7 +191,7 @@
       den.t += dt / 0.42;
       const f = Math.min(den.t, 1);
       go(den.hx, den.hy, 1 - (1 - f) ** 3);
-      heading = den.tilt = Math.atan2(-den.ny, -den.nx);
+      den.tilt = Math.atan2(-den.ny, -den.nx);
       smear = 0.3 * (1 - f);
       if (f >= 1) den.state = 'hidden';
     } else if (den.state === 'hidden') {
@@ -207,7 +206,6 @@
         const a = Math.atan2(den.ey - den.dy, den.ex - den.dx), rim = (RIM + 12) * scale + den.R * 0.3;
         den.rx = den.dx + Math.cos(a) * rim; den.ry = den.dy + Math.sin(a) * rim;
         den.ix = den.dx + Math.cos(a) * rim * 0.4; den.iy = den.dy + Math.sin(a) * rim * 0.4;
-        den.hop = a;
         from(den.x, den.y);
         den.state = 'creep'; den.done = 0; den.trip = Math.hypot(den.rx - den.x, den.ry - den.y);
       }
@@ -218,7 +216,7 @@
       den.done += (den.trip / CREEP) * (0.3 + 1.4 * heave) * dt;
       const f = Math.min(den.done / den.trip, 1);
       go(den.rx, den.ry, f);
-      heading = den.tilt = Math.atan2(den.ry - den.y0, den.rx - den.x0);
+      den.tilt = Math.atan2(den.ry - den.y0, den.rx - den.x0);
       smear = 0.24 * heave;
       if (den.heard) {
         // That's it, back it goes
@@ -238,7 +236,7 @@
     den.smear = smear;
     blob.x = blob.tx = blob.y = blob.ty = MID;
     blob.next = time + 9;
-    blob.la = heading;
+    blob.la = den.tilt;
     canvas.style.translate = `${(den.x - den.dx).toFixed(2)}px ${(den.y - den.dy).toFixed(2)}px`;
     canvas.style.scale = den.lift.toFixed(3);
     paintDen();
@@ -330,7 +328,7 @@
   // Where a point is, from the body: nearest point on its edge, which way's out, how far off
   function edge(x, y) {
     const dx = x - blob.x, dy = y - blob.y, L = Math.hypot(dx, dy) || 1e-3, a = Math.atan2(dy, dx), r = radius(a);
-    return { a, nx: dx / L, ny: dy / L, d: L - r, r };
+    return { a, nx: dx / L, ny: dy / L, d: L - r };
   }
   const at = (a, inset = 0) => {
     const r = radius(a) - inset;
@@ -365,9 +363,8 @@
     }
     return s;
   }
-  function spawnReach(toward) {
+  function spawnReach(toward, k) {
     if (strands.length >= MAX_STRANDS - 1) return;
-    const k = strands.filter(s => s.kind === 'reach' && s.pin === 'anchor' && s.state !== 'recoil').length;
     const lat = ([0, 0.5, -0.5, 0.95, -0.95, 1.35, -1.35][k % 7]) + rand(-0.1, 0.1);
     const s = newStrand('reach', toward + lat);
     s.lat = lat;
@@ -438,7 +435,7 @@
   // It parts at the neck: the base whips home, the tip unwinds, and falls, and crawls back
   function split(s) {
     const k = s.neckS * (NP - 1);
-    const base = { ...s, kind: 'piece', state: 'recoil', pin: 'anchor', pinch: 0, wrap: null,
+    const base = { ...s, kind: 'piece', state: 'recoil', pin: 'anchor', pinch: 0,
       pos: resample(s.pos, 0, k), prev: resample(s.prev, 0, k), rad: new Float32Array(NP), vol: s.vol * s.neckS };
     const o = (NP - 1) * 2;
     const tip = { ...s, kind: 'piece', state: 'recoil', pin: 'free', pinch: 0, mound: 0, end: [s.pos[o], s.pos[o + 1]],
@@ -462,7 +459,7 @@
   }
   function releaseAll(absorb) {
     for (const s of strands) {
-      if (s.kind === 'reach' && (s.state === 'grow' || s.state === 'attached')) {
+      if (s.kind === 'reach') {
         if (absorb || s.state === 'grow') { s.state = 'recoil'; s.kind = 'piece'; } else if (!s.pinch) s.pinch = 1e-4;
       }
     }
@@ -480,7 +477,7 @@
 
     // Where the tip wants to be
     let T = null;
-    if (s.kind === 'reach' && (s.state === 'grow' || s.state === 'attached')) {
+    if (s.kind === 'reach') {
       const h = s.hold, k = 1 - Math.exp(-dt * 24);
       h.a += h.spin * dt;
       // It's dragged along by the pointer, a moment behind it
@@ -552,7 +549,7 @@
 
     const pos = s.pos, prev = s.prev, damp = s.state === 'recoil' ? 0.94 : 0.965, last = (NP - 1) * 2;
     const ex = pos[last] - R[0], ey = pos[last + 1] - R[1], el = Math.hypot(ex, ey) || 1, px = -ey / el, py = ex / el;
-    const amp = (still || s.state === 'recoil' ? 0 : 700) * clamp(1.35 - s.stretch, 0.15, 1) * (s.state === 'grow' ? 0.4 : 1);
+    const amp = (s.state === 'recoil' ? 0 : 700) * clamp(1.35 - s.stretch, 0.15, 1) * (s.state === 'grow' ? 0.4 : 1);
     const mag = (s.kind === 'reach' || s.kind === 'micro') && s.state !== 'recoil' && cur.present ? P.magnet * 900 * dt * dt : 0;
     for (let i = 1; i < NP; i++) {
       const o = i * 2, sp = i / (NP - 1);
@@ -576,7 +573,6 @@
         const a = i * 2, b = a + 2;
         let dx = pos[b] - pos[a], dy = pos[b + 1] - pos[a + 1];
         const d = Math.hypot(dx, dy) || 1e-6, wa = i === 0 ? 0 : 1, wb = i + 1 === NP - 1 && tip ? 0 : 1, ws = wa + wb;
-        if (!ws) continue;
         const diff = ((d - rest) / d) * 0.95;
         dx *= diff; dy *= diff;
         if (wa) { pos[a] += dx * wa / ws; pos[a + 1] += dy * wa / ws; }
@@ -589,7 +585,6 @@
         const d = Math.hypot(dx, dy) || 1e-6, min = rest * 1.55;
         if (d >= min) continue;
         const wa = i === 0 ? 0 : 1, wb = i + 2 === NP - 1 && tip ? 0 : 1, ws = wa + wb;
-        if (!ws) continue;
         const diff = ((d - min) / d) * 0.25;
         dx *= diff; dy *= diff;
         if (wa) { pos[a] += dx * wa / ws; pos[a + 1] += dy * wa / ws; }
@@ -604,12 +599,12 @@
     const rMean = clamp(Math.sqrt(s.vol / (Math.PI * Math.max(L, 2))), 0.6, s.state === 'recoil' ? 5 : 7);
     const held = s.state === 'attached';
     const neck = held ? clamp((s.stretch - 1.15) / 1.2, 0, 0.7) : 0, nk = neck * (1 - s.pinch) + s.pinch * 0.96;
-    const bead = held ? clamp((s.stretch - 1.5) / 0.8, 0, 1) : 0, beadFreq = L / (9 * Math.max(rMean, 0.6));
+    const bead = held ? clamp((s.stretch - 1.5) / 0.8, 0, 1) : 0, beadFreq = L / (9 * rMean);
     const cap = s.state === 'recoil' ? Math.min(0.8, s.retract * 3) : 0;
     for (let i = 0; i < NP; i++) {
       const sp = i / (NP - 1);
       let r = rMean * (s.pin === 'free' ? 0.6 : 1 + 1.1 * Math.exp(-sp / 0.1));
-      if (s.kind === 'reach' || s.kind === 'micro' || s.kind === 'probe') r *= 1 - 0.68 * ease(0.5, 1, sp);
+      if (s.kind !== 'piece') r *= 1 - 0.68 * ease(0.5, 1, sp);
       else r *= 1 + (0.5 + cap) * Math.exp(-(1 - sp) / 0.07);
       r *= 1 - nk * Math.exp(-(((sp - s.neckS) / 0.16) ** 2));
       r *= 1 + bead * 0.3 * Math.sin(sp * Math.PI * 2 * beadFreq + s.phase);
@@ -688,7 +683,7 @@
     d.y += (-e.ny * speed + e.nx * wob) * dt;
     d.sq = 1 + 0.4 * pulse + d.land;
     if (d.outside && Math.hypot(d.x - MID, d.y - MID) < RIM + TAKEOFF) {
-      Object.assign(d, { state: 'crouch', crouch: rand(0.16, 0.3), dx: -e.nx, dy: -e.ny });
+      Object.assign(d, { state: 'crouch', crouch: rand(0.16, 0.3) });
       d.wait = d.crouch;
     }
     if (e.d < 0) { d.dead = true; ripple(e.a, 1); flash(d.x, d.y, 0.5); }
@@ -706,12 +701,14 @@
     glow.stirred += (rest - glow.stirred) * (1 - Math.exp(-dt * (rest > glow.stirred ? 7 : 1.2)));
     for (const f of flashes) f.age += dt;
     while (flashes.length && flashes[0].age > 1.4) flashes.shift();
-    // It doesn't care for daylight. By night it spreads out, and it's braver.
-    gone += ((leap && leap.off ? 1 : 0) - gone) * (1 - Math.exp(-dt * 8));
+    gone +=((leap && leap.off ? 1 : 0) - gone) * (1 - Math.exp(-dt * 8));
     // Point near him and it's seen where you're going: it gets ready, by as much as you're near
     ready += (nearing - ready) * (1 - Math.exp(-dt * (nearing > ready ? 5 : 3)));
     const winding = leap && !leap.off, coil = winding ? 1 : leap || den.state ? 0 : ready, tense = coil > 0.02;
-    spring(blob, 'size', 'sizeV', (glow.night ? 1.08 : 0.94) * (1 - 0.24 * coil) * (1 - 0.5 * gone), leap || den.state ? 18 : tense ? 10 : 3, 0.5, dt);
+    // It doesn't care for daylight. By night it spreads out, and it's braver.
+    const size = (glow.night ? 1.08 : 0.94) * (1 - 0.24 * coil) * (1 - 0.5 * gone), w = leap || den.state ? 18 : tense ? 10 : 3;
+    blob.sizeV += (w * w * (size - blob.size) - w * blob.sizeV) * dt;
+    blob.size += blob.sizeV * dt;
     const reach = P.reach * (glow.night ? 1.15 : 1);
     aware = present && !inside ? ease(P.awareness * (glow.night ? 1.15 : 1), 18, e.d) : 0;
 
@@ -739,15 +736,15 @@
     blob.x += (blob.tx - blob.x) * k;
     blob.y += (blob.ty - blob.y) * k;
     const strain = Math.max(aware, 1.5 * coil, den.lean), quiver = (1 - coil) * 0.03 * Math.sin(time * 19);
-    blob.lean += ((still ? 0 : strain) * (1 + quiver) - blob.lean) * (1 - Math.exp(-dt * (6 + 16 * Math.max(coil, den.press))));
+    blob.lean += (strain * (1 + quiver) - blob.lean) * (1 - Math.exp(-dt * (6 + 16 * Math.max(coil, den.press))));
 
     if (!still) {
-      const active = strands.filter(s => s.kind === 'reach' && (s.state === 'grow' || s.state === 'attached')).length;
+      const active = strands.filter(s => s.kind === 'reach').length;
       if (!present) releaseAll(false);
       else if (inside) releaseAll(true);
       else {
         const want = e.d < reach ? Math.round(4 + (P.maxStrands - 4) * ease(reach, reach * 0.45, e.d)) : 0;
-        if (active < want && time - lastSpawn > rand(0.03, 0.06) && time - lastSnap > 0.15) { spawnReach(e.a); lastSpawn = time; }
+        if (active < want && time - lastSpawn > rand(0.03, 0.06) && time - lastSnap > 0.15) { spawnReach(e.a, active); lastSpawn = time; }
         const micro = strands.filter(s => s.kind === 'micro' && s.state !== 'recoil').length;
         if (micro < Math.round(7 * ease(0.1, 0.8, aware)) && time - lastMicro > rand(0.03, 0.07)) { spawnMicro(e.a); lastMicro = time; }
       }
@@ -766,8 +763,6 @@
     while (ripples.length && ripples[0].age > 1.6) ripples.shift();
     for (const t of tracks) t.age += dt;
     while (tracks.length && tracks[0].age > 3) tracks.shift();
-
-    cur.vx *= Math.exp(-dt * 8);
   }
 
   // ---- Drawing ----
@@ -781,9 +776,10 @@
     }
   }
   // Through the middles of the sides, so it's smooth
-  function closed(c, xs, ys, n, inset = 0, fresh = true) {
-    const x = i => { i = (i + n) % n; return xs[i] + (blob.x - xs[i]) * inset; };
-    const y = i => { i = (i + n) % n; return ys[i] + (blob.y - ys[i]) * inset; };
+  function closed(c, inset = 0, fresh = true) {
+    const n = OUTLINE;
+    const x = i => { i = (i + n) % n; return ox[i] + (blob.x - ox[i]) * inset; };
+    const y = i => { i = (i + n) % n; return oy[i] + (blob.y - oy[i]) * inset; };
     if (fresh) c.beginPath();
     c.moveTo((x(n - 1) + x(0)) / 2, (y(n - 1) + y(0)) / 2);
     for (let i = 0; i < n; i++) c.quadraticCurveTo(x(i), y(i), (x(i) + x(i + 1)) / 2, (y(i) + y(i + 1)) / 2);
@@ -842,8 +838,7 @@
   // and an angle, so that they stay in it however it changes shape. They're soft dots, added
   // to what's under them: a little light by day, and all the light there is by night.
   const sprite = colour => {
-    const c = document.createElement('canvas');
-    c.width = c.height = 32;
+    const c = layer(32, 32);
     const x = c.getContext('2d'), g = x.createRadialGradient(16, 16, 0, 16, 16, 16);
     g.addColorStop(0, `rgba(${colour}, 1)`);
     g.addColorStop(0.3, `rgba(${colour}, 0.55)`);
@@ -946,7 +941,7 @@
   function shaded() {
     const light = Math.atan2(glow.y, glow.x), r = radius(light);
     ctx.save();
-    closed(ctx, ox, oy, OUTLINE);
+    closed(ctx);
     ctx.clip();
     motes();
     // Faint and broad, so it's round: nothing else lifts a black thing off a black thing
@@ -985,8 +980,8 @@
     sil.clearRect(0, 0, shape.width, shape.height);
     sil.setTransform(S, 0, 0, S, 0, 0);
     const body = rgb(DARK);
-    sil.fillStyle = sil.strokeStyle = body;
-    closed(sil, ox, oy, OUTLINE);
+    sil.fillStyle = body;
+    closed(sil);
     sil.fill();
     for (const s of strands) { view(s); ribbon(sil); }
     for (const d of drops) {
@@ -1080,7 +1075,7 @@
         const j = (i + 1) % OUTLINE, a = (i / OUTLINE) * Math.PI * 2;
         const v = 0.5 + 0.26 * Math.sin(3 * a + time * 0.4 + 1) + 0.15 * Math.sin(7 * a - time * 0.6) + 0.09 * Math.sin(13 * a + time * 0.9);
         let open = 1;
-        for (const s of strands) if (s.pin === 'anchor' && s.kind === 'reach') open *= 1 - 0.9 * bell(turn(a - s.a), 0.13);
+        for (const s of strands) if (s.kind === 'reach') open *= 1 - 0.9 * bell(turn(a - s.a), 0.13);
         ctx.strokeStyle = `rgba(${INK}, ${(amount * level * (0.14 + v * v * 1.3) * open).toFixed(3)})`;
         ctx.beginPath();
         ctx.moveTo(ox[i], oy[i]);
@@ -1155,7 +1150,7 @@
     // Everything inside it stops at its surface
     ctx.save();
     ctx.setTransform(S, 0, 0, S, 0, 0);
-    closed(ctx, ox, oy, OUTLINE);
+    closed(ctx);
     ctx.clip();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     // Even at its thinnest there's some of it
@@ -1169,10 +1164,9 @@
     [[0.72, 0.26, 0.2], [0.48, 0.18, 0.11], [0.17, 0.08, 0.07]].forEach(([inset, soft, amount]) => {
       lo.setTransform(1, 0, 0, 1, 0, 0);
       lo.clearRect(0, 0, low.width, low.height);
-      lo.globalCompositeOperation = 'source-over';
       lo.setTransform(L, 0, 0, L, 0, 0);
       lo.fillStyle = `rgb(${INK})`;
-      closed(lo, ox, oy, OUTLINE);
+      closed(lo);
       lo.fill();
       lo.save();
       lo.globalCompositeOperation = 'destination-out';
@@ -1183,10 +1177,9 @@
       lo.fillStyle = '#000';
       lo.beginPath();
       lo.rect(-300, -300, VIEW + 600, VIEW + 600);
-      closed(lo, ox, oy, OUTLINE, inset, false);
+      closed(lo, inset, false);
       lo.fill('evenodd');
       lo.restore();
-      ctx.globalCompositeOperation = 'lighter';
       ctx.globalAlpha = amount * level;
       ctx.drawImage(low, 0, 0, canvas.width, canvas.height);
     });
@@ -1215,10 +1208,10 @@
 
     ctx.setTransform(S, 0, 0, S, 0, 0);
     // The lit side of the glass, nearest it, inside the rim
-    const near = ctx.createRadialGradient(blob.x, blob.y, r * 0.6, blob.x, blob.y, WALL * 1.5);
-    near.addColorStop(0, `rgba(${INK}, ${(0.5 * level).toFixed(3)})`);
-    near.addColorStop(1, `rgba(${INK}, 0)`);
     if (!den.out) {
+      const near = ctx.createRadialGradient(blob.x, blob.y, r * 0.6, blob.x, blob.y, WALL * 1.5);
+      near.addColorStop(0, `rgba(${INK}, ${(0.5 * level).toFixed(3)})`);
+      near.addColorStop(1, `rgba(${INK}, 0)`);
       ctx.strokeStyle = near;
       ctx.lineWidth = 2.2;
       ctx.beginPath();
@@ -1250,12 +1243,11 @@
       ctx.lineTo(t.x, t.y);
       ctx.stroke();
     });
-    const bit = (x, y, size, a) => { ctx.globalAlpha = a; ctx.drawImage(SOFT, x - size, y - size, size * 2, size * 2); };
     // A bit's a small drop of it, with an edge of its own, and off the table, in the air, it
     // lights nothing but itself
     for (const d of drops) {
       const r = d.r * (1 + d.up * 0.028), a = Math.atan2(d.dy, d.dx);
-      if (d.up < 0.5) bit(d.x, d.y, r * 3, n * 0.16);
+      if (d.up < 0.5) { ctx.globalAlpha = n * 0.16; ctx.drawImage(SOFT, d.x - r * 3, d.y - r * 3, r * 6, r * 6); }
       ctx.globalAlpha = 1;
       ctx.fillStyle = `rgba(${INK}, ${(0.34 * n).toFixed(3)})`;
       ctx.strokeStyle = `rgba(${INK}, ${(0.5 * n).toFixed(3)})`;
@@ -1374,8 +1366,7 @@
   // read back, so it's lit like everything else here. A soft edge makes a round one, and a few
   // bulges on it and what's run down onto the hoodie keep it from being a shape anyone drew.
   function buildLump(W, H, cx, cy, k) {
-    const mask = document.createElement('canvas');
-    mask.width = W; mask.height = H;
+    const mask = layer(W, H);
     const c = mask.getContext('2d', { willReadFrequently: true }), N = W * H, FAR = W + 60;
     const soft = (draw, blur) => {
       c.setTransform(1, 0, 0, 1, 0, 0);
@@ -1427,12 +1418,12 @@
   // What it leaves where it's been: a film, thin in the middle and thick at the edge, because
   // that's where a drying liquid leaves what was in it. It's only a picture, so it costs
   // nothing to hold or to fade.
-  function paintFilm(el, F, level, night) {
+  function paintFilm(el, F) {
     const W = el.width, H = el.height, c = el.getContext('2d'), image = c.createImageData(W, H), px = image.data;
-    const [r, g, b] = night ? [130, 200, 140] : [74, 62, 38], most = night ? 0.16 : 0.22;
+    const [r, g, b] = glow.night ? [130, 200, 140] : [74, 62, 38], most = glow.night ? 0.16 : 0.22;
     for (let y = 1; y < H - 1; y++) {
       for (let x = 0; x < W; x++) {
-        const i = y * W + x, v = F[i] - level, a = v > 0 ? 0.5 + 0.5 * bell(v, 0.22) : bell(v, 0.06);
+        const i = y * W + x, v = F[i] - 0.42, a = v > 0 ? 0.5 + 0.5 * bell(v, 0.22) : bell(v, 0.06);
         if (a < 0.01) continue;
         const o = i * 4, patchy = Math.sin(x * 0.043 + y * 0.021) + Math.sin(x * 0.017 - y * 0.051) + 0.6 * Math.sin(x * 0.11 + y * 0.083);
         px[o] = r; px[o + 1] = g; px[o + 2] = b;
@@ -1453,8 +1444,8 @@
         if (q > 0 && F[at] < 0.42 + 0.3 * q) F[at] = 0.42 + 0.3 * q;
       }
     }
-    paintFilm(K.film, F, 0.42, glow.night);
-    paintFilm(K.mark, K.lump, 0.42, glow.night);
+    paintFilm(K.film, F);
+    paintFilm(K.mark, K.lump);
   }
   const wet = (el, on) => {
     el.style.transition = on ? 'none' : 'opacity 7s cubic-bezier(0.5, 0, 0.9, 0.6)';
@@ -1478,16 +1469,12 @@
     return { room, w, h, night };
   }
 
-  function place(K, c) {
-    const co = Math.cos(HEAD.tilt) * K.U, si = Math.sin(HEAD.tilt) * K.U;
-    c.setTransform(co * K.px, si * K.px, -si * K.px, co * K.px, K.fx * K.px, K.fy * K.px);
-  }
   // The specks. Each starts anywhere in the lump and has a place it's making for, in an eye or
   // the grin, and sets off when it sets off: what they make's a matter of where most of them
   // have got to, so it comes up slowly and it's never quite anything. They go on drifting, so
   // it's alive.
   function buildSpecks() {
-    const test = document.createElement('canvas').getContext('2d'), specks = [];
+    const test = layer().getContext('2d'), specks = [];
     eyesPath(test);
     const add = (x, y, start, size, power, eye = 0) => {
       const a = rand(0, 6.28), d = Math.sqrt(Math.random()) * 0.74;
@@ -1513,7 +1500,8 @@
     const present = ease(FACE.spread, FACE.gather, t) * (1 - ease(0, 0.5, peel)), lit = night ? Math.max(K.stress, 0.34 * present) : 0;
     K.halo.style.opacity = lit.toFixed(2);
     if (present <= 0) return;
-    place(K, c);
+    const co = Math.cos(HEAD.tilt) * K.U, si = Math.sin(HEAD.tilt) * K.U;
+    c.setTransform(co * K.px, si * K.px, -si * K.px, co * K.px, K.fx * K.px, K.fy * K.px);
     c.globalCompositeOperation = 'lighter';
     const draw = (x, y, size, a) => { c.globalAlpha = Math.min(a, 1); c.drawImage(SOFT, x - size, y - size, size * 2, size * 2); };
     // It looks where you're pointing, it shuts its eyes now and then, and it breathes
@@ -1546,9 +1534,8 @@
     const stage = document.createElement('div');
     stage.className = 'goo-face';
     stage.setAttribute('aria-hidden', 'true');
-    const midX = r.left + r.width / 2 - box.left, midY = r.top + r.height / 2 - box.top, turned = getComputedStyle(polaroid).rotate;
+    const [midX, midY] = middle(r, box), turned = getComputedStyle(polaroid).rotate;
     Object.assign(stage.style, { left: `${midX - sw / 2}px`, top: `${midY - sh / 2}px`, width: `${sw}px`, height: `${sh}px`, rotate: turned });
-    const layer = (cw, ch) => { const el = document.createElement('canvas'); el.width = cw; el.height = ch; return el; };
     const skin = layer(W, H), top = layer(Math.round(sw * px), Math.round(sh * px)), film = layer(W, H), mark = layer(W, H);
     const halo = document.createElement('div');
     film.style.opacity = mark.style.opacity = halo.style.opacity = 0;
@@ -1562,7 +1549,7 @@
     Object.assign(halo.style, { position: 'absolute', left: `${fx - U * 3.4}px`, top: `${fy - U * 3.4}px`, width: `${U * 6.8}px`, height: `${U * 6.8}px`, background: 'radial-gradient(closest-side, rgba(190, 236, 165, 0.3), rgba(190, 236, 165, 0.1) 45%, rgba(190, 236, 165, 0))' });
     const ox = fx - sw / 2, oy = fy - sh / 2;
     const c = skin.getContext('2d'), image = c.createImageData(W, H);
-    const cx = fx / g, cy = fy / g, lump = buildLump(W, H, cx, cy, U / g), K = { stage, skin, top, fly, c, fc: fly.getContext('2d'), tc: top.getContext('2d'), image, data: new Uint32Array(image.data.buffer), rgba: image.data,
+    const cx = fx / g, cy = fy / g, lump = buildLump(W, H, cx, cy, U / g), K = { stage, top, fly, c, fc: fly.getContext('2d'), tc: top.getContext('2d'), image, data: new Uint32Array(image.data.buffer), rgba: image.data,
       W, H, g, U, fx, fy, cx, cy, px, inset: pad / g, near: extent(lump, W, H), film, mark, halo, filmNight: null, stress: 0, blink: 0, angle: a, flyScale: fly.width / box.width, height: new Float32Array(N), wx: new Float32Array(W), wy: new Float32Array(H),
       landX: midX + ox * Math.cos(a) - oy * Math.sin(a), landY: midY + ox * Math.sin(a) + oy * Math.cos(a),
       run: buildRun(W, H, cx, cy, R / g), lump, specks: buildSpecks(), env: buildRoom(glow.night), tails: Array.from({ length: 5 }, () => rand(0, 6.28)),
@@ -1695,7 +1682,7 @@
     c.clearRect(0, 0, box.width, box.height);
     if (z === null) return;
     const x0 = from.left - box.left + blob.x * scale, y0 = from.top - box.top + blob.y * scale;
-    const f = z * z * (3 - 2 * z), x = x0 + (K.landX - x0) * f, y = y0 + (K.landY - y0) * f, up = Math.sin(Math.PI * z), r0 = BODY * scale * 0.42, r = r0 * (1 + 0.42 * up);
+    const f = ease(0, 1, z), x = x0 + (K.landX - x0) * f, y = y0 + (K.landY - y0) * f, up = Math.sin(Math.PI * z), r0 = BODY * scale * 0.42, r = r0 * (1 + 0.42 * up);
     const sx = x - glow.x * up * r0 * 2.6, sy = y - glow.y * up * r0 * 2.6, sr = r0 * (1 + 0.8 * up);
     if (!night) {
       const shadow = c.createRadialGradient(sx, sy, 0, sx, sy, sr);
@@ -1847,14 +1834,13 @@
     scale = item.width / 216;
     dpr = Math.min(devicePixelRatio || 1, 2);
     const size = VIEW * scale, px = Math.round(size * dpr);
-    const left = item.left + item.width / 2 - box.left - size / 2, topAt = item.top + item.height / 2 - box.top - size / 2;
+    const [cx, cy] = middle(item, box), left = cx - size / 2, topAt = cy - size / 2;
     canvas.width = canvas.height = px;
     Object.assign(canvas.style, { width: `${size}px`, height: `${size}px`, left: `${left}px`, top: `${topAt}px` });
     shape.width = shape.height = px;
     low.width = low.height = spill.width = spill.height = Math.ceil(px / 3);
     read();
     trail(box, item);
-    if (still) draw();
   }
   // A glow is a long, slow fade across very few of a screen's shades, and only some browsers
   // dither it, so in the others it shows as bands. A grain of a shade or two either way, over
@@ -1863,8 +1849,7 @@
   function makeGrain() {
     const D = Math.ceil(620 * scale * dpr);
     if (grain && grain.width === D) return;
-    grain = document.createElement('canvas');
-    grain.width = grain.height = D;
+    grain = layer(D, D);
     const c = grain.getContext('2d'), image = c.createImageData(D, D), px = image.data;
     for (let y = 0, i = 0; y < D; y++) {
       for (let x = 0; x < D; x++, i += 4) {
@@ -1884,9 +1869,9 @@
   function trail(box, item) {
     let seed = SEED;
     const rnd = (a = 0, b = 1) => { seed = (seed * 16807) % 2147483647; return a + (b - a) * (seed / 2147483647); };
-    const k = item.width / 216, cx = item.left + item.width / 2 - box.left, cy = item.top + item.height / 2 - box.top;
+    const k = item.width / 216, [cx, cy] = middle(item, box);
     const labels = [...table.querySelectorAll('.tag > span, .polaroid-caption')].filter(el => !obj.contains(el)).map(el => {
-      const r = el.getBoundingClientRect(), x = r.left + r.width / 2 - box.left, y = r.top + r.height / 2 - box.top;
+      const r = el.getBoundingClientRect(), [x, y] = middle(r, box);
       return { x, y, w: r.width, d: Math.hypot(x - cx, y - cy) };
     }).sort((a, b) => a.d - b.d);
     if (!labels.length) return;
@@ -1943,7 +1928,6 @@
         for (let i = 0; i < 4; i++) ripple(i * 1.5, 0.9);
       }
     }
-    if (glow.night === null && still) glow.n = night ? 1 : 0;
     glow.night = night;
     // What it's left is still there when the lights change, and looks as it should in the new light
     if (kit && kit.filmNight !== night && kit.stage.style.display === 'block') paintFilms();
@@ -1968,11 +1952,10 @@
 
   addEventListener('pointermove', e => {
     if (e.pointerType === 'touch') return;
-    rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
     if (!rect.width) return;
     const x = (e.clientX - rect.left) / scale, y = (e.clientY - rect.top) / scale;
-    if (cur.present) cur.vx = ((x - cur.x) / Math.max(e.timeStamp - cur.t, 1)) * 1000;
-    cur.x = x; cur.y = y; cur.t = e.timeStamp; cur.at = [e.clientX, e.clientY];
+    cur.x = x; cur.y = y; cur.at = [e.clientX, e.clientY];
     cur.present = Math.hypot(x - MID, y - MID) < LIMIT;
     if (polaroid && kit) {
       const r = polaroid.getBoundingClientRect(), off = Math.hypot(Math.max(r.left - e.clientX, 0, e.clientX - r.right), Math.max(r.top - e.clientY, 0, e.clientY - r.bottom));

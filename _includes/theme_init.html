@@ -157,12 +157,4 @@
     } catch (e) {
         console.error("Font settings initialization failed:", e);
     }
-
-    try {
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-            if (!localStorage.getItem("theme")) {
-                applyTheme(e.matches ? "dark" : "light");
-            }
-        });
-    } catch (e) { }
 </script>
