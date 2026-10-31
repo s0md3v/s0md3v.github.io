@@ -97,6 +97,74 @@
         font: inherit;
     }
 
+    /* Going from page to page, the table stays and a sheet's brought over it. Paper's opaque, so
+       a sheet moves, whole, rather than fading through the one under it. Each page's sheet has
+       its own name, so the old one doesn't turn into the new one. */
+    @media (min-width: 769px) and (prefers-reduced-motion: no-preference) {
+        @view-transition {
+            navigation: auto;
+        }
+
+        .wrapper {
+            view-transition-name: sheet-{{ page.url | slugify }};
+            view-transition-class: sheet;
+        }
+
+        /* The default adds the two pages' light together, which can overshoot */
+        ::view-transition-old(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        ::view-transition-new(root) {
+            animation: table-show 0.2s linear both;
+            mix-blend-mode: normal;
+        }
+
+        {% if page.layout_style == 'homepage' %}
+        ::view-transition-old(.sheet) {
+            animation: sheet-away 0.32s cubic-bezier(0.5, 0, 0.8, 0.4) both;
+        }
+        {% else %}
+        ::view-transition-new(.sheet) {
+            animation: sheet-over 0.36s cubic-bezier(0.16, 0.84, 0.3, 1) both;
+        }
+
+        ::view-transition-old(.sheet) {
+            animation: sheet-under 0.36s linear both;
+        }
+        {% endif %}
+
+        @keyframes table-show {
+            from {
+                opacity: 0;
+            }
+        }
+
+        @keyframes sheet-over {
+            from {
+                transform: translateY(100vh);
+            }
+        }
+
+        @keyframes sheet-away {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* Gone by the time it's covered. Only a wider sheet's edges would show it going. */
+        @keyframes sheet-under {
+            50% {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
         html {
             scroll-behavior: auto;
