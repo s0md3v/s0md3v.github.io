@@ -31,7 +31,7 @@ links:
     url: /essays/
     tooltip: i write essays
   playground:
-    label: playground
+    label: experiments
     url: /playground/
     tooltip: random experiments
   now:

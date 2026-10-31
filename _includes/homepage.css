@@ -252,8 +252,8 @@ a.obj:not(.grounded):focus-visible,
 .item {
   display: block;
   position: relative;
-  /* --j is a small random tilt, --spin is a die still turning as it lands */
-  rotate: calc(var(--r, 0deg) + var(--j, 0deg) + var(--spin, 0deg));
+  /* --j is a small random tilt */
+  rotate: calc(var(--r, 0deg) + var(--j, 0deg));
   container-type: inline-size;
 }
 
@@ -954,7 +954,7 @@ a.obj:not(.grounded):focus-visible,
 /* Above .light so the screen can glow; lit by #room-light-gallery instead */
 #gallery {
   /* A little bigger than to scale, for its buttons */
-  --x: 45; --y: -11.5; --w: 17.5; --r: 7deg; --h0: 2.5;
+  --x: 37.5; --y: -7.5; --w: 17.5; --r: 7deg; --h0: 2.5;
   --tx: 42%; --ty: 124%; --tw: 9; --tr: -3deg;
   z-index: 41;
 }
@@ -2627,20 +2627,55 @@ html:not(.dark-mode) .pi-screen {
   --tx: 81%; --ty: 75.2%; --tw: 9; --tr: 4deg;
 }
 
-/* ---- Playground: a die ---- */
+/* ---- Playground: a Petri dish, and what's in it (assets/js/symbiote.js) ---- */
 
 #playground {
-  --x: 26; --y: -1; --w: 2.4; --r: 22deg; --h0: 2.4;
-  --tx: 50%; --ty: 283%; --tw: 10; --tr: 4deg;
+  --x: -50; --y: -6; --w: 12; --h0: 1.2;
+  --tx: 50%; --ty: 114%; --tw: 11.5; --tr: 4deg;
 }
 
-/* Until the script drops it */
-#playground.held .lift {
+#playground .item {
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+/* A reflection, so it casts no shadow: it's out of .lift */
+.dish-sheen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.goo {
+  position: absolute;
+  z-index: 43;
+  pointer-events: none;
+}
+
+/* At night all that's on it is the light it gives off, which adds to the room's */
+.goo.shining {
+  mix-blend-mode: screen;
+}
+
+/* Where it's been, in the labels' ink: nothing by day, and it comes up as the room goes dark */
+.goo-prints {
+  position: absolute;
+  inset: 0;
+  z-index: 42;
+  pointer-events: none;
   opacity: 0;
+  color: rgb(180 232 155);
+  fill: currentColor;
+  mix-blend-mode: screen;
+  font-size: calc(2.4 * var(--u));
+  filter: drop-shadow(0 0 0.1em rgb(150 220 130 / 0.5));
+  mask: url('{{ "/assets/images/table/glow-ink.jpg" | relative_url }}') 0 0 / 4em 4em repeat luminance;
+  transition: opacity 1.4s;
 }
 
-#playground.falling .lift {
-  transition: none;
+.dark-mode .goo-prints {
+  opacity: 0.5;
 }
 
 /* ---- Papers: the first page of a paper ---- */
@@ -3035,7 +3070,7 @@ html:not(.dark-mode) .sw-sun {
   #papers { --w: 38; --r: 5deg; left: calc(100% - 21 * var(--u)); top: calc(268 * var(--u)); }
   #papers .tag { --tx: 18%; --tw: 22; }
   #philosophy { --x: -22; --y: 240; --w: 26; --tw: 26; }
-  #playground { --x: -6; --y: 268; --w: 6; --tw: 24; }
+  #playground { --x: -6; --y: 268; --w: 24; --tw: 27; }
   #gallery { --x: -20; --y: 304; --w: 36; --tw: 22; }
   #uses { --w: 30; --r: 90deg; left: calc(14 * var(--u)); top: calc(362 * var(--u)); }
   #uses .tag { --tw: 18; }

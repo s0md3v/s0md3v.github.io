@@ -300,16 +300,20 @@ layout_style: "homepage"
       <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
     </div>
 
-    <a class="obj" id="playground" href="{{ n.playground.url | relative_url }}">
+    <a class="obj grounded" id="playground" href="{{ n.playground.url | relative_url }}">
       <span class="lift"><span class="item">
-        <img class="base" width="160" height="160" alt="" data-faces="{{ t }}dice-">
-        <noscript><img class="base" src="{{ t }}dice-6.webp" width="160" height="160" alt=""></noscript>
-        <!-- Glow-in-the-dark pips, filled in by the script for the face that's up -->
-        <span class="glow-ink" aria-hidden="true"><svg class="pips" viewBox="0 0 160 160"></svg></span>
+        <img class="base" src="{{ t }}petridish.webp" srcset="{{ t }}petridish-400.webp 400w, {{ t }}petridish.webp 720w"
+          data-night="{{ t }}petridish-night-400.webp 400w, {{ t }}petridish-night.webp 720w"
+          sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
       </span></span>
+      <img class="dish-sheen" src="{{ t }}petridish-sheen.webp" data-night="{{ t }}petridish-sheen-night.webp 720w"
+        srcset="{{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
       <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
     </a>
-
+    <!-- What's in it, which climbs out over everything else, and gives off its own light, so
+         it's over .light; and where it's been (see symbiote.js) -->
+    <canvas class="goo" aria-hidden="true"></canvas>
+    <div class="goo-prints" aria-hidden="true"></div>
     <a class="obj" id="uses" href="{{ n.taste.url | relative_url }}">
       <span class="under"><span class="tag t1"><span>{{ n.taste.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
@@ -410,7 +414,6 @@ layout_style: "homepage"
       const parts = Array.from(document.querySelectorAll('.part'));
       const selfLit = Array.from(document.querySelectorAll('.self-lit'));
       const camera = document.getElementById('gallery');
-      const die = document.getElementById('playground');
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const pick = n => Math.floor(Math.random() * n);
 
@@ -1781,16 +1784,6 @@ layout_style: "homepage"
         });
       })();
 
-      const face = die.querySelector('.base');
-      const faceUp = 1 + pick(6);
-      face.src = `${face.dataset.faces}${faceUp}.webp`;
-      // Where the pips of each face are, in a 3 by 3 grid
-      const PIPS = [[4], [0, 8], [0, 4, 8], [0, 2, 6, 8], [0, 2, 4, 6, 8], [0, 2, 3, 5, 6, 8]];
-      die.querySelector('.pips').innerHTML = PIPS[faceUp - 1].map(at =>
-        `<circle class="dot" cx="${[43, 79, 116][at % 3]}" cy="${[40, 79, 118][Math.floor(at / 3)]}" r="12" />`).join('');
-
-
-
       // Lays the earphones out randomly, in pixels of the earbuds' photo (_raw/earphonecut.py)
       const earphones = document.getElementById('uses');
       // Shade along the wires' far side, laid and swung with the rest of them (the Pi's too)
@@ -2078,15 +2071,12 @@ layout_style: "homepage"
       // Each label was written with its own amount of paint, and its own unevenness
       const paints = writing.map(() => [0.8 + Math.random() * 0.2, Math.random() * 4, Math.random() * 4]);
       let risers = [];
-      // The die's pips, which turn with it as it lands (see drop()), and their angle at rest
-      let pips = null;
       function glow() {
         const night = document.documentElement.classList.contains('dark-mode');
         const box = table.getBoundingClientRect();
         // The copy can't cover the writing exactly, so the writing goes
         writing.forEach(el => el.classList.toggle('glowing', night));
         if (!night) {
-          pips = null;
           aura.replaceChildren();
           return glowing.replaceChildren();
         }
@@ -2107,7 +2097,7 @@ layout_style: "homepage"
             width: `${el.offsetWidth}px`,
             height: `${el.offsetHeight}px`,
             rotate: `${angle}deg`,
-            visibility: el.closest('.lift')?.closest('.held') || waiting.has(el.closest('.obj')) ? 'hidden' : '',
+            visibility: waiting.has(el.closest('.obj')) ? 'hidden' : '',
             opacity: paints[i][0].toFixed(2),
             maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
           });
@@ -2116,7 +2106,6 @@ layout_style: "homepage"
             copy.style.setProperty('--paint', copy.style.opacity);
             copy.style.removeProperty('opacity');
           }
-          if (el === die.querySelector('.glow-ink')) pips = { copy, angle: angle - (parseFloat(die.style.getPropertyValue('--spin')) || 0) };
           return [el.closest('.lift') && el.closest('.obj'), copy];
         });
         risers = copies.filter(([obj]) => obj);
@@ -2181,7 +2170,7 @@ layout_style: "homepage"
 
       // Things with hard, glossy edges, and how wide a band of edge catches the lamp (in u)
       // and how much it shines. Paper and cloth don't.
-      const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1], playground: [0.25, 1],
+      const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1],
         uses: [0.25, 1], blog: [0.2, 0.4] };
       const rimmed = objects.filter(el => el.id in RIMS);
       // And the sticker's glitter, which only needs which way the light is
@@ -2378,34 +2367,6 @@ layout_style: "homepage"
         toggle.setAttribute('aria-checked', String(night));
       }
 
-      // Drops the die the first time it comes into view
-      function drop() {
-        const lift = die.querySelector('.lift');
-        const HEIGHT = 10, TIME = 650;
-        const spin = (Math.random() < 0.5 ? -1 : 1) * (120 + Math.random() * 120);
-        const start = performance.now();
-        die.classList.remove('held');
-        die.classList.add('falling');
-        glow();
-        const at = measure(die);
-        (function frame(now) {
-          const t = Math.min((now - start) / TIME, 1);
-          const up = t < 0.45 ? HEIGHT * (1 - (t / 0.45) ** 2)
-            : t < 0.7 ? HEIGHT * 0.08 * Math.sin(Math.PI * (t - 0.45) / 0.25) : 0;
-          lift.style.scale = 1 + up * 0.012;
-          die.style.setProperty('--spin', (spin * (1 - t) ** 2).toFixed(1) + 'deg');
-          if (pips) Object.assign(pips.copy.style, { rotate: `${pips.angle + spin * (1 - t) ** 2}deg`, scale: lift.style.scale });
-          shade(die, up, 0, at);
-          if (t < 1) return requestAnimationFrame(frame);
-          die.classList.remove('falling');
-          lift.style.scale = '';
-          die.style.removeProperty('--spin');
-          shade(die);
-          rim(die);
-          glow();
-        })(start);
-      }
-
       // Each thing is shown once all its pictures are ready: its photos, as they're chosen for
       // this screen, and the tape and cloth drawn by the stylesheet. One that fails to load is
       // shown anyway, as it would be.
@@ -2471,15 +2432,6 @@ layout_style: "homepage"
       }
 
       if (!still && 'IntersectionObserver' in window) {
-        die.classList.add('held');
-        glow();
-        const watch = new IntersectionObserver(([entry]) => {
-          if (!entry.isIntersecting) return;
-          watch.disconnect();
-          drop();
-        }, { threshold: 1 });
-        ready.get(die).then(() => watch.observe(die.querySelector('.item')));
-
         // The polaroid comes out blank, and develops only once it can be seen: so not till
         // its photo's here, and not in a tab no one's looking at. If there's no photo, it's
         // left as it is. Hovered, it comes up once more, and sees that through whatever the
@@ -2505,6 +2457,7 @@ layout_style: "homepage"
       }
     })();
   </script>
+  <script src="{{ '/assets/js/symbiote.js' | relative_url }}" defer></script>
 </body>
 
 </html>

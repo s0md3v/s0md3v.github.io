@@ -262,7 +262,7 @@ function renderShell() {
   const app = document.getElementById('app');
   app.innerHTML = `
     <div class="layout">
-      <a class="site-return" href="../">← Playground</a>
+      <a class="site-return" href="../">← Experiments</a>
       <main class="reader-main" id="reader-main" tabindex="-1"></main>
       <div class="study-scrim" data-action="toggle-study"></div>
       <aside class="study-rail" id="study-rail" aria-label="Original page"></aside>
