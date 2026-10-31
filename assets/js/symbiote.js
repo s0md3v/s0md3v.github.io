@@ -34,7 +34,8 @@
   const dish = obj.querySelector('.item');
   const table = obj.closest('.table');
   const root = document.documentElement;
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // It's a lot to ask of a phone, so there it just lies in its dish
+  const still = matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches;
 
   // Everything's worked out in units of a dish 216 across, in the middle of a square VIEW
   // across, which is as far as it can reach
@@ -65,7 +66,7 @@
   const strands = [], drops = [], ripples = [];
   const blob = { x: MID, y: MID, tx: MID, ty: MID, next: 3, lean: 0, la: 0, grow: still ? 1 : 0.2, size: 1, sizeV: 0, over: 0 };
   const cur = { x: -1e4, y: -1e4, vx: 0, present: false };
-  const tracks = [], spores = [], flashes = [];
+  const tracks = [], flashes = [];
   let flow = rand(0, 50);
   const glow = { x: -0.53, y: -0.85, cast: [8, 12, 4], touch: [1, 1, 1], shadow: '28, 34, 44', night: null, n: 0, stirred: 0.25 };
   let lastSnap = -1, lastSpawn = -1, lastMicro = -1, nextProbe = 2.2, lastFeel = 6, lastProbeAt = Math.random() * 6.28, aware = 0;
@@ -75,15 +76,255 @@
     o[k] += o[v] * dt;
   }
 
+  // ---- What it hears ----
+  // It lives in that dish; nothing's keeping it there. And it can't stand noise. Earphones in,
+  // it starts, tears round the wall to get up speed, lets go at the point where its path runs
+  // to the Polaroid, and squeezes in under it. There it stays till they're out: a lump in the
+  // photo and a bit of it showing, and by night a glow from under the edge. Then it looks out,
+  // thinks about it, and creeps home.
+  // Out of the dish it's the same thing, drawn the same way: its canvas just goes with it, and
+  // has the Polaroid cut out of it. `den.c` is only for what's on the photo, and the eyes.
+  const phone = document.getElementById('phone');
+  const WAIT = 1.4, SWIRL = 1.35, LAPS = 2, CREEP = 3.2;
+  const den = { state: null, out: false, t: 0, press: 0, lean: 0, smear: 0, quiet: 0, heard: false, bulge: 0, p: 0, blink: 3 };
+
+  function startle() {
+    releaseAll(true);
+    ripple(rand(0, 6.28), 1.6);
+    ripple(rand(0, 6.28), 1.2);
+    blob.sizeV -= 2;
+    flash(blob.x, blob.y, 1);
+    den.state = 'startle'; den.t = 0;
+  }
+  // Where everything is, across the table. It goes under by the edge nearest the dish, and not
+  // near a corner.
+  function plot() {
+    const box = table.getBoundingClientRect(), r = polaroid.getBoundingClientRect(), d = dish.getBoundingClientRect();
+    const w = polaroid.offsetWidth, h = polaroid.offsetHeight, a = (parseFloat(getComputedStyle(polaroid).rotate) || 0) * Math.PI / 180, co = Math.cos(a), si = Math.sin(a);
+    const mx = r.left + r.width / 2 - box.left, my = r.top + r.height / 2 - box.top, dx = d.left + d.width / 2 - box.left, dy = d.top + d.height / 2 - box.top;
+    const world = (u, v) => [mx + u * co - v * si, my + u * si + v * co], hw = w / 2, hh = h / 2;
+    const lx = (dx - mx) * co + (dy - my) * si, ly = -(dx - mx) * si + (dy - my) * co, sideways = Math.abs(lx) / hw > Math.abs(ly) / hh;
+    const eu = sideways ? Math.sign(lx) * hw : clamp(lx, -hw * 0.55, hw * 0.55), ev = sideways ? clamp(ly, -hh * 0.55, hh * 0.55) : Math.sign(ly) * hh;
+    const nu = sideways ? Math.sign(lx) : 0, nv = sideways ? 0 : Math.sign(ly), R = BODY * scale * (glow.night ? 1.08 : 0.94);
+    const nx = nu * co - nv * si, ny = nu * si + nv * co, [ex, ey] = world(eu, ev);
+    Object.assign(den, { R, dx, dy, ex, ey, nx, ny, quad: [world(-hw, -hh), world(hw, -hh), world(hw, hh), world(-hw, hh)],
+      x0: dx, y0: dy, hx: ex - nx * R * 0.86, hy: ey - ny * R * 0.86, px: ex - nx * R * 0.3, py: ey - ny * R * 0.3 });
+  }
+  function sizeDen() {
+    const box = table.getBoundingClientRect(), s = Math.min(dpr, 1.5);
+    den.canvas.width = Math.round(box.width * s); den.canvas.height = Math.round(box.height * s);
+    den.s = s; den.W = box.width; den.H = box.height;
+    plot();
+  }
+  function openDen() {
+    if (!den.canvas) {
+      den.canvas = document.createElement('canvas');
+      den.canvas.className = 'goo-leap';
+      den.canvas.setAttribute('aria-hidden', 'true');
+      den.c = den.canvas.getContext('2d');
+      table.append(den.canvas);
+      den.eyes = [-1, 1].map(side => Array.from({ length: 16 }, () => {
+        const a = rand(0, 6.28), d = Math.sqrt(Math.random());
+        return { side, u: Math.cos(a) * d, v: Math.sin(a) * d, size: rand(0.05, 0.1), ph: rand(0, 6.28) };
+      }));
+    }
+    sizeDen();
+    den.canvas.style.display = 'block';
+  }
+  // Round the wall, faster and faster, on the glass: it's what's holding it to the curve. The
+  // laps come out so that it's going straight for the Polaroid when it's done.
+  function beginSwirl() {
+    openDen();
+    const from = canvas.getBoundingClientRect(), box = table.getBoundingClientRect();
+    const tx = (den.ex + box.left - from.left) / scale, ty = (den.ey + box.top - from.top) / scale, far = WALL - BODY * blob.size * 0.72;
+    const dir = Math.random() < 0.5 ? -1 : 1, D = Math.hypot(tx - MID, ty - MID), leave = Math.atan2(ty - MID, tx - MID) - dir * Math.acos(clamp(far / D, -1, 1));
+    const th0 = Math.atan2(blob.y - MID, blob.x - MID), more = (((leave - th0) * dir) % 6.283 + 6.283) % 6.283;
+    Object.assign(den, { state: 'swirl', t: 0, th0, dir, far, rho0: Math.hypot(blob.x - MID, blob.y - MID), sweep: 6.283 * LAPS + more });
+  }
+  function swirl(dt) {
+    den.t += dt;
+    if (den.state === 'startle') { if (den.t > 0.16) beginSwirl(); return; }
+    const u = clamp(den.t / SWIRL, 0, 1), th = den.th0 + den.dir * den.sweep * u * u;
+    // It goes as the square of how fast it's going, and the thinner it is the nearer the wall
+    den.smear = 1.35 * u * u;
+    const hug = WALL - (BODY * blob.size * 0.72) / (1 + den.smear * 0.75), rho = den.rho0 + (hug - den.rho0) * ease(0, 0.22, u);
+    blob.x = blob.tx = MID + Math.cos(th) * rho; blob.y = blob.ty = MID + Math.sin(th) * rho;
+    blob.next = time + 1;
+    blob.la = th + (den.dir * Math.PI) / 2;
+    den.lean = 0.5 * ease(0.1, 0.8, u);
+    den.press = ease(0.08, 0.3, u);
+    if (u >= 1) launch();
+  }
+  function launch() {
+    const from = canvas.getBoundingClientRect(), box = table.getBoundingClientRect();
+    den.x = from.left - box.left + blob.x * scale; den.y = from.top - box.top + blob.y * scale;
+    const speed = ((2 * den.sweep) / SWIRL) * den.far * scale;
+    Object.assign(den, { out: true, state: 'dash', t: 0, x0: den.x, y0: den.y, trip: Math.max(Math.hypot(den.ex - den.x, den.ey - den.y) / speed, 0.14), press: 0, lean: 0, tilt: 0 });
+    strands.length = 0;
+  }
+  function home() {
+    Object.assign(den, { out: false, state: null, press: 0, lean: 0, smear: 0, p: 0 });
+    den.canvas.style.display = 'none';
+    canvas.style.translate = canvas.style.scale = '';
+    const from = canvas.getBoundingClientRect(), box = table.getBoundingClientRect();
+    blob.x = blob.tx = (den.x - from.left + box.left) / scale; blob.y = blob.ty = (den.y - from.top + box.top) / scale;
+    blob.next = time + 2;
+    for (let i = 0; i < 5; i++) ripple(i * 1.25, 0.9);
+    blob.sizeV += 0.8;
+    flash(blob.x, blob.y, 0.5);
+    if (hovered) setHovered(true);
+  }
+  function roam(dt) {
+    const go = (x, y, f) => { den.x = den.x0 + (x - den.x0) * f; den.y = den.y0 + (y - den.y0) * f; };
+    const from = (x, y) => { den.x0 = x; den.y0 = y; den.t = 0; };
+    let up = 0, smear = 0, heading = den.tilt;
+    den.bulge += ((['hidden', 'peek'].includes(den.state) || (den.state === 'squeeze' && den.t > 0.3) ? 1 : 0) - den.bulge) * (1 - Math.exp(-dt * 7));
+    den.p += (((den.state === 'hidden' && hovered) || den.state === 'peek' ? 1 : 0) - den.p) * (1 - Math.exp(-dt * 6));
+    if (den.state === 'dash') {
+      den.t += dt / den.trip;
+      const f = Math.min(den.t, 1);
+      go(den.ex, den.ey, f);
+      heading = den.tilt = Math.atan2(den.ey - den.y0, den.ex - den.x0);
+      // Let go, nothing's holding it to the curve, and it pulls itself in as it flies
+      up = 0.55 * Math.sin(Math.PI * f); smear = 1.35 - 1.05 * f;
+      if (f >= 1) { from(den.ex, den.ey); den.state = 'squeeze'; }
+    } else if (den.state === 'squeeze') {
+      den.t += dt / 0.42;
+      const f = Math.min(den.t, 1);
+      go(den.hx, den.hy, 1 - (1 - f) ** 3);
+      heading = den.tilt = Math.atan2(-den.ny, -den.nx);
+      smear = 0.3 * (1 - f);
+      if (f >= 1) den.state = 'hidden';
+    } else if (den.state === 'hidden') {
+      den.x = den.hx + (den.px - den.hx) * den.p; den.y = den.hy + (den.py - den.hy) * den.p;
+      if (den.quiet > WAIT) { den.state = 'peek'; den.t = 0; }
+    } else if (den.state === 'peek') {
+      den.t += dt;
+      den.x = den.hx + (den.px - den.hx) * den.p; den.y = den.hy + (den.py - den.hy) * den.p;
+      if (den.heard) den.state = 'hidden';
+      else if (den.t > 1.7) {
+        plot();
+        const a = Math.atan2(den.ey - den.dy, den.ex - den.dx), rim = (RIM + 12) * scale + den.R * 0.3;
+        den.rx = den.dx + Math.cos(a) * rim; den.ry = den.dy + Math.sin(a) * rim;
+        den.ix = den.dx + Math.cos(a) * rim * 0.4; den.iy = den.dy + Math.sin(a) * rim * 0.4;
+        den.hop = a;
+        from(den.x, den.y);
+        den.state = 'creep'; den.done = 0; den.trip = Math.hypot(den.rx - den.x, den.ry - den.y);
+      }
+    } else if (den.state === 'creep') {
+      // In heaves, drawing itself up and letting itself go, and it's in no hurry
+      den.t += dt;
+      const heave = Math.sin(den.t * 5) ** 2;
+      den.done += (den.trip / CREEP) * (0.3 + 1.4 * heave) * dt;
+      const f = Math.min(den.done / den.trip, 1);
+      go(den.rx, den.ry, f);
+      heading = den.tilt = Math.atan2(den.ry - den.y0, den.rx - den.x0);
+      smear = 0.24 * heave;
+      if (den.heard) {
+        // That's it, back it goes
+        from(den.x, den.y);
+        den.trip = Math.max(Math.hypot(den.ex - den.x, den.ey - den.y) / (1100 * scale), 0.1);
+        den.state = 'dash';
+      } else if (f >= 1) { from(den.x, den.y); den.state = 'hop'; }
+    } else if (den.state === 'hop') {
+      den.t += dt / 0.36;
+      const f = Math.min(den.t, 1);
+      go(den.ix, den.iy, f);
+      up = 0.6 * Math.sin(Math.PI * f); smear = 0.12;
+      if (f >= 1) return home();
+    }
+    // Height's a matter of being a little nearer the eye
+    den.lift = 1 + 0.24 * up;
+    den.smear = smear;
+    blob.x = blob.tx = blob.y = blob.ty = MID;
+    blob.next = time + 9;
+    blob.la = heading;
+    canvas.style.translate = `${(den.x - den.dx).toFixed(2)}px ${(den.y - den.dy).toFixed(2)}px`;
+    canvas.style.scale = den.lift.toFixed(3);
+    paintDen();
+  }
+  // It's under the Polaroid, so where the Polaroid is there's none of it
+  function cutOut() {
+    const k = dpr * scale, f = 1 / (scale * den.lift);
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    for (const [x, y] of den.quad) ctx.lineTo((x - den.x) * f + MID, (y - den.y) * f + MID);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  function paintDen() {
+    const c = den.c, night = glow.night, R = den.R, s = den.s, hideX = den.hx, hideY = den.hy;
+    const quad = () => { c.moveTo(...den.quad[0]); for (let i = 1; i < 4; i++) c.lineTo(...den.quad[i]); c.closePath(); };
+    c.setTransform(s, 0, 0, s, 0, 0);
+    c.clearRect(0, 0, den.W, den.H);
+    // Under the photo, it shows as a rise in it, lit on one side
+    if (den.bulge > 0.01) {
+      c.save();
+      c.beginPath(); quad(); c.clip();
+      const reach = R * 1.45, a = den.bulge * (1 + 0.1 * Math.sin(time * 1.6));
+      const spot = (px, py, color, alpha) => {
+        const g = c.createRadialGradient(px, py, 0, px, py, reach);
+        g.addColorStop(0, `rgba(${color}, ${(alpha * a).toFixed(3)})`);
+        g.addColorStop(0.55, `rgba(${color}, ${(alpha * a * 0.42).toFixed(3)})`);
+        g.addColorStop(1, `rgba(${color}, 0)`);
+        c.fillStyle = g;
+        c.fillRect(px - reach, py - reach, reach * 2, reach * 2);
+      };
+      spot(hideX - glow.x * R * 0.42, hideY - glow.y * R * 0.42, '30, 26, 22', night ? 0.42 : 0.34);
+      spot(hideX + glow.x * R * 0.42, hideY + glow.y * R * 0.42, '255, 252, 240', night ? 0.1 : 0.34);
+      c.restore();
+    }
+    if (den.p > 0.02) {
+      c.save();
+      c.beginPath(); c.rect(0, 0, den.W, den.H); quad(); c.clip('evenodd');
+      paintEyes(c, den.ex + den.nx * R * 0.2, den.ey + den.ny * R * 0.2, R);
+      c.restore();
+    }
+  }
+  // Two lights, looking out from under, at whoever's there
+  function paintEyes(c, x, y, R) {
+    if (time > den.blink + 0.3) den.blink = time + rand(2, 5);
+    const tx = -den.ny, ty = den.nx, shut = 1 - 0.9 * bell(time - den.blink, 0.08), box = table.getBoundingClientRect();
+    const look = hovered && cur.at ? clamp(((cur.at[0] - box.left - x) * tx + (cur.at[1] - box.top - y) * ty) / (R * 3), -1, 1) * R * 0.1 : Math.sin(den.t * 2.6) * R * 0.1;
+    c.globalCompositeOperation = 'lighter';
+    for (const eye of den.eyes) for (const m of eye) {
+      const ex = x + tx * (m.side * R * 0.3 + look) + tx * m.u * R * 0.075 + den.nx * m.v * R * 0.09 * shut, ey = y + ty * (m.side * R * 0.3 + look) + ty * m.u * R * 0.075 + den.ny * m.v * R * 0.09 * shut, size = m.size * R * 1.1;
+      c.globalAlpha = den.p * (0.68 + 0.3 * Math.sin(time * 2 + m.ph));
+      c.drawImage(SOFT, ex - size, ey - size, size * 2, size * 2);
+    }
+    c.globalAlpha = 1;
+    c.globalCompositeOperation = 'source-over';
+  }
+  function hear(dt) {
+    den.heard = !!phone && phone.classList.contains('connected');
+    den.quiet = den.heard ? 0 : den.quiet + dt;
+    if (den.heard && !den.state && !leap && polaroid && blob.grow > 0.9) startle();
+    if (den.out) roam(dt);
+  }
+
   // ---- The body: a wandering outline, drawn out towards whatever's got its attention ----
 
   function radius(a) {
     const t = time * 1.5, R = BODY * blob.grow * blob.size;
     let r = R * (1 + 0.085 * Math.sin(2 * a + t * 0.31 + 1) + 0.06 * Math.sin(3 * a - t * 0.23 + 2) +
       0.034 * Math.sin(5 * a + t * 0.41) + 0.016 * Math.sin(8 * a - t * 0.7 + 4));
+    // Flung outward, it's thrown on the wall and spreads along it, and more of it drags behind
+    // than goes ahead. It's only as much of it as there was, so it's thinner for being longer.
+    if (den.smear > 0.01) {
+      const c = Math.cos(a - blob.la), s = Math.sin(a - blob.la), along = 1 + den.smear * (c > 0 ? 0.8 : 1.5), across = 1 / (1 + den.smear * 0.75);
+      r /= Math.sqrt((c * c) / (along * along) + (s * s) / (across * across));
+    }
     if (blob.lean > 0.001) r += blob.lean * R * 0.3 * bell(turn(a - blob.la), 0.62);
     for (const s of strands) if (s.mound > 0.05 && s.pin === 'anchor') r += s.mound * bell(turn(a - s.a), 0.13 + 0.09 * s.elong);
     for (const w of ripples) r += w.amp * 7 * Math.exp(-w.age * 4) * bell(turn(a - w.a), 0.3 + w.age);
+    // Driven against the glass, it's the glass that stops it
+    if (den.press > 0.01) {
+      const dx = blob.x - MID, dy = blob.y - MID, b = dx * Math.cos(a) + dy * Math.sin(a), wall = Math.sqrt(Math.max(b * b - dx * dx - dy * dy + (WALL - 1) ** 2, 0)) - b;
+      if (r > wall) r -= (r - wall) * den.press;
+    }
     return r;
   }
   // Where a point is, from the body: nearest point on its edge, which way's out, how far off
@@ -456,24 +697,10 @@
   function step(dt) {
     if (!still) time += dt;
     blob.grow += (1 - blob.grow) * (1 - Math.exp(-dt * 1.4));
-    const e = edge(cur.x, cur.y), present = cur.present && blob.grow > 0.6 && !(leap && leap.off);
+    const e = edge(cur.x, cur.y), present = cur.present && blob.grow > 0.6 && !(leap && leap.off) && !den.state;
     const inside = present && e.d < -4;
     blob.over += ((inside ? 1 : 0) - blob.over) * (1 - Math.exp(-dt * 6));
     flow += dt * (1 + 2 * aware + 2.5 * blob.over);
-    if (glow.night && spores.length < 16 && Math.random() < dt * 5) {
-      const a = rand(0, 6.28), [x, y] = at(a, 2);
-      spores.push({ x, y, vx: Math.cos(a) * rand(5, 13), vy: Math.sin(a) * rand(5, 13), age: 0, life: rand(2.5, 5.5), size: rand(1, 2.2), ph: rand(0, 6.28) });
-    }
-    for (let i = spores.length - 1; i >= 0; i--) {
-      const m = spores[i];
-      m.age += dt;
-      m.x += (m.vx + Math.sin(m.age * 1.7 + m.ph) * 7) * dt;
-      m.y += (m.vy + Math.cos(m.age * 1.3 + m.ph) * 7) * dt;
-      // They can't get through the glass
-      const dx = m.x - MID, dy = m.y - MID, L = Math.hypot(dx, dy);
-      if (L > WALL - 3) { m.x = MID + (dx / L) * (WALL - 3); m.y = MID + (dy / L) * (WALL - 3); m.vx *= 0.5; m.vy *= 0.5; }
-      if (m.age > m.life) spores.splice(i, 1);
-    }
     glow.n = glow.night ? glow.n + (1 - glow.n) * (1 - Math.exp(-dt * 2.5)) : 0;
     const rest = 0.25 + 0.45 * Math.max(aware, ready) + 0.6 * blob.over;
     glow.stirred += (rest - glow.stirred) * (1 - Math.exp(-dt * (rest > glow.stirred ? 7 : 1.2)));
@@ -483,8 +710,8 @@
     gone += ((leap && leap.off ? 1 : 0) - gone) * (1 - Math.exp(-dt * 8));
     // Point near him and it's seen where you're going: it gets ready, by as much as you're near
     ready += (nearing - ready) * (1 - Math.exp(-dt * (nearing > ready ? 5 : 3)));
-    const winding = leap && !leap.off, coil = winding ? 1 : leap ? 0 : ready, tense = coil > 0.02;
-    spring(blob, 'size', 'sizeV', (glow.night ? 1.08 : 0.94) * (1 - 0.24 * coil) * (1 - 0.5 * gone), leap ? 18 : tense ? 10 : 3, 0.5, dt);
+    const winding = leap && !leap.off, coil = winding ? 1 : leap || den.state ? 0 : ready, tense = coil > 0.02;
+    spring(blob, 'size', 'sizeV', (glow.night ? 1.08 : 0.94) * (1 - 0.24 * coil) * (1 - 0.5 * gone), leap || den.state ? 18 : tense ? 10 : 3, 0.5, dt);
     const reach = P.reach * (glow.night ? 1.15 : 1);
     aware = present && !inside ? ease(P.awareness * (glow.night ? 1.15 : 1), 18, e.d) : 0;
 
@@ -499,6 +726,7 @@
       blob.tx = MID + Math.cos(a) * far; blob.ty = MID + Math.sin(a) * far;
       blob.next = time + rand(4, 8);
     }
+    if (den.state === 'startle' || den.state === 'swirl') swirl(dt);
     // Winding up: it draws back from where it's going, and holds there, quite still
     if (tense) {
       const dir = winding ? leap.dir : aim;
@@ -510,8 +738,8 @@
     const k = 1 - Math.exp(-dt * (winding ? 16 : tense ? 6 : aware > 0.02 ? 2.2 : 0.5));
     blob.x += (blob.tx - blob.x) * k;
     blob.y += (blob.ty - blob.y) * k;
-    const strain = Math.max(aware, 1.5 * coil), quiver = (1 - coil) * 0.03 * Math.sin(time * 19);
-    blob.lean += ((still ? 0 : strain) * (1 + quiver) - blob.lean) * (1 - Math.exp(-dt * (6 + 16 * coil)));
+    const strain = Math.max(aware, 1.5 * coil, den.lean), quiver = (1 - coil) * 0.03 * Math.sin(time * 19);
+    blob.lean += ((still ? 0 : strain) * (1 + quiver) - blob.lean) * (1 - Math.exp(-dt * (6 + 16 * Math.max(coil, den.press))));
 
     if (!still) {
       const active = strands.filter(s => s.kind === 'reach' && (s.state === 'grow' || s.state === 'attached')).length;
@@ -523,7 +751,7 @@
         const micro = strands.filter(s => s.kind === 'micro' && s.state !== 'recoil').length;
         if (micro < Math.round(7 * ease(0.1, 0.8, aware)) && time - lastMicro > rand(0.03, 0.07)) { spawnMicro(e.a); lastMicro = time; }
       }
-      if (!inside && aware < 0.02 && time > nextProbe && blob.grow > 0.95) {
+      if (!inside && aware < 0.02 && time > nextProbe && blob.grow > 0.95 && !den.state) {
         if (strands.every(s => s.kind === 'probe' || s.state === 'recoil')) {
           if (time - lastFeel > 9) { spawnFeeler(); lastFeel = time; } else spawnProbe();
         }
@@ -990,11 +1218,13 @@
     const near = ctx.createRadialGradient(blob.x, blob.y, r * 0.6, blob.x, blob.y, WALL * 1.5);
     near.addColorStop(0, `rgba(${INK}, ${(0.5 * level).toFixed(3)})`);
     near.addColorStop(1, `rgba(${INK}, 0)`);
-    ctx.strokeStyle = near;
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    ctx.arc(MID, MID, WALL + 4.5, 0, 6.29);
-    ctx.stroke();
+    if (!den.out) {
+      ctx.strokeStyle = near;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(MID, MID, WALL + 4.5, 0, 6.29);
+      ctx.stroke();
+    }
 
     // A tube's deepest down its middle, so that's where it's brightest
     ctx.globalAlpha = level;
@@ -1021,7 +1251,6 @@
       ctx.stroke();
     });
     const bit = (x, y, size, a) => { ctx.globalAlpha = a; ctx.drawImage(SOFT, x - size, y - size, size * 2, size * 2); };
-    for (const m of spores) bit(m.x, m.y, m.size, n * 0.5 * Math.sin(Math.PI * Math.min(m.age / m.life, 1)));
     // A bit's a small drop of it, with an edge of its own, and off the table, in the air, it
     // lights nothing but itself
     for (const d of drops) {
@@ -1495,15 +1724,22 @@
         c.fill();
       }
     }
+    paintLump(c, x, y, r, Math.atan2(y - y0, x - x0), 1 + 0.4 * up, z * 14, night);
+  }
+  // All of it, or most, off the dish: drawn out along the way it's going
+  function paintLump(c, x, y, r, heading, stretch, phase, night) {
+    c.save();
+    c.translate(x, y);
+    c.rotate(heading);
+    c.scale(stretch, 1 / stretch);
     c.beginPath();
-    const heading = Math.atan2(y - y0, x - x0), stretch = 1 + 0.4 * up;
     for (let i = 0; i <= 56; i++) {
-      const a = (i / 56) * 6.283, q = r * (1 + 0.09 * Math.sin(3 * a + z * 11) + 0.05 * Math.sin(5 * a - z * 17));
-      const u = Math.cos(a) * q * stretch, v = (Math.sin(a) * q) / stretch;
-      c.lineTo(x + u * Math.cos(heading) - v * Math.sin(heading), y + u * Math.sin(heading) + v * Math.cos(heading));
+      const a = (i / 56) * 6.283, q = r * (1 + 0.09 * Math.sin(3 * a + phase * 0.8) + 0.05 * Math.sin(5 * a - phase * 1.2));
+      c.lineTo(Math.cos(a) * q, Math.sin(a) * q);
     }
     c.closePath();
-    const lx = x + glow.x * r * 0.35, ly = y + glow.y * r * 0.35, body = c.createRadialGradient(lx, ly, r * 0.1, x, y, r * 1.1);
+    const co = Math.cos(heading), si = Math.sin(heading), gx = glow.x * co + glow.y * si, gy = -glow.x * si + glow.y * co;
+    const body = c.createRadialGradient(gx * r * 0.35, gy * r * 0.35, r * 0.1, 0, 0, r * 1.1);
     if (night) {
       body.addColorStop(0, 'rgb(120, 174, 124)');
       body.addColorStop(0.72, 'rgb(84, 136, 98)');
@@ -1516,6 +1752,7 @@
     }
     c.fillStyle = body;
     c.fill();
+    c.restore();
     if (!night) {
       c.fillStyle = shine(0.75);
       c.beginPath();
@@ -1537,7 +1774,7 @@
 
   function setHovered(on) {
     hovered = on;
-    if (!on || leap) return;
+    if (!on || leap || den.state) return;
     kit = kit || build();
     clearTimeout(drying);
     kit.stage.style.rotate = getComputedStyle(polaroid).rotate;
@@ -1703,7 +1940,7 @@
       if (night) { blob.sizeV += 1.2; spawnProbe(); nextProbe = time + 0.7; flash(blob.x, blob.y, 0.9); } else {
         blob.sizeV -= 2.4;
         releaseAll(true);
-        for (let i = 0; i < OUTLINE / 21; i++) ripple(i * 1.5, 0.9);
+        for (let i = 0; i < 4; i++) ripple(i * 1.5, 0.9);
       }
     }
     if (glow.night === null && still) glow.n = night ? 1 : 0;
@@ -1721,6 +1958,7 @@
   new ResizeObserver(() => {
     if (kit && !leap) { kit.stage.remove(); kit.fly.remove(); kit = null; }
     layout();
+    if (den.out) sizeDen();
     prepare();
   }).observe(table);
   dish.querySelector('img').addEventListener('load', layout);
@@ -1734,7 +1972,7 @@
     if (!rect.width) return;
     const x = (e.clientX - rect.left) / scale, y = (e.clientY - rect.top) / scale;
     if (cur.present) cur.vx = ((x - cur.x) / Math.max(e.timeStamp - cur.t, 1)) * 1000;
-    cur.x = x; cur.y = y; cur.t = e.timeStamp;
+    cur.x = x; cur.y = y; cur.t = e.timeStamp; cur.at = [e.clientX, e.clientY];
     cur.present = Math.hypot(x - MID, y - MID) < LIMIT;
     if (polaroid && kit) {
       const r = polaroid.getBoundingClientRect(), off = Math.hypot(Math.max(r.left - e.clientX, 0, e.clientX - r.right), Math.max(r.top - e.clientY, 0, e.clientY - r.bottom));
@@ -1760,19 +1998,21 @@
   // Runs while it can be seen, and at half speed when it's only itself to mind
   let running = false, seen = true, last = 0, acc = 0;
   function frame(now) {
-    if (!seen || document.hidden) { running = false; return; }
+    if ((!seen && !den.out) || document.hidden) { running = false; return; }
     requestAnimationFrame(frame);
     const dt = Math.min((now - last) / 1000, 0.1);
     last = now;
     acc += dt;
+    hear(dt);
     let n = 0;
     while (acc >= SUB && n < 14) { step(SUB); acc -= SUB; n++; }
     if (n === 14) acc = 0;
-    const busy = cur.present || leap || ready > 0.01 || strands.some(s => s.kind !== 'probe') || drops.length;
+    const busy = cur.present || leap || ready > 0.01 || den.state || strands.some(s => s.kind !== 'probe') || drops.length;
     if (busy || !(frames++ & 1)) draw();
+    if (den.out) cutOut();
   }
   function wake() {
-    if (running || !seen || document.hidden) return;
+    if (running || (!seen && !den.out) || document.hidden) return;
     running = true;
     last = performance.now();
     requestAnimationFrame(frame);

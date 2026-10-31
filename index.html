@@ -390,6 +390,9 @@ layout_style: "homepage"
       <filter id="room-light-phone" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
+      <filter id="room-light-cable" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
+      </filter>
       <filter id="room-light-projects" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
@@ -2243,6 +2246,10 @@ layout_style: "homepage"
           const r = el.getBoundingClientRect();
           return lightAt(r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top);
         });
+        // The phone's cable has the light of where it lies: on a narrow table it leaves by the
+        // side, a long way up the phone and nearer the bulb. Otherwise, as the phone does.
+        const cableRun = [...table.querySelectorAll('#phone .run-side')].map(run => run.getBoundingClientRect()).find(run => run.width);
+        const cableLight = cableRun ? lightAt(cableRun.left + cableRun.width / 2 - box.left, cableRun.top + cableRun.height / 2 - box.top) : selfLight[selfLit.findIndex(el => el.id === 'phone')];
         const placed = objects.map(measure);
         const turned = parts.map(el => (parseFloat(getComputedStyle(el.closest('.item')).rotate) || 0) * Math.PI / 180);
         const partsPlaced = parts.map(measure);
@@ -2270,15 +2277,18 @@ layout_style: "homepage"
         lay();
         glow();
 
-        selfLit.forEach((el, i) => {
-          const lit = selfLight[i];
-          el.style.setProperty('--lit', rgb(lit));
-          const filter = document.querySelector(`#room-light-${el.id} feColorMatrix`);
+        const roomLight = (name, lit) => {
+          const filter = document.querySelector(`#room-light-${name} feColorMatrix`);
           if (filter) {
             const [red, green, blue] = lit.map(c => (c / 255).toFixed(3));
             filter.setAttribute('values', `${red} 0 0 0 0 0 ${green} 0 0 0 0 0 ${blue} 0 0 0 0 0 1 0`);
           }
+        };
+        selfLit.forEach((el, i) => {
+          el.style.setProperty('--lit', rgb(selfLight[i]));
+          roomLight(el.id, selfLight[i]);
         });
+        roomLight('cable', cableLight);
 
         function cast(height, cx, cy) {
           let dx = 0.53, dy = 0.85, length = height * u * 0.5;

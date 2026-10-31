@@ -1382,9 +1382,12 @@ html:not(.dark-mode) .cam-screen {
 }
 
 #phone .base,
-#phone .cable,
 html:not(.dark-mode) .phone-screen {
   filter: url(#room-light-phone);
+}
+
+#phone .cable {
+  filter: url(#room-light-cable);
 }
 
 .phone-screen {
