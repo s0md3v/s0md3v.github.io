@@ -3070,8 +3070,8 @@ html:not(.dark-mode) .sw-sun {
   #papers { --w: 38; --r: 5deg; left: calc(100% - 21 * var(--u)); top: calc(268 * var(--u)); }
   #papers .tag { --tx: 18%; --tw: 22; }
   #philosophy { --x: -22; --y: 240; --w: 26; --tw: 26; }
-  #playground { --x: -6; --y: 268; --w: 24; --tw: 27; }
   #gallery { --x: -20; --y: 304; --w: 36; --tw: 22; }
-  #uses { --w: 30; --r: 90deg; left: calc(14 * var(--u)); top: calc(362 * var(--u)); }
+  #playground { --x: 24; --y: 336; --w: 24; --tw: 27; }
+  #uses { --w: 30; left: calc(30 * var(--u)); top: calc(100% - 14 * var(--u)); }
   #uses .tag { --tw: 18; }
 }
