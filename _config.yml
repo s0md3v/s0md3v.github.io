@@ -9,6 +9,8 @@ kramdown:
   hard_wrap: false
   gfm_quirks: paragraph_end
   math_engine: mathjax
+  # Without the variation selector, iPhones draw the arrow as a blue emoji
+  footnote_backlink: "↩\uFE0E"
   syntax_highlighter: rouge
   syntax_highlighter_opts:
     default_lang: plaintext

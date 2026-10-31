@@ -26,8 +26,10 @@ html {
 }
 
 /* White diagrams and screenshots would glare off a dark page */
-.dark-mode .wrapper :is(img, video) {
-  filter: brightness(0.8);
+@media screen {
+  .dark-mode .wrapper :is(img, video) {
+    filter: brightness(0.8);
+  }
 }
 
 /* The table the sheet lies on, as on the homepage. Phones have no room for it. */
@@ -253,26 +255,28 @@ pre>code {
 
 /* Where a post ends: where to go next */
 .post-end {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 1em 2em;
   padding-top: 1.5em;
   border-top: 1px solid var(--border-color);
 }
 
 .post-end-link {
+  /* Side by side while two fit, whatever the text size */
+  flex: 1 1 14em;
+  overflow-wrap: anywhere;
   font-weight: 600;
   line-height: 1.3;
   text-wrap: balance;
 }
 
 .post-end-newer {
-  grid-column: 2;
   text-align: right;
 }
 
 .post-end-all {
-  grid-column: 1 / -1;
+  flex-basis: 100%;
   font-size: 0.85em;
 }
 
@@ -284,12 +288,7 @@ pre>code {
 }
 
 @media (max-width: 600px) {
-  .post-end {
-    grid-template-columns: 1fr;
-  }
-
   .post-end-newer {
-    grid-column: auto;
     text-align: left;
   }
 }
@@ -300,6 +299,8 @@ pre>code {
 }
 
 /* Long URLs and inline code would otherwise push the page sideways on phones */
+.post-title,
+.post-content :is(h2, h3, h4),
 .post-content p,
 .post-content li,
 .post-content :not(pre)>code {
@@ -620,14 +621,15 @@ pre>code {
 .settings-dropdown {
   display: none;
   position: absolute;
-  top: 30px;
-  left: 0;
+  top: 100%;
+  /* Its text lines up with the gear above it */
+  left: -3px;
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  width: 330px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 12px 14px 2px;
+  width: max-content;
+  line-height: 1.5;
+  box-shadow: 2px 3px 7px rgba(var(--sheet-shadow), 0.14), 5px 9px 26px rgba(var(--sheet-shadow), 0.08);
   z-index: 200;
   font-size: 1rem;
   /* The panel stays in the UI font so changing the reading font can't break it */
@@ -646,14 +648,12 @@ pre>code {
 }
 
 .settings-subtitle {
-  margin: 0 0 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--muted-color);
-  font-weight: bold;
 }
 
 .settings-section {
-  margin-bottom: 16px;
+  margin-bottom: 6px;
 }
 
 .settings-section:last-child {
@@ -663,33 +663,37 @@ pre>code {
 .settings-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 1.2em;
 }
 
+/* Marked the way the nav marks the current page. A background rather than a text underline,
+   so it also goes under the sun and moon. */
 .settings-options button {
-  background-color: var(--background-color);
-  border: 1px solid var(--border-color);
+  background: none;
+  border: none;
   color: var(--foreground-color);
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 0;
   cursor: pointer;
+  min-width: 32px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
-  flex: 1;
-  transition: all 0.2s ease;
+  font-size: 1rem;
+  transition: color 0.15s ease;
 }
 
 .settings-options button:hover {
-  background-color: var(--link-hover-bg);
+  color: var(--accent-color);
 }
 
 .settings-options button.active {
-  background-color: var(--accent-color);
-  color: var(--on-accent-color);
-  border-color: var(--accent-color);
+  background: linear-gradient(var(--accent-color), var(--accent-color)) center calc(50% + 0.85em) / 100% 2px no-repeat;
+}
+
+#decrease-font,
+#increase-font {
+  font-size: 1.3rem;
 }
 
 .skip-link {
@@ -751,23 +755,24 @@ pre>code {
     max-height: calc(100dvh - 100px - env(safe-area-inset-bottom));
     overflow-y: auto;
     background: var(--background-color);
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    padding: 6px 0;
+    box-shadow: 2px 3px 7px rgba(var(--sheet-shadow), 0.14), 5px 9px 26px rgba(var(--sheet-shadow), 0.08);
     z-index: 100;
     align-items: stretch;
-    gap: 4px;
+    gap: 0;
   }
 
   .nav-links.visible {
     display: flex;
   }
 
+  /* The words end over the hamburger they came from */
   .nav-links a {
-    padding: 12px 16px;
+    padding: 12px 9px 12px 40px;
     display: block;
     width: 100%;
-    text-align: center;
+    text-align: right;
   }
 
   .menu-toggle {
@@ -776,17 +781,19 @@ pre>code {
     padding: 10px;
   }
 
+  /* The panel sits on the bar, as the menu does, not on the settings button */
+  .settings-wrapper {
+    position: static;
+  }
+
   .settings-dropdown {
-    position: fixed;
     left: 50%;
     transform: translateX(-50%);
     top: auto;
     bottom: calc(100% + 8px);
-    width: 90%;
-    max-width: 350px;
+    max-width: calc(100% - 32px);
     max-height: calc(100dvh - 100px - env(safe-area-inset-bottom));
     overflow-y: auto;
-    line-height: 1.5;
   }
 }
 
@@ -999,9 +1006,11 @@ li {
     --background-color: #fff;
     --foreground-color: #000;
     --midground-color: #333;
+    --heading-color: #000;
     --muted-color: #555;
     --accent-color: #000;
     --link-color: #000;
+    --link-visited: #000;
     --border-color: #ccc;
     --code-bg: #f2f2f2;
   }
@@ -1024,5 +1033,26 @@ li {
     margin: 0;
     background: none;
     box-shadow: none;
+  }
+
+  /* Paper is narrower than the phone layout's limit, and has no bar to clear */
+  main.content,
+  main.blog-content {
+    padding-bottom: 0;
+  }
+
+  /* Nothing scrolls on paper */
+  .post-content pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    break-inside: avoid;
+  }
+
+  .post-content :is(img, video) {
+    break-inside: avoid;
+  }
+
+  .post-content :is(h2, h3, h4) {
+    break-after: avoid;
   }
 }
