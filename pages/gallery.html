@@ -57,7 +57,6 @@ description: Photographs by Somdev Sangwan.
         /* Keeps shimmer/img z-index below the fixed header and mobile nav */
         isolation: isolate;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .gallery-item::before {
@@ -92,18 +91,12 @@ description: Photographs by Somdev Sangwan.
         outline-offset: 2px;
     }
 
-    .gallery-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
-
     .gallery-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
-        transition: transform 0.5s ease, opacity 0.5s ease;
+        transition: opacity 0.5s ease;
         opacity: 0;
         position: relative;
         z-index: 2;
@@ -114,19 +107,79 @@ description: Photographs by Somdev Sangwan.
         opacity: 1;
     }
 
-    .gallery-item:hover img {
-        transform: scale(1.05);
-    }
-
     .gallery-item-wrapper.wide {
         grid-column: span 2;
+    }
+
+    /* A photo's colours leak into its border. Only those of the edge beside it (border-image),
+       blurred along that edge so no detail's left, and made solid again, as blur thins a strip
+       this narrow (#leak-colours). Weakening with distance from the photo, by more or less
+       depending on the fibres it meets (the mask), and gone softly where it runs out
+       (#leak-edge), so a spread goes as far as it goes, the strongest as far as the edge. A
+       pixel over the photo, as on a tilted print the two edges are each antialiased, and the
+       paper would show between them. */
+    .gallery-item {
+        --border-width: 7px;
+    }
+
+    .modal-screen {
+        --border-width: clamp(8px, 1.6vmin, 16px);
+    }
+
+    .leak {
+        position: absolute;
+        container-type: size;
+        filter: url(#leak-edge);
+        pointer-events: none;
+    }
+
+    .leak span {
+        position: absolute;
+        inset: 0;
+        --falloff: #000, rgb(0 0 0 / 0.35) 60%, rgb(0 0 0 / 0.26);
+        mask-image:
+            url('{{ "/assets/images/fibres.webp" | relative_url }}'),
+            linear-gradient(to top, var(--falloff)),
+            linear-gradient(to bottom, var(--falloff)),
+            linear-gradient(to left, var(--falloff)),
+            linear-gradient(to right, var(--falloff)),
+            radial-gradient(circle var(--border-width) at 100% 100%, var(--falloff)),
+            radial-gradient(circle var(--border-width) at 0 100%, var(--falloff)),
+            radial-gradient(circle var(--border-width) at 100% 0, var(--falloff)),
+            radial-gradient(circle var(--border-width) at 0 0, var(--falloff));
+        mask-size:
+            var(--fibres, calc(60 * var(--border-width))),
+            calc(100% - 2 * var(--border-width)) calc(var(--border-width) + 1px),
+            calc(100% - 2 * var(--border-width)) calc(var(--border-width) + 1px),
+            calc(var(--border-width) + 1px) calc(100% - 2 * var(--border-width)),
+            calc(var(--border-width) + 1px) calc(100% - 2 * var(--border-width)),
+            var(--border-width) var(--border-width),
+            var(--border-width) var(--border-width),
+            var(--border-width) var(--border-width),
+            var(--border-width) var(--border-width);
+        mask-position: var(--leak), top, bottom, left, right, top left, top right, bottom left, bottom right;
+        mask-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+        mask-composite: intersect, add, add, add, add, add, add, add;
+    }
+
+    .leak span::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: var(--border-width) solid transparent;
+        border-image: var(--photo) 2 / var(--border-width) / 0 stretch;
+        filter: blur(calc(2 * var(--border-width))) url(#leak-colours);
+    }
+
+    .gallery-item .leak {
+        display: none;
     }
 
     /* On the table, they're prints, on the same paper as the sheets and as flat on it. Put down
        by hand, so not quite square. Phones have no table. */
     @media (min-width: 769px) {
         .gallery-item {
-            padding: 7px;
+            padding: var(--border-width);
             background: var(--background-color);
             border-radius: 1px;
             --print-shadow:
@@ -140,52 +193,19 @@ description: Photographs by Somdev Sangwan.
             background: linear-gradient(90deg, transparent 0%, var(--code-bg) 50%, transparent 100%);
         }
 
-        /* Nothing moves or casts further: moved, the browser blurs the photo till it stops */
-        .gallery-item:hover {
-            transform: none;
-            box-shadow: var(--print-shadow);
-        }
-
-        /* The photo's colours leak into the paper, as the intro card's ink does: along the fibres,
-           so only here and there, in a different place on each print. A blurred copy, only in the
-           border, so the photo's left alone and can't blur while this fades: no blending, which
-           would redraw the whole print. Fetched once the photo's here, not before. */
-        .gallery-item::after {
-            content: "";
-            position: absolute;
+        /* Which print you're on: it doesn't move, or the browser would blur the photo till it
+           stopped. Fetched once the photo's here, not before. Over the photo, not under it, or
+           the browser would redraw and blur it while this fades. */
+        .gallery-item.img-loaded .leak {
+            display: block;
             inset: 0;
             z-index: 3;
-            padding: 7px;
-            background: center / cover no-repeat;
-            filter: blur(5px) saturate(1.7);
-            mask-image:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9 0 0 0 -4.6'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23f)'/%3E%3C/svg%3E"),
-                linear-gradient(#000 0 0),
-                linear-gradient(#000 0 0);
-            mask-size: 420px 420px, auto, auto;
-            mask-position: var(--leak), 0 0, 0 0;
-            mask-clip: border-box, content-box, border-box;
-            mask-composite: intersect, exclude;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.1s ease;
         }
 
-        .dark-mode .gallery-item::after {
-            filter: blur(5px) saturate(1.7) brightness(1.5);
-        }
-
-        .gallery-item.img-loaded::after {
-            background-image: var(--photo);
-        }
-
-        .gallery-item:hover::after {
+        .gallery-item:is(:hover, :focus-visible, .viewed) .leak {
             opacity: 1;
-        }
-
-        /* A print's picture doesn't grow out of its border */
-        .gallery-item:hover img {
-            transform: none;
         }
 
         /* Tilted, each is its own layer, so one that's up has to be over its neighbours */
@@ -219,10 +239,13 @@ description: Photographs by Somdev Sangwan.
     /* Locking the page while a photo's open keeps where it is, and its scrollbar's room */
     html {
         scrollbar-gutter: stable;
+        transition: background-color 0.3s ease;
     }
 
+    /* The dark's fixed, so it stops short of that room: the room goes as dark by itself */
     html.modal-open {
         overflow: hidden;
+        background: color-mix(in srgb, var(--desk-color) 5%, #000);
     }
 
     .modal {
@@ -258,24 +281,26 @@ description: Photographs by Somdev Sangwan.
         transition: none;
     }
 
-    /* The photo in the camera's bezel, its pink where it frames the screen, and as
-       narrow, so it doesn't tint the photo. Sized from the photo's own proportions, so
+    /* The photo in a print's paper border. Sized from the photo's own proportions, so
        the thumbnail can stand in, enlarged, while the photo loads; no bigger than the
        photo, nor than the window allows, and the window's height as it is right now */
     .modal-screen {
-        --bezel: clamp(6px, 1.1vmin, 11px);
-        --room: calc(100vw - 2 * max(20px, 4vw) - 2 * var(--bezel));
+        --room: calc(100vw - 2 * max(20px, 4vw) - 2 * var(--border-width));
         position: relative;
         display: block;
         box-sizing: content-box;
-        width: min(calc(var(--w) * 1px), var(--room), calc((95vh - 2 * var(--bezel)) * var(--ar)));
-        width: min(calc(var(--w) * 1px), var(--room), calc((95dvh - 2 * var(--bezel)) * var(--ar)));
+        width: min(calc(var(--w) * 1px), var(--room), calc((95vh - 2 * var(--border-width)) * var(--ar)));
+        width: min(calc(var(--w) * 1px), var(--room), calc((95dvh - 2 * var(--border-width)) * var(--ar)));
         aspect-ratio: var(--ar);
-        border: var(--bezel) solid rgb(172 122 130);
-        border-radius: calc(var(--bezel) * 0.8);
+        border: var(--border-width) solid var(--background-color);
+        border-radius: 1px;
         background: var(--code-bg) center / 100% 100% no-repeat;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
         transform-origin: 0 0;
+    }
+
+    /* Its own photo's, the print's */
+    .modal-screen .leak {
+        inset: calc(-1 * var(--border-width));
     }
 
     /* Over the thumbnail, once it's all here */
@@ -329,6 +354,11 @@ description: Photographs by Somdev Sangwan.
         color: var(--accent-color);
     }
 
+    /* They come and go with the dark, not over the page */
+    .modal:not(.visible) .modal-button {
+        opacity: 0;
+    }
+
     .close-button {
         top: 20px;
         right: 20px;
@@ -362,6 +392,19 @@ description: Photographs by Somdev Sangwan.
 
 <h1 class="sr-only">Gallery</h1>
 
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <filter id="leak-edge" color-interpolation-filters="sRGB">
+        <feComponentTransfer>
+            <feFuncA type="linear" slope="2.5" intercept="-0.5" />
+        </feComponentTransfer>
+    </filter>
+    <filter id="leak-colours" color-interpolation-filters="sRGB">
+        <feComponentTransfer>
+            <feFuncA type="linear" slope="12" />
+        </feComponentTransfer>
+    </filter>
+</svg>
+
 <div class="gallery" id="gallery">
     {% for image in site.data.gallery %}
     {% assign stem = image.filename | remove: '.webp' %}
@@ -381,6 +424,7 @@ description: Photographs by Somdev Sangwan.
                 alt="Photo {{ image.filename }}"
                 onload="this.parentElement.classList.add('img-loaded')"
                 onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.removeAttribute('srcset');this.src=this.parentElement.dataset.full}">
+            <span class="leak"><span></span></span>
         </button>
     </div>
     {% endfor %}
@@ -393,6 +437,7 @@ description: Photographs by Somdev Sangwan.
     <span class="modal-screen">
         <img alt="">
         <span class="modal-count" aria-hidden="true"></span>
+        <span class="leak"><span></span></span>
     </span>
     <span class="sr-only" aria-live="polite"></span>
 </div>
@@ -446,17 +491,26 @@ description: Photographs by Somdev Sangwan.
 
     // Shows the i-th photo: its thumbnail, already here, stands in until it's loaded
     function show(i) {
+        items[index]?.classList.remove('viewed');
         index = i;
         if (zoom) {
             unzoomed();
             frame.style.transform = '';
         }
         const item = items[i];
+        item.classList.add('viewed');
         const thumb = item.querySelector('img');
         const w = +thumb.getAttribute('width');
         frame.style.setProperty('--w', w);
         frame.style.setProperty('--ar', w / +thumb.getAttribute('height'));
         frame.style.backgroundImage = `url("${thumb.currentSrc || thumb.src}")`;
+        frame.style.setProperty('--photo', item.style.getPropertyValue('--photo'));
+        // The print's spread, enlarged: its fibres and where they fall, as a share of the print
+        const [x, y] = item.style.getPropertyValue('--leak').split(' ').map(parseFloat);
+        const fibres = 60 * parseFloat(getComputedStyle(item).getPropertyValue('--border-width'));
+        const inFrame = (across, down) => `${across / item.offsetWidth * 100}cqw ${down / item.offsetHeight * 100}cqh`;
+        frame.style.setProperty('--leak', inFrame(x, y));
+        frame.style.setProperty('--fibres', inFrame(fibres, fibres));
 
         // A new one each time, so the last photo never shows in this one's frame
         const img = new Image();
@@ -478,17 +532,26 @@ description: Photographs by Somdev Sangwan.
         });
     }
 
-    // From where something is to where the photo is: for flying between them
-    function from(rect) {
+    // From a print to where the photo is, its frame over the print: for flying between them
+    function from(print) {
         const to = frame.getBoundingClientRect();
-        return `translate(${rect.left - to.left}px, ${rect.top - to.top}px) ` +
-            `scale(${rect.width / to.width}, ${rect.height / to.height})`;
+        return `translate(${print.x - to.left}px, ${print.y - to.top}px) rotate(${print.tilt}deg) ` +
+            `translate(${-print.w / 2}px, ${-print.h / 2}px) scale(${print.w / to.width}, ${print.h / to.height})`;
     }
 
-    // Its thumbnail's place, when it's in sight to fly from or back to
-    function thumbRect(i) {
-        const rect = items[i].querySelector('img').getBoundingClientRect();
-        return rect.bottom > 0 && rect.top < innerHeight && rect.width ? rect : null;
+    // Where its print lies, by its middle, as its box is wider tilted: when it's in sight to
+    // fly from or back to
+    function printAt(i) {
+        const item = items[i];
+        const box = item.getBoundingClientRect();
+        if (box.bottom <= 0 || box.top >= innerHeight || !box.width) return null;
+        return {
+            x: box.left + box.width / 2,
+            y: box.top + box.height / 2,
+            w: item.offsetWidth,
+            h: item.offsetHeight,
+            tilt: parseFloat(getComputedStyle(item.parentElement).rotate) || 0
+        };
     }
 
     function stopMotion() {
@@ -560,11 +623,11 @@ description: Photographs by Somdev Sangwan.
         document.documentElement.classList.add('modal-open');
         setBackgroundInert(true);
 
-        // Out of its thumbnail, or where it's out of sight, just closer
-        const rect = thumbRect(i);
+        // Out of its print, or where it's out of sight, just closer
+        const print = printAt(i);
         if (!still.matches) {
-            frame.animate(rect
-                ? [{ transform: from(rect), opacity: 0 }, { opacity: 1, offset: 0.25 }, { transform: 'none', opacity: 1 }]
+            frame.animate(print
+                ? [{ transform: from(print), opacity: 0 }, { opacity: 1, offset: 0.25 }, { transform: 'none', opacity: 1 }]
                 : [{ transform: 'translate(2.5%, 2.5%) scale(0.95)', opacity: 0 }, { transform: 'none', opacity: 1 }],
                 { duration: 350, easing: EASE });
         }
@@ -583,11 +646,12 @@ description: Photographs by Somdev Sangwan.
         item.scrollIntoView({ block: 'nearest', behavior: 'instant' });
         item.focus({ preventScroll: true });
 
-        const rect = thumbRect(index);
+        const print = printAt(index);
         const now = getComputedStyle(frame).transform;
         stopMotion();
         unzoomed();
         const end = () => {
+            item.classList.remove('viewed');
             modal.style.display = 'none';
             modal.classList.remove('dragging');
             modal.style.removeProperty('--dim');
@@ -596,8 +660,8 @@ description: Photographs by Somdev Sangwan.
         };
         frame.style.transform = '';
         if (still.matches) return end();
-        frame.animate(rect
-            ? [{ transform: now === 'none' ? 'none' : now, opacity: 1 }, { opacity: 1, offset: 0.75 }, { transform: from(rect), opacity: 0 }]
+        frame.animate(print
+            ? [{ transform: now === 'none' ? 'none' : now, opacity: 1 }, { opacity: 1, offset: 0.75 }, { transform: from(print), opacity: 0 }]
             : [{ transform: now === 'none' ? 'none' : now, opacity: 1 }, { transform: 'translate(2.5%, 2.5%) scale(0.95)', opacity: 0 }],
             { duration: 300, easing: EASE, fill: 'forwards' }).onfinish = end;
     }
