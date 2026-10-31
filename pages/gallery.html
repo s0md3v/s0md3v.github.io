@@ -122,6 +122,90 @@ description: Photographs by Somdev Sangwan.
         grid-column: span 2;
     }
 
+    /* On the table, they're prints, on the same paper as the sheets and as flat on it. Put down
+       by hand, so not quite square. Phones have no table. */
+    @media (min-width: 769px) {
+        .gallery-item {
+            padding: 7px;
+            background: var(--background-color);
+            border-radius: 1px;
+            --print-shadow:
+                0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.2),
+                2px 3px 7px rgba(var(--sheet-shadow), 0.14),
+                5px 9px 26px rgba(var(--sheet-shadow), 0.08);
+            box-shadow: var(--print-shadow);
+        }
+
+        .gallery-item::before {
+            background: linear-gradient(90deg, transparent 0%, var(--code-bg) 50%, transparent 100%);
+        }
+
+        /* Nothing moves or casts further: moved, the browser blurs the photo till it stops */
+        .gallery-item:hover {
+            transform: none;
+            box-shadow: var(--print-shadow);
+        }
+
+        /* The photo's colours leak into the paper, as the intro card's ink does: along the fibres,
+           so only here and there, in a different place on each print. A blurred copy, only in the
+           border, so the photo's left alone and can't blur while this fades: no blending, which
+           would redraw the whole print. Fetched once the photo's here, not before. */
+        .gallery-item::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            padding: 7px;
+            background: center / cover no-repeat;
+            filter: blur(5px) saturate(1.7);
+            mask-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9 0 0 0 -4.6'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23f)'/%3E%3C/svg%3E"),
+                linear-gradient(#000 0 0),
+                linear-gradient(#000 0 0);
+            mask-size: 420px 420px, auto, auto;
+            mask-position: var(--leak), 0 0, 0 0;
+            mask-clip: border-box, content-box, border-box;
+            mask-composite: intersect, exclude;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s ease;
+        }
+
+        .dark-mode .gallery-item::after {
+            filter: blur(5px) saturate(1.7) brightness(1.5);
+        }
+
+        .gallery-item.img-loaded::after {
+            background-image: var(--photo);
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        /* A print's picture doesn't grow out of its border */
+        .gallery-item:hover img {
+            transform: none;
+        }
+
+        /* Tilted, each is its own layer, so one that's up has to be over its neighbours */
+        .gallery-item-wrapper:is(:hover, :focus-within) {
+            z-index: 1;
+        }
+
+        .gallery-item-wrapper:nth-child(3n + 1) {
+            rotate: -0.5deg;
+        }
+
+        .gallery-item-wrapper:nth-child(4n + 2) {
+            rotate: 0.4deg;
+        }
+
+        .gallery-item-wrapper:nth-child(7n + 3) {
+            rotate: 0.7deg;
+        }
+    }
+
     @media (max-width: 600px) {
         .gallery {
             grid-template-columns: repeat(2, 1fr);
@@ -282,9 +366,12 @@ description: Photographs by Somdev Sangwan.
     {% for image in site.data.gallery %}
     {% assign stem = image.filename | remove: '.webp' %}
     {% assign thumb = site.baseurl | append: '/assets/photos/thumbs/' | append: stem %}
+    {% assign leak_x = forloop.index | times: 137 | modulo: 420 %}
+    {% assign leak_y = forloop.index | times: 211 | modulo: 420 %}
     <div class="gallery-item-wrapper {% if image.is_wide %}wide{% endif %}"
         style="grid-row-end: span {{ image.row_span }};">
-        <button type="button" class="gallery-item" data-full="{{ site.baseurl }}{{ image.path }}"
+        <button type="button" class="gallery-item" style="--photo: url('{{ thumb }}-400.webp'); --leak: {{ leak_x }}px {{ leak_y }}px"
+            data-full="{{ site.baseurl }}{{ image.path }}"
             aria-label="View photo {{ image.filename }}">
             <img src="{{ thumb }}-400.webp"
                 srcset="{{ thumb }}-400.webp 400w, {{ thumb }}-800.webp 800w, {{ site.baseurl }}{{ image.path }} {{ image.width }}w"
@@ -400,7 +487,7 @@ description: Photographs by Somdev Sangwan.
 
     // Its thumbnail's place, when it's in sight to fly from or back to
     function thumbRect(i) {
-        const rect = items[i].getBoundingClientRect();
+        const rect = items[i].querySelector('img').getBoundingClientRect();
         return rect.bottom > 0 && rect.top < innerHeight && rect.width ? rect : null;
     }
 
