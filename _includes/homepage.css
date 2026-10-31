@@ -828,8 +828,7 @@ a.obj:not(.grounded):focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .blank .polaroid-film,
-  .replaying .polaroid-film {
+  .blank .polaroid-film {
     display: none;
   }
 }
