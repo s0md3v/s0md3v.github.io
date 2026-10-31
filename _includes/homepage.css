@@ -21,6 +21,11 @@ html:has(.table) {
   --cast-alpha: 0.55;
 }
 
+/* The table has its own night, whatever colour the inner pages' text is */
+.dark-mode .table {
+  color: #e6e2da;
+}
+
 .table {
   /* 1u is 1/100th of a 16:10 frame that fits the viewport; where it's the window's
      width that limits it, a little less, so there's table to spare at the sides */
@@ -35,6 +40,9 @@ html:has(.table) {
   overflow: hidden;
   isolation: isolate;
   flex-shrink: 0;
+  /* Not the reading font. What's on the table is set in fonts of its own, but the glow ink's
+     placed by the size of the plain letters under it, so this mustn't change. */
+  font-family: "Lexend", sans-serif;
   /* White laminate, from a photo of it at its real size (_raw/deskcut.py) */
   background: #e7e7e4 url('{{ "/assets/images/table/desk.avif" | relative_url }}') 0 0 / calc(48.5 * var(--u)) calc(31.4 * var(--u));
 }

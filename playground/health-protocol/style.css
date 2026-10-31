@@ -102,7 +102,7 @@ input[type=range]::-moz-range-progress {
     color: var(--text-main);
 }
 .select-btn:hover { border-color: var(--accent); color: var(--accent); }
-.select-btn.selected { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.select-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--on-accent-color, #fff); font-weight: 600; }
 
 .number-input-wrapper { display: flex; align-items: baseline; gap: 0.5rem; }
 .number-input { 
@@ -124,12 +124,12 @@ input[type=range]::-moz-range-progress {
     cursor: pointer; color: var(--text-muted); transition: all 0.2s;
 }
 .side-nav-btn:not(.primary):hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-.side-nav-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.side-nav-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent-color, #fff); }
 .side-nav-btn.primary:hover { box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
 .side-nav-btn:disabled { opacity: 0; pointer-events: none; }
 
 .primary-btn { 
-    background: var(--accent); color: #fff; border: none; padding: 1rem 2.5rem; 
+    background: var(--accent); color: var(--on-accent-color, #fff); border: none; padding: 1rem 2.5rem; 
     border-radius: 100px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
 .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }

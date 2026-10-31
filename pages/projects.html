@@ -97,7 +97,7 @@ order: 1
   margin: 0;
 }
 .proj-title a {
-  color: var(--foreground-color);
+  color: var(--heading-color);
   text-decoration: none;
 }
 .proj-title a:hover,
@@ -131,7 +131,8 @@ order: 1
   margin: 0;
 }
 .proj-summary dt {
-  font-size: 0.72em;
+  /* Never under 13px, on phones */
+  font-size: max(0.8125rem, 0.72em);
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;

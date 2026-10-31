@@ -2,6 +2,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f3ea">
   <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ '/feed.xml' | absolute_url }}">
 
@@ -51,20 +52,22 @@
     type="font/woff2" crossorigin>
   <!-- The business card is the largest thing on the table -->
   <link rel="preload" href="{{ '/assets/images/table/card.webp' | relative_url }}" as="image" fetchpriority="high">
-  {% else %}
-  <link rel="preload" href="{{ '/assets/fonts/Comfortaa-ascii.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   {% endif %}
   {% if uses_handwritten_font %}
   <link rel="preload" href="{{ '/assets/fonts/reenie-beanie-ascii.woff2' | relative_url }}" as="font"
     type="font/woff2" crossorigin>
   {% endif %}
   {% unless page.layout_style == "homepage" %}
-  <link rel="preload" href="{{ '/assets/fonts/Lexend-Variable-latin.woff2' | relative_url }}" as="font" type="font/woff2"
+  <link rel="preload" href="{{ '/assets/fonts/SourceSerif4-text.woff2' | relative_url }}" as="font" type="font/woff2"
     crossorigin>
+  {% if page.layout == "post" %}
+  <link rel="preload" href="{{ '/assets/fonts/SourceSerif4-text-italic.woff2' | relative_url }}" as="font" type="font/woff2"
+    crossorigin>
+  {% endif %}
   {% endunless %}
 
   <style>
-    /* The header's nearly always plain ASCII too, which comes in a file of its own */
+    /* The Links experiment's font. Nearly always plain ASCII, which comes in a file of its own. */
     @font-face {
       font-family: 'Comfortaa';
       font-style: normal;
@@ -134,6 +137,26 @@
     {% endif %}
 
     {% unless page.layout_style == "homepage" %}
+    /* What inner pages are set in, cut by _raw/textfont.py. Optional: if it isn't here by the
+       first paint, this visit stays in the fallback rather than reflowing what's being read.
+       Not the italic, which only some pages preload: it'd be stuck in the fallback there,
+       and swapping it moves little. */
+    @font-face {
+      font-family: 'Source Serif 4';
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: optional;
+      src: url('{{ "/assets/fonts/SourceSerif4-text.woff2" | relative_url }}') format('woff2');
+    }
+
+    @font-face {
+      font-family: 'Source Serif 4';
+      font-style: italic;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('{{ "/assets/fonts/SourceSerif4-text-italic.woff2" | relative_url }}') format('woff2');
+    }
+
     /* The homepage doesn't render Lexend, so it doesn't declare (or download) it */
     @font-face {
       font-family: 'Lexend';

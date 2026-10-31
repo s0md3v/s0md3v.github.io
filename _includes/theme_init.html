@@ -2,38 +2,52 @@
     :root {
         --base-font-size: 1rem;
         --blog-font-size: 1rem;
-        --base-font-family: "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --base-font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
         --blog-font-family: var(--base-font-family);
 
-        /* Body text ~14:1, muted text >5:1 (WCAG AA) */
+        /* Inner pages are a sheet of paper on the homepage's table: --background-color is
+           the sheet. --desk-color is the average of --desk-image (_raw/deskroom.py), so a
+           page can't flash while the image is on its way.
+           Body text ~14:1, muted text >5:1 (WCAG AA) */
         color-scheme: light;
+        --desk-color: #e4e0d6;
+        --desk-image: url('{{ "/assets/images/table/desk-day.avif" | relative_url }}');
+        --sheet-shadow: 28, 34, 44;
         --background-color: #f6f3ea;
         --foreground-color: #26231f;
+        --heading-color: #26231f;
         --midground-color: #5d564f;
         --accent-color: #1565c0;
+        --on-accent-color: #fff;
         --link-hover-bg: #e9e4d7;
         --muted-color: #655e56;
         --border-color: #dcd6c6;
         --code-bg: #ebe6d8;
         --link-color: #0d47a1;
         --link-visited: #0d47a1;
-        --icon-filter: none;
     }
 
-    /* Off-black/off-white to avoid halation */
+    /* Nothing's read on the table at night, so it's black, which sets the sheet apart. The
+       sheet stays dark, though real paper wouldn't. Each kind of text has its own step, by
+       APCA, as contrast ratios flatter light text on dark: headings Lc 89, body 76, quotes
+       62, labels 49. */
     .dark-mode {
         color-scheme: dark;
-        --background-color: #1c1b19;
-        --foreground-color: #e6e2da;
-        --midground-color: #aaa49a;
+        --desk-color: {% if page.layout_style == 'homepage' %}#232323{% else %}#000{% endif %};
+        --desk-image: none;
+        --sheet-shadow: 0, 0, 0;
+        --background-color: #100f0f;
+        --foreground-color: #cecdc3;
+        --heading-color: #e6e2da;
+        --midground-color: #b7b5ac;
         --accent-color: #42a5f5;
+        --on-accent-color: #100f0f;
         --link-hover-bg: #34322e;
-        --muted-color: #968f85;
+        --muted-color: #9f9d96;
         --border-color: #34322e;
         --code-bg: #292724;
         --link-color: #64b5f6;
         --link-visited: #a6d6ff;
-        --icon-filter: invert(1);
     }
 
     * {
@@ -115,6 +129,9 @@
     function applyTheme(theme) {
         document.documentElement.classList.remove("light-mode", "dark-mode");
         document.documentElement.classList.add(`${theme}-mode`);
+        // The browser's own bars take the colour of what's under them
+        document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement)
+            .getPropertyValue("{% if page.layout_style == 'homepage' %}--desk-color{% else %}--background-color{% endif %}");
         localStorage.setItem("theme", theme);
     }
 
@@ -126,9 +143,10 @@
     }
 
     // Applied before first paint to avoid layout shift; also used by assets/js/common.js
-    const DEFAULT_FONT = "lexend";
+    const DEFAULT_FONT = "serif";
     const DEFAULT_FONT_SIZE = 1.0;
     const FONT_FAMILIES = {
+        serif: '"Source Serif 4", Georgia, "Times New Roman", serif',
         lexend: '"Lexend", sans-serif',
         opendyslexic: '"OpenDyslexic", sans-serif',
         system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'

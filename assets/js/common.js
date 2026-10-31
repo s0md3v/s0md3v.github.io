@@ -108,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.querySelector('.nav-links');
-    const header = document.getElementById('site-header');
     const settingsToggle = document.getElementById('settings-toggle');
     const settingsMenu = document.getElementById('settings-menu');
     const mobileNavigation = window.matchMedia('(max-width: 768px)');
@@ -121,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
         panel.classList.toggle('visible', open);
         toggle.classList.toggle('active', open);
         toggle.setAttribute('aria-expanded', String(open));
-        if (open && header) header.classList.remove('hidden');
     }
 
     panels.forEach(entry => {
@@ -162,19 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     mobileNavigation.addEventListener('change', () => {
         panels.forEach(entry => setPanel(entry, false));
-        if (header) header.classList.remove('hidden');
     });
-
-    let lastScrollTop = 0;
-    if (header) {
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.scrollY;
-            const panelOpen = panels.some(entry => entry.toggle.getAttribute('aria-expanded') === 'true');
-            header.classList.toggle('hidden', !mobileNavigation.matches && !panelOpen &&
-                !header.contains(document.activeElement) && scrollTop > lastScrollTop && scrollTop > 50);
-            lastScrollTop = Math.max(0, scrollTop);
-        }, { passive: true });
-    }
 
     function setupAccessibility() {
         const mainContent = document.querySelector('main') ||

@@ -30,5 +30,34 @@ layout: base
     <div class="post-content">
       {{ content }}
     </div>
+    {% comment %} Its neighbours in time, skipping unlisted ones, so a post isn't a dead end {% endcomment %}
+    {% assign post_end_docs = site[page.collection] | sort: "date" %}
+    {% assign post_older = nil %}
+    {% assign post_newer = nil %}
+    {% assign post_passed = false %}
+    {% for doc in post_end_docs %}
+    {% if doc.url == page.url %}
+    {% assign post_passed = true %}
+    {% elsif doc.unlisted %}
+    {% elsif post_passed %}
+    {% assign post_newer = doc %}
+    {% break %}
+    {% else %}
+    {% assign post_older = doc %}
+    {% endif %}
+    {% endfor %}
+    <nav class="post-end prose" aria-label="More writing">
+      {% if post_older %}
+      <div class="post-end-link"><span class="post-end-label">Older</span><a href="{{ post_older.url | relative_url }}">{{ post_older.title | escape }}</a></div>
+      {% endif %}
+      {% if post_newer %}
+      <div class="post-end-link post-end-newer"><span class="post-end-label">Newer</span><a href="{{ post_newer.url | relative_url }}">{{ post_newer.title | escape }}</a></div>
+      {% endif %}
+      {% if page.collection == "essays" %}
+      <div class="post-end-all"><a href="{{ '/essays/' | relative_url }}">All essays</a></div>
+      {% else %}
+      <div class="post-end-all"><a href="{{ '/blog/' | relative_url }}">All posts</a></div>
+      {% endif %}
+    </nav>
   </div>
 </main>

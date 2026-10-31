@@ -6,21 +6,6 @@ permalink: /playground/
 ---
 
 <style>
-  .playground-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    font-family: 'Lexend', sans-serif;
-  }
-  
-  /* Title and intro on the shared inner-page scale (see .page-title in common.css) */
-  .playground-header {
-    font-size: var(--reading-size);
-    line-height: 1.6;
-    /* With the container's 2rem, lines the title up with other pages' 3em top padding */
-    padding-top: 1.25em;
-  }
-
   .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
@@ -76,8 +61,8 @@ permalink: /playground/
   }
 </style>
 
-<div class="playground-container">
-  <header class="playground-header">
+<div class="wrapper wide">
+  <header>
     <h1 class="page-title">Experiments</h1>
     <p class="page-intro">Small tools, experiments, interactive guides, and useful links.</p>
   </header>

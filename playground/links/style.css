@@ -59,3 +59,6 @@
   .links-page .search-field { padding: 0 .75rem; gap: .5rem; }
   .links-page .search-field kbd { display: none; }
 }
+
+/* Read straight off the page, with no sheet, so not off the black table at night */
+.dark-mode:has(.links-page) { background: var(--background-color); }
