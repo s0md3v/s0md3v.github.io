@@ -16,7 +16,7 @@
     Only these preload it and hide the handwritten elements until it has loaded.
     Any other page can opt in with `handwritten_font: true` in its front matter.
   {% endcomment %}
-  {% assign handwritten_urls = "/,/about/,/projects/,/now/,/uses/,/favorites/" | split: "," %}
+  {% assign handwritten_urls = "/,/about/,/projects/,/now/,/taste/" | split: "," %}
   {% assign page_url_key = page.url | remove: "index.html" | append: "/" | replace: "//", "/" %}
   {% if page.handwritten_font or handwritten_urls contains page_url_key %}
     {% assign uses_handwritten_font = true %}

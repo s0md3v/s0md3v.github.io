@@ -1,11 +1,14 @@
 ---
 layout: default
-title: Favorites
-description: "Films, shows, books and games I love and recommend."
-permalink: /favorites/
+title: Taste
+description: "Films, shows, books and games I love and recommend, and the software and hardware I use every day."
+permalink: /taste/
+redirect_from:
+  - /uses/
+  - /favorites/
 ---
 <style>
-    .favorites-container {
+    .taste-container {
         display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -13,7 +16,7 @@ permalink: /favorites/
     }
 
     @media (min-width: 900px) {
-        .favorites-container {
+        .taste-container {
             grid-template-columns: 1.3fr 1fr;
             gap: 3rem;
         }
@@ -92,14 +95,14 @@ permalink: /favorites/
     @media (hover: hover) {
         .list-item:hover {
             color: var(--accent-color);
-            background: rgba(0,0,0,0.03);
+            background: rgba(0, 0, 0, 0.03);
         }
-        
+
         .list-item.active {
             color: var(--accent-color);
         }
     }
-    
+
     .note-column {
         display: none;
     }
@@ -118,7 +121,7 @@ permalink: /favorites/
     .sticky-note.visible {
         opacity: 1;
     }
-    
+
     .mobile-note {
         display: block;
         font-family: 'Reenie Beanie', cursive;
@@ -131,7 +134,7 @@ permalink: /favorites/
         opacity: 0.9;
         max-width: 90%;
     }
-    
+
     .sup-note {
         font-family: 'Reenie Beanie', cursive;
         font-size: 1.1em;
@@ -155,17 +158,14 @@ permalink: /favorites/
     }
 </style>
 
-<div class="wrapper wide favorites-container">
-    
+<div class="wrapper wide taste-container">
+
     <div class="list-column">
-        <h1 class="page-title">Favorites</h1>
+        <h1 class="page-title">Taste</h1>
 
         <div class="list-section">
             <div class="section-label">Watch</div>
-            
-            {% assign watch_items = "About Time|Poor Things|Mard Ko Dard Nahi Hota|Past Lives|La La Land|Fleabag|Portrait of a Lady on Fire|Parasite|True Detective" | split: "|" %}
-            {% assign watch_notes = "if you are going to watch one movie from this list, watch this one.|my fav movie, go in blind|they made this one for me, you probably won't like it|i cried. amor fati.|'past lives' but make it cheesy|it'll pass.|yearning caught in 4k|we both know who the real parasite is :p|wake up babe, new literally me character just dropped" | split: "|" %}
-            
+
             <div class="list-item" data-note="if you are going to watch one movie from this list, watch this one.">About Time</div>
             <div class="mobile-note">if you are going to watch one movie from this list, watch this one.</div>
 
@@ -197,7 +197,7 @@ permalink: /favorites/
 
         <div class="list-section">
             <div class="section-label">Read</div>
-            
+
             <div class="list-item" data-note="if you are going to read one book in your life, it should be this one.">Nicomachean Ethics <span class="meta-tag">(Aristotle)</span></div>
             <div class="mobile-note">if you are going to read one book in your life, it should be this one.</div>
 
@@ -210,7 +210,7 @@ permalink: /favorites/
 
         <div class="list-section">
             <div class="section-label">Play</div>
-            
+
             <div class="list-item" data-note="this is a life changing game">Disco Elysium</div>
             <div class="mobile-note">this is a life changing game</div>
 
@@ -225,6 +225,46 @@ permalink: /favorites/
 
             <div class="list-item" data-note="i like the gameplay, especially with the mods">Cyberpunk 2077</div>
             <div class="mobile-note">i like the gameplay, especially with the mods</div>
+        </div>
+
+        <div class="list-section">
+            <div class="section-label">Use</div>
+
+            <div class="list-item" data-note="perfect for my workflow. dual-boot for games.">Arch Linux</div>
+            <div class="mobile-note">perfect for my workflow. dual-boot for games.</div>
+
+            <div class="list-item" data-note="no google + ublock origin = bliss">Firefox</div>
+            <div class="mobile-note">no google + ublock origin = bliss</div>
+
+            <div class="list-item" data-note="access to claude opus for free :3">Antigravity</div>
+            <div class="mobile-note">access to claude opus for free :3</div>
+
+            <div class="list-item" data-note="best in class, circa 2020">i7-12700K</div>
+            <div class="mobile-note">best in class, circa 2020</div>
+
+            <div class="list-item" data-note="this thing can render anything">AMD Radeon 6900 XT</div>
+            <div class="mobile-note">this thing can render anything</div>
+
+            <div class="list-item" data-note="you can't beat typing on this">MX Keys</div>
+            <div class="mobile-note">you can't beat typing on this</div>
+
+            <div class="list-item" data-note="this is the definitive productivity mouse">MX Master 3S</div>
+            <div class="mobile-note">this is the definitive productivity mouse</div>
+
+            <div class="list-item" data-note="that 1-inch sensor is magic">Vivo X100 Pro</div>
+            <div class="mobile-note">that 1-inch sensor is magic</div>
+
+            <div class="list-item" data-note="spacious, smooth, custom-built">6ft Custom Desk</div>
+            <div class="mobile-note">spacious, smooth, custom-built</div>
+
+            <div class="list-item" data-note="endgame noise cancellation">Sony WH-1000XM5</div>
+            <div class="mobile-note">endgame noise cancellation</div>
+
+            <div class="list-item" data-note="wired audio perfection for cheap">Tangzu Wan'er S.G</div>
+            <div class="mobile-note">wired audio perfection for cheap</div>
+
+            <div class="list-item" data-note="exactly as responsive as i'd want">Machenike G5 Pro</div>
+            <div class="mobile-note">exactly as responsive as i'd want</div>
         </div>
     </div>
 
@@ -246,7 +286,7 @@ permalink: /favorites/
                 setTimeout(() => {
                     noteDisplay.textContent = text;
                     noteDisplay.classList.add('visible');
-                }, 100); 
+                }, 100);
             };
 
             items.forEach(item => {

@@ -18,26 +18,40 @@ layout_style: "homepage"
     <section class="obj" id="intro" aria-label="Introduction">
       <span class="lift"><span class="item">
         <span class="intro-text">
-          <span class="intro-title">Somdev Sangwan</span>
-          <span class="intro-role">Hacker <span class="amp">&amp;</span> Maker</span>
-          <span class="intro-est">Est. 2017</span>
+          <span class="intro-lines">
+            <span class="intro-title">Somdev Sangwan</span>
+            <span class="intro-role">Hacker <span class="amp">&amp;</span> Maker</span>
+            <span class="intro-est">Est. 2017</span>
+          </span>
           <span class="intro-motto"><span>Has brain</span> <span>Has <del>taste<svg class="strike" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15C35 11 75 10 117 6L111 11C75 14 40 16 2 19L8 22C45 19 85 17 119 13L113 18C80 21 45 23 4 25L10 11C50 9 88 9 118 17" /></svg></del></span></span>
         </span>
+        <!-- Its back -->
+        <span class="intro-text intro-back">
+          <span class="intro-lines">
+            <span class="intro-title" data-email>hello[at]somdev.in</span>
+            <span class="intro-role"><del>Available for work<svg class="strike" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15C35 11 75 10 117 6L111 11C75 14 40 16 2 19L8 22C45 19 85 17 119 13L113 18C80 21 45 23 4 25L10 11C50 9 88 9 118 17" /></svg></del></span>
+          </span>
+        </span>
+        <span class="intro-pen">experience</span>
+        <a class="intro-note" draggable="false" href="{{ n.work.url | relative_url }}">on hold, for now</a>
         <span class="intro-rim" aria-hidden="true"></span>
         <span class="intro-spread" aria-hidden="true"></span>
         <span class="intro-skip" aria-hidden="true"></span>
+        <button class="intro-turn" type="button" aria-label="Turn the card over"></button>
       </span></span>
       <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span><span class="retraced">s</span>creentime</span></span></ins>
     </section>
 
     <!-- Small sizes are made by _raw/small.py. `sizes` uses u = min(0.85vw, 1.6vh) above 700px, and on
          an upright tablet, the phones' layout. -->
-    <a class="obj" id="about" href="{{ n.about.url | relative_url }}">
+    <a class="obj grounded" id="about" href="{{ n.about.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}polaroid.webp" srcset="{{ t }}polaroid-280.webp 280w, {{ t }}polaroid.webp 400w"
           sizes="(max-width: 700px) 38vw, (max-aspect-ratio: 4/5) 38vw, min(14vw, 26.4vh)" width="400" height="481" alt="">
         <span class="ink polaroid-caption">{{ n.about.label | escape }}</span>
-      </span></span>
+      </span>
+      <!-- Its picture, still developing -->
+      <span class="polaroid-film" aria-hidden="true"><i></i><i></i><i></i></span></span>
     </a>
 
     <!-- A Raspberry Pi Zero with a screen, showing how the projects are doing, as of the
@@ -214,24 +228,24 @@ layout_style: "homepage"
       </span></span>
     </div>
 
-    <a class="obj" id="papers" href="{{ n.papers.url | relative_url }}">
+    <a class="obj grounded" id="papers" href="{{ n.papers.url | relative_url }}">
       <span class="under"><span class="tag t3"><span>{{ n.papers.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
         <span class="page" aria-hidden="true"><span class="page-body">
-          <span class="page-title">Bypassing XSS Detection Mechanisms</span>
-          <span class="page-author">— Somdev Sangwan</span>
+          <span class="page-title"><span>Bypassing XSS<svg class="page-marker" viewBox="0 0 708 133" preserveAspectRatio="none"><path d="M27 10C38 6 59 12 81 13C102 14 130 18 153 18C176 18 194 15 216 14C239 12 262 10 285 9C308 8 328 10 351 9C374 8 398 5 420 3C443 2 463 -1 485 -1C507 -1 527 3 551 5C575 6 601 7 627 7C652 7 687 0 701 3C715 6 710 19 709 27C708 35 697 42 696 50C694 58 703 64 700 74C698 83 686 96 682 104C677 112 685 118 675 121C665 124 644 122 623 122C602 123 575 125 551 126C527 127 506 129 483 128C460 127 439 123 416 122C393 121 368 121 346 120C324 120 309 121 287 121C265 121 238 120 215 122C192 123 176 127 153 129C130 132 106 134 80 135C54 137 15 143 1 137C-13 131 -4 112 -3 102C-1 91 7 84 10 74C13 63 11 49 14 38C17 27 16 15 27 10Z" /><path d="M41 36C58 34 105 31 139 30C172 29 203 28 236 27C270 27 301 27 334 26C367 26 415 26 432 26C448 26 448 26 432 27C415 27 367 29 334 30C301 31 270 33 236 33C203 34 172 34 139 34C105 35 58 36 41 36C24 37 24 37 41 36ZM189 67C210 66 268 63 309 62C350 61 388 62 429 61C469 60 507 59 548 58C589 58 647 57 668 57C688 57 688 57 668 58C647 59 589 61 548 62C507 64 469 65 429 66C388 67 350 67 309 68C268 68 210 68 189 67C169 67 169 67 189 67ZM81 107C101 106 159 105 199 104C239 103 277 103 317 102C357 101 395 101 435 100C475 99 533 99 553 99C573 99 573 99 553 99C533 100 475 102 435 104C395 105 357 106 317 107C277 107 239 108 199 108C159 108 101 108 81 108C61 108 61 108 81 107ZM34 14C38 6 46 5 48 12C50 20 45 47 45 60C45 72 49 73 46 86C43 98 34 126 28 134C22 142 14 141 12 133C10 125 16 99 18 87C20 74 23 73 26 61C29 48 30 23 34 14ZM681 8C684 1 692 -1 693 6C694 13 689 37 689 48C689 60 693 62 690 74C687 86 678 110 673 117C667 125 660 124 659 116C658 109 663 87 665 75C667 64 670 61 673 49C676 38 678 15 681 8Z" /></svg></span> <span>Detection Mechanisms<svg class="page-marker" viewBox="0 0 1028 133" preserveAspectRatio="none"><path d="M27 10C38 5 58 8 79 8C100 9 127 11 150 12C173 13 191 14 213 15C235 15 259 16 282 16C305 16 326 16 348 15C371 14 390 11 413 10C435 9 457 11 480 10C502 10 520 7 543 6C565 5 589 6 612 5C635 4 659 2 680 1C701 0 715 -1 738 0C761 0 791 2 814 3C838 4 853 4 874 4C895 5 912 7 937 7C962 8 1005 3 1021 7C1037 10 1030 21 1029 29C1028 36 1017 44 1016 51C1014 59 1023 65 1020 73C1018 82 1006 95 1002 102C997 110 1006 114 995 118C984 122 957 124 937 125C916 126 896 126 874 126C852 126 830 124 808 124C786 124 767 124 745 124C722 125 698 126 676 127C654 128 638 131 616 130C593 130 570 128 546 127C522 125 498 124 476 122C454 121 438 119 416 119C394 118 370 121 348 122C325 123 307 124 285 124C262 125 238 126 216 126C193 127 176 126 152 126C129 127 102 127 77 128C51 129 15 138 1 133C-13 128 -4 109 -3 98C-1 88 7 82 10 71C13 61 11 47 14 37C17 26 16 14 27 10Z" /><path d="M54 34C78 33 149 32 198 31C247 30 293 28 342 28C391 27 437 28 486 28C535 28 606 29 630 29C655 29 655 29 630 30C606 30 535 32 486 33C437 33 391 32 342 32C293 33 247 35 198 35C149 36 78 35 54 35C29 35 29 35 54 34ZM272 67C302 66 389 63 449 62C509 61 565 62 625 61C685 61 742 61 802 60C862 60 948 59 978 59C1008 59 1008 59 978 60C948 61 862 63 802 64C742 66 685 68 625 68C565 69 509 67 449 67C389 67 302 68 272 68C242 68 242 69 272 67ZM113 101C143 101 228 99 287 98C346 98 402 97 461 97C520 96 576 96 635 96C694 96 780 97 809 98C839 98 839 98 809 99C780 99 694 99 635 100C576 100 520 101 461 102C402 102 346 102 287 103C228 103 143 102 113 102C84 102 84 102 113 101ZM34 15C38 7 46 6 48 13C50 20 45 45 45 57C45 69 49 71 46 83C43 95 34 120 28 128C22 135 14 134 12 127C10 119 16 96 18 84C20 72 23 70 26 58C29 46 30 23 34 15ZM1001 11C1004 4 1012 2 1013 9C1014 15 1009 38 1009 49C1009 61 1013 64 1010 75C1007 87 998 110 993 117C987 124 980 123 979 116C978 109 983 87 985 76C987 65 990 61 993 50C996 39 998 18 1001 11Z" /></svg></span></span>
+          <span class="page-author">Somdev Sangwan</span>
+          <span class="page-cols">
           <span class="page-h">Abstract</span>
-          <span>This paper proposes a well-defined methodology to bypass Cross Site Scripting (XSS) security mechanisms by making assumptions about the rules being used to detect malicious strings by sending probes and crafting payloads based on the assumptions.</span>
-          <span>The proposed methodology consists of three phases: determining payload structure, probing and obfuscation.</span>
-          <span>Determining various payload structures for a given context provides a precise idea of the optimal testing approach. The next phase, probing, involves testing various strings against the target's security mechanisms. The target's responses are analyzed in order to make assumptions based on the analysis.</span>
-          <span>Finally, obfuscation and other tweaks are made to the payload if required.</span>
-          <span class="page-h">About the Author</span>
-          <span>Hacker.</span>
+          <span>This paper pro&shy;poses a well-defined method&shy;ol&shy;ogy to <span class="page-word">bypass</span> Cross Site Script&shy;ing (XSS) secu&shy;rity mech&shy;a&shy;nisms by mak&shy;ing as&shy;sump&shy;tions about the rules being used to detect <span class="page-word">ma&shy;li&shy;cious</span> strings by send&shy;ing <span class="page-word">probes</span> and craft&shy;ing pay&shy;loads based on the as&shy;sump&shy;tions.</span>
+          <span>The pro&shy;posed method&shy;ol&shy;ogy con&shy;sists of three phases: de&shy;ter&shy;min&shy;ing <span class="page-word">pay&shy;load</span> struc&shy;ture, prob&shy;ing and <span class="page-word">ob&shy;fus&shy;ca&shy;tion</span>.</span>
+          <span>De&shy;ter&shy;min&shy;ing var&shy;i&shy;ous pay&shy;load struc&shy;tures for a given con&shy;text pro&shy;vides a pre&shy;cise idea of the op&shy;ti&shy;mal test&shy;ing ap&shy;proach. The next phase, prob&shy;ing, in&shy;volves test&shy;ing var&shy;i&shy;ous strings against the tar&shy;get's secu&shy;rity mech&shy;a&shy;nisms. The tar&shy;get's re&shy;sponses are an&shy;a&shy;lyzed in order to make as&shy;sump&shy;tions based on the anal&shy;y&shy;sis.</span>
+          <span>Fi&shy;nally, ob&shy;fus&shy;ca&shy;tion and other tweaks are made to the pay&shy;load if re&shy;quired.</span>
           <span class="page-h">To the Reader</span>
-          <span>The author assumes that the reader has at least basic level knowledge of Cross Site Scripting, Hypertext Markup Language (HTML) and JavaScript.</span>
-          <span>{string} is used throughout the paper to represent components of a payload scheme. {?string} represents an optional component.</span>
-          <span>The word <b>primary character</b> refers to a character which must be included in a payload. It is advised to URL encode URL unsafe characters such as + and &amp; before using them in payloads.</span>
-          <span>While probing, a harmless string should be used instead of {javascript}.</span>
+          <span>The au&shy;thor as&shy;sumes that the reader has at least basic level knowl&shy;edge of Cross Site Script&shy;ing, Hy&shy;per&shy;text Mark&shy;up Lan&shy;guage (HTML) and Java&shy;Script.</span>
+          <span>{string} is used through&shy;out the paper to rep&shy;re&shy;sent com&shy;po&shy;nents of a pay&shy;load scheme. {?string} rep&shy;re&shy;sents an op&shy;tion&shy;al com&shy;po&shy;nent.</span>
+          <span>The word <b>pri&shy;mary char&shy;ac&shy;ter</b> refers to a char&shy;ac&shy;ter which must be in&shy;cluded in a pay&shy;load. It is ad&shy;vised to URL en&shy;code URL un&shy;safe char&shy;ac&shy;ters such as + and &amp; be&shy;fore using them in pay&shy;loads.</span>
+          <span>While prob&shy;ing, a harm&shy;less string should be used in&shy;stead of {java&shy;script}.</span>
+          </span>
         </span></span>
       </span></span>
     </a>
@@ -296,16 +310,8 @@ layout_style: "homepage"
       <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
     </a>
 
-    <a class="obj" id="favorites" href="{{ n.favorites.url | relative_url }}">
-      <span class="lift"><span class="item">
-        <img class="base" src="{{ t }}cassette.avif" srcset="{{ t }}cassette-310.avif 310w, {{ t }}cassette.avif 440w"
-          sizes="(max-width: 700px) 42vw, (max-aspect-ratio: 4/5) 42vw, min(14vw, 26.4vh)" width="440" height="293" alt="">
-        <span class="ink cassette-label">{{ n.favorites.label | escape }}</span>
-      </span></span>
-    </a>
-
-    <a class="obj" id="uses" href="{{ n.uses.url | relative_url }}">
-      <span class="under"><span class="tag t1"><span>{{ n.uses.label | escape }}</span></span></span>
+    <a class="obj" id="uses" href="{{ n.taste.url | relative_url }}">
+      <span class="under"><span class="tag t1"><span>{{ n.taste.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
         <!-- In pixels of the earbuds' photo. The script re-lays it; this is the fallback. -->
         <svg class="cable" viewBox="137 600 1774 2300" aria-hidden="true">
@@ -410,10 +416,51 @@ layout_style: "homepage"
 
       // The ink spread round the card's type: copies of it, without the pen's strike, that
       // the stylesheet spreads, in an unbroken rim and further along the paper's fibres
-      const printed = document.querySelector('#intro .intro-text').cloneNode(true);
-      printed.querySelectorAll('svg').forEach(svg => svg.remove());
-      document.querySelector('.intro-spread').append(printed);
-      document.querySelector('.intro-rim').append(printed.cloneNode(true));
+      document.querySelectorAll('#intro .intro-text').forEach(side => {
+        const printed = side.cloneNode(true);
+        printed.querySelectorAll('svg').forEach(svg => svg.remove());
+        document.querySelector('.intro-spread').append(printed);
+        document.querySelector('.intro-rim').append(printed.cloneNode(true));
+      });
+
+      // The card turns over when it's clicked on bare stock. The words are text, to select
+      // and copy, so a click on them does nothing, and nor does ending a drag or clearing
+      // what was selected. Its blend modes stay inside it, so it's turned whole, flat as it
+      // comes up, and which side's printed changes when it's edge on.
+      const intro = document.getElementById('intro');
+      const stock = intro.querySelector('.item');
+      const turner = intro.querySelector('.intro-turn');
+      let turning = false, selecting = false;
+      stock.addEventListener('pointerdown', () => { selecting = !getSelection().isCollapsed; });
+      stock.addEventListener('click', async e => {
+        if (turning || e.target.closest('a, .intro-lines > span, .intro-motto > span')) return;
+        if (e.detail && (selecting || !getSelection().isCollapsed)) return;
+        turning = true;
+        const flip = () => {
+          const back = intro.classList.toggle('flipped');
+          turner.setAttribute('aria-label', back ? 'Turn the card back over' : 'Turn the card over');
+        };
+        if (still) {
+          flip();
+          turning = false;
+          return;
+        }
+        intro.classList.add('turning');
+        const follow = () => {
+          if (!turning) return;
+          lay();
+          requestAnimationFrame(follow);
+        };
+        requestAnimationFrame(follow);
+        const w = stock.offsetWidth;
+        const held = (up, turn) => `perspective(${5 * w}px) translateZ(${up * w}px) rotateY(${turn}deg)`;
+        await stock.animate({ transform: [held(0, 0), held(0.3, 90)] }, { duration: 240, easing: 'ease-in' }).finished;
+        flip();
+        await stock.animate({ transform: [held(0.3, -90), held(0, 0)] }, { duration: 280, easing: 'ease-out' }).finished;
+        intro.classList.remove('turning');
+        turning = false;
+        lay();
+      });
 
       objects.forEach(el => {
         if (el !== toggle) el.style.setProperty('--j', (Math.random() * 3 - 1.5).toFixed(2) + 'deg');
@@ -2076,10 +2123,58 @@ layout_style: "homepage"
         glowing.replaceChildren(...copies.map(([, copy]) => copy).filter(copy => copy.className !== 'halo'));
         aura.replaceChildren(...copies.map(([, copy]) => copy).filter(copy => copy.className === 'halo'));
       }
+      // Two things follow the card, wherever it's been lifted or turned to. The glare doesn't
+      // fall on it, as its paper is matte, so that's cut out where it is. And its shadow
+      // doesn't show past its edges towards the light, the left and the top, by day or night.
+      // A drop-shadow's blur spills round every side, and it's only ever moved by whole
+      // pixels, so along the card's crisp, straight edges there it's a dark line. Cut off
+      // along them, in the card's tilt in its shadow's box, half a pixel in, or it still
+      // shows through the soft pixels along them.
+      function lay() {
+        const box = table.getBoundingClientRect();
+        const card = intro.getBoundingClientRect();
+        const lift = stock.parentElement;
+        let turn = 0;
+        for (let at = stock; at !== table; at = at.parentElement) turn += parseFloat(getComputedStyle(at).rotate) || 0;
+        const [cos, sin] = [Math.cos(turn * Math.PI / 180), Math.sin(turn * Math.PI / 180)];
+        const [w, h] = [stock.offsetWidth / 2, stock.offsetHeight / 2];
+        const held = new DOMMatrix(getComputedStyle(stock).transform);
+        const seen = (x, y) => {
+          const point = held.transformPoint({ x, y });
+          return [point.x / point.w, point.y / point.w];
+        };
+        const [tx, ty] = getComputedStyle(lift).translate.split(' ').map(n => parseFloat(n) || 0);
+        const [cx, cy] = [card.left + card.width / 2 - box.left + tx, card.top + card.height / 2 - box.top + (ty || 0)];
+        const corners = [[-w, -h], [w, -h], [w, h], [-w, h], [-w, -h]].map(([x, y]) => seen(x, y))
+          .map(([x, y]) => `${(cx + x * cos - y * sin).toFixed(1)}px ${(cy + x * sin + y * cos).toFixed(1)}px`);
+        glint.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${corners.join(', ')})`;
+        const tilt = (parseFloat(getComputedStyle(stock).rotate) || 0) * Math.PI / 180;
+        const [tc, ts] = [Math.cos(tilt), Math.sin(tilt)];
+        const [PAST, IN] = [50, 0.5];
+        const past = ([x, y], [toX, toY]) => {
+          const run = Math.hypot(toX - x, toY - y) || 1;
+          return [toX + (toX - x) / run * PAST, toY + (toY - y) / run * PAST];
+        };
+        const [corner, top, left] = [seen(IN - w, IN - h), seen(w, IN - h), seen(IN - w, h)];
+        const [right, under] = [past(corner, top), past(corner, left)];
+        lift.style.clipPath = `polygon(${[corner, right, [right[0] + under[0] - corner[0], right[1] + under[1] - corner[1]], under]
+          .map(([x, y]) => `${(w + x * tc - y * ts).toFixed(2)}px ${(h + x * ts + y * tc).toFixed(2)}px`).join(', ')})`;
+      }
+
+      let raised = false, settled = 0;
+      function settle() {
+        lay();
+        if (performance.now() < settled) requestAnimationFrame(settle);
+      }
       function rise() {
         risers.forEach(([obj, copy]) => {
           copy.style.translate = obj.matches(':hover, :focus-visible') && !obj.matches('.grounded') ? obj.style.getPropertyValue('--rise') : '';
         });
+        const up = intro.matches(':hover, :has(:focus-visible)');
+        if (up === raised) return;
+        raised = up;
+        settled = performance.now() + 350;
+        requestAnimationFrame(settle);
       }
       ['pointerover', 'pointerout', 'focusin', 'focusout'].forEach(type =>
         table.addEventListener(type, () => requestAnimationFrame(rise)));
@@ -2087,7 +2182,7 @@ layout_style: "homepage"
       // Things with hard, glossy edges, and how wide a band of edge catches the lamp (in u)
       // and how much it shines. Paper and cloth don't.
       const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1], playground: [0.25, 1],
-        favorites: [0.3, 0.8], uses: [0.25, 1], blog: [0.2, 0.4] };
+        uses: [0.25, 1], blog: [0.2, 0.4] };
       const rimmed = objects.filter(el => el.id in RIMS);
       // And the sticker's glitter, which only needs which way the light is
       const cables = Array.from(table.querySelectorAll('svg.cable, .glitter'));
@@ -2183,27 +2278,7 @@ layout_style: "homepage"
           return `rgb(30 29 28 / ${Math.exp(-((r / (0.35 * height)) ** 2)).toFixed(3)}) ${r.toFixed(0)}px`;
         });
         table.style.setProperty('--glint', `radial-gradient(circle at ${bulbX}px ${bulbY}px, ${glare.join(', ')})`);
-        // Except on the card: its paper is matte, so it doesn't glint. Cut out where it lies.
-        const face = document.querySelector('#intro .item');
-        let turn = 0;
-        for (let at = face; at !== table; at = at.parentElement) turn += parseFloat(getComputedStyle(at).rotate) || 0;
-        const [cos, sin] = [Math.cos(turn * Math.PI / 180), Math.sin(turn * Math.PI / 180)];
-        const [w, h] = [face.offsetWidth / 2, face.offsetHeight / 2];
-        const [cx, cy] = [card.left + card.width / 2 - box.left, card.top + card.height / 2 - box.top];
-        const corners = [[-w, -h], [w, -h], [w, h], [-w, h], [-w, -h]]
-          .map(([x, y]) => `${(cx + x * cos - y * sin).toFixed(1)}px ${(cy + x * sin + y * cos).toFixed(1)}px`);
-        glint.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${corners.join(', ')})`;
-        // Nor does its shadow show past its edges towards the light, the left and the top, by
-        // day or night. A drop-shadow's blur spills round every side, and it's only ever moved
-        // by whole pixels, so along the card's crisp, straight edges there it's a dark line.
-        // Cut off along them, in the card's tilt in its shadow's box, half a pixel in, or it
-        // still shows through the soft pixels along them.
-        const lift = face.parentElement;
-        const tilt = (parseFloat(getComputedStyle(face).rotate) || 0) * Math.PI / 180;
-        const [tc, ts] = [Math.cos(tilt), Math.sin(tilt)];
-        const [PAST, IN] = [50, 0.5];
-        lift.style.clipPath = `polygon(${[[IN - w, IN - h], [w + PAST, IN - h], [w + PAST, h + PAST], [IN - w, h + PAST]]
-          .map(([x, y]) => `${(w + x * tc - y * ts).toFixed(2)}px ${(h + x * ts + y * tc).toFixed(2)}px`).join(', ')})`;
+        lay();
         glow();
 
         selfLit.forEach((el, i) => {
@@ -2232,8 +2307,13 @@ layout_style: "homepage"
         shade = function (el, up = 0, angle = 0, { height, cx, cy } = measure(el)) {
           const cos = Math.cos(-angle), sin = Math.sin(-angle);
           // g is for tape on the table beside the object
+          // Lifted, a thing moves off the table as far by night as by day. Its shadow barely
+          // shifts under a high bulb, but it's as much nearer the eye.
+          const [rx, ry] = cast(LIFT, cx, cy);
+          const raise = Math.max(Math.hypot(rx, ry), LIFT * u * 0.5) / (Math.hypot(rx, ry) || 1);
           Object.entries({ s: height + up, h: height + up + LIFT, c: 0.05 + up, g: 0.05 }).forEach(([key, h]) => {
             let [x, y, blur] = cast(h, cx, cy);
+            if (key === 'h') [x, y] = [x + rx * (raise - 1), y + ry * (raise - 1)];
             // The side towards the sun or the lamp is lit right up to the table, so no shadow
             // shows there, even where things meet it: each is pushed out from under them at
             // least as far as its blur, which would otherwise spill round on the lit side, and
@@ -2242,8 +2322,7 @@ layout_style: "homepage"
             [x, y] = [x / length * out, y / length * out];
             setShadow(el, key, [x * cos - y * sin, x * sin + y * cos, blur]);
           });
-          const [rx, ry] = cast(LIFT, cx, cy);
-          el.style.setProperty('--rise', `${(-rx * 0.5).toFixed(1)}px ${(-ry * 0.5).toFixed(1)}px`);
+          el.style.setProperty('--rise', `${(-rx * raise * 0.5).toFixed(1)}px ${(-ry * raise * 0.5).toFixed(1)}px`);
         };
 
         // At night the lamp catches the edges of things that face it. From above, that's a
@@ -2369,6 +2448,28 @@ layout_style: "homepage"
       // The labels' size depends on their font
       document.fonts?.ready.then(light);
 
+      // Whoever comes to the paper goes over its title with a highlighter, once, and it
+      // doesn't come off. Coming back, they get further into it, and mark the next word
+      // that matters, till they've marked them all. On a touch screen there's no coming
+      // to it, and the tap is for the link, so its title's already been gone over when
+      // it's first seen.
+      const paper = document.getElementById('papers');
+      const words = [...paper.querySelectorAll('.page-word')];
+      const mark = () => {
+        if (paper.classList.contains('marked')) words.shift()?.classList.add('marked');
+        else paper.classList.add('marked');
+      };
+      if (matchMedia('(hover: hover)').matches) {
+        ['pointerenter', 'focusin'].forEach(type => paper.addEventListener(type, mark));
+      } else if ('IntersectionObserver' in window) {
+        const seen = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting) return;
+          seen.disconnect();
+          mark();
+        }, { threshold: 1 });
+        ready.get(paper).then(() => seen.observe(paper.querySelector('.page-title span + span')));
+      }
+
       if (!still && 'IntersectionObserver' in window) {
         die.classList.add('held');
         glow();
@@ -2378,6 +2479,29 @@ layout_style: "homepage"
           drop();
         }, { threshold: 1 });
         ready.get(die).then(() => watch.observe(die.querySelector('.item')));
+
+        // The polaroid comes out blank, and develops only once it can be seen: so not till
+        // its photo's here, and not in a tab no one's looking at. If there's no photo, it's
+        // left as it is. Hovered, it comes up once more, and sees that through whatever the
+        // pointer does: its last layer clearing is what ends either.
+        const polaroid = document.getElementById('about');
+        const film = polaroid.querySelector('.polaroid-film i');
+        polaroid.classList.add('blank');
+        const seen = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting) return;
+          seen.disconnect();
+          polaroid.classList.add('developing');
+        }, { threshold: 0.5 });
+        ready.get(polaroid).then(() => {
+          const shot = polaroid.querySelector('.base');
+          if (!shot.naturalWidth) return polaroid.classList.remove('blank');
+          polaroid.style.setProperty('--photo', `url("${shot.currentSrc}")`);
+          seen.observe(shot);
+        });
+        film.addEventListener('animationend', () => polaroid.classList.remove('blank', 'developing', 'replaying'));
+        const again = () => { if (!polaroid.matches('.blank')) polaroid.classList.add('replaying'); };
+        polaroid.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') again(); });
+        polaroid.addEventListener('focus', () => { if (polaroid.matches(':focus-visible')) again(); });
       }
     })();
   </script>

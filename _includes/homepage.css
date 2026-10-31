@@ -237,7 +237,7 @@ a.obj:not(.grounded):focus-visible,
   z-index: 30;
 }
 
-:is(a.obj:not(.grounded):is(:hover, :focus-visible), .obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible))) .lift {
+:is(a.obj:not(.grounded):is(:hover, :focus-visible), .obj:not(.grounded):has(.cover):is(:hover, :has(:focus-visible)), #intro:is(:hover, :has(:focus-visible))) .lift {
   filter:
     drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) * 0.5 / var(--round, 1))))
     drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
@@ -330,8 +330,106 @@ a.obj:not(.grounded):focus-visible,
   z-index: 2;
 }
 
+#intro.turning {
+  z-index: 30;
+}
+
+/* In the air, it passes over what's written on the table */
+#intro.turning .lift {
+  position: relative;
+  z-index: 1;
+}
+
 #intro .item {
   aspect-ratio: 1000 / 613;
+  cursor: pointer;
+}
+
+/* For a keyboard: the mouse needs only bare stock */
+.intro-turn {
+  position: absolute;
+  z-index: 7;
+  top: 0;
+  right: 0;
+  width: 12cqi;
+  height: 12cqi;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* Only one side's up */
+#intro:not(.flipped) :is(.intro-back, .intro-note),
+#intro.flipped :is(.intro-text:not(.intro-back), .intro-pen) {
+  visibility: hidden;
+}
+
+/* The pen's first line, on the card, so it goes where the card goes. Its lines on the table
+   stay. This is it, in the place kept for it in .pen-sum. */
+.intro-pen {
+  position: absolute;
+  z-index: 5;
+  left: 71.9cqi;
+  top: 86%;
+  width: 23.9cqi;
+  rotate: -2deg;
+  font: 7cqi/0.95 "Reenie Beanie", cursive;
+  white-space: nowrap;
+  color: var(--ballpoint);
+  pointer-events: none;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.pen-sum > :nth-child(2) {
+  visibility: hidden;
+}
+
+/* Each line's as wide as its words, and spaced by padding, not margin, so it reaches the line
+   above: crossing them, the pointer doesn't flicker */
+.intro-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
+}
+
+.intro-lines > span,
+.intro-motto > span {
+  cursor: text;
+}
+
+.intro-back {
+  justify-content: center;
+  padding-bottom: 9%;
+}
+
+.intro-back .intro-lines {
+  margin-top: 0;
+}
+
+/* A line this long stays readable under a pen that's only gone over it lightly */
+.intro-role .strike {
+  stroke-width: 0.07em;
+}
+
+/* Written over it, with the same pen, by someone who's since changed their mind */
+#intro .intro-note {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  /* It reaches the line above, tilted as it is, as the printed lines do */
+  top: calc(60% - 1.4cqi);
+  padding-top: 1.4cqi;
+  cursor: text;
+  translate: -50% 0;
+  rotate: -3deg;
+  font: 7cqi/0.95 "Reenie Beanie", cursive;
+  white-space: nowrap;
+  color: var(--ballpoint);
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 #intro .item::before {
@@ -487,7 +585,6 @@ a.obj:not(.grounded):focus-visible,
 
 .intro-title {
   font-family: "Source Serif Display", "Source Serif", serif;
-  margin-top: auto;
   font-size: 2.5em;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -510,7 +607,7 @@ a.obj:not(.grounded):focus-visible,
 }
 
 .intro-role {
-  margin-top: 0.35em;
+  padding-top: 0.35em;
 }
 
 .amp {
@@ -521,7 +618,7 @@ a.obj:not(.grounded):focus-visible,
 }
 
 .intro-est {
-  margin-top: 0.3em;
+  padding-top: 0.3em;
   font-size: 1.05em;
   font-style: italic;
   /* theme_init.html turns onum off everywhere */
@@ -537,7 +634,7 @@ a.obj:not(.grounded):focus-visible,
   font-size: 1.15em;
 }
 
-.intro-motto del {
+.intro-text del {
   position: relative;
   text-decoration: none;
 }
@@ -617,7 +714,6 @@ a.obj:not(.grounded):focus-visible,
 }
 
 /* The lines under the card, written a little further right than the one on it */
-.pen-sum > :nth-child(2) { rotate: -2deg; }
 .pen-sum > :nth-child(4) { rotate: 1deg; translate: 0.65em 0; }
 .pen-sum > :nth-child(6) { rotate: -6deg; translate: 0.95em -0.05em; transform-origin: 0 50%; }
 .pen-sum > :nth-child(3) { rotate: 2deg; translate: 0.6em 0; }
@@ -625,6 +721,7 @@ a.obj:not(.grounded):focus-visible,
 
 /* ---- About: a polaroid ---- */
 
+/* Hovered, it doesn't lift like the rest, being .grounded: its picture answers instead */
 #about {
   --x: -27; --y: -18; --w: 14; --r: -7deg; --h0: 0.2;
 }
@@ -636,6 +733,129 @@ a.obj:not(.grounded):focus-visible,
   text-align: center;
   font-size: 15cqi;
   rotate: -2deg;
+}
+
+/* Instant film comes out under a pale, opaque layer, greenish grey, that clears as the dyes
+   climb through it: the darks come up first, the highlights last, and the colour starts cold
+   and warms last of all, red arriving after the rest. Here each of those moments is a copy
+   of the photo, and each clears in turn to the one under it, down to the photo itself.
+   Nothing is blended, so the room's light falls on it as on anything else, day or night.
+   Laid over the picture's window, in hundredths of the photo: its edges aren't quite
+   straight, bowing by a pixel or so. Beside .item, turned with it, rather than in it: the
+   browser would draw all that's in it upright, to turn afterwards, for as long as this
+   lasts, and the writing and the edges of the paper would go soft. */
+.polaroid-film {
+  position: absolute;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+  rotate: calc(var(--r, 0deg) + var(--j, 0deg));
+  clip-path: polygon(7.25% 6.9%, 12.5% 6.78%, 18.5% 7.01%, 25% 7.07%, 85% 7.07%, 92.95% 6.92%,
+    93.05% 11.64%, 93.05% 15.8%, 92.75% 20.79%, 92.68% 31.19%, 92.65% 64.86%, 93.05% 66.94%,
+    93.03% 75.26%, 92.93% 79.88%, 87.5% 79.81%, 82.5% 80.06%, 26% 80.06%, 7.5% 79.92%,
+    7.38% 76.09%, 7.3% 62.37%, 7.25% 51.98%, 7.48% 50.73%, 7.5% 27.03%, 7.43% 18.71%, 7.25% 15.8%);
+}
+
+.blank .polaroid-film,
+.replaying .polaroid-film {
+  display: block;
+}
+
+.polaroid-film i,
+.polaroid-film::before,
+.polaroid-film::after {
+  position: absolute;
+  inset: 0;
+}
+
+.polaroid-film i {
+  background: var(--photo) 0 0 / 100% 100%;
+}
+
+/* Nearly there, the reds still to come */
+.polaroid-film i:nth-child(1) {
+  filter: saturate(0.5) hue-rotate(18deg) contrast(0.88) brightness(1.05);
+}
+
+/* The middle tones up, the highlights still under the milk */
+.polaroid-film i:nth-child(2) {
+  filter: saturate(0.12) brightness(1.04) contrast(0.62) sepia(0.14) hue-rotate(42deg) brightness(1.12);
+}
+
+/* Only the darks, and not far */
+.polaroid-film i:nth-child(3) {
+  filter: grayscale(1) brightness(2.6) contrast(0.3) sepia(0.2) hue-rotate(45deg) brightness(1.2);
+}
+
+/* The opaque layer, before anything's come through it. Never quite even: fractal noise,
+   0.2 to 0.8, made a few levels either side of the colour under it, drawn once. */
+.polaroid-film::after {
+  content: "";
+  z-index: 2;
+  background: rgb(204 209 197) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 481' preserveAspectRatio='none'%3E%3Cfilter id='m' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='5' seed='5'/%3E%3CfeColorMatrix values='0.07 0 0 0 0.765 0.07 0 0 0 0.785 0.07 0 0 0 0.737 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='400' height='481' filter='url(%23m)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+}
+
+/* It clears unevenly too, lingering in broad patches over what's already come up. Noise
+   again: none of it where that's 0.32, and half of it where it's 0.7. */
+.polaroid-film::before {
+  content: "";
+  z-index: 1;
+  background: rgb(204 209 197);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 481' preserveAspectRatio='none'%3E%3Cfilter id='m' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.007' numOctaves='3' seed='11'/%3E%3CfeColorMatrix values='1.4 0 0 0 -0.45 1.4 0 0 0 -0.45 1.4 0 0 0 -0.45 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='400' height='481' filter='url(%23m)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat luminance;
+}
+
+.developing .polaroid-film::after {
+  animation: polaroid-clear 1.5s ease-in-out 0.25s both;
+}
+
+.developing .polaroid-film::before {
+  animation: polaroid-clear 2s ease-in-out 1.25s both;
+}
+
+.developing .polaroid-film i:nth-child(3) {
+  animation: polaroid-clear 1.5s ease-in-out 1.25s both;
+}
+
+.developing .polaroid-film i:nth-child(2) {
+  animation: polaroid-clear 1.75s ease-in-out 2.25s both;
+}
+
+.developing .polaroid-film i:nth-child(1) {
+  animation: polaroid-clear 1.5s ease-in-out 3.5s both;
+}
+
+@keyframes polaroid-clear {
+  to { opacity: 0; }
+}
+
+/* Hovered, it goes a little of the way back, colder and paler but never to the milk, and
+   comes up again */
+.replaying .polaroid-film::before,
+.replaying .polaroid-film::after,
+.replaying .polaroid-film i:nth-child(3) {
+  display: none;
+}
+
+.replaying .polaroid-film i:nth-child(1) {
+  --back: 0.85;
+  animation: polaroid-recede 2.2s ease-in-out both;
+}
+
+.replaying .polaroid-film i:nth-child(2) {
+  --back: 0.35;
+  animation: polaroid-recede 1.6s ease-in-out both;
+}
+
+@keyframes polaroid-recede {
+  from, to { opacity: 0; }
+  20% { opacity: var(--back); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blank .polaroid-film,
+  .replaying .polaroid-film {
+    display: none;
+  }
 }
 
 /* ---- Philosophy: a sticker ---- */
@@ -2296,7 +2516,7 @@ html:not(.dark-mode) .pi-screen {
 .sheet:nth-child(4) { --out: 2.5cqi -3cqi; --turn: 2.5deg; --after: 0.09s; }
 .sheet:nth-child(5) { --out: 5.5cqi -1.5cqi; --turn: -0.5deg; --after: 0.12s; background: #f5f2ea; }
 
-/* ---- Uses: earphones ---- */
+/* ---- Taste (still #uses): earphones ---- */
 
 #uses {
   /* As high as its cable is thick */
@@ -2309,7 +2529,7 @@ html:not(.dark-mode) .pi-screen {
   top: calc(100% - 7 * var(--u));
 }
 
-/* As thick as the cassette; the cable is hardly anything */
+/* The buds stand well off the table; the cable is hardly anything */
 .earbuds {
   --h0: 1.6;
 }
@@ -2403,23 +2623,8 @@ html:not(.dark-mode) .pi-screen {
 .bud-right .glow-ink { left: 28%; }
 
 #uses .tag {
-  --tx: 60.5%; --ty: 75.2%; --tw: 9; --tr: 4deg;
-}
-
-/* ---- Favorites: a cassette ---- */
-
-#favorites {
-  --x: -55; --y: -6; --w: 15; --r: 9deg; --h0: 1.4;
-  /* Never off the edge of a narrower table */
-  left: max(calc(50% + var(--x) * var(--ux)), calc(10 * var(--u)));
-}
-
-.cassette-label {
-  left: 12%;
-  right: 12%;
-  top: 20%;
-  text-align: center;
-  font-size: 10cqi;
+  /* Off to one side, so the right cable, which crosses at `over` in index.html, misses the word */
+  --tx: 81%; --ty: 75.2%; --tw: 9; --tr: 4deg;
 }
 
 /* ---- Playground: a die ---- */
@@ -2441,15 +2646,16 @@ html:not(.dark-mode) .pi-screen {
 /* ---- Papers: the first page of a paper ---- */
 
 #papers {
-  --w: 30; --r: -9deg; --h0: 0.12;
+  --w: 20; --r: -9deg; --h0: 0.12;
   /* Sheets lie flat, with no edge thick enough to darken the table where they meet it */
   --contact-alpha: 0;
-  left: calc(100% + 0 * var(--u));
-  top: calc(100% - 7 * var(--u));
+  /* In the table's corner, a little off it */
+  left: calc(100% - 6 * var(--u));
+  top: calc(100% - 10 * var(--u));
 }
 
 #papers .tag {
-  --tx: 40%; --ty: -4%; --tw: 10; --tr: 0deg;
+  --tx: 52%; --ty: -8%; --tw: 10; --tr: 0deg;
 }
 
 /* Two sheets of the business card's stock, a little brighter: the page, in front, and
@@ -2480,7 +2686,7 @@ html:not(.dark-mode) .pi-screen {
   rotate: 91.2deg;
 }
 
-/* Matches the PDF: US letter, Arial, 1in margins */
+/* Set as a journal would: US letter, Times, 0.75in margins, two columns */
 .page {
   position: absolute;
   z-index: 1;
@@ -2506,29 +2712,130 @@ html:not(.dark-mode) .pi-screen {
 
 .page-body {
   position: relative;
+  box-sizing: border-box;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.6cqi;
-  padding: 11% 11.8%;
-  font: 1.8cqi/1.15 Arial, "Liberation Sans", Helvetica, sans-serif;
+  padding: 11.5% 8.8% 9%;
+  font: 2.9cqi/1.22 "Times New Roman", "Liberation Serif", Tinos, Times, serif;
   color: #1d1b18;
   mix-blend-mode: multiply;
 }
 
 .page-title {
   font-weight: 700;
-  font-size: 2.9cqi;
+  font-size: 4.8cqi;
+  line-height: 1.16;
+  text-align: center;
+}
+
+.page-title span {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+/* A pass of a yellow highlighter over each line of the title: drawn, not ruled, as the
+   pen's strike is. It starts and stops past the words, and drifts across them. The ink's
+   multiplied, so the print shows through it and it's darker where the passes overlap.
+   Laid over what's under it, it needs no night of its own: the room's light dims it too. */
+.page-marker {
+  position: absolute;
+  left: -0.3em;
+  top: -0.1em;
+  width: calc(100% + 0.68em);
+  height: 1.38em;
+  overflow: visible;
+  fill: rgb(255 238 80);
+  mix-blend-mode: multiply;
+  visibility: hidden;
+}
+
+/* Where the felt laid down more ink */
+.page-marker path + path {
+  fill: rgb(242 190 0 / 0.3);
+}
+
+/* At an even pace, so the longer line takes longer, with a moment to bring the pen back */
+#papers.marked .page-marker {
+  visibility: visible;
+  animation: page-mark 0.34s cubic-bezier(0.3, 0.2, 0.5, 1) 0.12s backwards;
+}
+
+#papers.marked .page-title span + span .page-marker {
+  animation-duration: 0.5s;
+  animation-delay: 0.6s;
+}
+
+/* Its leading edge slanted, like the pen's chisel tip */
+@keyframes page-mark {
+  from { clip-path: polygon(-12% -30%, -4% -30%, -10% 130%, -12% 130%); }
+  to { clip-path: polygon(-12% -30%, 112% -30%, 106% 130%, -12% 130%); }
+}
+
+/* The words picked out of the abstract, each in one short pass of the same pen */
+.page-word {
+  position: relative;
+}
+
+.page-word::before {
+  content: "";
+  position: absolute;
+  left: -0.14em;
+  top: 0.02em;
+  width: calc(100% + 0.3em);
+  height: 1.16em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 133' preserveAspectRatio='none'%3E%3Cpath fill='%23ffee50' d='M9 15C42 8 92 14 142 11C192 8 248 14 291 8L296 17C293 42 299 88 294 121C250 128 198 121 150 125C100 129 52 122 7 128L3 117C7 90 1 42 6 22Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mix-blend-mode: multiply;
+  visibility: hidden;
+}
+
+.page-word.marked::before {
+  visibility: visible;
+  animation: page-mark 0.22s cubic-bezier(0.3, 0.2, 0.5, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #papers.marked .page-marker,
+  .page-word.marked::before {
+    animation: none;
+  }
 }
 
 .page-author {
-  font-weight: 700;
-  font-size: 1.2cqi;
-  margin: 1.4cqi 0 1.2cqi;
+  font-size: 3cqi;
+  text-align: center;
+  margin: 1.8cqi 0 4.8cqi;
 }
 
-.page-h {
-  font-size: 2.6cqi;
-  margin-top: 1.6cqi;
+/* However much of the writing a face's widths leave room for, in whole lines. No paragraph
+   is spaced from the next, and a heading is two lines, so the columns' lines stay level. */
+.page-cols {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  columns: 2;
+  column-gap: 3.4cqi;
+  column-fill: auto;
+  text-align: justify;
+}
+
+.page-cols > span {
+  display: block;
+  text-indent: 1em;
+}
+
+.page-cols > .page-h {
+  font-weight: 700;
+  line-height: 2.4;
+  text-align: center;
+  text-indent: 0;
+  break-after: avoid;
+}
+
+.page-h + span {
+  text-indent: 0;
 }
 
 /* ---- Theme switch: a rocker light switch ---- */
@@ -2725,12 +3032,11 @@ html:not(.dark-mode) .sw-sun {
   /* Out, its cable off to the side: it fell the other way */
   #phone { --loose-dx: 22; --loose-dy: -24.5; --loose-turn: 70; }
   .table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged { --dx: var(--loose-dx); --dy: var(--loose-dy); --turn: var(--loose-turn); }
-  #papers { --w: 62; --r: 8deg; left: calc(100% - 2 * var(--u)); top: calc(268 * var(--u)); }
+  #papers { --w: 38; --r: 5deg; left: calc(100% - 21 * var(--u)); top: calc(268 * var(--u)); }
   #papers .tag { --tx: 18%; --tw: 22; }
   #philosophy { --x: -22; --y: 240; --w: 26; --tw: 26; }
   #playground { --x: -6; --y: 268; --w: 6; --tw: 24; }
   #gallery { --x: -20; --y: 304; --w: 36; --tw: 22; }
-  #favorites { --x: 22; --y: 330; --w: 38; }
   #uses { --w: 30; --r: 90deg; left: calc(14 * var(--u)); top: calc(362 * var(--u)); }
   #uses .tag { --tw: 18; }
 }

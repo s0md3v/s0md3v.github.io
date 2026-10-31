@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+        // Addresses that aren't links
+        document.querySelectorAll('[data-email]').forEach(el => {
+            el.textContent = el.textContent.replace('[at]', '@');
+        });
     }
 
     function setupThemeButtons() {

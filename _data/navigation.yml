@@ -38,14 +38,10 @@ links:
     label: my life rn
     url: /now/
     tooltip: what am i doing?
-  favorites:
-    label: recommendations
-    url: /favorites/
-    tooltip: stuff i love
-  uses:
-    label: what i use
-    url: /uses/
-    tooltip: my gear
+  taste:
+    label: taste
+    url: /taste/
+    tooltip: stuff i love, stuff i use
 
 header:
   - projects
@@ -56,5 +52,4 @@ header:
 homepage_extra:
   - playground
   - now
-  - favorites
-  - uses
+  - taste
