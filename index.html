@@ -1258,8 +1258,16 @@ layout_style: "homepage"
         setTimeout(tick, 60000 - now % 60000);
       })();
 
-      // Redraws the phone's cable as a twisted pair, for both its resting and tugged paths
-      const TWIST = { half: 6.5, apart: 0.8 };
+      // Redraws the phone's cable as a braid, for both its resting and tugged paths: all that
+      // shows of it, from _raw/braidflat.py, so each point of it can follow the cable's curves.
+      // A strand's outline, and the whole's along one side, each point how far along and how
+      // far across. Each strand's half a repeat on from the last, and its mirror image; so
+      // are the two sides.
+      const BRAID = {
+        half: 4.48,
+        strand: [[0.01,-1.62],[1.46,-1.91],[2.96,-2.07],[4.45,-2.1],[5.85,-2.01],[8.32,-1.57],[12.62,-0.31],[10.59,0.15],[8.88,0.3],[6.14,-0.35],[4.89,-0.48],[3.73,-0.5]],
+        side: [[0.01,-1.83],[1.8,-2.16],[3.63,-2.3],[6.14,-2.18],[8.51,-1.73]],
+      };
       // A point any distance along a path of M, C and S commands. The browser's own
       // getPointAtLength measures from the start each time, which over a whole twisted
       // pair kept a phone busy for most of a second, so the path is measured once here.
@@ -1319,40 +1327,54 @@ layout_style: "homepage"
         return at((low + high) / 2, y1, y2);
       };
       const EASE_IN_OUT = bezier(0.42, 0, 0.58, 1);
-      // Each run's twisted pair, plugged in, held up over the jack, and out, for the plug
-      // on its way: a point at a time, every seventh starting a half twist
+      // Each run's braid, plugged in, held up over the jack, and out, for the plug on its
+      // way: its outline, its strands, and the line down its middle
       const strands = [];
       phone.querySelectorAll('.cable-run').forEach(run => {
         const svg = run.ownerSVGElement, ns = svg.namespaceURI;
         const middle = run.querySelector('.cable-core').getAttribute('d');
-        // A half twist every TWIST.half from the plug, whichever way the cable goes, so the
-        // same points of it can be moved between them; the shorter its way, the more of it
-        // is off the table, gathered at the end
-        function twist(d, halves) {
-          const { at } = walk(d);
-          let over = '', under = '';
-          for (let k = 0; k < halves; k++) {
-            for (let i = 0; i <= 6; i++) {
-              const s = (k + i / 6) * TWIST.half;
-              const p = at(s), q = at(s - 0.5), r = at(s + 0.5);
-              const across = Math.hypot(r.x - q.x, r.y - q.y) || 1;
-              const nx = -(r.y - q.y) / across, ny = (r.x - q.x) / across;
-              const off = TWIST.apart * Math.cos(Math.PI * i / 6);
-              const step = i ? 'L' : 'M';
-              over += `${step}${(p.x + nx * off).toFixed(2)} ${(p.y + ny * off).toFixed(2)}`;
-              under += `${step}${(p.x - nx * off).toFixed(2)} ${(p.y - ny * off).toFixed(2)}`;
-            }
-          }
-          return { over, under };
+        // From the plug, whichever way the cable goes, so the same points of it can be moved
+        // between them; the shorter its way, the more of it is off the table, running on
+        // straight past its end. Before the first point it runs back into the plug.
+        function braid(d, halves) {
+          const { at, length } = walk(d);
+          const [start, next, before, end] = [at(0), at(1), at(length - 1), at(length)];
+          const on = s => {
+            const p = at(Math.min(Math.max(s, 0), length));
+            const [ahead, way] = s < 0 ? [s, [next.x - start.x, next.y - start.y]] : [Math.max(s - length, 0), [end.x - before.x, end.y - before.y]];
+            return { x: p.x + ahead * way[0], y: p.y + ahead * way[1] };
+          };
+          // A point of a strand, half k of it along, mirrored every other
+          const place = (k, [along, across]) => {
+            const s = along + k * BRAID.half;
+            const p = on(s), q = on(s - 0.5), r = on(s + 0.5);
+            const apart = Math.hypot(r.x - q.x, r.y - q.y) || 1;
+            const off = k % 2 ? -across : across;
+            return `${(p.x + (r.y - q.y) / apart * off).toFixed(2)} ${(p.y - (r.x - q.x) / apart * off).toFixed(2)}`;
+          };
+          const each = [...Array(halves).keys()].map(k => k - 2);
+          // A side's a whole repeat, two of those, and the other's half a repeat on
+          const repeats = each.filter(k => k % 2 === 0);
+          const down = repeats.flatMap(k => BRAID.side.map(point => place(k, point)));
+          const back = repeats.flatMap(k => BRAID.side.map(point => place(k + 1, point))).reverse();
+          const line = points => 'M' + points.join('L');
+          return {
+            edge: line([...down, ...back]),
+            core: each.map(k => line(BRAID.strand.map(point => place(k, point)))).join(''),
+            middle: line(each.map(k => {
+              const p = on((k + 2) * BRAID.half);
+              return `${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
+            })),
+          };
         }
         const ways = [middle, run.dataset.tug, run.dataset.lift, run.dataset.loose, run.dataset.looseTug];
-        const halves = Math.ceil(Math.max(...ways.filter(Boolean).map(d => walk(d).length)) / TWIST.half);
-        const [rest, tug, lift, loose, looseTug] = ways.map(d => d && twist(d, halves));
+        const halves = Math.ceil(Math.max(...ways.filter(Boolean).map(d => walk(d).length)) / BRAID.half) + 4;
+        const [rest, tug, lift, loose, looseTug] = ways.map(d => d && braid(d, halves));
         const numbers = d => d.match(/-?\d*\.?\d+/g).map(Number);
-        run.replaceChildren(...[['under', 'strand-edge'], ['under', 'strand'], ['over', 'strand-edge'],
-          ['over', 'strand'], ['over', 'strand-shine']].map(([layer, kind]) => {
+        run.replaceChildren(...[['edge', 'braid-edge', Infinity], ['core', 'braid-core', BRAID.strand.length * 2],
+          ['middle', 'strand-shade', Infinity], ['middle', 'strand-shine', Infinity]].map(([layer, kind, every]) => {
           const path = document.createElementNS(ns, 'path');
-          path.setAttribute('class', `${kind} ${layer}`);
+          path.setAttribute('class', kind);
           path.setAttribute('d', rest[layer]);
           path.style.setProperty('--rest', `path("${rest[layer]}")`);
           if (tug) path.style.setProperty('--tug', `path("${tug[layer]}")`);
@@ -1360,10 +1382,10 @@ layout_style: "homepage"
           if (looseTug) path.style.setProperty('--loose-tug', `path("${looseTug[layer]}")`);
           const all = { rest, tug, lift, loose, looseTug };
           const poses = Object.fromEntries(Object.keys(all).filter(way => all[way]).map(way => [way, numbers(all[way][layer])]));
-          strands.push({ path, poses, ends: [poses.rest, poses.lift, poses.loose], now: poses.rest });
+          strands.push({ path, every, poses, ends: [poses.rest, poses.lift, poses.loose], now: poses.rest });
           return path;
         }));
-        run.classList.add('twisted');
+        run.classList.add('braided');
       });
 
       // A scanner: an SDR dongle on the laptop, off the table, which the Pi listens through
@@ -1591,7 +1613,7 @@ layout_style: "homepage"
           let d = '';
           strand.now = from.map((v, k) => v + u * (to[k] - v));
           for (let k = 0; k < from.length; k += 2) {
-            d += `${k % 14 ? 'L' : 'M'}${strand.now[k].toFixed(2)} ${strand.now[k + 1].toFixed(2)}`;
+            d += `${k % strand.every ? 'L' : 'M'}${strand.now[k].toFixed(2)} ${strand.now[k + 1].toFixed(2)}`;
           }
           if (STYLED_D) strand.path.style.d = `path("${d}")`;
           else strand.path.setAttribute('d', d);

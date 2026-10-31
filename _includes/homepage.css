@@ -1509,29 +1509,29 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(2.5px * var(--cable-scale, 1));
 }
 
-/* The twisted pair, drawn by the script */
-.strand-edge,
-.strand,
+/* The braid, drawn by the script: its edge all round, its strands over that, and over
+   them, the cable's far side, turned from the light, and its shine */
+.cable .braid-edge {
+  fill: #7a8696;
+}
+
+.cable .braid-core {
+  fill: #eef2f6;
+}
+
+.strand-shade,
 .strand-shine {
-  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.strand-edge {
-  stroke: rgba(112, 118, 127, 0.6);
-  stroke-width: 2.5px;
-}
-
-.strand {
-  stroke: rgb(234 237 241);
-  stroke-width: 1.9px;
-}
-
-.strand.under {
-  stroke: rgb(196 201 208);
+.strand-shade {
+  stroke: rgb(120 128 140);
+  stroke-opacity: calc(0.5 * var(--shade, 0.45));
+  stroke-width: 1.6px;
 }
 
 .strand-shine {
-  stroke: rgba(255, 255, 255, 0.95);
+  stroke: rgba(255, 255, 255, 0.5);
   stroke-width: 0.45px;
 }
 
@@ -1549,9 +1549,12 @@ html:not(.dark-mode) .phone-screen {
   --off: calc(-0.45px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
 }
 
-.ear-hook-edge,
-.strand-edge {
+.ear-hook-edge {
   --off: calc(-0.3px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
+}
+
+.strand-shade {
+  --off: -1.5px;
 }
 
 .ear-left > .cable-shine,
@@ -1560,13 +1563,13 @@ html:not(.dark-mode) .phone-screen {
 }
 
 .strand-shine {
-  --off: calc(0.95px * var(--glint, 0.5));
+  --off: calc(1.2px * var(--glint, 0.5));
 }
 
 .ear-left > :is(.cable-edge, .cable-shine, .cable-shade),
 .ear-right > :is(.cable-edge, .cable-shine, .cable-shade),
 .ear-hook-edge,
-.strand-edge,
+.strand-shade,
 .strand-shine {
   translate: calc(var(--lx, -0.53) * var(--off)) calc(var(--ly, -0.85) * var(--off));
 }
@@ -1657,20 +1660,20 @@ html:not(.dark-mode) .phone-screen {
   touch-action: none;
 }
 
-.twisted path {
+.braided path {
   d: var(--rest);
 }
 
-#phone.unplugged .twisted path {
+#phone.unplugged .braided path {
   d: var(--loose);
 }
 
 /* Without the script, the cable as it's drawn, to where the plug lies */
-#phone.unplugged .run-down:not(.twisted) path {
+#phone.unplugged .run-down:not(.braided) path {
   d: path("M-19.84 -33.41C-32.06 -37.86 -44 -42 -52 -34C-57 -29 -58 -20 -58 -8S-60 30 -52 60S-42 130 -40 200");
 }
 
-#phone.unplugged .run-side:not(.twisted) path {
+#phone.unplugged .run-side:not(.braided) path {
   d: path("M75.84 -33.41C83.4 -36.15 96 -44 112 -42S136 -40 160 -45");
 }
 
@@ -1686,7 +1689,7 @@ html:not(.dark-mode) .phone-screen {
   d: path("M28 -27C28 -40 6 -46 -18 -42C-42 -37 -55 -30 -56 -8S-57 30 -50 60S-40 130 -38 200");
 }
 
-.table:has(#uses:is(:hover, :focus-visible)) #phone:not(.unplugged) .run-down.twisted path {
+.table:has(#uses:is(:hover, :focus-visible)) #phone:not(.unplugged) .run-down.braided path {
   d: var(--tug);
 }
 
@@ -1694,7 +1697,7 @@ html:not(.dark-mode) .phone-screen {
   --dx: -26; --dy: -25.5; --turn: -75;
 }
 
-.table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged .run-down.twisted path {
+.table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged .run-down.braided path {
   d: var(--loose-tug);
 }
 
