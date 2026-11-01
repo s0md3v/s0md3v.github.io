@@ -1,6 +1,7 @@
 - title: XSStrike
   href: https://github.com/s0md3v/XSStrike
-  stars: 14927
+  stars: 15239
+  year: 2017
   what: Most advanced XSS detection suite.
   why: Scanners usually just inject a list of payloads and see what sticks, missing
     context-aware vulnerabilities.
@@ -8,7 +9,8 @@
     working payloads on the fly.
 - title: Arjun
   href: https://github.com/s0md3v/Arjun
-  stars: 6213
+  stars: 6435
+  year: 2018
   what: HTTP parameter discovery suite.
   why: Web apps often have hidden parameters that are vulnerable to attacks, but they
     aren't linked anywhere in the UI.
@@ -16,7 +18,8 @@
     the server accepts, while bypassing rate limits.
 - title: Photon
   href: https://github.com/s0md3v/Photon
-  stars: 12847
+  stars: 13317
+  year: 2018
   what: Incredibly fast crawler designed for OSINT.
   why: Extracting intelligence from a target manually is painful, and standard web
     crawlers aren't built for reconnaissance.
@@ -24,14 +27,16 @@
     accounts, and keys into a neat structure.
 - title: Smap
   href: https://github.com/s0md3v/Smap
-  stars: 3218
+  stars: 3313
+  year: 2022
   what: A drop-in nmap replacement powered by shodan.io.
   why: Active port scanning is inherently noisy and gets your IP address blocked by
     firewalls.
   how: It queries Shodan's API and perfectly mimics nmap's CLI arguments and output.
 - title: overthink
   href: https://github.com/s0md3v/overthink
-  stars: 6
+  stars: 41
+  year: 2026
   what: Skill that makes coding agents think thoroughly.
   why: Agents often jump to answers when a task is ambiguous, risky, or needs real
     judgment.
@@ -39,7 +44,8 @@
     deciding, tasting, and synthesizing before the agent answers.
 - title: uro
   href: https://github.com/s0md3v/uro
-  stars: 1551
+  stars: 1599
+  year: 2021
   what: Declutters URL lists for crawling and pentesting.
   why: Wayback machine and crawlers give you huge lists of URLs, but most of them
     are basically duplicates with different parameter values.
@@ -48,6 +54,7 @@
 - title: hardcodes
   href: https://github.com/s0md3v/hardcodes
   stars: 285
+  year: 2020
   what: Extracts hardcoded strings from source code.
   why: Developers accidentally leave API keys and sensitive info inside strings, and
     normal grepping gets messy with comments.
@@ -55,7 +62,8 @@
     across over 20 different programming languages.
 - title: Orbit
   href: https://github.com/s0md3v/Orbit
-  stars: 597
+  stars: 623
+  year: 2018
   what: Blockchain transactions investigation tool.
   why: Tracking cryptocurrency moving through tons of different wallets is a nightmare
     without visualizing the flow.
@@ -63,7 +71,8 @@
     relationship graph between addresses.
 - title: huepy
   href: https://github.com/s0md3v/huepy
-  stars: 1482
+  stars: 1478
+  year: 2018
   what: Python library to print awesomely in terminals.
   why: Adding colored text in CLI tools shouldn't require memorizing ugly ANSI escape
     codes and writing boilerplate.
@@ -71,7 +80,8 @@
     and markers to your script's output.
 - title: Be-a-hacker
   href: https://github.com/s0md3v/be-a-hacker
-  stars: 2665
+  stars: 2910
+  year: 2020
   what: Roadmap for a self-taught hacker.
   why: Information security is overwhelming for beginners without a clear, structured
     learning path.

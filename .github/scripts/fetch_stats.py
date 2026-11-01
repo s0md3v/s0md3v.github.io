@@ -41,6 +41,22 @@ PYPI_PROJECTS = [
     "zetanize",
 ]
 
+# What the archive on /projects leaves out, besides the picks in _data/projects.yaml: anything with
+# too few stars or no description, what isn't a tool or is shown elsewhere, and a few attack
+# payloads, which aren't what this page is for.
+ARCHIVE_MIN_STARS = 25
+# Shown anyway, with few stars or no description on GitHub
+ARCHIVE_KEEP = {
+    "dishtance": "Find where a photo or video was shot from a satellite dish in it",
+    "shades": "Dark and monochrome modes for Linux",
+}
+# When a repository's life really began, where that isn't when it was created
+ARCHIVE_YEARS = {"esprima2": 2025}
+ARCHIVE_SKIP = {
+    ".github", "s0md3v", "s0md3v.github.io", "dump", "papers", "fonetic-go",
+    "cloak", "jshell", "nano", "shiva",
+}
+
 HEADERS = {
     "Authorization": f"Bearer {GITHUB_TOKEN}",
     "Accept": "application/vnd.github+json",
@@ -124,6 +140,25 @@ def get_pypi_downloads(project):
     return get_json(url).get("data", {}).get("last_month", 0)
 
 
+def archive_entries(repos, picks):
+    entries = []
+    for repo in repos:
+        name = repo["name"].lower()
+        description = ARCHIVE_KEEP.get(name) or (repo["description"] or "").strip().rstrip(".")
+        if repo["fork"] or name in picks or name in ARCHIVE_SKIP:
+            continue
+        if name not in ARCHIVE_KEEP and (repo["stargazers_count"] < ARCHIVE_MIN_STARS or not description):
+            continue
+        entries.append({
+            "name": repo["name"],
+            "href": repo["html_url"],
+            "year": ARCHIVE_YEARS.get(name, int(repo["created_at"][:4])),
+            "stars": repo["stargazers_count"],
+            "description": description[0].upper() + description[1:],
+        })
+    return sorted(entries, key=lambda entry: (-entry["year"], -entry["stars"]))
+
+
 def main():
     if not GITHUB_TOKEN:
         raise RuntimeError(
@@ -203,6 +238,9 @@ def main():
                     
             with open("_data/projects.yaml", "w") as f:
                 yaml.dump(projects, f, sort_keys=False, default_flow_style=False)
+
+            with open("_data/repos.json", "w") as f:
+                json.dump(archive_entries(repos, {p["title"].lower() for p in projects}), f, indent=2)
 
 if __name__ == "__main__":
     main()

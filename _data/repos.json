@@ -1,0 +1,233 @@
+[
+  {
+    "name": "esprima2",
+    "href": "https://github.com/s0md3v/esprima2",
+    "year": 2025,
+    "stars": 72,
+    "description": "Modern javascript parser"
+  },
+  {
+    "name": "wappalyzer-next",
+    "href": "https://github.com/s0md3v/wappalyzer-next",
+    "year": 2024,
+    "stars": 423,
+    "description": "Detect technologies with wappalyzer alternative"
+  },
+  {
+    "name": "roop",
+    "href": "https://github.com/s0md3v/roop",
+    "year": 2023,
+    "stars": 3558,
+    "description": "Roop extension for StableDiffusion web-ui"
+  },
+  {
+    "name": "SubGPT",
+    "href": "https://github.com/s0md3v/SubGPT",
+    "year": 2023,
+    "stars": 357,
+    "description": "Find subdomains with GPT, for free"
+  },
+  {
+    "name": "ifnude",
+    "href": "https://github.com/s0md3v/ifnude",
+    "year": 2023,
+    "stars": 114,
+    "description": "Nudity detector that works"
+  },
+  {
+    "name": "wl",
+    "href": "https://github.com/s0md3v/wl",
+    "year": 2023,
+    "stars": 70,
+    "description": "Convert case style of words"
+  },
+  {
+    "name": "ote",
+    "href": "https://github.com/s0md3v/ote",
+    "year": 2021,
+    "stars": 586,
+    "description": "Generate Email, Register for anything, Get the OTP/Link"
+  },
+  {
+    "name": "rewise",
+    "href": "https://github.com/s0md3v/rewise",
+    "year": 2021,
+    "stars": 82,
+    "description": "Google auto-complete wrapper"
+  },
+  {
+    "name": "shades",
+    "href": "https://github.com/s0md3v/shades",
+    "year": 2021,
+    "stars": 28,
+    "description": "Dark and monochrome modes for Linux"
+  },
+  {
+    "name": "Parth",
+    "href": "https://github.com/s0md3v/Parth",
+    "year": 2020,
+    "stars": 602,
+    "description": "Heuristic Vulnerable Parameter Scanner"
+  },
+  {
+    "name": "velocity",
+    "href": "https://github.com/s0md3v/velocity",
+    "year": 2020,
+    "stars": 95,
+    "description": "DNS caching for humans"
+  },
+  {
+    "name": "dishtance",
+    "href": "https://github.com/s0md3v/dishtance",
+    "year": 2020,
+    "stars": 10,
+    "description": "Find where a photo or video was shot from a satellite dish in it"
+  },
+  {
+    "name": "Corsy",
+    "href": "https://github.com/s0md3v/Corsy",
+    "year": 2019,
+    "stars": 1542,
+    "description": "CORS Misconfiguration Scanner"
+  },
+  {
+    "name": "Silver",
+    "href": "https://github.com/s0md3v/Silver",
+    "year": 2019,
+    "stars": 1055,
+    "description": "Mass scan IPs for vulnerable services"
+  },
+  {
+    "name": "goop",
+    "href": "https://github.com/s0md3v/goop",
+    "year": 2019,
+    "stars": 567,
+    "description": "Google Search Scraper"
+  },
+  {
+    "name": "Predator",
+    "href": "https://github.com/s0md3v/Predator",
+    "year": 2019,
+    "stars": 127,
+    "description": "Anti-Automation System"
+  },
+  {
+    "name": "fonetic",
+    "href": "https://github.com/s0md3v/fonetic",
+    "year": 2019,
+    "stars": 37,
+    "description": "Assess pronounciblity of text"
+  },
+  {
+    "name": "AwesomeXSS",
+    "href": "https://github.com/s0md3v/AwesomeXSS",
+    "year": 2018,
+    "stars": 5155,
+    "description": "Awesome XSS stuff"
+  },
+  {
+    "name": "Diggy",
+    "href": "https://github.com/s0md3v/Diggy",
+    "year": 2018,
+    "stars": 869,
+    "description": "Extract endpoints from apk files"
+  },
+  {
+    "name": "Zen",
+    "href": "https://github.com/s0md3v/Zen",
+    "year": 2018,
+    "stars": 602,
+    "description": "Find emails of Github users"
+  },
+  {
+    "name": "Bolt",
+    "href": "https://github.com/s0md3v/Bolt",
+    "year": 2018,
+    "stars": 595,
+    "description": "CSRF Scanner"
+  },
+  {
+    "name": "Quark",
+    "href": "https://github.com/s0md3v/Quark",
+    "year": 2018,
+    "stars": 229,
+    "description": "Quark is a data visualization framework"
+  },
+  {
+    "name": "proxify",
+    "href": "https://github.com/s0md3v/proxify",
+    "year": 2018,
+    "stars": 161,
+    "description": "A python module for dumping usable proxies"
+  },
+  {
+    "name": "zetanize",
+    "href": "https://github.com/s0md3v/zetanize",
+    "year": 2018,
+    "stars": 81,
+    "description": "HTML form parser for humans"
+  },
+  {
+    "name": "Locky",
+    "href": "https://github.com/s0md3v/Locky",
+    "year": 2018,
+    "stars": 70,
+    "description": "Locky generates \"really\" strong yet easy to remember passwords"
+  },
+  {
+    "name": "Entropy",
+    "href": "https://github.com/s0md3v/Entropy",
+    "year": 2018,
+    "stars": 58,
+    "description": "Entropy is a (prototype) WAF driven by maths"
+  },
+  {
+    "name": "Striker",
+    "href": "https://github.com/s0md3v/Striker",
+    "year": 2017,
+    "stars": 2352,
+    "description": "Striker is an offensive information and vulnerability scanner"
+  },
+  {
+    "name": "ReconDog",
+    "href": "https://github.com/s0md3v/ReconDog",
+    "year": 2017,
+    "stars": 2128,
+    "description": "Reconnaissance Swiss Army Knife"
+  },
+  {
+    "name": "Hash-Buster",
+    "href": "https://github.com/s0md3v/Hash-Buster",
+    "year": 2017,
+    "stars": 1904,
+    "description": "Crack hashes in seconds"
+  },
+  {
+    "name": "Decodify",
+    "href": "https://github.com/s0md3v/Decodify",
+    "year": 2017,
+    "stars": 934,
+    "description": "Detect and decode encoded strings, recursively"
+  },
+  {
+    "name": "Blazy",
+    "href": "https://github.com/s0md3v/Blazy",
+    "year": 2017,
+    "stars": 927,
+    "description": "Intelligent login bruteforcer"
+  },
+  {
+    "name": "Breacher",
+    "href": "https://github.com/s0md3v/Breacher",
+    "year": 2017,
+    "stars": 847,
+    "description": "An advanced multithreaded admin panel finder written in python"
+  },
+  {
+    "name": "sqlmate",
+    "href": "https://github.com/s0md3v/sqlmate",
+    "year": 2017,
+    "stars": 453,
+    "description": "A friend of SQLmap which will do what you always expected from SQLmap"
+  }
+]
