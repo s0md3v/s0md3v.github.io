@@ -1,0 +1,25 @@
+{% assign nav = site.data.navigation %}
+{% comment %} Where this page is: its section (/blog/x, /papers -> blog) and the name it goes by {% endcomment %}
+{% assign nav_section = nil %}
+{% assign nav_title = nil %}
+{% for link_id in nav.header %}
+{% for covered in nav.links[link_id].covers %}
+{% assign covered_size = covered | size %}
+{% assign page_url_prefix = page.url | slice: 0, covered_size %}
+{% assign covered_last = covered | slice: -1, 1 %}
+{% if page.url == covered or covered_last == "/" and page_url_prefix == covered %}
+{% assign nav_section = link_id %}
+{% assign nav_title = nav.links[link_id].label %}
+{% assign nav_title_id = link_id %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% if nav_section %}
+{% for nav_entry in nav.links %}
+{% assign entry_url = nav_entry[1].url %}
+{% assign entry_size = entry_url | size %}
+{% assign page_url_prefix = page.url | slice: 0, entry_size %}
+{% assign entry_last = entry_url | slice: -1, 1 %}
+{% if entry_url != "/" %}{% if page.url == entry_url or entry_last == "/" and page_url_prefix == entry_url %}{% assign nav_title = nav_entry[1].label %}{% assign nav_title_id = nav_entry[0] %}{% endif %}{% endif %}
+{% endfor %}
+{% endif %}

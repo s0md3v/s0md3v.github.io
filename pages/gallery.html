@@ -6,6 +6,15 @@ description: Photographs by Somdev Sangwan.
 ---
 
 <style>
+    /* Prints are on paper in the dark too, only less of a lamp on it */
+    :root {
+        --print-paper: var(--background-color);
+    }
+
+    .dark-mode {
+        --print-paper: #d3cfc3;
+    }
+
     .sr-only {
         position: absolute;
         width: 1px;
@@ -180,7 +189,7 @@ description: Photographs by Somdev Sangwan.
     @media (min-width: 769px) {
         .gallery-item {
             padding: var(--border-width);
-            background: var(--background-color);
+            background: var(--print-paper);
             border-radius: 1px;
             --print-shadow:
                 0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.2),
@@ -292,7 +301,7 @@ description: Photographs by Somdev Sangwan.
         width: min(calc(var(--w) * 1px), var(--room), calc((95vh - 2 * var(--border-width)) * var(--ar)));
         width: min(calc(var(--w) * 1px), var(--room), calc((95dvh - 2 * var(--border-width)) * var(--ar)));
         aspect-ratio: var(--ar);
-        border: var(--border-width) solid var(--background-color);
+        border: var(--border-width) solid var(--print-paper);
         border-radius: 1px;
         background: var(--code-bg) center / 100% 100% no-repeat;
         transform-origin: 0 0;
@@ -319,23 +328,7 @@ description: Photographs by Somdev Sangwan.
     }
 
     /* Which one it is, as the camera says it */
-    .modal-count {
-        position: absolute;
-        top: 0.9em;
-        right: 1.1em;
-        font: 600 clamp(12px, 1.7vmin, 17px)/1 system-ui, sans-serif;
-        letter-spacing: 0.03em;
-        color: #fff;
-        text-shadow: 0 0 0.25em rgba(0, 0, 0, 0.8);
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-    }
-
     /* Zoomed in, it's the photo, not which one it is */
-    .modal.zoomed .modal-count {
-        opacity: 0;
-    }
-
     .modal-button {
         position: fixed;
         color: white;
@@ -408,6 +401,7 @@ description: Photographs by Somdev Sangwan.
 <div class="gallery" id="gallery">
     {% for image in site.data.gallery %}
     {% assign stem = image.filename | remove: '.webp' %}
+    {% assign photo_description = site.data.photo_descriptions[image.filename] | default: "A photograph." %}
     {% assign thumb = site.baseurl | append: '/assets/photos/thumbs/' | append: stem %}
     {% assign leak_x = forloop.index | times: 137 | modulo: 420 %}
     {% assign leak_y = forloop.index | times: 211 | modulo: 420 %}
@@ -415,13 +409,13 @@ description: Photographs by Somdev Sangwan.
         style="grid-row-end: span {{ image.row_span }};">
         <button type="button" class="gallery-item" style="--photo: url('{{ thumb }}-400.webp'); --leak: {{ leak_x }}px {{ leak_y }}px"
             data-full="{{ site.baseurl }}{{ image.path }}"
-            aria-label="View photo {{ image.filename }}">
+            aria-label="View photo: {{ photo_description | escape }}">
             <img src="{{ thumb }}-400.webp"
                 srcset="{{ thumb }}-400.webp 400w, {{ thumb }}-800.webp 800w, {{ site.baseurl }}{{ image.path }} {{ image.width }}w"
                 sizes="{% if image.is_wide %}(max-width: 600px) 100vw, 600px{% else %}(max-width: 600px) 50vw, 300px{% endif %}"
                 width="{{ image.width }}" height="{{ image.height }}"
                 {% if forloop.index <= 6 %}loading="eager"{% if forloop.first %} fetchpriority="high"{% endif %}{% else %}loading="lazy"{% endif %}
-                alt="Photo {{ image.filename }}"
+                alt="{{ photo_description | escape }}"
                 onload="this.parentElement.classList.add('img-loaded')"
                 onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.removeAttribute('srcset');this.src=this.parentElement.dataset.full}">
             <span class="leak"><span></span></span>
@@ -436,7 +430,6 @@ description: Photographs by Somdev Sangwan.
     <button type="button" class="modal-button next-button" aria-label="Next photo">&rsaquo;</button>
     <span class="modal-screen">
         <img alt="">
-        <span class="modal-count" aria-hidden="true"></span>
         <span class="leak"><span></span></span>
     </span>
     <span class="sr-only" aria-live="polite"></span>
@@ -445,7 +438,6 @@ description: Photographs by Somdev Sangwan.
 <script>
     const modal = document.getElementById('modal');
     const frame = modal.querySelector('.modal-screen');
-    const count = modal.querySelector('.modal-count');
     const said = modal.querySelector('[aria-live]');
     const closeBtn = modal.querySelector('.close-button');
     const prevBtn = modal.querySelector('.prev-button');
@@ -522,7 +514,6 @@ description: Photographs by Somdev Sangwan.
         photo.replaceWith(img);
         photo = img;
 
-        count.textContent = `${i + 1}/${items.length}`;
         said.textContent = `Photo ${i + 1} of ${items.length}`;
         // And the ones either side, so stepping to them is instant
         preloads = [1, -1].map(d => {

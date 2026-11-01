@@ -2,11 +2,9 @@ div {
   display: block;
 }
 
-/* Everything in .wrapper is sized in em off --reading-size, so --blog-font-size scales it all */
+/* Everything in .wrapper is sized in em off --reading-size */
 :root {
-  /* Fluid body size anchored to the reader's chosen --blog-font-size. Source Serif is small
-     for its size, so the smallest screens get 17px, which reads like 16px of a sans. */
-  --reading-size: clamp(calc(var(--blog-font-size) * 1.0625), calc(var(--blog-font-size) * 0.9 + 0.3vw), calc(var(--blog-font-size) * 1.15));
+  --reading-size: clamp(1rem, calc(0.9rem + 0.3vw), 1.15rem);
 }
 
 html {
@@ -43,8 +41,8 @@ html {
   --sheet-margin: 1.25em;
   font-size: var(--reading-size);
   line-height: 1.6;
-  /* ~70 characters of whichever font the reader picked, plus the sheet's margins */
-  max-width: calc(68ch + 2 * var(--sheet-margin));
+  /* ~70 characters of Lexend, plus the sheet's margins */
+  max-width: calc(37.5em + 2 * var(--sheet-margin));
   padding: 3em var(--sheet-margin);
   margin: auto;
   background: var(--background-color);
@@ -595,6 +593,12 @@ pre>code {
 [data-page="taste"] { --c: var(--c-taste); }
 [data-page="work"] { --c: var(--c-work); }
 
+/* The window's scrollbar is on all the time, so it's the quiet grey tinted with the page's colour:
+   thinning the colour instead would lose the yellow against the desk */
+html[data-page] {
+  scrollbar-color: color-mix(in srgb, var(--c) 45%, var(--nav-quiet)) transparent;
+}
+
 /* The bar stays with you the length of the page, so the page can't end at the window */
 body {
   height: auto;
@@ -851,39 +855,14 @@ body {
 }
 
 @media (hover: hover) {
-  .settings-options button:not([aria-disabled="true"]):hover {
+  .settings-options button:hover {
     color: var(--foreground-color);
   }
-}
-
-/* Stays in the tab order, or reaching a limit would drop the keyboard's place */
-.settings-options button[aria-disabled="true"] {
-  opacity: 0.55;
-  cursor: default;
 }
 
 .settings-options button.active {
   color: var(--foreground-color);
   background: linear-gradient(var(--foreground-color), var(--foreground-color)) center calc(50% + 0.85em) / 100% 2px no-repeat;
-}
-
-#decrease-font,
-#increase-font {
-  font-size: 1.3rem;
-}
-
-/* Wide enough for 250%, so the + doesn't shift as the number grows */
-#font-size-value {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 3em;
-  min-height: 44px;
-  font-variant-numeric: tabular-nums;
-}
-
-#reset-font {
-  margin-left: auto;
 }
 
 .skip-link {

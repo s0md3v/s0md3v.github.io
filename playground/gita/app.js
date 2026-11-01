@@ -112,6 +112,7 @@ function save() {
 }
 
 function setAppearance() {
+  state.theme = window.getPreferredTheme();
   window.applyTheme(state.theme);
   const root = document.documentElement;
   root.style.setProperty('--blog-font-family', SITE_FONTS[state.readingFont]);
@@ -705,7 +706,7 @@ function handleChange(event) {
     setAppearance();
     if (state.view === 'reader') requestAnimationFrame(collectVersePositions);
   } else if (event.target.id === 'theme-select' && SITE_THEMES.includes(event.target.value)) {
-    state.theme = event.target.value;
+    window.chooseTheme(event.target.value);
     setAppearance();
   }
 }

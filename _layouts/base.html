@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+{% include page_section.html %}
+<html lang="{{ page.lang | default: site.lang | default: "en" }}"{% if nav_title_id %} data-page="{{ nav_title_id }}"{% endif %}>
 {% include head.html %}
 
 <body>

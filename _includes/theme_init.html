@@ -2,7 +2,7 @@
     :root {
         --base-font-size: 1rem;
         --blog-font-size: 1rem;
-        --base-font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+        --base-font-family: {% if page.layout_style == 'homepage' %}"Source Serif 4", Georgia, "Times New Roman", serif{% else %}"Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif{% endif %};
         --blog-font-family: var(--base-font-family);
 
         /* Inner pages are a sheet of paper on the homepage's table: --background-color is
@@ -115,15 +115,16 @@
 
 <script>
     const themes = ["light", "dark"];
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
 
+    // Only a choice is kept. Someone who hasn't made one stays with their system, day and night.
     function getPreferredTheme() {
-        let savedTheme = localStorage.getItem("theme");
-        // The old cream theme became the light theme
-        if (savedTheme === "cream") savedTheme = "light";
-        if (savedTheme && themes.includes(savedTheme)) return savedTheme;
-
-        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        return systemPrefersDark ? "dark" : "light";
+        let chosen = null;
+        try {
+            chosen = localStorage.getItem("chosenTheme");
+        } catch (e) { }
+        if (themes.includes(chosen)) return chosen;
+        return systemDark.matches ? "dark" : "light";
     }
 
     function applyTheme(theme) {
@@ -132,47 +133,23 @@
         // The browser's own bars take the colour of what's under them
         document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement)
             .getPropertyValue("{% if page.layout_style == 'homepage' %}--desk-color{% else %}--background-color{% endif %}");
-        localStorage.setItem("theme", theme);
     }
+
+    // Choosing what the system already shows is the same as going back to following it
+    function chooseTheme(theme) {
+        applyTheme(theme);
+        try {
+            if (theme === (systemDark.matches ? "dark" : "light")) localStorage.removeItem("chosenTheme");
+            else localStorage.setItem("chosenTheme", theme);
+        } catch (e) { }
+    }
+
+    systemDark.addEventListener("change", () => applyTheme(getPreferredTheme()));
 
     try {
         const currentTheme = getPreferredTheme();
         applyTheme(currentTheme);
     } catch (e) {
         console.error("Theme initialization failed:", e);
-    }
-
-    // Applied before first paint to avoid layout shift; also used by assets/js/common.js
-    const DEFAULT_FONT = "serif";
-    const DEFAULT_FONT_SIZE = 1.0;
-    const FONT_FAMILIES = {
-        serif: '"Source Serif 4", Georgia, "Times New Roman", serif',
-        lexend: '"Lexend", sans-serif',
-        opendyslexic: '"OpenDyslexic", sans-serif',
-        system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-    };
-
-    function getFontFamily(font) {
-        return FONT_FAMILIES[font] || "var(--base-font-family)";
-    }
-
-    try {
-        const root = document.documentElement;
-        const savedFont = localStorage.getItem("font") || DEFAULT_FONT;
-        root.style.setProperty("--blog-font-family", getFontFamily(savedFont));
-        if (savedFont === "opendyslexic") {
-            const preload = document.createElement("link");
-            preload.rel = "preload";
-            preload.as = "font";
-            preload.type = "font/woff2";
-            preload.crossOrigin = "anonymous";
-            preload.href = "{{ '/assets/fonts/OpenDyslexic-Regular.woff2' | relative_url }}";
-            document.head.appendChild(preload);
-        }
-
-        const savedSize = parseFloat(localStorage.getItem("fontSize"));
-        root.style.setProperty("--blog-font-size", (savedSize > 0 ? savedSize : DEFAULT_FONT_SIZE) + "rem");
-    } catch (e) {
-        console.error("Font settings initialization failed:", e);
     }
 </script>

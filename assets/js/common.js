@@ -1,4 +1,4 @@
-// DEFAULT_FONT, DEFAULT_FONT_SIZE, getFontFamily, getPreferredTheme, applyTheme: see _includes/theme_init.html
+// getPreferredTheme, chooseTheme, systemDark: see _includes/theme_init.html
 document.addEventListener('DOMContentLoaded', function () {
     function setActiveOption(buttons, activeButton) {
         buttons.forEach(btn => {
@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setupThemeButtons() {
         const themeButtons = document.querySelectorAll('.theme-options button');
-        const currentTheme = getPreferredTheme();
-        const activeThemeButton = document.querySelector(`.theme-options button[data-theme="${currentTheme}"]`);
-        setActiveOption(themeButtons, activeThemeButton);
+        const showTheme = () => setActiveOption(themeButtons, document.querySelector(`.theme-options button[data-theme="${getPreferredTheme()}"]`));
+        showTheme();
+        systemDark.addEventListener('change', showTheme);
 
         themeButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -38,78 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 setActiveOption(themeButtons, this);
 
-                applyTheme(theme);
+                chooseTheme(theme);
             });
         });
-    }
-
-    function setupFontButtons() {
-        const fontButtons = document.querySelectorAll('.font-options button');
-        fontButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const font = this.dataset.font;
-
-                setActiveOption(fontButtons, this);
-
-                document.documentElement.style.setProperty('--blog-font-family', getFontFamily(font));
-                localStorage.setItem('font', font);
-            });
-        });
-    }
-
-    const FONT_SIZE_MIN = 0.7;
-    const FONT_SIZE_MAX = 2.5;
-
-    function currentFontSize() {
-        return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--blog-font-size')) || DEFAULT_FONT_SIZE;
-    }
-
-    function showFontSize(size) {
-        const disable = (id, disabled) => document.getElementById(id)?.setAttribute('aria-disabled', String(disabled));
-        const value = document.getElementById('font-size-value');
-        if (value) value.textContent = Math.round(size * 100) + '%';
-        disable('decrease-font', size <= FONT_SIZE_MIN);
-        disable('increase-font', size >= FONT_SIZE_MAX);
-        disable('reset-font', size === DEFAULT_FONT_SIZE);
-    }
-
-    function setFontSize(size) {
-        document.documentElement.style.setProperty('--blog-font-size', size + 'rem');
-        localStorage.setItem('fontSize', size);
-        showFontSize(size);
-    }
-
-    function setupFontSizeButtons() {
-        const decreaseFont = document.getElementById('decrease-font');
-        const resetFont = document.getElementById('reset-font');
-        const increaseFont = document.getElementById('increase-font');
-
-        if (decreaseFont) decreaseFont.addEventListener('click', () => changeFontSize(-0.1));
-        if (resetFont) resetFont.addEventListener('click', () => setFontSize(DEFAULT_FONT_SIZE));
-        if (increaseFont) increaseFont.addEventListener('click', () => changeFontSize(0.1));
-        showFontSize(currentFontSize());
-    }
-
-    function changeFontSize(amount) {
-        const size = Number((currentFontSize() + amount).toFixed(1));
-        setFontSize(Math.max(FONT_SIZE_MIN, Math.min(FONT_SIZE_MAX, size)));
-    }
-
-    // Only syncs the menu; _includes/theme_init.html applies font and size before first paint
-    function loadFontSettings() {
-        let font = DEFAULT_FONT;
-        try {
-            font = localStorage.getItem('font') || DEFAULT_FONT;
-        } catch (e) { }
-
-        const activeFontButton = document.querySelector(`.font-options button[data-font="${font}"]`);
-        setActiveOption(document.querySelectorAll('.font-options button'), activeFontButton);
     }
 
     setupThemeButtons();
-    setupFontButtons();
-    setupFontSizeButtons();
-    loadFontSettings();
     deobfuscateEmails();
 
     const settingsToggle = document.getElementById('settings-toggle');

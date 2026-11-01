@@ -2396,7 +2396,7 @@ layout_style: "homepage"
       clearTimeout(window.spawning);
 
       toggle.addEventListener('click', () => {
-        applyTheme(document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark');
+        chooseTheme(document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark');
         light();
       });
 
