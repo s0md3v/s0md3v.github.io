@@ -57,36 +57,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    const FONT_SIZE_MIN = 0.7;
+    const FONT_SIZE_MAX = 2.5;
+
+    function currentFontSize() {
+        return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--blog-font-size')) || DEFAULT_FONT_SIZE;
+    }
+
+    function showFontSize(size) {
+        const disable = (id, disabled) => document.getElementById(id)?.setAttribute('aria-disabled', String(disabled));
+        const value = document.getElementById('font-size-value');
+        if (value) value.textContent = Math.round(size * 100) + '%';
+        disable('decrease-font', size <= FONT_SIZE_MIN);
+        disable('increase-font', size >= FONT_SIZE_MAX);
+        disable('reset-font', size === DEFAULT_FONT_SIZE);
+    }
+
+    function setFontSize(size) {
+        document.documentElement.style.setProperty('--blog-font-size', size + 'rem');
+        localStorage.setItem('fontSize', size);
+        showFontSize(size);
+    }
+
     function setupFontSizeButtons() {
         const decreaseFont = document.getElementById('decrease-font');
         const resetFont = document.getElementById('reset-font');
         const increaseFont = document.getElementById('increase-font');
 
-        if (decreaseFont) {
-            decreaseFont.addEventListener('click', function () {
-                changeFontSize(-0.1);
-            });
-        }
-
-        if (resetFont) {
-            resetFont.addEventListener('click', function () {
-                document.documentElement.style.setProperty('--blog-font-size', DEFAULT_FONT_SIZE + 'rem');
-                localStorage.setItem('fontSize', DEFAULT_FONT_SIZE);
-            });
-        }
-
-        if (increaseFont) {
-            increaseFont.addEventListener('click', function () {
-                changeFontSize(0.1);
-            });
-        }
+        if (decreaseFont) decreaseFont.addEventListener('click', () => changeFontSize(-0.1));
+        if (resetFont) resetFont.addEventListener('click', () => setFontSize(DEFAULT_FONT_SIZE));
+        if (increaseFont) increaseFont.addEventListener('click', () => changeFontSize(0.1));
+        showFontSize(currentFontSize());
     }
 
     function changeFontSize(amount) {
-        const currentSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--blog-font-size')) || DEFAULT_FONT_SIZE;
-        const newSize = Math.max(0.7, Math.min(2.5, currentSize + amount)).toFixed(1);
-        document.documentElement.style.setProperty('--blog-font-size', newSize + 'rem');
-        localStorage.setItem('fontSize', newSize);
+        const size = Number((currentFontSize() + amount).toFixed(1));
+        setFontSize(Math.max(FONT_SIZE_MIN, Math.min(FONT_SIZE_MAX, size)));
     }
 
     // Only syncs the menu; _includes/theme_init.html applies font and size before first paint
@@ -106,15 +112,10 @@ document.addEventListener('DOMContentLoaded', function () {
     loadFontSettings();
     deobfuscateEmails();
 
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
     const settingsToggle = document.getElementById('settings-toggle');
     const settingsMenu = document.getElementById('settings-menu');
-    const mobileNavigation = window.matchMedia('(max-width: 768px)');
-    const panels = [
-        { toggle: menuToggle, panel: navLinks },
-        { toggle: settingsToggle, panel: settingsMenu }
-    ].filter(({ toggle, panel }) => toggle && panel);
+    const mobileNavigation = window.matchMedia('(max-width: 48em)');
+    const panels = [{ toggle: settingsToggle, panel: settingsMenu }].filter(({ toggle, panel }) => toggle && panel);
 
     function setPanel({ toggle, panel }, open) {
         panel.classList.toggle('visible', open);
@@ -161,6 +162,72 @@ document.addEventListener('DOMContentLoaded', function () {
     mobileNavigation.addEventListener('change', () => {
         panels.forEach(entry => setPanel(entry, false));
     });
+
+    // Above the page it leaves as you read on and comes back as you turn back, once either is
+    // clearly meant, so a nudge of the wheel or a thumb leaves it where it is. On a phone it's
+    // tabs, which stay.
+    const header = document.getElementById('site-header');
+    const TURN = 8;
+    let lastScroll = Math.max(0, window.scrollY);
+    let travelled = 0;
+
+    function barNeeded() {
+        return mobileNavigation.matches ||
+            panels.some(entry => entry.toggle.getAttribute('aria-expanded') === 'true') ||
+            header.querySelector(':focus-visible');
+    }
+
+    if (header) {
+        mobileNavigation.addEventListener('change', () => header.classList.remove('hidden'));
+
+        window.addEventListener('scroll', () => {
+            const scroll = Math.max(0, window.scrollY);
+            const moved = scroll - lastScroll;
+            travelled = Math.sign(moved) === Math.sign(travelled) ? travelled + moved : moved;
+            lastScroll = scroll;
+
+            if (scroll < header.offsetHeight || barNeeded()) header.classList.remove('hidden');
+            else if (Math.abs(travelled) >= TURN) header.classList.toggle('hidden', travelled > 0);
+        }, { passive: true });
+
+        document.addEventListener('focusin', event => {
+            if (header.contains(event.target)) header.classList.remove('hidden');
+        });
+
+        // A mouse at the top of the screen is reaching for it
+        document.addEventListener('mousemove', event => {
+            if (event.clientY <= 6) header.classList.remove('hidden');
+        }, { passive: true });
+    }
+
+    // The marks have no words of their own, so the title names the one you're on, in a hint of its
+    // colour, and goes back to where you are when you leave it
+    const title = document.querySelector('.nav-title');
+    if (header && title) {
+        const here = title.textContent;
+        const preview = item => {
+            title.textContent = item.dataset.name;
+            title.style.setProperty('--c', getComputedStyle(item).getPropertyValue('--c'));
+            title.classList.add('previewing');
+        };
+        const restore = () => {
+            title.textContent = here;
+            title.style.removeProperty('--c');
+            title.classList.remove('previewing');
+        };
+        const named = event => event.target.closest?.('.nav-item:not([aria-current])');
+
+        header.addEventListener('pointerover', event => {
+            if (event.pointerType === 'mouse' && named(event)) preview(named(event));
+        });
+        header.addEventListener('pointerout', event => {
+            if (named(event)) restore();
+        });
+        header.addEventListener('focusin', event => {
+            if (named(event)?.matches(':focus-visible')) preview(named(event));
+        });
+        header.addEventListener('focusout', restore);
+    }
 
     function setupAccessibility() {
         const mainContent = document.querySelector('main') ||

@@ -1,81 +1,106 @@
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
+{% assign nav = site.data.navigation %}
+{% comment %} Where this page is: its section (/blog/x, /papers -> blog) and the name it goes by {% endcomment %}
+{% assign nav_section = nil %}
+{% assign nav_title = nil %}
+{% for link_id in nav.header %}
+{% for covered in nav.links[link_id].covers %}
+{% assign covered_size = covered | size %}
+{% assign page_url_prefix = page.url | slice: 0, covered_size %}
+{% assign covered_last = covered | slice: -1, 1 %}
+{% if page.url == covered or covered_last == "/" and page_url_prefix == covered %}
+{% assign nav_section = link_id %}
+{% assign nav_title = nav.links[link_id].label %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% if nav_section %}
+{% for sub_id in nav.sections[nav_section] %}
+{% assign sub_url = nav.links[sub_id].url %}
+{% assign sub_size = sub_url | size %}
+{% assign page_url_prefix = page.url | slice: 0, sub_size %}
+{% assign sub_last = sub_url | slice: -1, 1 %}
+{% if page.url == sub_url or sub_last == "/" and page_url_prefix == sub_url %}{% assign nav_title = nav.links[sub_id].label %}{% endif %}
+{% endfor %}
+{% endif %}
+
 <header id="site-header" class="header">
-    <nav class="nav-container">
-        <div class="site-home">
-            <a href="{{ site.data.navigation.links.home.url | relative_url }}">{{ site.data.navigation.links.home.label | escape }}</a>
-            <div class="settings-wrapper">
-                <button class="settings-icon" id="settings-toggle" aria-label="Settings" aria-expanded="false" aria-controls="settings-menu">
-                    <svg width="20" height="20" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282 l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886 C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45 c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863 c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985 l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891 c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48 h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441 c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857 c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>
-                </button>
-                <div class="settings-dropdown" id="settings-menu">
-                    <div class="settings-section">
-                        <div class="settings-subtitle" id="settings-theme-label">Theme</div>
-                        <div class="settings-options theme-options" role="group" aria-labelledby="settings-theme-label">
-                            <button data-theme="light" aria-label="Light Mode" aria-pressed="false">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14.5 14.5c-1.2 2.5-4.5 3.2-6.5 1.5s-2.8-4.8-1.2-6.8 4.2-2.5 6.2-1.2 2.5 4.5 1.5 6.5z" />
-                                    <path d="M12 2.5c0.2 1.5-0.5 2.5-0.2 4M11.5 18c0.2 1.8 0.5 3 0.8 4.5M4 4.5l2.2 2.8M17.5 17.5l3 3.5M2 12.5c1.5-0.2 3 0.5 4.5 0.2M18.5 11c1.8 0.5 3.2-0.2 4.8-0.5M4.5 19.5l2.8-2.2M19.5 4.5l-2.8 3" />
-                                </svg>
-                            </button>
-                            <button data-theme="dark" aria-label="Dark Mode" aria-pressed="false">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <g transform="translate(4 0)">
-                                        <g transform="rotate(-20 12 12)">
-                                            <path transform="translate(24 0) scale(-1 1)" d="M12 3.5a8.5 8.5 0 0 1 0 17c2.2-2.2 3.3-5.3 3.3-8.5S14.2 5.7 12 3.5Z" />
-                                        </g>
+    <nav class="nav-container" aria-label="Main">
+        <a class="nav-item nav-home" data-page="home" data-name="{{ nav.links.home.label | escape }}" href="{{ nav.links.home.url | relative_url }}" aria-label="somdev sangwan, {{ nav.links.home.label | escape }}">{% include marks/home.svg %}<span class="nav-name">somdev sangwan</span><span class="nav-label">{{ nav.links.home.label | escape }}</span></a>
+        <span class="nav-title" data-page="{{ nav_section }}" aria-hidden="true">{{ nav_title | escape }}</span>
+
+        <ul class="nav-links" id="site-navigation">
+            {% for link_id in nav.header %}
+            {% assign nav_link = nav.links[link_id] %}
+            {% assign nav_current = nil %}
+            {% if link_id == nav_section %}{% assign nav_current = "true" %}{% endif %}
+            {% if page.url == nav_link.url %}{% assign nav_current = "page" %}{% endif %}
+            <li><a class="nav-item" data-page="{{ link_id }}" data-name="{{ nav_link.label | escape }}" href="{{ nav_link.url | relative_url }}" aria-label="{{ nav_link.label | escape }}"{% if nav_current %} aria-current="{{ nav_current }}"{% endif %}>{% include marks/{{ link_id }}.svg %}<span class="nav-label">{{ nav_link.label | escape }}</span></a></li>
+            {% endfor %}
+        </ul>
+
+        <div class="settings-wrapper">
+            <button class="nav-item settings-icon" data-page="settings" data-name="settings" id="settings-toggle" aria-label="settings" aria-expanded="false" aria-controls="settings-menu">{% include marks/settings.svg %}<span class="nav-label">settings</span></button>
+            <div class="settings-dropdown" id="settings-menu">
+                <div class="settings-section">
+                    <div class="settings-subtitle" id="settings-theme-label">theme</div>
+                    <div class="settings-options theme-options" role="group" aria-labelledby="settings-theme-label">
+                        <button data-theme="light" aria-label="Light Mode" aria-pressed="false">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.5 14.5c-1.2 2.5-4.5 3.2-6.5 1.5s-2.8-4.8-1.2-6.8 4.2-2.5 6.2-1.2 2.5 4.5 1.5 6.5z" />
+                                <path d="M12 2.5c0.2 1.5-0.5 2.5-0.2 4M11.5 18c0.2 1.8 0.5 3 0.8 4.5M4 4.5l2.2 2.8M17.5 17.5l3 3.5M2 12.5c1.5-0.2 3 0.5 4.5 0.2M18.5 11c1.8 0.5 3.2-0.2 4.8-0.5M4.5 19.5l2.8-2.2M19.5 4.5l-2.8 3" />
+                            </svg>
+                        </button>
+                        <button data-theme="dark" aria-label="Dark Mode" aria-pressed="false">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <g transform="translate(4 0)">
+                                    <g transform="rotate(-20 12 12)">
+                                        <path transform="translate(24 0) scale(-1 1)" d="M12 3.5a8.5 8.5 0 0 1 0 17c2.2-2.2 3.3-5.3 3.3-8.5S14.2 5.7 12 3.5Z" />
                                     </g>
-                                </svg>
-                            </button>
-                        </div>
+                                </g>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle" id="settings-font-label">Font</div>
-                        <div class="settings-options font-options" role="group" aria-labelledby="settings-font-label">
-                            <button data-font="serif" aria-pressed="false">Serif</button>
-                            <button data-font="system" aria-pressed="false">System</button>
-                            <button data-font="lexend" aria-pressed="false">Lexend</button>
-                            <button data-font="opendyslexic" aria-pressed="false">Dyslexic</button>
-                        </div>
+                </div>
+                <div class="settings-section">
+                    <div class="settings-subtitle" id="settings-font-label">font</div>
+                    <div class="settings-options font-options" role="group" aria-labelledby="settings-font-label">
+                        <button data-font="serif" aria-pressed="false">serif</button>
+                        <button data-font="system" aria-pressed="false">system</button>
+                        <button data-font="lexend" aria-pressed="false">lexend</button>
+                        <button data-font="opendyslexic" aria-pressed="false">dyslexic</button>
                     </div>
-                    <div class="settings-section">
-                        <div class="settings-subtitle" id="settings-size-label">Font Size</div>
-                        <div class="settings-options size-options" role="group" aria-labelledby="settings-size-label">
-                            <button id="decrease-font" aria-label="Decrease font size">−</button>
-                            <button id="reset-font" aria-label="Reset font size">Reset</button>
-                            <button id="increase-font" aria-label="Increase font size">+</button>
-                        </div>
+                </div>
+                <div class="settings-section">
+                    <div class="settings-subtitle" id="settings-size-label">size</div>
+                    <div class="settings-options size-options" role="group" aria-labelledby="settings-size-label">
+                        <button id="decrease-font" aria-label="Decrease text size">−</button>
+                        <output id="font-size-value" aria-label="Text size">100%</output>
+                        <button id="increase-font" aria-label="Increase text size">+</button>
+                        <button id="reset-font" aria-label="Reset text size">reset</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-navigation">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </button>
-
-        <ul class="nav-links" id="site-navigation">
-            {% for link_id in site.data.navigation.header %}
-            {% assign nav_link = site.data.navigation.links[link_id] %}
-            {% comment %} The page itself, or a section it lives under (/blog/x -> /blog/, /essays/x -> /essays/) {% endcomment %}
-            {% assign nav_url_size = nav_link.url | size %}
-            {% assign page_url_prefix = page.url | slice: 0, nav_url_size %}
-            {% assign nav_url_last = nav_link.url | slice: -1, 1 %}
-            {% assign nav_current = nil %}
-            {% if page.url == nav_link.url %}
-            {% assign nav_current = "page" %}
-            {% elsif nav_link.url != "/" and nav_url_last == "/" and page_url_prefix == nav_link.url %}
-            {% assign nav_current = "true" %}
-            {% endif %}
-            <li><a href="{{ nav_link.url | relative_url }}"{% if nav_current %} aria-current="{{ nav_current }}"{% endif %}>{{ nav_link.label | escape }}</a></li>
-            {% endfor %}
-        </ul>
     </nav>
 </header>
+
+{% comment %} The pages that aren't in the bar, on their section and on each other {% endcomment %}
+{% if nav_section and nav.sections[nav_section] %}
+{% assign in_section = false %}
+{% if nav.links[nav_section].url == page.url %}{% assign in_section = true %}{% endif %}
+{% for sub_id in nav.sections[nav_section] %}
+{% if nav.links[sub_id].url == page.url %}{% assign in_section = true %}{% endif %}
+{% endfor %}
+{% if in_section %}
+<nav class="subnav" data-page="{{ nav_section }}" aria-label="More in {{ nav_section }}">
+    <ul>
+        {% for sub_id in nav.sections[nav_section] %}
+        {% assign sub_link = nav.links[sub_id] %}
+        <li><a href="{{ sub_link.url | relative_url }}"{% if sub_link.url == page.url %} aria-current="page"{% endif %}>{% include marks/{{ sub_id }}.svg %}{{ sub_link.label | escape }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}
+{% endif %}
