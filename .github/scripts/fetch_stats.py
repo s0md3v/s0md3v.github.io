@@ -45,11 +45,14 @@ PYPI_PROJECTS = [
 # too few stars or no description, what isn't a tool or is shown elsewhere, and a few attack
 # payloads, which aren't what this page is for.
 ARCHIVE_MIN_STARS = 25
-# Shown anyway, with few stars or no description on GitHub
+# Shown anyway, in these words, whatever GitHub has for them
 ARCHIVE_KEEP = {
     "dishtance": "Find where a photo or video was shot from a satellite dish in it",
     "shades": "Dark and monochrome modes for Linux",
+    "roop": "Stable diffusion extension for character consistency",
 }
+# Written up on the blog
+ARCHIVE_POSTS = {"dishtance": "dishtance"}
 # When a repository's life really began, where that isn't when it was created
 ARCHIVE_YEARS = {"esprima2": 2025}
 ARCHIVE_SKIP = {
@@ -155,6 +158,7 @@ def archive_entries(repos, picks):
             "year": ARCHIVE_YEARS.get(name, int(repo["created_at"][:4])),
             "stars": repo["stargazers_count"],
             "description": description[0].upper() + description[1:],
+            "post": ARCHIVE_POSTS.get(name),
         })
     return sorted(entries, key=lambda entry: (-entry["year"], -entry["stars"]))
 

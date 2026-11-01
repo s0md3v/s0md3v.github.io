@@ -1,5 +1,6 @@
 - title: XSStrike
   href: https://github.com/s0md3v/XSStrike
+  post: making-of-xsstrike
   stars: 15239
   year: 2017
   what: Most advanced XSS detection suite.
@@ -9,6 +10,7 @@
     working payloads on the fly.
 - title: Arjun
   href: https://github.com/s0md3v/Arjun
+  post: making-of-arjun
   stars: 6435
   year: 2018
   what: HTTP parameter discovery suite.

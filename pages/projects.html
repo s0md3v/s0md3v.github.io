@@ -8,73 +8,145 @@ order: 1
 ---
 
 <style>
-/* One line through all of it: what matters most is large and what doesn't is quiet, and a year
-   leads with the big ones, so reading in order is also reading the best first */
-.years {
-  --gutter: 3.5em;
-  --step: 1.75em;
+/* All paper: the window's the sheet, as a timeline is looked at whole, not read down a column */
+@media screen and (min-width: 769px) {
+  html {
+    background: var(--background-color) var(--paper-grain);
+  }
+
+  html.dark-mode {
+    background-image: none;
+  }
+}
+
+.timeline {
+  font-size: var(--reading-size);
+  line-height: 1.6;
+  max-width: 39em;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5em 1.25em 3em;
+  --line-x: 0.35em;
+  --indent: 1.6em;
+  /* From a row to the line */
+  --to-line: calc(var(--line-x) - var(--indent));
+  --label-paper: var(--background-color);
+}
+
+@media screen and (min-width: 769px) {
+  .timeline {
+    --label-paper: var(--background-color) var(--paper-grain);
+  }
+
+  .dark-mode .timeline {
+    --label-paper: var(--background-color);
+  }
+}
+
+.chart {
   position: relative;
+}
+.years {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.years::before {
-  content: "";
-  position: absolute;
-  top: 0.8em;
-  bottom: 0.5em;
-  left: var(--gutter);
-  width: 1px;
-  background: var(--border-color);
-}
 .year {
-  position: relative;
-  padding-left: calc(var(--gutter) + var(--step));
+  padding-left: var(--indent);
 }
 .year + .year {
-  margin-top: 4em;
+  margin-top: 3.5em;
 }
-.years h2 {
-  position: absolute;
+.year h2 {
+  position: sticky;
   top: 0;
-  left: 0;
-  margin: 0;
-  font-size: 0.9em;
+  z-index: 2;
+  width: calc(100% + var(--indent) - var(--line-x) + 0.3em);
+  margin: 0 0 0.7em calc(var(--line-x) - var(--indent) - 0.3em);
+  padding: 0.05em 0.3em;
+  background: var(--label-paper);
+  color: var(--c);
+  font-family: "Reenie Beanie", cursive;
+  font-size: 2.1em;
   font-weight: 400;
-  line-height: 1.6;
-  color: var(--muted-color);
-  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  rotate: -2deg;
 }
-.year:has(.major) h2 {
-  top: 0.75em;
-  font-weight: 500;
-  color: var(--foreground-color);
+/* Nobody writes two the same */
+.year:nth-child(even) h2 {
+  rotate: 1.5deg;
+}
+.year:nth-child(3n) h2 {
+  rotate: -3.5deg;
+}
+
+/* The bait: bits of what's under the page, as it leaves them on the homepage. By day it's nearly
+   black, with the window in it; by night there's only its own light, and an edge. */
+.major::before,
+.minors li::before,
+.major-head::after,
+.today::before {
+  translate: -50% -50%;
+  border-radius: 56% 44% 50% 50% / 46% 54% 48% 52%;
+  background: radial-gradient(circle at 34% 30%, rgb(232 240 255 / 0.7) 0 10%, transparent 14%), #112e22;
+  box-shadow: 1px 1px 1px rgb(28 34 44 / 0.6), 2px 3px 3px rgb(28 34 44 / 0.25);
+}
+.dark-mode .major::before,
+.dark-mode .minors li::before,
+.dark-mode .major-head::after,
+.dark-mode .today::before {
+  background: rgb(180 232 155 / 0.34);
+  box-shadow: inset 0 0 0 0.7px rgb(180 232 155 / 0.5), 0 0 0.5em rgb(190 236 165 / 0.3);
+}
+/* They're alive, if you look: each swells a little, now and then, in its own time */
+@media (prefers-reduced-motion: no-preference) {
+  .major::before,
+  .minors li::before,
+  .major-head::after,
+  .today::before {
+    animation: alive 9s ease-in-out infinite;
+  }
+  .minors li:nth-child(2n)::before {
+    animation-delay: -3.1s;
+    animation-duration: 11s;
+  }
+  .minors li:nth-child(3n)::before {
+    animation-delay: -6.4s;
+  }
+  .minors li:nth-child(5n)::before {
+    animation-delay: -1.7s;
+    animation-duration: 13s;
+  }
+  .major:nth-child(2n) .major-head::after {
+    animation-delay: -4.6s;
+  }
+}
+@keyframes alive {
+  0%, 80%, 100% { scale: 1; }
+  88% { scale: 1.14 0.92; }
+  94% { scale: 0.96 1.06; }
 }
 
 .major {
   position: relative;
 }
-.major + .major {
-  margin-top: 3em;
-}
-/* On the line, in the page's colour. A year's first is level with its number */
 .major::before {
   content: "";
   position: absolute;
-  top: 0.95em;
-  left: calc(-1 * var(--step) - 0.3em);
-  width: 0.6em;
-  height: 0.6em;
-  border-radius: 50%;
-  background: var(--c);
-  box-shadow: 0 0 0 0.3em var(--background-color);
+  top: 1.2em;
+  left: var(--to-line);
+  width: 0.9em;
+  height: 0.78em;
+}
+.major + .major {
+  margin-top: 2.75em;
 }
 .major-head {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  column-gap: 1em;
+  gap: 0 1em;
 }
 .major h3 {
   margin: 0;
@@ -91,6 +163,9 @@ order: 1
   color: var(--c);
   background: none;
 }
+.major-head .stars {
+  font-size: 0.85em;
+}
 .major p {
   margin: 0.5em 0 0;
   color: var(--midground-color);
@@ -98,6 +173,20 @@ order: 1
 .major strong {
   font-weight: 400;
   color: var(--foreground-color);
+}
+.major-post {
+  display: inline-block;
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  color: var(--c);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--c) 40%, transparent);
+  text-underline-offset: 0.2em;
+}
+.major-post:hover,
+.minor-post:hover {
+  background: none;
+  text-decoration-color: currentColor;
 }
 
 .stars {
@@ -112,115 +201,383 @@ order: 1
   width: 0.85em;
   height: 0.85em;
 }
-.major .stars {
-  font-size: 0.95em;
-}
 
 .minors {
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: 0.9em;
   line-height: 1.45;
 }
-.major + .minors {
-  margin-top: 2.75em;
+.year-majors + .minors {
+  margin-top: 2.5em;
 }
 .minors li {
+  position: relative;
   display: grid;
-  grid-template-columns: 8.75em 1fr auto;
-  gap: 1em;
+  grid-template-columns: 1fr auto;
+  gap: 0 1em;
   align-items: baseline;
 }
+.minors li > * {
+  font-size: 0.9em;
+}
+/* Left out for him */
+.minors li::before {
+  content: "";
+  position: absolute;
+  top: 0.65em;
+  left: var(--to-line);
+  width: 0.5em;
+  height: 0.42em;
+}
+.minors li:nth-child(3n)::before {
+  width: 0.58em;
+  height: 0.38em;
+  rotate: 40deg;
+}
+.minors li:nth-child(4n + 1)::before {
+  width: 0.42em;
+  height: 0.48em;
+  rotate: -25deg;
+}
+.minors li:nth-child(7n)::before {
+  width: 0.6em;
+  height: 0.46em;
+  rotate: 110deg;
+}
 .minors li + li {
-  margin-top: 0.5em;
+  margin-top: 0.8em;
 }
 .minor-name {
   font-weight: 500;
   color: var(--heading-color);
 }
 .minor-about {
+  grid-row: 2;
+  grid-column: 1 / -1;
   color: var(--midground-color);
 }
-.minors .stars {
+.minor-post {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--c) 60%, transparent);
+  text-underline-offset: 0.2em;
+}
+.minors li > .stars {
+  font-size: 0.81em;
+}
+
+/* The line it's on, which has been there all along, lying however it fell. It's on the page like
+   anything else that's on the page, over "now" as well. */
+@media (min-width: 1160px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .today::after {
+    content: "";
+    position: absolute;
+    z-index: 3;
+    top: -1.1em;
+    bottom: -5em;
+    left: var(--line-x);
+    width: 20px;
+    margin-left: -10px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 100' preserveAspectRatio='none'%3E%3Cpath d='M10 0C16 15 16 35 10 50S4 85 10 100' fill='none' stroke='%232e845c' stroke-opacity='.8' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+  .dark-mode .today::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 100' preserveAspectRatio='none'%3E%3Cpath d='M10 0C16 15 16 35 10 50S4 85 10 100' fill='none' stroke='%23b4e89b' stroke-opacity='.4' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  }
+  .today.eaten::after {
+    opacity: 0;
+  }
+}
+
+/* All of that was to get him here */
+.today::before {
+  content: "";
+  position: absolute;
+  top: -1.75em;
+  left: var(--line-x);
+  width: 1.9em;
+  height: 1.55em;
+  border-radius: 58% 42% 52% 48% / 44% 56% 46% 54%;
+  background: radial-gradient(ellipse at 32% 26%, rgb(232 240 255 / 0.75) 0 7%, transparent 11%), radial-gradient(circle at 34% 30%, rgb(232 240 255 / 0.14), transparent 60%), #112e22;
+  box-shadow: 1px 1px 1px rgb(28 34 44 / 0.6), 3px 5px 5px rgb(28 34 44 / 0.25);
+  rotate: -8deg;
+}
+.today {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25em;
+  margin: 3.5em 0 0;
+  color: var(--midground-color);
+}
+.today > span {
   font-size: 0.9em;
 }
-
-.years-end {
-  margin-top: 4em;
-  padding-left: calc(3.5em + 1.75em);
-  color: var(--midground-color);
+.today .now-link {
+  position: relative;
+  z-index: 2;
+  margin-left: calc(var(--line-x) - 0.3em);
+  padding: 0.05em 0.3em;
+  background: var(--label-paper);
+  color: var(--c-now);
+  text-decoration: none;
+}
+/* Sized in here, as the link's measures are the rail's */
+.now-link span {
+  display: block;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 2.1em;
+  line-height: 1;
+  rotate: -2deg;
+}
+.today .now-link:hover {
+  background: var(--label-paper);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
 }
 
-@media (max-width: 600px) {
-  .years {
-    --gutter: 0.3em;
-    --step: 1.25em;
+/* Wide enough for both sides of the line */
+@media (min-width: 1160px) {
+  .timeline {
+    max-width: 78em;
+    padding: 3em 2.5em 5em;
+    --rail: 10.75em;
+    --left: calc((100% - var(--rail)) / 2);
+    --line-x: calc(var(--left) + var(--rail) - 2.75em);
+    --indent: 0;
+    --to-line: -2.75em;
   }
-  .years h2,
-  .year:has(.major) h2 {
-    position: static;
-    margin-bottom: 0.6em;
+  .year {
+    display: grid;
+    grid-template-columns: var(--left) var(--rail) minmax(0, 1fr);
+    align-items: start;
   }
+  .year + .year {
+    margin-top: 4.5em;
+  }
+  .year h2 {
+    /* Under the bar, when it's there, and on the line, in the rail */
+    top: 4.6rem;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    width: 1.9em;
+    margin: 0.3em calc(2.75em / 2.1 - 0.95em) 0 0;
+    padding: 0;
+    text-align: center;
+  }
+  .year-majors {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  /* A major's a power pellet, at the end of a run of pellets out to it */
   .major::before {
-    top: 0.85em;
+    display: none;
   }
-  .major h3 {
-    font-size: 1.9em;
+  .major-head {
+    position: relative;
   }
+  .major-head::before,
+  .major-head::after {
+    content: "";
+    position: absolute;
+    top: 1.64em;
+  }
+  .major-head::before {
+    left: calc(100% + 0.6em);
+    width: calc(var(--rail) - 2.75em - 0.6em);
+    height: 0.6em;
+    margin-top: -0.3em;
+    /* Clear of the big one at the end */
+    box-sizing: border-box;
+    padding-right: 1.15em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' preserveAspectRatio='none'%3E%3Cellipse cx='10' cy='6' rx='3.3' ry='2.5' transform='rotate%28-20 10 6%29' fill='%23112e22'/%3E%3Ccircle cx='9' cy='5.1' r='.6' fill='%23e8f0ff' fill-opacity='.7'/%3E%3Cellipse cx='30' cy='6.4' rx='2.5' ry='3.0' transform='rotate%2815 30 6.4%29' fill='%23112e22'/%3E%3Ccircle cx='29' cy='5.5' r='.6' fill='%23e8f0ff' fill-opacity='.7'/%3E%3Cellipse cx='50' cy='5.7' rx='3.6' ry='2.4' transform='rotate%2835 50 5.7%29' fill='%23112e22'/%3E%3Ccircle cx='49' cy='4.8' r='.6' fill='%23e8f0ff' fill-opacity='.7'/%3E%3C/svg%3E") 0 0 / 3em 100% round no-repeat content-box;
+    filter: drop-shadow(0.5px 1px 0.6px rgb(28 34 44 / 0.45));
+    /* He eats them from the line outwards, one at a time */
+    clip-path: inset(-4px var(--gone, 0px) -4px 0);
+  }
+  .dark-mode .major-head::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' preserveAspectRatio='none'%3E%3Cellipse cx='10' cy='6' rx='3.3' ry='2.5' transform='rotate%28-20 10 6%29' fill='%23b4e89b' fill-opacity='.4' stroke='%23b4e89b' stroke-opacity='.55' stroke-width='.5'/%3E%3Cellipse cx='30' cy='6.4' rx='2.5' ry='3.0' transform='rotate%2815 30 6.4%29' fill='%23b4e89b' fill-opacity='.4' stroke='%23b4e89b' stroke-opacity='.55' stroke-width='.5'/%3E%3Cellipse cx='50' cy='5.7' rx='3.6' ry='2.4' transform='rotate%2835 50 5.7%29' fill='%23b4e89b' fill-opacity='.4' stroke='%23b4e89b' stroke-opacity='.55' stroke-width='.5'/%3E%3C/svg%3E");
+    filter: drop-shadow(0 0 2px rgb(190 236 165 / 0.4));
+  }
+  .major-head::after {
+    left: calc(100% + var(--rail) - 2.75em);
+    width: 0.9em;
+    height: 0.78em;
+  }
+  .minors {
+    grid-column: 3;
+    grid-row: 1;
+    margin-top: 0.98em;
+  }
+  .year-majors + .minors {
+    margin-top: 0.98em;
+  }
+  .today {
+    position: relative;
+    margin-top: 4.5em;
+    padding-left: calc(var(--left) + var(--rail));
+  }
+  .today .now-link {
+    position: absolute;
+    left: var(--line-x);
+    translate: -50% 0;
+    margin: 0;
+  }
+}
+/* A quiet project takes one line, once that leaves its words room */
+@media (min-width: 1280px) {
   .minors li {
-    grid-template-columns: 1fr auto;
-    gap: 0 1em;
-  }
-  .minor-about {
-    grid-row: 2;
-    grid-column: 1 / -1;
+    grid-template-columns: 7.7em minmax(0, 1fr) auto;
+    gap: 0 0.7em;
   }
   .minors li + li {
-    margin-top: 0.8em;
+    margin-top: 0.5em;
   }
-  .years-end {
-    padding-left: 0;
+  .minor-about {
+    grid-row: auto;
+    grid-column: auto;
+  }
+}
+
+/* He goes where you're reading, at his own pace, eating what's on the way */
+.pac {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: var(--line-x);
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  pointer-events: none;
+  /* Lit from the top left, whichever way he's facing */
+  filter: drop-shadow(1px 2px 1.5px rgba(var(--sheet-shadow), 0.35));
+}
+.pac[hidden] {
+  display: none;
+}
+.pac svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pac path {
+  fill: #f7b000;
+}
+.jaw-l {
+  transform: rotate(-24deg);
+}
+.jaw-r {
+  transform: rotate(24deg);
+}
+.pac.walking .jaw-l {
+  animation: chomp-l 0.15s ease-in-out infinite alternate;
+}
+.pac.walking .jaw-r {
+  animation: chomp-r 0.15s ease-in-out infinite alternate;
+}
+@keyframes chomp-l {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(-38deg); }
+}
+@keyframes chomp-r {
+  from { transform: rotate(3deg); }
+  to { transform: rotate(38deg); }
+}
+.eaten::before,
+.major.eaten .major-head::after {
+  opacity: 0;
+  animation: none;
+}
+
+/* It's the one from the dish on the homepage. Nothing's keeping it there. */
+.symbiote {
+  position: fixed;
+  z-index: 4;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.dark-mode .symbiote {
+  mix-blend-mode: screen;
+}
+
+@media (max-width: 1159px) {
+  .pac {
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+  }
+}
+
+@media print {
+  .pac {
+    display: none;
+  }
+  .year h2 {
+    position: static;
   }
 }
 </style>
 
-<div class="wrapper">
+<div class="timeline">
   <h1 class="sr-only">Projects</h1>
 
-  {% assign first_year = site.data.repos | map: 'year' | sort | first %}
+  {% assign first_year = site.data.projects | map: 'year' | sort | first %}
   {% assign last_year = site.time | date: '%Y' | plus: 0 %}
-  <ol class="years">
-    {% for y in (first_year..last_year) %}
-    {% assign majors = site.data.projects | where: 'year', y %}
-    {% assign minors = site.data.repos | where: 'year', y %}
-    {% if majors.size > 0 or minors.size > 0 %}
-    <li class="year">
-      <h2>{{ y }}</h2>
-      {% for project in majors %}
-      <article class="major">
-        <div class="major-head">
-          <h3><a href="{{ project.href }}">{{ project.title }}</a></h3>
-          {% include stars.html count=project.stars %}
+  <div class="chart">
+    <ol class="years">
+      {% for y in (first_year..last_year) %}
+      {% assign majors = site.data.projects | where: 'year', y %}
+      {% assign minors = site.data.repos | where: 'year', y %}
+      {% if majors.size > 0 or minors.size > 0 %}
+      <li class="year" data-year="{{ y }}">
+        <h2>{{ y }}</h2>
+        {% if majors.size > 0 %}
+        <div class="year-majors">
+          {% for project in majors %}
+          <article class="major">
+            <div class="major-head">
+              <h3><a href="{{ project.href }}">{{ project.title }}</a></h3>
+              {% include stars.html count=project.stars %}
+            </div>
+            <p><strong>{{ project.what }}</strong> {{ project.why }} {{ project.how }}</p>
+            {% if project.post %}
+            {% assign post = site.blog | where: 'slug', project.post | first %}
+            <a class="major-post" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            {% endif %}
+          </article>
+          {% endfor %}
         </div>
-        <p><strong>{{ project.what }}</strong> {{ project.why }} {{ project.how }}</p>
-      </article>
-      {% endfor %}
-      {% if minors.size > 0 %}
-      <ul class="minors">
-        {% for repo in minors %}
-        <li>
-          <a class="minor-name" href="{{ repo.href }}">{{ repo.name }}</a>
-          <span class="minor-about">{{ repo.description }}</span>
-          {% include stars.html count=repo.stars %}
-        </li>
-        {% endfor %}
-      </ul>
+        {% endif %}
+        {% if minors.size > 0 %}
+        <ul class="minors">
+          {% for repo in minors %}
+          <li>
+            <a class="minor-name" href="{{ repo.href }}">{{ repo.name }}</a>
+            <span class="minor-about">{% if repo.post %}{% assign post = site.blog | where: 'slug', repo.post | first %}<a class="minor-post" href="{{ post.url | relative_url }}">{{ repo.description }}</a>{% else %}{{ repo.description }}{% endif %}</span>
+            {% include stars.html count=repo.stars %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </li>
       {% endif %}
-    </li>
-    {% endif %}
-    {% endfor %}
-  </ol>
-
-  <p class="years-end prose">The rest is on <a href="https://github.com/s0md3v">GitHub</a>.</p>
+      {% endfor %}
+    </ol>
+    <p class="today prose"><a class="now-link" href="{{ '/now' | relative_url }}"><span>now</span></a><span>The rest is on <a href="https://github.com/s0md3v">GitHub</a>.</span></p>
+    <div class="pac" aria-hidden="true">
+      <svg viewBox="-15 -15 30 30">
+        <path class="jaw-l" d="M0-14A14 14 0 0 0 0 14Z"/>
+        <path class="jaw-r" d="M0-14A14 14 0 0 1 0 14Z"/>
+      </svg>
+    </div>
+  </div>
 </div>
+
+<script src="{{ '/assets/js/pacman.js' | relative_url }}" defer></script>

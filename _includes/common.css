@@ -5,6 +5,8 @@ div {
 /* Everything in .wrapper is sized in em off --reading-size */
 :root {
   --reading-size: clamp(1rem, calc(0.9rem + 0.3vw), 1.15rem);
+  /* Faint enough to leave the letters alone */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.26 0 0 0 0 0.2 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 html {
@@ -61,8 +63,7 @@ html {
     aspect-ratio: 1 / 1.3;
     padding-block: 3.5em 4em;
     margin-block: 2rem 0;
-    /* Paper's own grain, faint enough to leave the letters alone */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.26 0 0 0 0 0.2 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-image: var(--paper-grain);
     /* Flat on the table: lit from the top left, as everything on it is */
     box-shadow:
       0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.2),
