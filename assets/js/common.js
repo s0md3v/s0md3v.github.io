@@ -43,7 +43,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function setupSoundButtons() {
+        const soundButtons = document.querySelectorAll('.sound-options button');
+        const show = () => setActiveOption(soundButtons, document.querySelector(`.sound-options button[data-sound="${siteSound.enabled ? 'on' : 'off'}"]`));
+        show();
+
+        soundButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                siteSound.set(this.dataset.sound === 'on');
+                show();
+            });
+        });
+    }
+
     setupThemeButtons();
+    setupSoundButtons();
     deobfuscateEmails();
 
     const settingsToggle = document.getElementById('settings-toggle');
