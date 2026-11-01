@@ -48,12 +48,6 @@ links:
     url: /taste/
     tooltip: stuff i love, stuff i use
 
-# The pages that aren't in the bar, as a row under it on their section and on each other
-sections:
-  blog: [philosophy, papers]
-  projects: [playground]
-  about: [now, taste, work]
-
 header:
   - projects
   - blog

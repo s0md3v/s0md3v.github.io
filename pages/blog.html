@@ -2,10 +2,13 @@
 layout: default
 title: Blog
 description: "Research notes, tutorials, and thoughts on security engineering."
+ink: blog
+handwritten_font: true
 permalink: /blog/
 ---
 
 <div class="wrapper">
-  <h1 class="page-title">Blog</h1>
+  <h1 class="sr-only">Blog</h1>
+  <p class="page-intro prose">Longer research is in <a href="{{ '/papers' | relative_url }}">papers</a>, and slower thinking in <a href="{{ '/essays/' | relative_url }}">philosophy</a>.</p>
   {% include post-list.html posts=site.blog order="desc" %}
 </div>

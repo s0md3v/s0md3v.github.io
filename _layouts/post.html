@@ -2,8 +2,9 @@
 layout: base
 ---
 {% include header.html %}
+{% if page.collection == "essays" %}{% assign post_mark = "philosophy" %}{% else %}{% assign post_mark = "blog" %}{% endif %}
 
-<main class="blog-content" id="main-content" tabindex="-1">
+<main class="blog-content" data-page="{{ post_mark }}" id="main-content" tabindex="-1">
   <div class="wrapper">
     <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
     <p class="post-meta">
@@ -30,6 +31,7 @@ layout: base
     <div class="post-content">
       {{ content }}
     </div>
+    <div class="post-fin">{% include marks/{{ post_mark }}.svg %}</div>
     {% comment %} Its neighbours in time, skipping unlisted ones, so a post isn't a dead end {% endcomment %}
     {% assign post_end_docs = site[page.collection] | sort: "date" %}
     {% assign post_older = nil %}

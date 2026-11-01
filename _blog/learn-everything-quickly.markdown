@@ -6,7 +6,7 @@ author: Somdev Sangwan
 type:   tech
 image: /assets/thumbs/git-gud.png
 permalink: /blog/get-good-quickly
-description: "How to be good at multiple things and why?"  
+description: "How to be good at multiple things and why?"
 ---
 
 I was in 6th grade when my English teacher asked the class if anyone knew what a "duece" is. I answered, "*When a match ties in tennis.*"\

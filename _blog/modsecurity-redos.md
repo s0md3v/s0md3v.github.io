@@ -6,7 +6,7 @@ author: Somdev Sangwan
 type:   tech
 image: /assets/thumbs/modsecurity-redos.png
 permalink: /blog/modsecurity-redos
-description: "A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS."  
+description: "A tale of how I found 5 ReDOS vulnerabilities in ModSecurity CRS."
 ---
 
 I have been spending a good amount of time writing ReDOS exploits and studying WAFs lately.

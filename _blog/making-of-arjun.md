@@ -5,7 +5,7 @@ date:   2018-05-11 12:46:00 +0530
 author: Somdev Sangwan
 type:   tech
 permalink: /blog/making-of-arjun
-description: "Making of s0md3v/arjun repository"  
+description: "Making of s0md3v/arjun repository"
 ---
 
 Webpages and APIs often have more parameters than they let users interact with. For security testing, it is important for the testers to discover these hidden parameters.

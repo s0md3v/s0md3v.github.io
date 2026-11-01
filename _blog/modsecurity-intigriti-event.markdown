@@ -6,7 +6,7 @@ author: Somdev Sangwan
 type:   tech
 image: /assets/thumbs/modsecurity-event.png
 permalink: /blog/modsecurity-rce-bypass
-description: "A tale of multiple RCE bypasses for ModSecurity WAF."  
+description: "A tale of multiple RCE bypasses for ModSecurity WAF."
 ---
 
 > tl;dr: I bypassed [ModSecurity](https://github.com/SpiderLabs/ModSecurity) for multiple RCEs in a hacking event hosted by [intigriti](https://www.intigriti.com/).

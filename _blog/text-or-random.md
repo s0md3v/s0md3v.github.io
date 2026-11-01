@@ -6,6 +6,7 @@ author: Somdev Sangwan
 type:   tech
 permalink: /blog/text-or-random
 description: "A phonetic approach to differentiating human-readable text from random data."
+note: "by sounding it out"
 ---
 
 How can a computer tell the difference between meaningful text and a random string of characters? This question seems simple, but the obvious answers are often wrong. It's a problem that pops up everywhere, from analyzing data streams and detecting obfuscated code to simple input validation.

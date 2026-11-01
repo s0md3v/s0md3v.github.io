@@ -5,7 +5,7 @@ date:   2017-06-15 12:46:00 +0530
 author: Somdev Sangwan
 type:   tech
 permalink: /blog/making-of-xsstrike
-description: "Making of s0md3v/xsstrike repository"  
+description: "Making of s0md3v/xsstrike repository"
 ---
 
 Before XSStrike, existing XSS scanners followed a primitive approach: inject payloads blindly and hope something sticks. This brute-force methodology resulted in countless false positives and missed vulnerabilities that required more nuanced detection.

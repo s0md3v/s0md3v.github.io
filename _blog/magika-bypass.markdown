@@ -6,7 +6,7 @@ author: Somdev Sangwan
 type:   tech
 image: /assets/thumbs/magika-bypass.jpg
 permalink: /blog/magika-bypass
-description: "So, you want to bypass AI-powered detection?"  
+description: "So, you want to bypass AI-powered detection?"
 ---
 
 To develop a software that can detect chairs in an image, you will need to define what a [chair](https://www.youtube.com/watch?v=fXW-QjBsruE) is first. Is a chair still a chair if one of its legs is removed, or does it become something else? Does a chair even need legs? At what point does a chair transition into a couch?

@@ -7,6 +7,7 @@ type:   tech
 image: /assets/thumbs/interface-design.png
 permalink: /blog/interface-design
 description: "Designing interfaces that real users love."
+note: "has a checklist"
 ---
 
 > tldr: if you are building an app, a machine, a website, a toy or any system that has a user - you will find something useful here. There's also a checklist in the end because I love you.

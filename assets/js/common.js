@@ -262,6 +262,47 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // A handwritten note sits beside its title. If it would run off the list or touch other words
+    // there, it takes the nearest free spot above or below the title instead
+    const postList = document.querySelector('.post-list');
+    const notes = postList ? postList.querySelectorAll('.post-list-note') : [];
+    if (notes.length) {
+        const rectsOf = element => {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            return [...range.getClientRects()];
+        };
+        const placeNote = (note, words) => {
+            note.hidden = false;
+            note.style.translate = '';
+            const list = postList.getBoundingClientRect();
+            const box = note.getBoundingClientRect();
+            const title = note.previousElementSibling.getClientRects();
+            // A line of text is taller than its letters, and a tilted note's box than its writing
+            const slack = 6;
+            const free = (x, y) => box.left + x >= list.left && box.right + x <= list.right
+                && !words.some(word => box.left + x < word.right + 3 && word.left - 3 < box.right + x
+                    && box.top + y + slack < word.bottom && word.top + slack < box.bottom + y);
+
+            if (free(0, 0)) return;
+            for (const y of [title[0].top - box.bottom + slack, title[title.length - 1].bottom - box.top - slack]) {
+                for (let x = 0; box.left + x >= list.left; x -= 8) {
+                    if (free(x, y)) {
+                        note.style.translate = `${x}px ${y}px`;
+                        return;
+                    }
+                }
+            }
+            note.hidden = true;
+        };
+        const placeNotes = () => {
+            const words = [...document.querySelectorAll('.post-list-title, .post-list-date, .page-intro')].flatMap(rectsOf);
+            notes.forEach(note => placeNote(note, words));
+        };
+        new ResizeObserver(placeNotes).observe(postList);
+        document.fonts.ready.then(placeNotes);
+    }
+
     const consoleStyles = [
         'color: #e17800',
         'font-size: 24px',

@@ -253,13 +253,32 @@ pre>code {
   margin-bottom: 30px;
 }
 
+/* A writing section is written in the ink of its mark. Paper stays black and white */
+@media screen {
+  main[data-page] {
+    --accent-color: var(--c);
+    --link-color: var(--c);
+  }
+}
+
+/* A post signs off with its section's mark, as a magazine piece ends on one */
+.post-fin {
+  margin: 3em 0 2.5em;
+  color: var(--c);
+}
+
+.post-fin svg {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: auto;
+}
+
 /* Where a post ends: where to go next */
 .post-end {
   display: flex;
   flex-wrap: wrap;
   gap: 1em 2em;
-  padding-top: 1.5em;
-  border-top: 1px solid var(--border-color);
 }
 
 .post-end-link {
@@ -357,7 +376,7 @@ pre>code {
 }
 
 .post-content li::marker {
-  color: var(--muted-color);
+  color: var(--link-color);
 }
 
 .post-content li>p:last-child {
@@ -376,6 +395,7 @@ pre>code {
   margin: 0 0 1.2em;
   padding-left: 1em;
   border-left-width: 3px;
+  border-left-color: color-mix(in srgb, var(--link-color) 45%, transparent);
 }
 
 .blog-content a,
@@ -455,7 +475,7 @@ pre>code {
   }
 }
 
-/* Post lists (blog, essays, 404): a quiet date column beside the titles */
+/* Post lists (blog, essays): a quiet column of years beside the titles */
 .post-list {
   margin: 0;
   list-style: none;
@@ -467,7 +487,7 @@ pre>code {
 
 .post-list-entry {
   display: grid;
-  grid-template-columns: 4.5em minmax(0, 1fr);
+  grid-template-columns: 3em minmax(0, 1fr);
   column-gap: 1.25em;
   align-items: baseline;
 }
@@ -481,6 +501,24 @@ pre>code {
 
 .post-list-main {
   text-wrap: balance;
+}
+
+/* Written beside its title by hand, taking up no room in the list. common.js moves it above or
+   below the title if it would touch any words there */
+.post-list-note {
+  position: absolute;
+  margin-left: 0.4em;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 1.35em;
+  line-height: 1;
+  color: var(--accent-color);
+  white-space: nowrap;
+  pointer-events: none;
+  rotate: -3deg;
+}
+
+.post-list>li:nth-child(even) .post-list-note {
+  rotate: 2deg;
 }
 
 .post-list-title {
@@ -515,7 +553,7 @@ pre>code {
   --nav-shoulder: 1rem;
   --c-home: #b3261e;
   --c-projects: #2e7d32;
-  --c-blog: #4338ca;
+  --c-blog: #0d47a1;
   --c-gallery: #cf1f7a;
   --c-about: #f7b000;
   --c-settings: #0f766e;
@@ -531,7 +569,7 @@ pre>code {
 .dark-mode {
   --c-home: #ff8a7a;
   --c-projects: #6fd67a;
-  --c-blog: #a5a0ff;
+  --c-blog: #64b5f6;
   --c-gallery: #ff74b8;
   --c-about: #ffc23d;
   --c-settings: #4fd1c5;
@@ -868,61 +906,6 @@ body {
   outline: 3px solid var(--accent-color);
 }
 
-/* The rest of a section, on its own pages, with the same manners as the bar */
-.subnav {
-  align-self: center;
-}
-
-.subnav ul {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.25rem 1.25rem;
-  list-style: none;
-  margin: 0;
-  padding: 0.75rem;
-}
-
-.subnav li {
-  margin: 0;
-}
-
-.subnav a {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  min-height: 2.25rem;
-  color: var(--foreground-color);
-  font-family: var(--base-font-family);
-  font-size: 0.9375rem;
-  text-decoration: none;
-  transition: color 0.12s ease;
-}
-
-.subnav svg {
-  flex: none;
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--nav-quiet);
-}
-
-.subnav a:hover svg,
-.subnav a[aria-current] svg {
-  color: inherit;
-}
-
-@media (hover: hover) {
-  .subnav a:hover {
-    background: none;
-    color: var(--c);
-  }
-}
-
-.subnav a[aria-current] {
-  color: var(--c);
-  font-weight: 600;
-}
-
 /* A heading jumped to isn't left under the bar, which doesn't move for a page too short to scroll */
 html {
   scroll-padding-top: calc(var(--nav-height) + 1rem);
@@ -1028,18 +1011,6 @@ html {
     .settings-dropdown.visible {
       animation-name: panel-up;
     }
-  }
-}
-
-@media (max-width: 22.5em) {
-  .subnav ul {
-    column-gap: 0.75rem;
-    padding-inline: 0.25rem;
-  }
-
-  .subnav a {
-    gap: 0.25rem;
-    font-size: 0.875rem;
   }
 }
 
@@ -1273,8 +1244,8 @@ li {
   }
 
   .header,
-  .subnav,
   .skip-link,
+  .post-fin,
   .post-end {
     display: none;
   }

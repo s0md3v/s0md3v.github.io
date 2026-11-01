@@ -17,12 +17,12 @@
 {% endfor %}
 {% endfor %}
 {% if nav_section %}
-{% for sub_id in nav.sections[nav_section] %}
-{% assign sub_url = nav.links[sub_id].url %}
-{% assign sub_size = sub_url | size %}
-{% assign page_url_prefix = page.url | slice: 0, sub_size %}
-{% assign sub_last = sub_url | slice: -1, 1 %}
-{% if page.url == sub_url or sub_last == "/" and page_url_prefix == sub_url %}{% assign nav_title = nav.links[sub_id].label %}{% assign nav_title_id = sub_id %}{% endif %}
+{% for nav_entry in nav.links %}
+{% assign entry_url = nav_entry[1].url %}
+{% assign entry_size = entry_url | size %}
+{% assign page_url_prefix = page.url | slice: 0, entry_size %}
+{% assign entry_last = entry_url | slice: -1, 1 %}
+{% if entry_url != "/" %}{% if page.url == entry_url or entry_last == "/" and page_url_prefix == entry_url %}{% assign nav_title = nav_entry[1].label %}{% assign nav_title_id = nav_entry[0] %}{% endif %}{% endif %}
 {% endfor %}
 {% endif %}
 
@@ -86,22 +86,3 @@
         </div>
     </nav>
 </header>
-
-{% comment %} The pages that aren't in the bar, on their section and on each other {% endcomment %}
-{% if nav_section and nav.sections[nav_section] %}
-{% assign in_section = false %}
-{% if nav.links[nav_section].url == page.url %}{% assign in_section = true %}{% endif %}
-{% for sub_id in nav.sections[nav_section] %}
-{% if nav.links[sub_id].url == page.url %}{% assign in_section = true %}{% endif %}
-{% endfor %}
-{% if in_section %}
-<nav class="subnav" aria-label="More in {{ nav_section }}">
-    <ul>
-        {% for sub_id in nav.sections[nav_section] %}
-        {% assign sub_link = nav.links[sub_id] %}
-        <li><a data-page="{{ sub_id }}" href="{{ sub_link.url | relative_url }}"{% if sub_link.url == page.url %} aria-current="page"{% endif %}>{% include marks/{{ sub_id }}.svg %}{{ sub_link.label | escape }}</a></li>
-        {% endfor %}
-    </ul>
-</nav>
-{% endif %}
-{% endif %}

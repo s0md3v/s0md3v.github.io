@@ -6,7 +6,8 @@ author: Somdev Sangwan
 type:   tech
 image: /assets/thumbs/creativity-self-doubt.png
 permalink: /blog/creativity-and-self-doubt
-description: "How to eliminate self-doubt in creative careers and do remarkable work."  
+description: "How to eliminate self-doubt in creative careers and do remarkable work."
+note: "read this if you're stuck"
 ---
 
 If you work in a creative field such as fine art, programming or music - you likely got into it after seeing something interesting from that field.
