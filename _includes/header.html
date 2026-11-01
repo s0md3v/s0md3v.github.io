@@ -12,6 +12,7 @@
 {% if page.url == covered or covered_last == "/" and page_url_prefix == covered %}
 {% assign nav_section = link_id %}
 {% assign nav_title = nav.links[link_id].label %}
+{% assign nav_title_id = link_id %}
 {% endif %}
 {% endfor %}
 {% endfor %}
@@ -21,14 +22,14 @@
 {% assign sub_size = sub_url | size %}
 {% assign page_url_prefix = page.url | slice: 0, sub_size %}
 {% assign sub_last = sub_url | slice: -1, 1 %}
-{% if page.url == sub_url or sub_last == "/" and page_url_prefix == sub_url %}{% assign nav_title = nav.links[sub_id].label %}{% endif %}
+{% if page.url == sub_url or sub_last == "/" and page_url_prefix == sub_url %}{% assign nav_title = nav.links[sub_id].label %}{% assign nav_title_id = sub_id %}{% endif %}
 {% endfor %}
 {% endif %}
 
 <header id="site-header" class="header">
     <nav class="nav-container" aria-label="Main">
         <a class="nav-item nav-home" data-page="home" data-name="{{ nav.links.home.label | escape }}" href="{{ nav.links.home.url | relative_url }}" aria-label="somdev sangwan, {{ nav.links.home.label | escape }}">{% include marks/home.svg %}<span class="nav-name">somdev sangwan</span><span class="nav-label">{{ nav.links.home.label | escape }}</span></a>
-        <span class="nav-title" data-page="{{ nav_section }}" aria-hidden="true">{{ nav_title | escape }}</span>
+        <span class="nav-title" data-page="{{ nav_title_id }}" aria-hidden="true">{{ nav_title | escape }}</span>
 
         <ul class="nav-links" id="site-navigation">
             {% for link_id in nav.header %}
@@ -94,11 +95,11 @@
 {% if nav.links[sub_id].url == page.url %}{% assign in_section = true %}{% endif %}
 {% endfor %}
 {% if in_section %}
-<nav class="subnav" data-page="{{ nav_section }}" aria-label="More in {{ nav_section }}">
+<nav class="subnav" aria-label="More in {{ nav_section }}">
     <ul>
         {% for sub_id in nav.sections[nav_section] %}
         {% assign sub_link = nav.links[sub_id] %}
-        <li><a href="{{ sub_link.url | relative_url }}"{% if sub_link.url == page.url %} aria-current="page"{% endif %}>{% include marks/{{ sub_id }}.svg %}{{ sub_link.label | escape }}</a></li>
+        <li><a data-page="{{ sub_id }}" href="{{ sub_link.url | relative_url }}"{% if sub_link.url == page.url %} aria-current="page"{% endif %}>{% include marks/{{ sub_id }}.svg %}{{ sub_link.label | escape }}</a></li>
         {% endfor %}
     </ul>
 </nav>

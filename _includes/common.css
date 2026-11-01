@@ -507,27 +507,41 @@ pre>code {
   }
 }
 
-/* A notch let down from the top of the window, in the page's own colour. Everything in it is ink
+/* A notch let down from the top of the window, in the page's own colour. Everything in it is quiet
    but where you are: that one mark has its colour, and the title beside it says it in words. There
    are no words under the marks, so the title names whichever one you're on before you press it. */
 :root {
   --nav-height: 3.5rem;
   --nav-shoulder: 1rem;
-  --c-projects: #c13f0c;
-  --c-blog: #0a7d45;
+  --c-home: #b3261e;
+  --c-projects: #2e7d32;
+  --c-blog: #4338ca;
   --c-gallery: #cf1f7a;
-  --c-about: #4257e0;
-  --c-home: #0873c4;
-  --c-settings: #5d6f82;
+  --c-about: #f7b000;
+  --c-settings: #0f766e;
+  --c-philosophy: #7c3aed;
+  --c-papers: #086fbd;
+  --c-playground: #5b7500;
+  --c-now: #c2410c;
+  --c-taste: #8a5a2c;
+  --c-work: #0a7594;
+  --nav-quiet: #736d62;
 }
 
 .dark-mode {
-  --c-projects: #ff8a5c;
-  --c-blog: #3bd68f;
+  --c-home: #ff8a7a;
+  --c-projects: #6fd67a;
+  --c-blog: #a5a0ff;
   --c-gallery: #ff74b8;
-  --c-about: #8fa0ff;
-  --c-home: #4dbbff;
-  --c-settings: #9fb2c6;
+  --c-about: #ffc23d;
+  --c-settings: #4fd1c5;
+  --c-philosophy: #c4a1ff;
+  --c-papers: #4dbbff;
+  --c-playground: #c0e84a;
+  --c-now: #ff9a4d;
+  --c-taste: #d9a066;
+  --c-work: #5ccbe8;
+  --nav-quiet: #8f8a81;
 }
 
 [data-page="home"] { --c: var(--c-home); }
@@ -536,6 +550,12 @@ pre>code {
 [data-page="gallery"] { --c: var(--c-gallery); }
 [data-page="about"] { --c: var(--c-about); }
 [data-page="settings"] { --c: var(--c-settings); }
+[data-page="philosophy"] { --c: var(--c-philosophy); }
+[data-page="papers"] { --c: var(--c-papers); }
+[data-page="playground"] { --c: var(--c-playground); }
+[data-page="now"] { --c: var(--c-now); }
+[data-page="taste"] { --c: var(--c-taste); }
+[data-page="work"] { --c: var(--c-work); }
 
 /* The bar stays with you the length of the page, so the page can't end at the window */
 body {
@@ -625,10 +645,6 @@ body {
   white-space: nowrap;
 }
 
-.nav-title.previewing {
-  color: color-mix(in srgb, var(--c) 65%, var(--background-color));
-}
-
 .nav-links {
   display: flex;
   gap: 0.25rem;
@@ -651,7 +667,7 @@ body {
   border: 0;
   border-radius: 50%;
   background: none;
-  color: var(--foreground-color);
+  color: var(--nav-quiet);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: color 0.12s ease;
@@ -684,28 +700,25 @@ body {
   display: none;
 }
 
-/* Only ever a hint of its colour: the whole of it means you're there */
 @media (hover: hover) {
   .nav-item:hover {
     background: none;
-    color: color-mix(in srgb, var(--c) 45%, var(--background-color));
+    color: var(--c);
   }
 }
 
 .nav-item:active {
-  color: color-mix(in srgb, var(--c) 45%, var(--background-color));
+  color: var(--c);
 }
 
 .nav-item:focus-visible {
   outline: 2px solid var(--foreground-color);
   outline-offset: -2px;
-  color: color-mix(in srgb, var(--c) 45%, var(--background-color));
+  color: var(--c);
 }
 
 .nav-item[aria-current],
-.nav-item[aria-current]:hover,
-.settings-icon.active,
-.settings-icon.active:hover {
+.settings-icon.active {
   color: var(--c);
 }
 
@@ -890,17 +903,22 @@ body {
   flex: none;
   width: 1.5rem;
   height: 1.5rem;
+  color: var(--nav-quiet);
+}
+
+.subnav a:hover svg,
+.subnav a[aria-current] svg {
+  color: inherit;
 }
 
 @media (hover: hover) {
   .subnav a:hover {
     background: none;
-    color: color-mix(in srgb, var(--c) 45%, var(--background-color));
+    color: var(--c);
   }
 }
 
-.subnav a[aria-current],
-.subnav a[aria-current]:hover {
+.subnav a[aria-current] {
   color: var(--c);
   font-weight: 600;
 }

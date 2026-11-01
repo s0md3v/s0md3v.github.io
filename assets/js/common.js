@@ -200,20 +200,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { passive: true });
     }
 
-    // The marks have no words of their own, so the title names the one you're on, in a hint of its
-    // colour, and goes back to where you are when you leave it
+    // The marks have no words of their own, so the title names the one you're on, in its colour,
+    // and goes back to where you are when you leave it
     const title = document.querySelector('.nav-title');
     if (header && title) {
         const here = title.textContent;
         const preview = item => {
             title.textContent = item.dataset.name;
             title.style.setProperty('--c', getComputedStyle(item).getPropertyValue('--c'));
-            title.classList.add('previewing');
         };
         const restore = () => {
             title.textContent = here;
             title.style.removeProperty('--c');
-            title.classList.remove('previewing');
         };
         const named = event => event.target.closest?.('.nav-item:not([aria-current])');
 
