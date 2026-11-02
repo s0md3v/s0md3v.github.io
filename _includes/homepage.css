@@ -109,7 +109,7 @@ html:has(.table) {
    they're scaled up */
 .light canvas,
 .dusk canvas,
-.goo-face canvas {
+.fizz-face canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2560,7 +2560,7 @@ html:not(.dark-mode) .pi-screen {
   --tx: 81%; --ty: 75.2%; --tw: 9; --tr: 4deg;
 }
 
-/* ---- Playground: a Petri dish, and what's in it (assets/js/symbiote.js) ---- */
+/* ---- Playground: a Petri dish, and what's in it (assets/js/petri.js) ---- */
 
 #playground {
   --x: -50; --y: -6; --w: 12; --h0: 1.2;
@@ -2580,7 +2580,7 @@ html:not(.dark-mode) .pi-screen {
   height: 100%;
 }
 
-.goo {
+.fizz {
   position: absolute;
   z-index: 43;
   pointer-events: none;
@@ -2588,27 +2588,27 @@ html:not(.dark-mode) .pi-screen {
 
 /* What takes over the man in the Polaroid, over .light, in the window of the photo, turned
    with it. And on its way there, over the table. Only here while they're needed. */
-.goo-face,
-.goo-leap {
+.fizz-face,
+.fizz-leap {
   position: absolute;
   z-index: 43;
   display: none;
   pointer-events: none;
 }
 
-.goo-leap {
+.fizz-leap {
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
 /* At night all that's on it is the light it gives off, which adds to the room's */
-.goo.shining {
+.fizz.shining {
   mix-blend-mode: screen;
 }
 
 /* Where it's been, in the labels' ink: nothing by day, and it comes up as the room goes dark */
-.goo-prints {
+.fizz-prints {
   position: absolute;
   inset: 0;
   z-index: 42;
@@ -2623,7 +2623,7 @@ html:not(.dark-mode) .pi-screen {
   transition: opacity 1.4s;
 }
 
-.dark-mode .goo-prints {
+.dark-mode .fizz-prints {
   opacity: 0.5;
 }
 

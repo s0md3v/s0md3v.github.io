@@ -311,9 +311,9 @@ layout_style: "homepage"
       <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
     </a>
     <!-- What's in it, which climbs out over everything else, and gives off its own light, so
-         it's over .light; and where it's been (see symbiote.js) -->
-    <canvas class="goo" aria-hidden="true"></canvas>
-    <div class="goo-prints" aria-hidden="true"></div>
+         it's over .light; and where it's been (see petri.js) -->
+    <canvas class="fizz" aria-hidden="true"></canvas>
+    <div class="fizz-prints" aria-hidden="true"></div>
     <a class="obj" id="uses" href="{{ n.taste.url | relative_url }}">
       <span class="under"><span class="tag t1"><span>{{ n.taste.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
@@ -2435,7 +2435,7 @@ layout_style: "homepage"
       if (!still && 'IntersectionObserver' in window) {
         // The polaroid comes out blank, and develops only once it can be seen: so not till
         // its photo's here, and not in a tab no one's looking at. If there's no photo, it's
-        // left as it is. Its last layer clearing ends it. (Hovered, it's symbiote.js's.)
+        // left as it is. Its last layer clearing ends it. (Hovered, it's petri.js's.)
         const polaroid = document.getElementById('about');
         const film = polaroid.querySelector('.polaroid-film i');
         polaroid.classList.add('blank');
@@ -2454,7 +2454,8 @@ layout_style: "homepage"
       }
     })();
   </script>
-  <script src="{{ '/assets/js/symbiote.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/fizz.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/petri.js' | relative_url }}" defer></script>
 </body>
 
 </html>

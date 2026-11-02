@@ -4,19 +4,95 @@ title: 404
 permalink: /404.html
 ---
 
+<style>
+/* Nothing here but a card on the table. It's over what's under it, and that's over the navigation */
+@media (min-width: 769px) {
+  .wrapper {
+    position: relative;
+    z-index: 102;
+    display: grid;
+    align-content: center;
+    width: min(30em, calc(100% - 3rem));
+    aspect-ratio: 5 / 3;
+    padding-block: 2em;
+    margin-block: calc((100svh - 56px - 30em * 0.6) / 2 - 5vh) 0;
+    overflow: hidden;
+  }
+}
+.number {
+  margin: 0;
+  font-size: 4.5em;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.gone {
+  margin: 0.5em 0 0;
+  font-size: 1.25em;
+}
+.way {
+  margin: 0.5em 0 0;
+  color: var(--midground-color);
+}
+/* It's under the card, and the card comes up over it, lit from the top left */
+.rise {
+  --light: 0.5;
+  --dark: 0.1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  margin: -100px 0 0 -100px;
+  background:
+    radial-gradient(circle 62px at 45% 42%, rgb(255 255 250 / var(--light)), rgb(255 255 250 / calc(var(--light) * 0.5)) 55%, transparent),
+    radial-gradient(circle 74px at 56% 60%, rgb(50 44 36 / var(--dark)), rgb(50 44 36 / calc(var(--dark) * 0.5)) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.dark-mode .rise {
+  --light: 0.05;
+  --dark: 0.3;
+}
+.fizz {
+  position: absolute;
+  z-index: 101;
+  pointer-events: none;
+}
+.dark-mode .fizz {
+  mix-blend-mode: screen;
+}
+.nav-item.pointed {
+  color: var(--c);
+}
+</style>
+
 <div class="wrapper">
-    <h1 class="page-title">404</h1>
-    <p class="page-intro">Page not found.</p>
-
-    <p>
-        The page you are looking for doesn't exist or has been moved.
-    </p>
-
-    <h2>Navigate</h2>
-    <ul class="post-list">
-        <li><a class="post-list-title" href="/">Home</a></li>
-        <li><a class="post-list-title" href="/projects">Projects</a></li>
-        <li><a class="post-list-title" href="/blog/">Blog</a></li>
-        <li><a class="post-list-title" href="/papers">Papers</a></li>
-    </ul>
+  <h1 class="number">404</h1>
+  <p class="gone">This page doesn't exist.</p>
+  <p class="way"><a href="{{ '/' | relative_url }}">Go home</a></p>
 </div>
+
+{%- assign nav = site.data.navigation -%}
+<script type="application/json" id="known">
+{
+  "pages": [
+    {%- assign everything = site.pages | concat: site.blog | concat: site.essays -%}
+    {%- for known in everything -%}
+      {%- assign kind = known.url | split: "." | last -%}
+      {%- if known.title and known.sitemap != false and known.url != page.url and known.url != "/" and kind != "xml" and kind != "txt" -%}
+        { "url": {{ known.url | relative_url | jsonify }}, "title": {{ known.title | jsonify }} },
+      {%- endif -%}
+    {%- endfor -%}
+    { "url": {{ "/" | relative_url | jsonify }}, "title": "home" }
+  ],
+  "sections": [
+    {%- for id in nav.header -%}
+      {%- for covered in nav.links[id].covers -%}
+        { "id": {{ id | jsonify }}, "url": {{ covered | relative_url | jsonify }} }{% unless forloop.last and forloop.parentloop.last %},{% endunless %}
+      {%- endfor -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+<script src="{{ '/assets/js/fizz.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/lost.js' | relative_url }}" defer></script>
