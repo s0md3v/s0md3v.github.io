@@ -2602,11 +2602,6 @@ html:not(.dark-mode) .pi-screen {
   height: 100%;
 }
 
-/* At night all that's on it is the light it gives off, which adds to the room's */
-.fizz.shining {
-  mix-blend-mode: screen;
-}
-
 /* Where it's been, in the labels' ink: nothing by day, and it comes up as the room goes dark */
 .fizz-prints {
   position: absolute;

@@ -25,7 +25,7 @@
   const P = { reach: 200, awareness: 290, maxStrands: 7 };
   const LIMIT = VIEW / 2 - 52;
 
-  const { clamp, ease, rand, turn, bell, layer, rgb, shine, INK, DARK, SOFT, NP, SUB } = Fizz;
+  const { clamp, ease, rand, turn, bell, layer, rgb, shine, DARK, SOFT, NP, SUB, LIT } = Fizz;
   // Where a box's middle is, from the corner of another
   const middle = (r, box) => [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
 
@@ -276,8 +276,8 @@
   function litGlass(c, level, r) {
     if (den.out) return;
     const near = c.createRadialGradient(blob.x, blob.y, r * 0.6, blob.x, blob.y, WALL * 1.5);
-    near.addColorStop(0, `rgba(${INK}, ${(0.5 * level).toFixed(3)})`);
-    near.addColorStop(1, `rgba(${INK}, 0)`);
+    near.addColorStop(0, `rgba(${LIT}, ${(0.5 * level).toFixed(3)})`);
+    near.addColorStop(1, `rgba(${LIT}, 0)`);
     c.strokeStyle = near;
     c.lineWidth = 2.2;
     c.beginPath();
@@ -371,7 +371,7 @@
     const e = edge(cur.x, cur.y), present = cur.present && blob.grow > 0.6 && !(leap && leap.off) && !den.state;
     const inside = present && e.d < -4;
     blob.over += ((inside ? 1 : 0) - blob.over) * (1 - Math.exp(-dt * 6));
-    fizz.stir(dt, 0.25 + 0.45 * Math.max(fizz.aware, ready) + 0.6 * blob.over);
+    fizz.stir(dt, 0.25 + 0.45 * ready + 0.6 * blob.over);
     gone +=((leap && leap.off ? 1 : 0) - gone) * (1 - Math.exp(-dt * 8));
     // Point near him and it's seen where you're going: it gets ready, by as much as you're near
     ready += (nearing - ready) * (1 - Math.exp(-dt * (nearing > ready ? 5 : 3)));
@@ -855,8 +855,8 @@
       c.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
     } else {
       const pool = c.createRadialGradient(sx, sy, 0, sx, sy, sr * 2.4);
-      pool.addColorStop(0, `rgba(${INK}, ${(0.24 - 0.14 * up).toFixed(3)})`);
-      pool.addColorStop(1, `rgba(${INK}, 0)`);
+      pool.addColorStop(0, `rgba(${LIT}, ${(0.24 - 0.14 * up).toFixed(3)})`);
+      pool.addColorStop(1, `rgba(${LIT}, 0)`);
       c.fillStyle = pool;
       c.fillRect(sx - sr * 2.4, sy - sr * 2.4, sr * 4.8, sr * 4.8);
     }
@@ -865,7 +865,7 @@
     if (tail > 0.01) {
       for (const a of K.tails) {
         const ax = x0 + Math.cos(a) * r0, ay = y0 + Math.sin(a) * r0, off = Math.sin(a * 3) * r * 0.6, wide = r * 0.22 * tail, px = x + nx * off, py = y + ny * off;
-        c.fillStyle = night ? `rgba(${INK}, ${(0.4 * tail).toFixed(3)})` : `rgba(${DARK}, ${tail.toFixed(3)})`;
+        c.fillStyle = night ? `rgba(${LIT}, ${(0.4 * tail).toFixed(3)})` : `rgba(${DARK}, ${tail.toFixed(3)})`;
         c.beginPath();
         c.moveTo(ax, ay);
         c.quadraticCurveTo((ax + px) / 2 + nx * wide, (ay + py) / 2 + ny * wide - up * r, px + nx * wide, py + ny * wide);
@@ -1074,7 +1074,6 @@
     glow.night = night;
     // What it's left is still there when the lights change, and looks as it should in the new light
     if (kit && kit.filmNight !== night && kit.stage.style.display === 'block') paintFilms();
-    canvas.classList.toggle('shining', night);
     if (still) glow.n = night ? 1 : 0;
     glow.cast = [sx * 0.7, sy * 0.7, Math.max(get('--sb') * 0.6, 1)];
     glow.touch = [get('--cx') || 0.6, get('--cy') || 0.8, Math.max(get('--cb'), 0.6)];

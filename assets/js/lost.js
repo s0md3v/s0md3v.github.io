@@ -63,7 +63,7 @@
   // Whatever's showing of it: home is a name at this width, and the rest are icons
   const mark = [...item.children].find(el => el.getBoundingClientRect().width) || item;
   const canvas = document.createElement('canvas');
-  const fizz = Fizz({ body: R, most: 4, blend: 'lighter' });
+  const fizz = Fizz({ body: R, most: 4, blend: 'lighter', root: 60, mound: 2.2 });
   const { blob, glow } = fizz;
   const eyes = fizz.eyes();
   const c = canvas.getContext('2d');

@@ -53,13 +53,17 @@ permalink: /404.html
   --light: 0.05;
   --dark: 0.3;
 }
+/* And by night what's under it lights the card, from just under its edge */
+.dark-mode .rise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle 80px at 50% 32%, rgb(128 196 136 / 0.16), rgb(128 196 136 / 0.05) 55%, transparent);
+}
 .fizz {
   position: absolute;
   z-index: 101;
   pointer-events: none;
-}
-.dark-mode .fizz {
-  mix-blend-mode: screen;
 }
 .nav-item.pointed {
   color: var(--c);

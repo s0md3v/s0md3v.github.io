@@ -48,7 +48,6 @@
   const P = { creep: 0.25, magnet: 1.6 };
   const mix = (a, b, t) => a.map((c, i) => Math.round(c + (b[i] - c) * t));
   const rgb = c => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
-  const INK = '180, 232, 155';
   const DARK = [17, 46, 34], THIN = [46, 132, 92];
   const shine = alpha => `rgba(232, 240, 255, ${alpha})`;
   // What it's full of. Each has its own place in the body, as a share of the way to the edge
@@ -65,6 +64,10 @@
     return c;
   };
   const SOFT = sprite('190, 236, 165');
+  // By night: its own light, a firefly's green, softened by the gel it comes through; the gel,
+  // all but black; and the lamp in the room
+  const GLOW = sprite('128, 196, 136');
+  const LIT = '128, 196, 136', DEEP = [12, 20, 16], LAMP = '255, 232, 206';
 
   // All of these are optional, and a page only has the ones it needs.
   //   body, most, bit: how big it is, how many strands it'll have out, and how big its bits are
@@ -78,10 +81,15 @@
   //   area, under: as far as it can get, as [w, h], and how far past the bottom of that
   //   aside: how far to throw a shape that's only there for its shadow
   //   blend: how an arm's light adds to what's there. grainAt: (size, S) => [x, y], for the grain.
+  //   root: how far up a long, thin arm it comes out of the body. By default it's a share of the
+  //   arm, which is right for short, thick ones. mound: how much the body comes up round it.
   function Fizz(opts = {}) {
     const BODY = opts.body || 50, MAX_STRANDS = opts.most || 14, BIT = opts.bit || 1, SNAP = opts.snap;
     const area = opts.area || (() => [canvas.width / (dpr * scale), canvas.height / (dpr * scale)]);
     const aside = opts.aside || (() => 1000), under = opts.under || 0, blend = opts.blend || 'source-over';
+    const MOUND = opts.mound || 1;
+    // Where along an arm it's all arm and no longer body
+    const rooted = s => (opts.root ? Math.min(1, opts.root / Math.max(s.len, 1)) : 1);
     let canvas = null, ctx = null, shape = null, sil = null, low = null, lo = null, spill = null, pool = null;
     let scale = 1, dpr = 1, top = 0, sinceNight = 0, lastNight = 0;
 
@@ -383,7 +391,7 @@
         if (s.kind === 'micro') { moundT *= 0.35; elongT *= 0.6; }
         if (s.kind === 'probe') { moundT *= 0.2; elongT *= 0.4; }
       }
-      s.mound += (moundT * 0.55 - s.mound) * (1 - Math.exp(-dt * (moundT > s.mound ? 10 : 5)));
+      s.mound += (moundT * 0.55 * MOUND - s.mound) * (1 - Math.exp(-dt * (moundT > s.mound ? 10 : 5)));
       s.elong += (elongT - s.elong) * (1 - Math.exp(-dt * 8));
 
       if (s.state === 'recoil' && (s.rest * (NP - 1) < 12 || L < 5)) {
@@ -432,7 +440,7 @@
 
     // What's going on inside it, which goes faster the more it's got to mind. `calm`'s what its
     // light settles to.
-    function stir(dt, calm = 0.25 + 0.45 * aware + 0.6 * blob.over) {
+    function stir(dt, calm = 0.25 + 0.6 * blob.over) {
       flow += dt * (1 + 2 * aware + 2.5 * blob.over);
       glow.n = glow.night ? glow.n + (1 - glow.n) * (1 - Math.exp(-dt * 2.5)) : 0;
       glow.stirred += (calm - glow.stirred) * (1 - Math.exp(-dt * (calm > glow.stirred ? 7 : 1.2)));
@@ -523,10 +531,31 @@
       do { x = rand(-1, 1); y = rand(-1, 1); z = rand(0, 1); } while (x * x + y * y + z * z > 1);
       const rho = Math.hypot(x, y);
       return { rho: rho * 0.96, depth: Math.sqrt(1 - rho * rho) - z, th: Math.atan2(y, x), spin: rand(0.05, 0.2) * (Math.random() < 0.8 ? 1 : -1),
-        size: Math.random() < 0.1 ? rand(2.6, 4.4) : rand(1, 2.4), ph: rand(0, 6.28), rate: rand(0.5, 1.6), bright: rand(0.3, 1), spark: 0 };
+        size: Math.random() < 0.1 ? rand(2.6, 4.4) : rand(1, 2.4), ph: rand(0, 6.28), rate: rand(0.5, 1.6), bright: rand(0.3, 1), spark: 0, ready: 0, store: 1 };
     });
+    // By night, what sets a speck off is being pushed about, as it is in the sea: by the body
+    // moving, by an arm at work near it, by a touch, or by the wave from where it was touched
+    // going through it. Left alone, one hardly ever does. A flash is over in a tenth of a second
+    // and uses up some of what it has to give, so it can't go again for a second or two, and
+    // set off over and over it gives less and less, till it's had a rest.
+    let lastX = null, lastY = 0, touchX = null, touchY = 0;
+    function shaken() {
+      const dt = Math.max(sinceNight, 1e-3), on = focus && focus.present;
+      const sway = lastX === null ? 0 : Math.min(Math.hypot(blob.x - lastX, blob.y - lastY) / dt / 400, 1);
+      const rub = on && touchX !== null ? Math.min((blob.over * Math.hypot(focus.x - touchX, focus.y - touchY)) / dt / 300, 2) : 0;
+      lastX = blob.x; lastY = blob.y;
+      if (on) { touchX = focus.x; touchY = focus.y; } else touchX = null;
+      const work = [];
+      for (const s of strands) {
+        if (s.pin !== 'anchor' || s.state === 'recoil') continue;
+        const k = s.state === 'grow' ? 2 : 2 * clamp(s.stretch - 1, 0, 1);
+        if (k > 0.05) work.push([...at(s.a), k]);
+      }
+      return { sway, rub, work };
+    }
     function motes() {
       const near = aware + blob.over, dx = Math.cos(blob.la), dy = Math.sin(blob.la), on = focus && focus.present;
+      const push = glow.night ? shaken() : null;
       ctx.globalCompositeOperation = 'lighter';
       for (const m of MOTES) {
         const th = m.th + flow * m.spin * (1.4 - m.rho), rho = m.rho + 0.05 * Math.sin(flow * 0.4 * m.rate + m.ph), r = radius(th) * rho;
@@ -534,15 +563,30 @@
         const x = blob.x + Math.cos(th) * r + dx * near * 16 * (1 - m.rho * 0.6), y = blob.y + Math.sin(th) * r + dy * near * 16 * (1 - m.rho * 0.6);
         const twinkle = 0.55 + 0.45 * Math.sin(flow * m.rate + m.ph * 3);
         if (glow.night) {
-          // Each only sparks now and then, for a moment, more often the more it's stirred.
-          // Deep down it's dimmer, and spread out by what the light's come through.
-          m.spark *= Math.exp(-sinceNight / 0.18);
-          if (Math.random() < sinceNight * (0.08 + 1.5 * glow.stirred * glow.stirred)) m.spark = rand(0.4, 0.95);
-          let light = 0.09 + 0.09 * twinkle + m.spark;
-          for (const f of flashes) light += f.amp * Math.exp(-f.age * 2.6) * bell(Math.hypot(x - f.x, y - f.y) - f.age * 230, 24);
-          if (on) light += (0.2 * aware + blob.over) * bell(Math.hypot(x - focus.x, y - focus.y), 42);
+          m.spark *= Math.exp(-sinceNight / 0.1);
+          m.store = Math.min(m.store + sinceNight / 20, 1);
+          let kick = 0.01 + 0.6 * push.sway, light = 0.07;
+          for (const [wx, wy, k] of push.work) kick += 3 * k * bell(Math.hypot(x - wx, y - wy), 22);
+          if (push.rub) kick += 8 * push.rub * bell(Math.hypot(x - focus.x, y - focus.y), 30);
+          for (const f of flashes) {
+            const front = bell(Math.hypot(x - f.x, y - f.y) - f.age * 230, 14) * Math.exp(-f.age * 2.6);
+            kick += 60 * f.amp * front;
+            light += 0.4 * f.amp * front;
+          }
+          if (time >= m.ready && Math.random() < sinceNight * kick) {
+            m.spark = m.store * rand(0.6, 1);
+            m.store *= 0.55;
+            m.ready = time + rand(1.2, 2.4);
+          }
+          light += m.spark;
+          // Deep down it's dimmer, and spread out by what the light's come through
           const size = m.size * (0.8 + 2.4 * m.depth);
           ctx.globalAlpha = Math.min(light * Math.exp(-1.5 * m.depth), 1) * glow.n;
+          // It's what gives off the light, so the gel round it is lit, and more of it the deeper it is
+          const halo = size * (3 + 2 * m.depth), a = ctx.globalAlpha;
+          ctx.globalAlpha = Math.min(a * 0.4, 1);
+          ctx.drawImage(GLOW, x - halo, y - halo, halo * 2, halo * 2);
+          ctx.globalAlpha = a;
           ctx.drawImage(SOFT, x - size, y - size, size * 2, size * 2);
           continue;
         }
@@ -712,11 +756,11 @@
     // the strain on it sets it off
     function emission(c, s, width = 1, amount = 1) {
       const fill = c.createLinearGradient(vx[0], vy[0], vx[VP - 1] + 0.01, vy[VP - 1]);
-      const strain = s.state === 'attached' ? clamp(s.stretch - 1, 0, 1) : 0;
+      const strain = s.state === 'attached' ? clamp(s.stretch - 1, 0, 1) : 0, k = rooted(s);
       for (let i = 0; i < NP; i++) {
         const sp = i / (NP - 1), a = (0.08 + 0.55 * ease(0.7, 3.6, s.rad[i]) + 0.45 * strain) * amount;
         // It comes up out of the body, so its root's lost in the glow
-        fill.addColorStop(sp, `rgba(${INK}, ${(Math.min(a, 1) * ease(0, 0.2, sp)).toFixed(3)})`);
+        fill.addColorStop(sp, `rgba(${LIT}, ${(Math.min(a, 1) * ease(0, 0.2 * k, sp)).toFixed(3)})`);
       }
       c.fillStyle = fill;
       ribbon(c, width);
@@ -725,14 +769,6 @@
     // It's not even all through: there's more of what shines in some places than others, and
     // it's slowly carried round. Soft all over, or it'd look like the parts of a cell.
     const CLOUDS = Array.from({ length: 13 }, () => ({ rho: Math.sqrt(Math.random()) * 0.72, th: rand(0, 6.28), spin: rand(0.03, 0.09), size: rand(0.3, 0.62), a: rand(0.05, 0.12), ph: rand(0, 6.28) }));
-    function clouds(level) {
-      ctx.globalCompositeOperation = 'lighter';
-      for (const c of CLOUDS) {
-        const th = c.th + flow * c.spin, r = radius(th), x = blob.x + Math.cos(th) * r * c.rho, y = blob.y + Math.sin(th) * r * c.rho, size = r * c.size;
-        ctx.globalAlpha = Math.min(c.a * (1.1 + 0.4 * Math.sin(flow * 0.3 + c.ph)) * level * 1.7, 1);
-        ctx.drawImage(SOFT, x - size, y - size, size * 2, size * 2);
-      }
-    }
 
     // Its surface, at night, drawn inside its outline. The light that's turned back and gets
     // out round the rim gathers where the surface curves, and thins where it doesn't, so it
@@ -747,7 +783,7 @@
           const v = 0.5 + 0.26 * Math.sin(3 * a + time * 0.4 + 1) + 0.15 * Math.sin(7 * a - time * 0.6) + 0.09 * Math.sin(13 * a + time * 0.9);
           let open = 1;
           for (const s of strands) if (s.kind === 'reach') open *= 1 - 0.9 * bell(turn(a - s.a), 0.13);
-          ctx.strokeStyle = `rgba(${INK}, ${(amount * level * (0.14 + v * v * 1.3) * open).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(${LIT}, ${(amount * level * (0.14 + v * v * 1.3) * open).toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(ox[i], oy[i]);
           ctx.lineTo(ox[j], oy[j]);
@@ -770,11 +806,22 @@
       ctx.arc(0, 0, r, 0, 6.29);
       ctx.fill();
       ctx.restore();
+      // The bulb, in a gel this dark: soft-edged, laid along the curve, and no brighter than a
+      // dim lamp's image is, or it's the brightest thing there and looks like a fault
       const k = r * 0.62;
-      ctx.fillStyle = `rgba(255, 236, 214, ${(0.75 * lamp).toFixed(3)})`;
+      ctx.save();
+      ctx.translate(blob.x + glow.x * k, blob.y + glow.y * k);
+      ctx.rotate(light + Math.PI / 2);
+      ctx.scale(1, 0.5);
+      const bulb = ctx.createRadialGradient(0, 0, 0, 0, 0, 3.4);
+      bulb.addColorStop(0, `rgba(${LAMP}, ${(0.32 * lamp).toFixed(3)})`);
+      bulb.addColorStop(0.5, `rgba(${LAMP}, ${(0.12 * lamp).toFixed(3)})`);
+      bulb.addColorStop(1, `rgba(${LAMP}, 0)`);
+      ctx.fillStyle = bulb;
       ctx.beginPath();
-      ctx.ellipse(blob.x + glow.x * k, blob.y + glow.y * k, 2.6, 1.4, light + Math.PI / 2, 0, 6.29);
+      ctx.arc(0, 0, 3.4, 0, 6.29);
       ctx.fill();
+      ctx.restore();
     }
 
     // A tentacle's the same stuff, with the same surface: a sharp edge down each side, where
@@ -782,12 +829,13 @@
     // a thread, and where it rises out of the body it's the body's own
     function skin(s, level) {
       ctx.lineCap = 'round';
+      const k = rooted(s);
       const line = (at, phase) => {
         for (let i = 0; i < VP - 1; i++) {
           const j = at(i), k = at(i + 1), sp = i / (VP - 1), r = vr[i];
           const v = 0.55 + 0.3 * Math.sin(sp * 11 + s.phase + phase + time * 0.7) + 0.15 * Math.sin(sp * 27 - time * 1.1 + phase);
-          const a = level * ease(0.05, 0.3, sp) * ease(0.5, 1.6, r) * (0.1 + 0.75 * v * v);
-          ctx.strokeStyle = `rgba(${INK}, ${a.toFixed(3)})`;
+          const a = level * ease(0.05 * k, 0.3 * k, sp) * ease(0.5, 1.6, r) * (0.1 + 0.75 * v * v);
+          ctx.strokeStyle = `rgba(${LIT}, ${a.toFixed(3)})`;
           ctx.lineWidth = Math.min(0.45 + r * 0.2, 1.1);
           ctx.beginPath();
           ctx.moveTo(edgeX[j], edgeY[j]);
@@ -799,42 +847,89 @@
       line(i => VP * 2 - 1 - i, 2.1);
     }
 
-    // At night there's nothing to see of it but the light it gives off, and that's all this
-    // draws, screened over what's there, so what's under it shows through: a thing that shines
-    // adds to what's there. Light from all through it adds up along the line of sight, so it's
-    // brightest where it's deepest. But it's a gel, not a gas: it has a surface, so its edge is
-    // sharp however soft its inside, and at that surface what's coming out at a shallow angle is
-    // turned back in, and gets out round the rim instead, so there's a thin, uneven line of
-    // brighter light just inside its edge. And what it lights is lit from low down, close to,
-    // which falls off fast (about as the cube of the distance), and keeps to its shape.
     const AWAY = 4000;
+    // A glow is a long, slow fade across very few of a screen's shades, and only some browsers
+    // dither it, so in the others it shows as bands. A grain of a shade or two either way, over
+    // all of it, breaks them up. It fades out with the glow, and it's only made once it's needed.
+    let grain = null;
+    function makeGrain() {
+      const D = Math.ceil(620 * scale * dpr);
+      if (grain && grain.width === D) return;
+      grain = layer(D, D);
+      const c = grain.getContext('2d'), image = c.createImageData(D, D), px = image.data;
+      for (let y = 0, i = 0; y < D; y++) {
+        for (let x = 0; x < D; x++, i += 4) {
+          const d = Math.hypot(x - D / 2, y - D / 2) / (D / 2), fade = d < 1 ? (1 - d * d) ** 1.2 : 0;
+          px[i] = px[i + 1] = px[i + 2] = Math.random() < 0.5 ? 0 : 255;
+          px[i + 3] = Math.random() * 6 * fade;
+        }
+      }
+      c.putImageData(image, 0, 0);
+    }
+    // By night it's as it is by day, a dark gel, wet, that you can see into, and the light's in
+    // it, as an animal's is: made in specks all through it, which spark when it's stirred, like
+    // the sea does, and light the gel round them. Between them it's dark. The light that's turned
+    // back at its surface gets out round its rim, and the room's lamp is in its surface, dim.
+    // What it lights is lit from close to, which falls off fast, and keeps to its shape.
     function byNight() {
       const S = dpr * scale, L = S / 3, n = glow.n, r = BODY * blob.size, [w, h] = area();
       sinceNight = clamp(time - lastNight, 0, 0.1);
       lastNight = time;
       const level = n * (0.68 + 0.42 * glow.stirred) * (0.94 + 0.06 * Math.sin(time * 0.9));
-
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Everything inside it stops at its surface
-      ctx.save();
+
+      // What it lights, under it: the body and its arms, spread three ways
+      lo.setTransform(1, 0, 0, 1, 0, 0);
+      lo.clearRect(0, 0, low.width, low.height);
+      world(lo, L);
+      lo.fillStyle = `rgba(${LIT}, 0.8)`;
+      closed(lo);
+      lo.fill();
+      for (const s of strands) { view(s); emission(lo, s); }
+      pool.setTransform(1, 0, 0, 1, 0, 0);
+      pool.clearRect(0, 0, spill.width, spill.height);
+      pool.globalCompositeOperation = 'lighter';
+      pool.shadowOffsetX = AWAY;
+      [[5, 0.45], [16, 0.32], [48, 0.2]].forEach(([spread, amount]) => {
+        pool.shadowColor = `rgba(${LIT}, ${amount})`;
+        pool.shadowBlur = 2 * spread * L;
+        pool.drawImage(low, -AWAY, 0);
+      });
+      ctx.globalAlpha = level;
+      ctx.drawImage(spill, 0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = 1;
+
       world(ctx, S);
+      // Whatever else is there to be lit, nearest it
+      if (opts.lit) opts.lit(ctx, level, r);
+      // The gel: nearly black where it's deep, and you can see a little through it at its edge
+      const deep = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, r * 1.1);
+      deep.addColorStop(0, `rgba(${DEEP}, 0.96)`);
+      deep.addColorStop(1, `rgba(${DEEP}, 0.8)`);
+      ctx.fillStyle = deep;
+      closed(ctx);
+      ctx.fill();
+      // A thread of it's hardly there to see
+      for (const s of strands) {
+        view(s);
+        const fill = ctx.createLinearGradient(vx[0], vy[0], vx[VP - 1] + 0.01, vy[VP - 1]);
+        for (let i = 0; i < NP; i++) fill.addColorStop(i / (NP - 1), `rgba(${DEEP}, ${(0.7 * ease(0.4, 2.4, s.rad[i])).toFixed(3)})`);
+        ctx.fillStyle = fill;
+        ribbon(ctx);
+      }
+
+      // Inside: the depth of it, lit by what's in it, then what's in it
+      ctx.save();
       closed(ctx);
       ctx.clip();
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      // Even at its thinnest there's some of it
       ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = `rgba(${INK}, ${(0.08 * level).toFixed(3)})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      // The depth of it, at a third of the size, as it has no edges to keep sharp. A dome's
-      // depth climbs steeply at its edge, then slower and slower towards the middle, so it's
-      // built up in steps, each all of it less the shadow of a ring set in from its edge. The
-      // last, nearly all of it, is left for what it lights.
-      [[0.72, 0.26, 0.2], [0.48, 0.18, 0.11], [0.17, 0.08, 0.07]].forEach(([inset, soft, amount]) => {
+      [[0.72, 0.26, 0.045], [0.48, 0.18, 0.025], [0.17, 0.08, 0.018]].forEach(([inset, soft, amount]) => {
         lo.setTransform(1, 0, 0, 1, 0, 0);
         lo.clearRect(0, 0, low.width, low.height);
         world(lo, L);
-        lo.fillStyle = `rgb(${INK})`;
+        lo.fillStyle = `rgb(${LIT})`;
         closed(lo);
         lo.fill();
         lo.save();
@@ -853,71 +948,106 @@
         ctx.drawImage(low, 0, 0, canvas.width, canvas.height);
       });
       world(ctx, S);
-      clouds(level);
-      ctx.globalAlpha = 1;
-      motes();
       ctx.globalCompositeOperation = 'lighter';
-      surface(level);
-      ctx.restore();
-
-      // What it lights: everything it gives off, spread three ways, that sum to that fall-off
-      for (const s of strands) { view(s); emission(lo, s); }
-      pool.setTransform(1, 0, 0, 1, 0, 0);
-      pool.clearRect(0, 0, spill.width, spill.height);
-      pool.globalCompositeOperation = 'lighter';
-      pool.shadowOffsetX = AWAY;
-      [[3, 0.42], [9, 0.24], [26, 0.11]].forEach(([spread, amount]) => {
-        pool.shadowColor = `rgba(${INK}, ${amount})`;
-        pool.shadowBlur = 2 * spread * L;
-        pool.drawImage(low, -AWAY, 0);
-      });
-      ctx.globalCompositeOperation = blend;
-      ctx.globalAlpha = level;
-      ctx.drawImage(spill, 0, 0, canvas.width, canvas.height);
-      ctx.globalAlpha = 1;
-
-      world(ctx, S);
-      // Whatever else is there to be lit, nearest it
-      if (opts.lit) opts.lit(ctx, level, r);
-
-      // A tube's deepest down its middle, so that's where it's brightest
-      ctx.globalAlpha = level;
-      for (const s of strands) {
-        view(s);
-        emission(ctx, s, 0.34, 0.34);
-        emission(ctx, s, 0.68, 0.26);
-        emission(ctx, s, 1, 0.34);
-        skin(s, level);
+      for (const c of CLOUDS) {
+        const th = c.th + flow * c.spin, cr = radius(th), x = blob.x + Math.cos(th) * cr * c.rho, y = blob.y + Math.sin(th) * cr * c.rho, size = cr * c.size;
+        ctx.globalAlpha = Math.min(c.a * (1.1 + 0.4 * Math.sin(flow * 0.3 + c.ph)) * level * 0.6, 1);
+        ctx.drawImage(GLOW, x - size, y - size, size * 2, size * 2);
       }
       ctx.globalAlpha = 1;
-      for (const s of strands) { view(s); streaming(s); }
+      motes();
+      // Its surface: the light turned back at its edge, and the lamp in it, as by day but dim
       ctx.globalCompositeOperation = 'lighter';
-      // What a bit leaves behind it, one unbroken smear, drying up
+      surface(level * 0.7);
+      ctx.globalCompositeOperation = 'source-over';
+      const light = Math.atan2(glow.y, glow.x), lr = radius(light);
+      const pan = ctx.createRadialGradient(blob.x, blob.y, lr * 0.5, blob.x, blob.y, lr * 0.86);
+      pan.addColorStop(0, `rgba(${LAMP}, 0)`);
+      pan.addColorStop(0.45, `rgba(${LAMP}, ${(0.08 * n).toFixed(3)})`);
+      pan.addColorStop(1, `rgba(${LAMP}, ${(0.26 * n).toFixed(3)})`);
+      ctx.fillStyle = pan;
+      const take = blob.take;
+      blob.take = 0;
+      pane(ctx, light - 0.56, light - 0.05, 0.56, 0.84);
+      pane(ctx, light + 0.05, light + 0.56, 0.56, 0.84);
+      blob.take = take;
+      ctx.restore();
+
+      // The arms: the same gel, with the light down their middles, and the lamp down one side
+      world(ctx, S);
+      for (const s of strands) {
+        view(s);
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = level;
+        emission(ctx, s, 0.22, 0.7);
+        emission(ctx, s, 0.5, 0.3);
+        emission(ctx, s, 0.85, 0.12);
+        ctx.globalAlpha = 1;
+        skin(s, level * 0.35);
+        ctx.globalCompositeOperation = 'source-over';
+        if (s.state === 'recoil') continue;
+        ctx.globalAlpha = 0.3 * n;
+        gloss(ctx);
+        ctx.globalAlpha = 1;
+      }
+      for (const s of strands) { view(s); streaming(s); }
+
+      ctx.globalCompositeOperation = 'lighter';
       ctx.lineCap = 'round';
       tracks.forEach((t, i) => {
         const before = tracks.slice(Math.max(i - 8, 0), i).reverse().find(o => o.of === t.of);
         if (!before || Math.hypot(t.x - before.x, t.y - before.y) > 40) return;
-        ctx.strokeStyle = `rgba(${INK}, ${(0.2 * n * (1 - t.age / 3)).toFixed(3)})`;
+        ctx.strokeStyle = `rgba(${LIT}, ${(0.16 * n * (1 - t.age / 3)).toFixed(3)})`;
         ctx.lineWidth = t.r * 1.4 * (1 - t.age / 6);
         ctx.beginPath();
         ctx.moveTo(before.x, before.y);
         ctx.lineTo(t.x, t.y);
         ctx.stroke();
       });
-      // A bit's a small drop of it, with an edge of its own, and in the air it lights nothing but
-      // itself
+      // A bit's a drop of the same: dark, with a light in it
       for (const d of drops) {
-        const r = d.r * (1 + d.up * 0.028), a = Math.atan2(d.dy, d.dx);
-        if (d.up < 0.5) { ctx.globalAlpha = n * 0.16; ctx.drawImage(SOFT, d.x - r * 3, d.y - r * 3, r * 6, r * 6); }
+        const dr = d.r * (1 + d.up * 0.028), a = Math.atan2(d.dy, d.dx);
+        if (d.up < 0.5) { ctx.globalAlpha = n * 0.14; ctx.drawImage(GLOW, d.x - dr * 3, d.y - dr * 3, dr * 6, dr * 6); }
         ctx.globalAlpha = 1;
-        ctx.fillStyle = `rgba(${INK}, ${(0.34 * n).toFixed(3)})`;
-        ctx.strokeStyle = `rgba(${INK}, ${(0.5 * n).toFixed(3)})`;
-        ctx.lineWidth = 0.7;
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = `rgba(${DEEP}, 0.92)`;
         ctx.beginPath();
         if (d.path) d.path(ctx);
-        else ctx.ellipse(d.x, d.y, r * d.sq, r / d.sq, a, 0, 6.29);
+        else ctx.ellipse(d.x, d.y, dr * d.sq, dr / d.sq, a, 0, 6.29);
         ctx.fill();
-        ctx.stroke();
+        ctx.globalCompositeOperation = 'lighter';
+        if (d.path) {
+          // A piece with a shape of its own is lit as the body is: the light turned back at its
+          // edge, inside it, and a few specks in it, wherever they've ended up
+          ctx.save();
+          ctx.beginPath();
+          d.path(ctx);
+          ctx.clip();
+          ctx.lineJoin = 'round';
+          for (const [width, amount] of [[9, 0.12], [3, 0.4]]) {
+            ctx.strokeStyle = `rgba(${LIT}, ${(amount * n).toFixed(3)})`;
+            ctx.lineWidth = width;
+            ctx.beginPath();
+            d.path(ctx);
+            ctx.stroke();
+          }
+          d.specks = d.specks || Array.from({ length: 9 }, () => [rand(-22, 22), rand(-16, 16), rand(0.4, 1)]);
+          for (const [sx, sy, b] of d.specks) {
+            ctx.globalAlpha = n * 0.45 * b;
+            ctx.drawImage(GLOW, d.x + sx - 8, d.y + sy - 8, 16, 16);
+            ctx.globalAlpha = n * 0.8 * b;
+            ctx.drawImage(SOFT, d.x + sx - 1.4, d.y + sy - 1.4, 2.8, 2.8);
+          }
+          ctx.restore();
+          continue;
+        }
+        ctx.globalAlpha = n * 0.7;
+        ctx.drawImage(GLOW, d.x - dr, d.y - dr, dr * 2, dr * 2);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = `rgba(${LAMP}, ${(0.5 * n).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(d.x + glow.x * dr * 0.4, d.y + glow.y * dr * 0.4, dr * 0.2, 0, 6.29);
+        ctx.fill();
       }
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
@@ -928,24 +1058,6 @@
       ctx.globalAlpha = n;
       ctx.drawImage(grain, gx, gy);
       ctx.globalAlpha = 1;
-    }
-    // A glow is a long, slow fade across very few of a screen's shades, and only some browsers
-    // dither it, so in the others it shows as bands. A grain of a shade or two either way, over
-    // all of it, breaks them up. It fades out with the glow, and it's only made once it's needed.
-    let grain = null;
-    function makeGrain() {
-      const D = Math.ceil(620 * scale * dpr);
-      if (grain && grain.width === D) return;
-      grain = layer(D, D);
-      const c = grain.getContext('2d'), image = c.createImageData(D, D), px = image.data;
-      for (let y = 0, i = 0; y < D; y++) {
-        for (let x = 0; x < D; x++, i += 4) {
-          const d = Math.hypot(x - D / 2, y - D / 2) / (D / 2), fade = d < 1 ? (1 - d * d) ** 1.2 : 0;
-          px[i] = px[i + 1] = px[i + 2] = Math.random() < 0.5 ? 0 : 255;
-          px[i + 3] = Math.random() * 6 * fade;
-        }
-      }
-      c.putImageData(image, 0, 0);
     }
     function draw() {
       outline();
@@ -1012,5 +1124,5 @@
     };
   }
 
-  window.Fizz = Object.assign(Fizz, { clamp, ease, rand, turn, bell, layer, rgb, shine, INK, DARK, SOFT, NP, SUB });
+  window.Fizz = Object.assign(Fizz, { clamp, ease, rand, turn, bell, layer, rgb, shine, DARK, SOFT, NP, SUB, LIT });
 })();
