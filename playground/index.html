@@ -3,110 +3,274 @@ layout: default
 title: Experiments
 description: Small tools, experiments, interactive guides, and useful links.
 permalink: /playground/
+ink: playground
+handwritten_font: true
 ---
-
+{% assign lab = '/assets/images/lab/' | relative_url %}
 <style>
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-    gap: 1.5rem;
+/* All paper, as Projects is. Each experiment's a thing of its own beside what it is. */
+@media screen and (min-width: 769px) {
+  html {
+    background: var(--background-color) var(--paper-grain);
   }
 
-  .tool-card {
-    display: block;
-    background: var(--code-bg, #f9fafb);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.2s, background-color 0.2s;
+  html.dark-mode {
+    background-image: none;
+  }
+}
+
+.experiments-page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+.experiments {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.experiment {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 3rem;
+  padding: 1.5rem 0;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.experiment:focus-visible {
+  outline: none;
+}
+
+/* Looked at, it's its title that answers, not a tint behind the whole row */
+.experiment:hover {
+  background: none;
+}
+
+.experiment h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.experiment p {
+  margin: 0.5em 0 0;
+  max-width: 26em;
+  line-height: 1.55;
+  color: var(--midground-color);
+  transition: color 0.2s;
+}
+
+/* Looked at: come to from the keyboard, or under a pointer that can hover. (A finger's touch
+   counts as hovering, and stays so after it's lifted, so a row a thumb scrolled from would stay
+   looked at; on touch screens it's the keyboard's only.) Its title in the experiments' colour,
+   and its line nearer the text's own: darker by day, lighter by night. */
+.experiment:focus-visible h2 {
+  color: var(--c);
+}
+
+.experiment:focus-visible p {
+  color: color-mix(in srgb, var(--midground-color) 35%, var(--foreground-color));
+}
+
+@media (hover: hover) {
+  .experiment:hover h2 {
+    color: var(--c);
   }
 
-  .tool-card:hover {
-    border-color: var(--accent-color, #2563eb);
+  .experiment:hover p {
+    color: color-mix(in srgb, var(--midground-color) 35%, var(--foreground-color));
+  }
+}
+
+/* Where it is: all the same height, so the list reads as a list */
+.stage {
+  position: relative;
+  height: 17rem;
+  display: grid;
+  place-items: center;
+}
+
+.thing {
+  position: relative;
+  display: block;
+  width: min(100%, var(--sw), 17rem * var(--a));
+  aspect-ratio: var(--a);
+}
+
+.thing canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Feel Better, Fast: an apple, which rolls away from what comes at it. Its canvas reaches
+   past it, so its shadow isn't cut off at the edge of where it can roll. */
+#apple { --sw: 24rem; --a: 1.6; }
+
+#apple canvas {
+  inset: -2rem;
+  width: calc(100% + 4rem);
+  height: calc(100% + 4rem);
+}
+
+/* That reach mustn't widen the page */
+.experiments-page {
+  overflow-x: clip;
+}
+
+/* Red is pain: a toy soldier, lying down, aiming at whatever moves */
+#soldier { --sw: 17rem; --a: 1; }
+
+/* Sumi: a little open water, inks dropped on it */
+#water { --sw: 17rem; --a: 1; }
+
+/* Links: a chain of paper clips, hooked one into the next */
+#links { --sw: 17rem; --a: 1.435; }
+
+/* Bhagavad Gītā: a wheel of the Sun's chariot at Konark, carved in stone, lying on the page.
+   Swept round by the pointer, it turns, heavily, and slows and stops. Its shadow's a copy of it,
+   darkened and softened, a little way off from the window; turned with it, and not moved. */
+#gita { --sw: 14rem; --a: 1; }
+
+#gita img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#gita .shadow {
+  translate: 2.2% 2.7%;
+  filter: brightness(0) blur(0.15rem) opacity(0.32);
+}
+
+.dark-mode #gita .wheel {
+  filter: brightness(0.8);
+}
+
+.dark-mode #gita .shadow {
+  filter: brightness(0) blur(0.15rem) opacity(0.6);
+}
+
+/* ---- Phones: still beside what it is, smaller, so it reads as a list ---- */
+
+@media (max-width: 768px) {
+  .experiments-page {
+    padding: 1rem 1rem 3rem;
   }
 
-  .tool-card:focus-visible {
-    outline: 2px solid var(--accent-color, #2563eb);
-    outline-offset: 4px;
+  .experiment {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.75rem 0;
   }
 
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .stage {
+    height: 9.5rem;
   }
 
-  .tool-desc {
-    font-size: 0.95rem;
-    color: var(--midground-color, #666);
-    line-height: 1.4;
+  .thing {
+    width: min(100%, var(--sw), 9.5rem * var(--a));
   }
 
-  .arrow-icon {
-    opacity: 0;
-    transform: translateX(-5px);
-    transition: all 0.2s;
-    color: var(--accent-color, #2563eb);
+  /* It doesn't roll away from a finger, so it needn't be given room to */
+  #apple { --a: 1.15; }
+
+  /* The water and the wheel a little smaller, to weigh as the others do */
+  #water { --sw: 8.5rem; }
+  #gita { --sw: 8.75rem; }
+
+  .experiment h2 {
+    font-size: 1.1rem;
   }
 
-  .tool-card:hover .arrow-icon,
-  .tool-card:focus-visible .arrow-icon {
-    opacity: 1;
-    transform: translateX(0);
+  .experiment p {
+    margin-top: 0.35em;
+    font-size: 0.92rem;
+    line-height: 1.45;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experiment :is(h2, p) {
+    transition: none;
+  }
+}
 </style>
 
-<div class="wrapper wide">
-  <header>
-    <h1 class="page-title">Experiments</h1>
-    <p class="page-intro">Small tools, experiments, interactive guides, and useful links.</p>
-  </header>
+<div class="experiments-page">
+  <h1 class="sr-only">Experiments</h1>
 
-  <div class="tools-grid">
-    <a href="/playground/health-protocol/" class="tool-card">
-      <div class="tool-title">
-        Feel Better, Fast
-        <span class="arrow-icon">→</span>
-      </div>
-      <p class="tool-desc">A 2-minute audit of your daily habits to find the low-hanging fruit for better energy, sleep, and mood.</p>
-    </a>
-
-    <a href="/playground/red-is-pain/" class="tool-card">
-      <div class="tool-title">
-        Red is pain
-        <span class="arrow-icon">→</span>
-      </div>
-      <p class="tool-desc">An experiment on whether we can simulate psyche for NPCs.</p>
-    </a>
-    
-    <a href="/playground/sumi/" class="tool-card">
-      <div class="tool-title">
-        Sumi
-        <span class="arrow-icon">→</span>
-      </div>
-      <p class="tool-desc">An abstract wallpaper and animation generator.</p>
-    </a>
-
-    <a href="{{ '/playground/links/' | relative_url }}" class="tool-card">
-      <div class="tool-title">
-        Links
-        <span class="arrow-icon" aria-hidden="true">→</span>
-      </div>
-      <p class="tool-desc">Tools, articles, videos, and resources. Browse by topic or search for something specific.</p>
-    </a>
-
-    <a href="/playground/gita/" class="tool-card">
-      <div class="tool-title">
-        Bhagavad Gītā
-        <span class="arrow-icon">→</span>
-      </div>
-      <p class="tool-desc">Read all 18 books with Winthrop Sargeant’s translation, a plain English reading, and the original printed pages.</p>
-    </a>
-
-  </div>
+  <ol class="experiments">
+    <li>
+      <a class="experiment" href="{{ '/playground/health-protocol/' | relative_url }}">
+        <span class="stage" aria-hidden="true">
+          <span class="thing" id="apple"><canvas></canvas></span>
+        </span>
+        <span class="words">
+          <h2>Feel Better, Fast</h2>
+          <p>A 2-minute audit of your daily habits to find the low-hanging fruit for better energy, sleep, and mood.</p>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="experiment" href="{{ '/playground/red-is-pain/' | relative_url }}">
+        <span class="stage" aria-hidden="true">
+          <span class="thing" id="soldier"><canvas></canvas></span>
+        </span>
+        <span class="words">
+          <h2>Red is pain</h2>
+          <p>An experiment on whether we can simulate psyche for NPCs.</p>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="experiment" href="{{ '/playground/gita/' | relative_url }}">
+        <span class="stage" aria-hidden="true">
+          <span class="thing" id="gita">
+            <img class="shadow" src="{{ lab }}chakra.avif" srcset="{{ lab }}chakra-240.avif 240w, {{ lab }}chakra.avif 448w"
+              sizes="(max-width: 768px) 8.75rem, 14rem" width="448" height="448" alt="" loading="lazy" decoding="async">
+            <img class="wheel" src="{{ lab }}chakra.avif" srcset="{{ lab }}chakra-240.avif 240w, {{ lab }}chakra.avif 448w"
+              sizes="(max-width: 768px) 8.75rem, 14rem" width="448" height="448" alt="" loading="lazy" decoding="async">
+          </span>
+        </span>
+        <span class="words">
+          <h2>Bhagavad Gītā</h2>
+          <p>Read all 18 books with Winthrop Sargeant’s translation, a plain English reading, and the original printed pages.</p>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="experiment" href="{{ '/playground/links/' | relative_url }}">
+        <span class="stage" aria-hidden="true">
+          <span class="thing" id="links"><canvas></canvas></span>
+        </span>
+        <span class="words">
+          <h2>Links</h2>
+          <p>Tools, articles, videos, and resources. Browse by topic or search for something specific.</p>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="experiment" href="{{ '/playground/sumi/' | relative_url }}">
+        <span class="stage" aria-hidden="true">
+          <span class="thing" id="water"><canvas></canvas></span>
+        </span>
+        <span class="words">
+          <h2>Sumi</h2>
+          <p>An abstract wallpaper and animation generator.</p>
+        </span>
+      </a>
+    </li>
+  </ol>
 </div>
+
+<script src="{{ '/assets/js/experiments.js' | relative_url }}" defer></script>
