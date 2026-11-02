@@ -1,24 +1,20 @@
 {% comment %}
   A list of posts with a quiet year column, each year shown once.
-  posts: the documents to list (unlisted and future ones are skipped)
+  posts: the documents to list (only the listed ones are shown, see _plugins/listed.rb)
   order: "desc" for newest first, anything else for oldest first
 {% endcomment %}
-{% assign post_list_entries = include.posts | sort: "date" %}
+{% assign post_list_entries = include.posts | listed | sort: "date" %}
 {% if include.order == "desc" %}
 {% assign post_list_entries = post_list_entries | reverse %}
 {% endif %}
 {% assign post_list_year = nil %}
 <ul class="post-list">
   {% for post in post_list_entries %}
-  {% unless post.unlisted %}
-  {% if site.future or post.date <= site.time %}
   <li class="post-list-entry">
     {% assign post_year = post.date | date: "%Y" %}
     <time class="post-list-date" datetime="{{ post.date | date: '%Y-%m-%d' }}">{% if post_year != post_list_year %}{{ post_year }}{% endif %}</time>
     {% assign post_list_year = post_year %}
     <span class="post-list-main"><a class="post-list-title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>{% if post.note %}<span class="post-list-note">{{ post.note | escape }}</span>{% endif %}</span>
   </li>
-  {% endif %}
-  {% endunless %}
   {% endfor %}
 </ul>

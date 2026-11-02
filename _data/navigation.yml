@@ -5,8 +5,6 @@ links:
   about:
     label: about
     url: /about
-    # Pages that aren't in the navigation light up the section they belong to
-    covers: [/about, /now/, /taste/, /work]
     tooltip: Somdev Sangwan aka s0md3v
   work:
     label: work with me
@@ -15,12 +13,10 @@ links:
   projects:
     label: projects
     url: /projects
-    covers: [/projects, /playground/]
     tooltip: i picked the best 10
   blog:
     label: blog
     url: /blog/
-    covers: [/blog/, /essays/, /papers]
     tooltip: research, hacking, dev
   papers:
     label: papers
@@ -29,7 +25,6 @@ links:
   gallery:
     label: gallery
     url: /gallery
-    covers: [/gallery]
     tooltip: good photos, i promise
   philosophy:
     label: philosophy

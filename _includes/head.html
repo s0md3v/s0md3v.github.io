@@ -41,6 +41,7 @@
       {% include homepage.css %}
     {% else %}
       {% include common.css %}
+      {% if page.layout == "post" %}{% include article.css %}{% endif %}
     {% endif %}
   </style>
   {% if page.layout_style == "homepage" %}

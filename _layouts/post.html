@@ -2,64 +2,67 @@
 layout: base
 ---
 {% include header.html %}
-{% if page.collection == "essays" %}{% assign post_mark = "philosophy" %}{% else %}{% assign post_mark = "blog" %}{% endif %}
+{% comment %} Its section, as the header worked it out from where the post is: blog or philosophy {% endcomment %}
+{% assign post_mark = nav_title_id | default: "blog" %}
+{% assign post_essay = false %}
+{% if page.collection == "essays" %}{% assign post_essay = true %}{% endif %}
 
 <main class="blog-content" data-page="{{ post_mark }}" id="main-content" tabindex="-1">
   <div class="wrapper">
-    <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+    <h1 class="post-title">{{ page.title | escape }}</h1>
     <p class="post-meta">
       {% assign word_count = content | strip_html | number_of_words %}
+      {% if post_essay %}An essay by{% else %}By{% endif %}
+      <a href="{{ '/about' | relative_url }}" rel="author">{{ page.author | default: site.author.name }}</a>
+      <span aria-hidden="true">·</span>
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
-      · {{ word_count | divided_by: 200.0 | ceil }} min read
-      {% for tag in page.tags %}
-      <span>[{{ tag }}]</span>
-      {% endfor %}
+      <span aria-hidden="true">·</span>
+      {{ word_count | divided_by: 200.0 | ceil }} min read
       {% if page.external %}
-      <br>
-      also {{ page.external.status }} <a href="{{ page.external.href }}">{{ page.external.title }}</a>
-      on {{ page.external.date | date: "%-d %b %Y" }}
+      <span class="post-meta-line">Also {{ page.external.status }} <a href="{{ page.external.href }}">{{ page.external.title | escape }}</a> on {{ page.external.date | date: "%-d %b %Y" }}</span>
       {% endif %}
       {% for extra in page.extras %}
-      <br>
-      see: <a href="{{ extra.href }}">{{ extra.text }}</a>
+      <span class="post-meta-line">See <a href="{{ extra.href }}">{{ extra.text | escape }}</a></span>
       {% endfor %}
-      {% if page.unlisted %}
-      <br>
-      unlisted post
-      {% endif %}
     </p>
     <div class="post-content">
       {{ content }}
     </div>
     <div class="post-fin">{% include marks/{{ post_mark }}.svg %}</div>
-    {% comment %} Its neighbours in time, skipping unlisted ones, so a post isn't a dead end {% endcomment %}
-    {% assign post_end_docs = site[page.collection] | sort: "date" %}
-    {% assign post_older = nil %}
-    {% assign post_newer = nil %}
-    {% assign post_passed = false %}
-    {% for doc in post_end_docs %}
-    {% if doc.url == page.url %}
-    {% assign post_passed = true %}
-    {% elsif doc.unlisted %}
-    {% elsif post_passed %}
-    {% assign post_newer = doc %}
-    {% break %}
-    {% else %}
-    {% assign post_older = doc %}
-    {% endif %}
-    {% endfor %}
-    <nav class="post-end prose" aria-label="More writing">
-      {% if post_older %}
-      <div class="post-end-link"><span class="post-end-label">Older</span><a href="{{ post_older.url | relative_url }}">{{ post_older.title | escape }}</a></div>
-      {% endif %}
-      {% if post_newer %}
-      <div class="post-end-link post-end-newer"><span class="post-end-label">Newer</span><a href="{{ post_newer.url | relative_url }}">{{ post_newer.title | escape }}</a></div>
-      {% endif %}
-      {% if page.collection == "essays" %}
-      <div class="post-end-all"><a href="{{ '/essays/' | relative_url }}">All essays</a></div>
-      {% else %}
-      <div class="post-end-all"><a href="{{ '/blog/' | relative_url }}">All posts</a></div>
-      {% endif %}
-    </nav>
   </div>
+
+  {% comment %} Off the sheet, where the post's over: one to read next, the one before it in time
+     among those a reader can come across (an unlisted post has one too, by its date), or, from
+     the first of them, the latest. And the rest of them. {% endcomment %}
+  {% assign post_end_docs = site[page.collection] | listed | sort: "date" %}
+  {% assign post_next = nil %}
+  {% assign post_next_label = "Older" %}
+  {% for doc in post_end_docs %}
+  {% if doc.url == page.url or doc.date > page.date %}{% break %}{% endif %}
+  {% assign post_next = doc %}
+  {% endfor %}
+  {% unless post_next %}
+  {% assign post_latest = post_end_docs | last %}
+  {% if post_latest and post_latest.url != page.url %}
+  {% assign post_next = post_latest %}
+  {% assign post_next_label = "Latest" %}
+  {% endif %}
+  {% endunless %}
+  <nav class="post-after" aria-label="More {% if post_essay %}essays{% else %}posts{% endif %}">
+    <p class="post-after-line">
+      {% if post_next %}<span class="post-next-label" id="post-next-label">{{ post_next_label }} {% if post_essay %}essay{% else %}post{% endif %}</span>{% endif %}
+      {% if post_essay %}
+      <a class="post-all" href="{{ '/essays/' | relative_url }}">All essays</a>
+      {% else %}
+      <a class="post-all" href="{{ '/blog/' | relative_url }}">All posts</a>
+      {% endif %}
+    </p>
+    {% if post_next %}
+    <a class="post-next" href="{{ post_next.url | relative_url }}" aria-describedby="post-next-label">
+      <span class="post-next-title">{{ post_next.title | escape }}</span>
+      {% if post_next.description %}<span class="post-next-description">{{ post_next.description | strip | escape }}</span>{% endif %}
+    </a>
+    {% endif %}
+  </nav>
 </main>
+<script src="{{ '/assets/js/article.js' | relative_url }}" defer></script>

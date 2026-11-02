@@ -5,13 +5,11 @@
         --base-font-family: {% if page.layout_style == 'homepage' %}"Source Serif 4", Georgia, "Times New Roman", serif{% else %}"Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif{% endif %};
         --blog-font-family: var(--base-font-family);
 
-        /* Inner pages are a sheet of paper on the homepage's table: --background-color is
-           the sheet. --desk-color is the average of --desk-image (_raw/deskroom.py), so a
-           page can't flash while the image is on its way.
+        /* Reading pages are a sheet: --background-color is the sheet, and --surround-color is
+           what's round it, plain (on the homepage, the colour of its desk).
            Body text ~14:1, muted text >5:1 (WCAG AA) */
         color-scheme: light;
-        --desk-color: #e4e0d6;
-        --desk-image: url('{{ "/assets/images/table/desk-day.avif" | relative_url }}');
+        --surround-color: #e4e0d6;
         --sheet-shadow: 28, 34, 44;
         --background-color: #f6f3ea;
         --foreground-color: #26231f;
@@ -27,14 +25,12 @@
         --link-visited: #0d47a1;
     }
 
-    /* Nothing's read on the table at night, so it's black, which sets the sheet apart. The
-       sheet stays dark, though real paper wouldn't. Each kind of text has its own step, by
-       APCA, as contrast ratios flatter light text on dark: headings Lc 89, body 76, quotes
-       62, labels 49. */
+    /* At night what's round the sheet is black, so the sheet's the only thing that glows, and
+       little of it. Each kind of text has its own step, by APCA, as contrast ratios flatter
+       light text on dark: headings Lc 89, body 76, quotes 62, labels 49. */
     .dark-mode {
         color-scheme: dark;
-        --desk-color: {% if page.layout_style == 'homepage' %}#232323{% else %}#000{% endif %};
-        --desk-image: none;
+        --surround-color: {% if page.layout_style == 'homepage' %}#232323{% else %}#000{% endif %};
         --sheet-shadow: 0, 0, 0;
         --background-color: #100f0f;
         --foreground-color: #cecdc3;
@@ -132,7 +128,7 @@
         document.documentElement.classList.add(`${theme}-mode`);
         // The browser's own bars take the colour of what's under them
         document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement)
-            .getPropertyValue("{% if page.layout_style == 'homepage' %}--desk-color{% else %}--background-color{% endif %}");
+            .getPropertyValue("{% if page.layout_style == 'homepage' %}--surround-color{% else %}--background-color{% endif %}");
     }
 
     // Choosing what the system already shows is the same as going back to following it

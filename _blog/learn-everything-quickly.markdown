@@ -39,7 +39,7 @@ Taking a break from the creativity discourse, lets quickly go over other factors
 
 Did someone/something ruin a nice photo you took? You can just draw around it with the lasso tool in photoshop and press shift+backspace to magically remove it.
 
-![photoshop example](/assets/inline/photoshop-example.jpg)
+![Before and after: a beach at dusk with three people standing on the sand, and the same beach with the people removed](/assets/inline/photoshop-example.jpg)
 
 Congrats! You just learned something that will help you countless times in life :)
 
@@ -53,7 +53,7 @@ In this article, being "good" will be used as a synonym for being just good enou
 
 ## Start
 
-![its better to try](/assets/inline/better-to-try.webp)
+![Two targets: the one with no shots is empty, the one where the shooter tried has four hits near the center and four misses outside. Caption: It's better to try, fail and learn than to not try at all](/assets/inline/better-to-try.webp)
 
 Develop a habit of taking action. Look around, do you think these people have a device in their pockets that contains the totality of human knowledge? Can you fathom how crazy this is? You can google everything, from how to tie your shoelaces in shape of a flower to how motion detectors work.
 
@@ -61,7 +61,7 @@ It's crazy that there's information about everything but a lot of people still c
 
 Why? Because they don't act, they don't question and they don't care enough. In learning, the hardest part is over once you start.
 
-![just get started](/assets/inline/just-get-started.jpg)
+![Comic: a character says they want to make art but don't know how to start; a giant hand forces a pencil into theirs and pushes them to the desk, and they end up drawing, terrified, as a thumbs-up appears](/assets/inline/just-get-started.jpg)
 
 This is a rule to live by in general - you miss all the shots you don't take. If you try there's a chance of success - however small. If you don't try, you have failed by default.
 

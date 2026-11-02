@@ -4,9 +4,13 @@ title:  "Detecting Linguistic Information in Text"
 date:   2019-04-22 00:00:00 +0530
 author: Somdev Sangwan
 type:   tech
+image: /assets/thumbs/text-or-random.png
 permalink: /blog/text-or-random
 description: "A phonetic approach to differentiating human-readable text from random data."
 note: "by sounding it out"
+extras:
+  - text: fonetic on GitHub
+    href: https://github.com/s0md3v/fonetic
 ---
 
 How can a computer tell the difference between meaningful text and a random string of characters? This question seems simple, but the obvious answers are often wrong. It's a problem that pops up everywhere, from analyzing data streams and detecting obfuscated code to simple input validation.

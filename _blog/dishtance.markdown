@@ -4,6 +4,7 @@ title:  "Geolocating Satellite Dishes"
 date:   2024-08-09 17:19:00 +0530
 author: Somdev Sangwan
 type:   tech
+image: /assets/thumbs/dishtance.png
 permalink: /blog/geolocating-satellite-dishes
 description: "Using the angle and direction of a satellite dish in a photo to narrow down where it was taken."
 ---
@@ -16,11 +17,11 @@ One of these clues is satellite dishes, most commonly used for television broadc
 
 Satellites that need to be in a fixed spot in the sky at all times must be placed in the geostationary orbit. Geostationary orbit is an orbit 35,786 km right above the equator, and the satellites in it are called geostationary satellites. Satellites in this orbit revolve around the earth at a speed equivalent to earth's spin speed, thus they appear "stationary".
 
-<video autoplay muted loop playsinline preload="metadata" width="714" height="414" aria-label="geostationary orbit animated"><source src="/assets/inline/geostationary-orbit.mp4" type="video/mp4"></video>
+<video autoplay muted loop playsinline preload="metadata" width="714" height="414" aria-label="A satellite on a ring above the equator stays over one spot while the Earth rotates beneath it"><source src="/assets/inline/geostationary-orbit.mp4" type="video/mp4"></video>
 
 To connect to a geostationary satellite, you must point your antenna towards it at a certain angle. The angle is proportional to your distance from the satellite.
 
-![elevation](/assets/inline/dish-elevation.jpg)
+![Diagram: Dish A, far from the satellite, points at it at a shallow angle to the ground; the nearer Dish B must point steeply upward](/assets/inline/dish-elevation.jpg)
 
 ## The big idea
 At a given location, the angle (called elevation angle) and the direction (called north angle) required to connect to a specific satellite can be [easily calculated](https://www.satsig.net/maps/satellite-tv-dish-pointing-south-east-asia.htm) using trigonomety. What if we could guess the angle and direction of a dish from a photo and 'reverse' this calculation? We will get a set of coordinates, yes.
@@ -30,7 +31,7 @@ Based on this, I wrote code that takes elevation angle, north angle, and satelli
 Realistically, it is unlikely to get accurate angles from a photo. Thus, in addition to, let's say, 30 degrees - the program must accept a range as input e.g., 35-45 degrees.\
 To get around this limitation, we use a different approach.
 
-![calculation](/assets/inline/calculation.webp)
+![Diagram: a small circle (max elevation angle) and a large circle (min elevation angle) around the satellite, cut by a triangle spanning min to max north angle; the part of the ring inside the triangle is the result](/assets/inline/calculation.webp)
 
 **Step 1.** Use the upper limit of elevation angle range as elevation angle to find a set of coordinates with findLocation function. Then, measure the distance between this location and location right under satellite on earth (let's call it center). Finally, create a circle around the center using the said distance as radius.\
 **Step 2.** Do the same process but using the lower limit this time.\
@@ -58,6 +59,6 @@ Keeping all this in mind, I created a tool named "Dishtance". It allows the user
 
 **Github:** [https://github.com/s0md3v/dishtance](https://github.com/s0md3v/dishtance)
 
-![dishtance demo](/assets/inline/dishtance-demo.webp)
+![Dishtance with north angle 220-240, elevation angle 30-40 and satellite BulgariaSat-1: a shaded region on the map covering Romania, Bulgaria, Moldova and part of northern Greece](/assets/inline/dishtance-demo.webp)
 
 This solves an incredibly niche problem but it must prove invaluable to journalists and investigators when needed. Furthermore, I hope this project motivates researchers to automate more *non-automatable* problems in chronolocation, geolocation, and other related fields.

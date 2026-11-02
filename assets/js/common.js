@@ -111,16 +111,17 @@ document.addEventListener('DOMContentLoaded', function () {
         panels.forEach(entry => setPanel(entry, false));
     });
 
-    // Above the page it leaves as you read on and comes back as you turn back, once either is
-    // clearly meant, so a nudge of the wheel or a thumb leaves it where it is. On a phone it's
-    // tabs, which stay.
+    // It leaves as you read on and comes back as you turn back, once either is clearly meant, so a
+    // nudge of the wheel or a thumb leaves it where it is: above the page, and on a phone below it,
+    // where it would otherwise take a line in every screenful. At the end of the page it's back,
+    // for wherever you go next.
     const header = document.getElementById('site-header');
     const TURN = 8;
     let lastScroll = Math.max(0, window.scrollY);
     let travelled = 0;
 
     function barNeeded() {
-        return mobileNavigation.matches ||
+        return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2 ||
             panels.some(entry => entry.toggle.getAttribute('aria-expanded') === 'true') ||
             header.querySelector(':focus-visible');
     }

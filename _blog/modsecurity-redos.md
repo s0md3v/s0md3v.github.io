@@ -26,15 +26,17 @@ Now, let’s talk about the different exploitable sub-patterns I found and how I
 ## Case #1
 
 **Pattern:** ```(?:(?:^[\"'`\\]*?[^\"'\`]+[\"'\`])+|(?:^[\"'\`\\]*?[\d\"'`]+)+)\s```\
-**Exploit:** ```""""""""""""""``` (about 1000 "s)
+**Exploit:** ```""""""""""""""``` (about 1000 of `"`)
 
 ### Why this exploit works?
 
 **1. Intersecting alternate patterns**
+
 This pattern consists of two alternate sub-patterns. Both alternate patterns start with ```^["'`\\]*?``` which causes the regex engine to keep looking for both patterns and hence increasing the permutations.
-In the second alternate pattern, the tokens ```["'`\\]*?``` and ```[\d"'`]+``` intersect and both of them match `"`, '\''and `.
+In the second alternate pattern, the tokens ```["'`\\]*?``` and ```[\d"'`]+``` intersect and both of them match `"`, `'` and `` ` ``.
 
 **2. Nested repetition operators**
+
 The structure of this subpattern is `((pattern 1)+|(pattern 2)+)+` and it’s clear that it’s using nested repetition operators which dramatically increases the complexity.
 
 ## Case #2
@@ -82,8 +84,8 @@ The last case was found in 3 different rules so that explains why I discussed on
 
 Following CVE IDs were assigned to the vulnerabilities:
 
-- CVE-2019–11387
-- CVE-2019–11388
-- CVE-2019–11389
-- CVE-2019–11390
-- CVE-2019–11391
+- [CVE-2019-11387](https://nvd.nist.gov/vuln/detail/CVE-2019-11387)
+- [CVE-2019-11388](https://nvd.nist.gov/vuln/detail/CVE-2019-11388)
+- [CVE-2019-11389](https://nvd.nist.gov/vuln/detail/CVE-2019-11389)
+- [CVE-2019-11390](https://nvd.nist.gov/vuln/detail/CVE-2019-11390)
+- [CVE-2019-11391](https://nvd.nist.gov/vuln/detail/CVE-2019-11391)

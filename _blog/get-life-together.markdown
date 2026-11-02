@@ -174,7 +174,7 @@ If you can learn just one thing from this article, it should be ability to be aw
 
 If this article benefits you in future (or already has), [support me with some money](https://buymeacoffee.com/s0md3v).
 
-#### References
+## References
 [^reward]: [Reward system - Wikipedia](https://en.wikipedia.org/wiki/Reward_system)
 [^time]: [Time preference - Wikipedia](https://en.wikipedia.org/wiki/Time_preference)
 [^delayed]: [Delayed gratification - Wikipedia](https://en.wikipedia.org/wiki/Delayed_gratification)

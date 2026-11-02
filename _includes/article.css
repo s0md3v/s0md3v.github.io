@@ -1,0 +1,603 @@
+/* A post or an essay (_layouts/post.html), on its sheet. What every page shares is in common.css;
+   this is only what's read. Everything's in em, off the sheet's --reading-size. */
+
+:root {
+  /* Strings and numbers in code: what's given, as against what's done with it */
+  --code-literal: #8a4a0b;
+}
+
+.dark-mode {
+  --code-literal: #e2ad72;
+}
+
+/* ---- Its start: what it is, who wrote it and when ---- */
+
+.post-title {
+  font-size: 2.1em;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  margin-bottom: 0.35em;
+}
+
+.post-meta {
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: var(--muted-color);
+  margin-bottom: 2.5em;
+}
+
+.post-meta-line {
+  display: block;
+}
+
+/* ---- Its text ---- */
+
+.post-content {
+  margin-bottom: 30px;
+}
+
+.post-content> :first-child {
+  margin-top: 0;
+}
+
+.post-content p {
+  margin-bottom: 1.2em;
+  text-wrap: pretty;
+}
+
+/* Long URLs and inline code would otherwise push the page sideways on phones */
+.post-content :is(h2, h3, h4),
+.post-content p,
+.post-content li,
+.post-content :not(pre)>code {
+  overflow-wrap: anywhere;
+}
+
+/* Long words break at their syllables where the column's narrow. Never code, where a hyphen
+   that wasn't there would change what it says. */
+@media screen and (max-width: 600px) {
+  .post-content p,
+  .post-content li {
+    hyphens: auto;
+  }
+}
+
+.post-content code {
+  hyphens: manual;
+}
+
+.post-content strong,
+.post-content b {
+  font-weight: 600;
+}
+
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.post-content h2 {
+  font-size: 1.4em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 2em 0 0.5em;
+}
+
+.post-content h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 2em 0 0.5em;
+}
+
+.post-content h4 {
+  font-size: 1.05em;
+  font-weight: 600;
+  margin: 1.6em 0 0.4em;
+}
+
+.post-content :is(h2, h3, h4)+ :is(h2, h3, h4) {
+  margin-top: 0.5em;
+}
+
+/* Each section can be linked to: its heading shows the link as a pointer comes to it */
+.post-content .section-link {
+  margin-left: 0.3em;
+  color: var(--muted-color);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.post-content :is(h2, h3):hover .section-link {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .post-content .section-link {
+    display: none;
+  }
+}
+
+.post-content ul,
+.post-content ol {
+  margin: 0 0 1.2em 1.4em;
+}
+
+.post-content li+li {
+  margin-top: 0.35em;
+}
+
+.post-content li::marker {
+  color: var(--link-color);
+}
+
+.post-content li>p:last-child {
+  margin-bottom: 0;
+}
+
+.post-content dt {
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.post-content dd {
+  margin: 0 0 0.8em 1.4em;
+}
+
+/* What's set apart: a summary, a note, a conclusion. Read as the text is, with the section's ink
+   beside it, so the sentence that matters most isn't the quietest one. */
+.post-content blockquote {
+  color: var(--foreground-color);
+  font-size: 1em;
+  margin: 0 0 1.2em;
+  padding-left: 1em;
+  border-left: 3px solid color-mix(in srgb, var(--link-color) 45%, transparent);
+}
+
+.post-content hr {
+  width: 6em;
+  height: 0;
+  margin: 2.5em auto;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Something kept folded until it's wanted: its line says what's in it, and turns to open it */
+.post-content details {
+  margin: 0 0 1.2em;
+}
+
+.post-content summary {
+  width: fit-content;
+  font-weight: 600;
+  color: var(--heading-color);
+  cursor: pointer;
+  list-style: none;
+}
+
+.post-content summary::-webkit-details-marker {
+  display: none;
+}
+
+.post-content summary::before {
+  content: "";
+  display: inline-block;
+  width: 0.4em;
+  height: 0.4em;
+  margin: 0 0.6em 0.12em 0.1em;
+  border: solid var(--link-color);
+  border-width: 0 0.13em 0.13em 0;
+  rotate: -45deg;
+  transition: rotate 0.15s ease;
+}
+
+.post-content details[open]>summary {
+  margin-bottom: 0.6em;
+}
+
+.post-content details[open]>summary::before {
+  rotate: 45deg;
+}
+
+.post-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 1.2em;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-content :is(th, td) {
+  padding: 0.45em 0.9em 0.45em 0;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+  vertical-align: top;
+}
+
+.post-content th {
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+/* ---- Links ---- */
+
+/* In the text's own colour, underlined in the section's ink */
+.blog-content a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--link-color);
+  text-decoration-thickness: max(1px, 0.08em);
+  text-underline-offset: 0.2em;
+  transition: color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .blog-content a:hover {
+    color: var(--accent-color);
+    background: none;
+  }
+}
+
+.blog-content a:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---- Notes ---- */
+
+/* Its number, and the way back from the note, are a finger's width to press, though they're small
+   to look at and take no room from the line */
+.blog-content :is(a.footnote, a.reversefootnote) {
+  position: relative;
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+.blog-content :is(a.footnote, a.reversefootnote)::after {
+  content: "";
+  position: absolute;
+  inset: -0.75rem -0.6rem;
+}
+
+/* Keep superscripts from pushing their line apart */
+.post-content sup {
+  line-height: 0;
+}
+
+.post-content .footnotes {
+  margin-top: 3em;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.875em;
+  color: var(--midground-color);
+}
+
+/* Some posts already introduce their notes with a "References" heading */
+.post-content :is(h2, h3, h4):not(.sr-only)+.footnotes {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Gone to a note, or back from it: it's marked, so you can tell which it was */
+.post-content .footnotes li:target,
+.post-content sup:target>a {
+  background: color-mix(in srgb, var(--link-color) 14%, transparent);
+  box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--link-color) 14%, transparent);
+  border-radius: 0.2em;
+}
+
+/* Where there's room beside the sheet (article.js decides), each note is on a slip of the same
+   paper, tucked under the sheet's right edge level with its line: under it, so the sheet's own
+   shadow falls on it. Drawn out a little when its number's pointed at. The slips are laid over the
+   sheet's place, a layer below the sheet. */
+.blog-content {
+  position: relative;
+}
+
+.blog-content .wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.slips {
+  display: none;
+  position: absolute;
+  font-size: var(--reading-size);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.slips-on .slips {
+  display: block;
+}
+
+.slip {
+  --tuck: 1.5em;
+  position: absolute;
+  left: calc(100% - var(--tuck));
+  left: round(calc(100% - var(--tuck)), 1px);
+  pointer-events: auto;
+  width: 15em;
+  padding: 0.7em 0.9em 0.8em calc(var(--tuck) + 0.85em);
+  font-size: 0.8em;
+  line-height: 1.45;
+  color: var(--midground-color);
+  overflow-wrap: anywhere;
+  background: var(--background-color) var(--paper-grain);
+  box-shadow:
+    0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.18),
+    2px 3px 6px rgba(var(--sheet-shadow), 0.1);
+  /* Drawn out by its margin, not moved as a layer: a layer's letters are drawn another way while it
+     moves, and some slips (those at rest on whole pixels) would visibly change as they start and
+     stop */
+  transition: margin-left 0.2s ease;
+}
+
+.dark-mode .slip {
+  background-image: none;
+}
+
+.slip p {
+  margin: 0;
+}
+
+.slip p+p {
+  margin-top: 0.5em;
+}
+
+.slip-number {
+  margin-right: 0.45em;
+  font-weight: 600;
+  color: var(--link-color);
+}
+
+.slip.near {
+  margin-left: 8px;
+}
+
+.blog-content a.footnote.near {
+  background: color-mix(in srgb, var(--link-color) 14%, transparent);
+  border-radius: 0.2em;
+}
+
+/* Clicked for: drawn out, and back */
+.slip.called {
+  animation: slip-called 0.9s ease;
+}
+
+@keyframes slip-called {
+  30% {
+    margin-left: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slip {
+    transition: none;
+  }
+
+  .slip.called {
+    animation: none;
+  }
+}
+
+/* ---- Code ---- */
+
+.post-content code {
+  font-size: 0.85em;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+/* Code keeps its lines as they're written, so what's shown is what it says, and scrolls. A shade
+   at either side says there's more that way. */
+.post-content pre {
+  --more: color-mix(in srgb, var(--foreground-color) 16%, transparent);
+  font-size: 0.85em;
+  line-height: 1.5;
+  tab-size: 4;
+  white-space: pre;
+  overflow-x: auto;
+  padding: 0.9em 1.1em;
+  margin-bottom: 1.2em;
+  border: 0;
+  border-radius: 0.4em;
+  background:
+    linear-gradient(to right, var(--code-bg) 30%, transparent) left / 2.5em 100% no-repeat local,
+    linear-gradient(to left, var(--code-bg) 30%, transparent) right / 2.5em 100% no-repeat local,
+    linear-gradient(to right, var(--more), transparent) left / 0.8em 100% no-repeat scroll,
+    linear-gradient(to left, var(--more), transparent) right / 0.8em 100% no-repeat scroll,
+    var(--code-bg);
+}
+
+.post-content pre:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
+.post-content pre code {
+  font-size: 1em;
+  padding: 0;
+  background: none;
+}
+
+/* Words in a code block (```text), not code: they wrap, as words do */
+.post-content .language-text pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Its colours, few and quiet: what's said about it fades back, its words are in the section's
+   ink, and what's given (strings, numbers) is in another */
+.post-content .highlight :is(.c, .c1, .cm, .cs, .ch, .cd, .cp, .cpf) {
+  color: var(--muted-color);
+}
+
+.post-content .highlight :is(.k, .kc, .kd, .kn, .kp, .kr, .kt, .ow, .nt) {
+  color: var(--link-color);
+}
+
+.post-content .highlight :is(.s, .sa, .sb, .sc, .dl, .sd, .s1, .s2, .se, .sh, .si, .sx, .sr, .ss, .m, .mb, .mf, .mh, .mi, .il, .mo, .na) {
+  color: var(--code-literal);
+}
+
+.post-content .highlight :is(.nf, .fm, .nc) {
+  font-weight: 600;
+}
+
+/* ---- Pictures ---- */
+
+/* By day, printed on the sheet: white is the paper's own colour */
+.light-mode .post-content :is(img, video) {
+  mix-blend-mode: multiply;
+}
+
+/* One that's bigger than it can be shown opens full size */
+.blog-content a.full-size {
+  display: block;
+  cursor: zoom-in;
+}
+
+.post-content video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1.2em;
+}
+
+/* ---- Its end: its section's mark, the last thing on the sheet, as a magazine piece ends on one.
+   Then, off the paper, where to go next. ---- */
+
+/* A post's sheet ends where the post does, however short: everything after it is off the paper.
+   (Other sheets keep their paper shape, however little's on them.) */
+.blog-content .wrapper {
+  aspect-ratio: auto;
+}
+
+.post-fin {
+  margin-top: 2em;
+  color: var(--c);
+}
+
+.post-fin svg {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: auto;
+}
+
+/* As wide as the sheet, its words lined up with the sheet's; on what's round it. On a phone,
+   which has no room round the sheet, it's a band of that colour to the foot of the page. */
+.post-after {
+  --sheet-margin: 1.25em;
+  font-size: var(--reading-size);
+  line-height: 1.5;
+  max-width: calc(37.5em + 2 * var(--sheet-margin));
+  margin: auto;
+  padding: 2.75em var(--sheet-margin) calc(3em + var(--nav-height) + env(safe-area-inset-bottom));
+  background: var(--surround-color);
+}
+
+@media (min-width: 769px) {
+  .post-after {
+    --sheet-margin: 3.5em;
+    width: calc(100% - 3rem);
+    padding-block: 3em 5em;
+    background: none;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  /* The band goes under the bar instead */
+  main.blog-content {
+    padding-bottom: 0;
+  }
+}
+
+/* Which one's next, and, on the same line, all of them: both ways on from here */
+.post-after-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.25em 1.5em;
+  margin: 0;
+  font-size: 0.85em;
+}
+
+.post-next-label {
+  color: var(--muted-color);
+}
+
+.blog-content .post-next {
+  display: block;
+  margin-top: 0.3em;
+  color: var(--foreground-color);
+  text-decoration: none;
+}
+
+.post-next-title {
+  display: block;
+  font-size: 1.35em;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--heading-color);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-color: var(--link-color);
+  text-decoration-thickness: max(1px, 0.06em);
+  text-underline-offset: 0.18em;
+}
+
+.post-next-description {
+  display: block;
+  margin-top: 0.4em;
+  color: var(--midground-color);
+  text-wrap: pretty;
+}
+
+@media (hover: hover) {
+  .blog-content .post-next:hover .post-next-title {
+    color: var(--accent-color);
+  }
+}
+
+/* ---- On paper ---- */
+
+@media print {
+  .post-fin,
+  .post-after,
+  .section-link,
+  .slips {
+    display: none;
+  }
+
+  /* Nothing scrolls on paper */
+  .post-content pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    break-inside: avoid;
+    background: var(--code-bg);
+  }
+
+  .post-content :is(img, video) {
+    break-inside: avoid;
+    mix-blend-mode: normal;
+  }
+
+  .post-content :is(h2, h3, h4) {
+    break-after: avoid;
+  }
+}

@@ -4,8 +4,12 @@ title:  "Arjun: Solving Parameter Discovery"
 date:   2018-05-11 12:46:00 +0530
 author: Somdev Sangwan
 type:   tech
+image: /assets/thumbs/arjun.png
 permalink: /blog/making-of-arjun
 description: "Making of s0md3v/arjun repository"
+extras:
+  - text: Arjun on GitHub
+    href: https://github.com/s0md3v/Arjun
 ---
 
 Webpages and APIs often have more parameters than they let users interact with. For security testing, it is important for the testers to discover these hidden parameters.
@@ -52,4 +56,4 @@ Now that core problem was solved, I wanted to expand the scope as follows:
 
 1. Extract input fields from HTML forms and adding them to the wordlist.
 2. Extract variable names from JavaScript and JSON keys and adding them to the wordlist.
-3. Add support for parameters like 'debug=true' or 'enabled=1' that only respond to a specific value.
+3. Add support for parameters like `debug=true` or `enabled=1` that only respond to a specific value.

@@ -11,8 +11,6 @@ description: "Various aspects of well-being and what does it mean to be well any
 ---
 
 
-## Suffering, Self-Care and Superheroes
-
 In 399 BC, a prominent Greek philosopher named Socrates was being trialed for corrupting the minds of citizens with his ideas. Socrates did not believe that he committed a crime and he defended himself in court with reason and logic. The jury of the court which consisted of hundreds of male citizens, found him guilty and sentenced him to death.
 
 The night before his execution, Socrates was visited by his friends in the prison who wanted to help him escape. He declined their offer and as per law, drank poison in the court the next day.

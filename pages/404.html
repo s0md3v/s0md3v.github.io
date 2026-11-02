@@ -91,9 +91,7 @@ permalink: /404.html
   ],
   "sections": [
     {%- for id in nav.header -%}
-      {%- for covered in nav.links[id].covers -%}
-        { "id": {{ id | jsonify }}, "url": {{ covered | relative_url | jsonify }} }{% unless forloop.last and forloop.parentloop.last %},{% endunless %}
-      {%- endfor -%}
+      { "id": {{ id | jsonify }}, "url": {{ nav.links[id].url | relative_url | jsonify }} }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
   ]
 }

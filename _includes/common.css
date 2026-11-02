@@ -32,10 +32,10 @@ html {
   }
 }
 
-/* The table the sheet lies on, as on the homepage. Phones have no room for it. */
+/* What's round the sheet. Phones have no room for it. */
 @media (min-width: 769px) {
   html {
-    background: var(--desk-color) var(--desk-image) 0 0 / 530px 343px;
+    background: var(--surround-color);
   }
 }
 
@@ -64,7 +64,7 @@ html {
     padding-block: 3.5em 4em;
     margin-block: 2rem 0;
     background-image: var(--paper-grain);
-    /* Flat on the table: lit from the top left, as everything on it is */
+    /* Lit from the top left, as everything on the site is */
     box-shadow:
       0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.2),
       2px 3px 7px rgba(var(--sheet-shadow), 0.14),
@@ -187,17 +187,8 @@ pre>code {
   padding-left: 0;
 }
 
-.blog-content p,
-.blog-content ul,
-.blog-content ol,
-.blog-content li,
-.blog-content blockquote {
-  font-family: var(--blog-font-family);
-}
+/* The reference scale for every inner page (_includes/article.css is a post's own) */
 
-/* Post typography: the reference scale for every inner page */
-
-.post-title,
 .page-title {
   font-size: 2.1em;
   font-weight: 500;
@@ -207,12 +198,27 @@ pre>code {
   margin-bottom: 0.35em;
 }
 
+/* A page that has no tab of its own is named in the bar where there's room for that, so its own
+   title's needed only on a phone */
+@media (width > 48em) {
+  .page-title.phone-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
 /* A page title with nothing under it gets the same gap a post title + meta line would */
 .page-title:not(:has(+ .page-intro)) {
   margin-bottom: 1.4em;
 }
 
-.blog-content .post-meta,
 .page-intro {
   font-family: var(--blog-font-family);
   font-size: 0.85em;
@@ -248,10 +254,6 @@ pre>code {
   margin: 2em 0 0.5em;
 }
 
-.post-content {
-  margin-bottom: 30px;
-}
-
 /* A writing section is written in the ink of its mark. Paper stays black and white */
 @media screen {
   main[data-page] {
@@ -260,144 +262,7 @@ pre>code {
   }
 }
 
-/* A post signs off with its section's mark, as a magazine piece ends on one */
-.post-fin {
-  margin: 3em 0 2.5em;
-  color: var(--c);
-}
-
-.post-fin svg {
-  display: block;
-  width: 1.75rem;
-  height: 1.75rem;
-  margin: auto;
-}
-
-/* Where a post ends: where to go next */
-.post-end {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em 2em;
-}
-
-.post-end-link {
-  /* Side by side while two fit, whatever the text size */
-  flex: 1 1 14em;
-  overflow-wrap: anywhere;
-  font-weight: 600;
-  line-height: 1.3;
-  text-wrap: balance;
-}
-
-.post-end-newer {
-  text-align: right;
-}
-
-.post-end-all {
-  flex-basis: 100%;
-  font-size: 0.85em;
-}
-
-.post-end-label {
-  display: block;
-  font-size: 0.85em;
-  font-weight: 400;
-  color: var(--muted-color);
-}
-
-@media (max-width: 600px) {
-  .post-end-newer {
-    text-align: left;
-  }
-}
-
-.post-content p {
-  margin-bottom: 1.2em;
-  text-wrap: pretty;
-}
-
-/* Long URLs and inline code would otherwise push the page sideways on phones */
-.post-title,
-.post-content :is(h2, h3, h4),
-.post-content p,
-.post-content li,
-.post-content :not(pre)>code {
-  overflow-wrap: anywhere;
-}
-
-.post-content strong,
-.post-content b {
-  font-weight: 600;
-}
-
-.post-content h2,
-.post-content h3,
-.post-content h4 {
-  line-height: 1.3;
-  text-wrap: balance;
-}
-
-.post-content h2 {
-  font-size: 1.4em;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 2em 0 0.5em;
-}
-
-.post-content h3 {
-  font-size: 1.2em;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  margin: 2em 0 0.5em;
-}
-
-.post-content h4 {
-  font-size: 1.05em;
-  font-weight: 600;
-  margin: 1.6em 0 0.4em;
-}
-
-.post-content :is(h2, h3, h4)+ :is(h2, h3, h4) {
-  margin-top: 0.5em;
-}
-
-.post-content> :first-child {
-  margin-top: 0;
-}
-
-.post-content ul,
-.post-content ol {
-  margin: 0 0 1.2em 1.4em;
-}
-
-.post-content li+li {
-  margin-top: 0.35em;
-}
-
-.post-content li::marker {
-  color: var(--link-color);
-}
-
-.post-content li>p:last-child {
-  margin-bottom: 0;
-}
-
-.post-content video {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  margin: 0 auto 1.2em;
-}
-
-.post-content blockquote {
-  font-size: 1em;
-  margin: 0 0 1.2em;
-  padding-left: 1em;
-  border-left-width: 3px;
-  border-left-color: color-mix(in srgb, var(--link-color) 45%, transparent);
-}
-
-.blog-content a,
+/* Links in running text: in the text's own colour, underlined in the section's ink */
 .prose a {
   color: inherit;
   text-decoration: underline;
@@ -407,70 +272,11 @@ pre>code {
   transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
-.blog-content a:hover,
-.prose a:hover {
-  color: var(--accent-color);
-  text-decoration-color: currentColor;
-  background: none;
-}
-
-.blog-content a.footnote,
-.blog-content a.reversefootnote {
-  color: var(--link-color);
-  text-decoration: none;
-}
-
-/* Keep superscripts from pushing their line apart */
-.post-content sup {
-  line-height: 0;
-}
-
-.post-content .footnotes {
-  margin-top: 3em;
-  padding-top: 1.5em;
-  border-top: 1px solid var(--border-color);
-  font-size: 0.875em;
-  color: var(--midground-color);
-}
-
-/* Some posts already introduce footnotes with a "References" heading */
-.post-content :is(h2, h3, h4)+.footnotes {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-}
-
-.post-content code,
-.prose code {
-  font-size: 0.85em;
-  padding: 0.1em 0.3em;
-  border-radius: 3px;
-}
-
-.post-content pre {
-  font-size: 0.85em;
-  line-height: 1.5;
-  padding: 0.9em 1.1em;
-  margin-bottom: 1.2em;
-}
-
-.post-content pre code {
-  font-size: 1em;
-  padding: 0;
-  background: none;
-}
-
-/* Long lines of text and payloads wrap rather than run off the sheet. Real code keeps its
-   line breaks, and scrolls. */
-.post-content .language-plaintext pre {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-@media screen and (max-width: 600px) {
-  .post-content p,
-  .post-content li {
-    hyphens: auto;
+@media (hover: hover) {
+  .prose a:hover {
+    color: var(--accent-color);
+    text-decoration-color: currentColor;
+    background: none;
   }
 }
 
@@ -765,6 +571,16 @@ body {
   color: var(--c);
 }
 
+/* High contrast paints every mark the one colour, and drops the line under a chosen setting, so
+   where you are and what's chosen are outlined instead */
+@media (forced-colors: active) {
+  .nav-item[aria-current],
+  .settings-options button.active {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
+
 /* It's a switch, so it switches. In the mark's own units: the width of its travel */
 .settings-icon.active .knob {
   translate: 16px 0;
@@ -893,7 +709,7 @@ html {
 }
 
 /* On a phone the top of the screen is the camera's, and out of reach of the thumb, so it comes up
-   from the bottom instead, and it stays */
+   from the bottom instead, and goes back down as you read */
 @media screen and (max-width: 48em) {
   html {
     scroll-padding-top: 1rem;
@@ -912,6 +728,10 @@ html {
     padding-bottom: env(safe-area-inset-bottom);
     border-radius: 1.25rem 1.25rem 0 0;
     filter: drop-shadow(0 -1px 0 var(--border-color)) drop-shadow(0 -2px 6px rgba(0, 0, 0, 0.06));
+  }
+
+  .header.hidden {
+    transform: translateY(calc(100% + 1rem));
   }
 
   .header::before,
@@ -1224,9 +1044,7 @@ li {
   }
 
   .header,
-  .skip-link,
-  .post-fin,
-  .post-end {
+  .skip-link {
     display: none;
   }
 
@@ -1244,20 +1062,5 @@ li {
   main.content,
   main.blog-content {
     padding-bottom: 0;
-  }
-
-  /* Nothing scrolls on paper */
-  .post-content pre {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    break-inside: avoid;
-  }
-
-  .post-content :is(img, video) {
-    break-inside: avoid;
-  }
-
-  .post-content :is(h2, h3, h4) {
-    break-after: avoid;
   }
 }

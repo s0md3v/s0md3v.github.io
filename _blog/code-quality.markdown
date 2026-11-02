@@ -58,7 +58,7 @@ If you have a step in your pipeline that uses AI to review the code for bugs, ke
 ## So, how do we do this?
 I don't know what's the best way to do this because that will require a lot of benchmarking to claim that it is the best way. I just hope that I was able to help you think about code quality in this new era. Here are a few lines that you may want to use a starting point:
 
-```
+```text
 Make architectural decisions for the long term. If clarity for long term decision is missing, pick something safe instead of premature optimization/engineering.
 
 Use a proven dependency over custom implementation whenever possible.

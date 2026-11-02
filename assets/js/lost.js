@@ -37,7 +37,8 @@
     }
     return best;
   }
-  // The navigation's short, so it's the section it's in. The same rule as _includes/page_section.html.
+  // Its tab in the bar, if it's one of the bar's places (/blog/x is the blog's). The same rule as
+  // _includes/page_section.html.
   function section(url) {
     let id = null;
     for (const s of sections) if (url === s.url || (s.url.endsWith('/') && url.startsWith(s.url))) id = s.id;
