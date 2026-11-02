@@ -149,9 +149,8 @@
     {% if uses_handwritten_font %}
     @media (min-width: 576px) {
       .handwritten-font-hidden .corner-annotation,
-      .handwritten-font-hidden .sketch-note,
+      .handwritten-font-hidden .hand-note,
       .handwritten-font-hidden .menuheader,
-      .handwritten-font-hidden .location-overlay,
       .handwritten-font-hidden #hand-tooltip,
       .handwritten-font-hidden .layout-guide {
         opacity: 0 !important;
@@ -160,10 +159,9 @@
     {% endif %}
     /* Ensure transition applies when opacity changes back */
     .corner-annotation,
-    .sketch-note,
+    .hand-note,
     .menuheader,
     .mobile-footer,
-    .location-overlay,
     #hand-tooltip,
     .layout-guide {
       transition: opacity 0.5s ease-out;

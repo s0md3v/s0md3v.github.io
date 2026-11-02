@@ -421,6 +421,48 @@
     var(--code-bg);
 }
 
+/* Copy, in the block's top corner: there to be found where there's a pointer, and always there
+   where there isn't */
+.post-content .highlight {
+  position: relative;
+}
+
+.copy-code {
+  position: absolute;
+  top: 0.45em;
+  right: 0.45em;
+  padding: 0.2em 0.6em;
+  font: inherit;
+  font-size: 0.75em;
+  line-height: 1.4;
+  color: var(--muted-color);
+  background: var(--code-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.35em;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .copy-code {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .post-content .highlight:hover .copy-code,
+  .copy-code:focus-visible {
+    opacity: 1;
+  }
+
+  .copy-code:hover {
+    color: var(--foreground-color);
+  }
+}
+
+.copy-code:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
 .post-content pre:focus-visible {
   outline: 2px solid var(--link-color);
   outline-offset: 2px;
@@ -579,6 +621,7 @@
 @media print {
   .post-fin,
   .post-after,
+  .copy-code,
   .section-link,
   .slips {
     display: none;

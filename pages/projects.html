@@ -65,7 +65,7 @@ order: 1
   margin: 0 0 0.7em calc(var(--line-x) - var(--indent) - 0.3em);
   padding: 0.05em 0.3em;
   background: var(--label-paper);
-  color: var(--c);
+  color: var(--pen);
   font-family: "Reenie Beanie", cursive;
   font-size: 2.1em;
   font-weight: 400;
@@ -331,7 +331,7 @@ order: 1
   margin-left: calc(var(--line-x) - 0.3em);
   padding: 0.05em 0.3em;
   background: var(--label-paper);
-  color: var(--c-now);
+  color: var(--pen);
   text-decoration: none;
 }
 /* Sized in here, as the link's measures are the rail's */
@@ -344,6 +344,7 @@ order: 1
 }
 .today .now-link:hover {
   background: var(--label-paper);
+  color: var(--c-now);
   text-decoration: underline;
   text-decoration-color: currentColor;
   text-underline-offset: 0.2em;

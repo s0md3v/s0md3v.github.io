@@ -2,17 +2,18 @@
   A list of posts with a quiet year column, each year shown once.
   posts: the documents to list (only the listed ones are shown, see _plugins/listed.rb)
   order: "desc" for newest first, anything else for oldest first
+  dates: false for none (a list that's read in its order, not looked up by when)
 {% endcomment %}
 {% assign post_list_entries = include.posts | listed | sort: "date" %}
 {% if include.order == "desc" %}
 {% assign post_list_entries = post_list_entries | reverse %}
 {% endif %}
 {% assign post_list_year = nil %}
-<ul class="post-list">
+<ul class="post-list{% if include.dates == false %} post-list-undated{% endif %}">
   {% for post in post_list_entries %}
   <li class="post-list-entry">
     {% assign post_year = post.date | date: "%Y" %}
-    <time class="post-list-date" datetime="{{ post.date | date: '%Y-%m-%d' }}">{% if post_year != post_list_year %}{{ post_year }}{% endif %}</time>
+    {% if include.dates != false %}<time class="post-list-date" datetime="{{ post.date | date: '%Y-%m-%d' }}">{% if post_year != post_list_year %}{{ post_year }}{% endif %}</time>{% endif %}
     {% assign post_list_year = post_year %}
     <span class="post-list-main"><a class="post-list-title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>{% if post.note %}<span class="post-list-note">{{ post.note | escape }}</span>{% endif %}</span>
   </li>

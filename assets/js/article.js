@@ -23,6 +23,48 @@
         new ResizeObserver(reachable).observe(content);
     }
 
+    // Each block can be copied whole: a payload or a command is meant to be tried, and a line that
+    // runs past the box is hard to select by hand. Said aloud as well as shown.
+    const said = document.createElement('span');
+    said.className = 'sr-only';
+    said.setAttribute('role', 'status');
+    if (blocks.length) content.append(said);
+    blocks.forEach(pre => {
+        const box = pre.parentElement.classList.contains('highlight') ? pre.parentElement : pre;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code';
+        button.textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy the code');
+        let back;
+        const show = (text, aloud) => {
+            button.textContent = text;
+            said.textContent = aloud;
+            clearTimeout(back);
+            back = setTimeout(() => { button.textContent = 'Copy'; said.textContent = ''; }, 1600);
+        };
+        button.addEventListener('click', async () => {
+            const text = (pre.querySelector('code') || pre).textContent.replace(/\n$/, '');
+            try {
+                await navigator.clipboard.writeText(text);
+                show('Copied', 'Copied');
+            } catch {
+                // No clipboard to write to here: the code's selected instead, to copy by hand
+                getSelection().selectAllChildren(pre.querySelector('code') || pre);
+                show('Selected', 'Selected, copy it with your keyboard');
+            }
+        });
+        if (box === pre) {
+            const wrap = document.createElement('div');
+            wrap.className = 'highlight';
+            pre.replaceWith(wrap);
+            wrap.append(pre);
+            wrap.append(button);
+        } else {
+            box.append(button);
+        }
+    });
+
     // Where there's room beside the sheet, each note is on a slip of its own, tucked under the
     // sheet's right edge level with the line it's for. The notes at the end stay as they are:
     // they're the post's sources, and what a screen reader goes to.

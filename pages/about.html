@@ -1,104 +1,621 @@
 ---
 layout: default
 title: About
-description: "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics."
+description: "Somdev Sangwan (s0md3v) is a security researcher and programmer, the author of XSStrike and Arjun, who does product design too."
+ink: about
 permalink: /about
 order: 4
 ---
 
-<div class="wrapper wide">
-  <h1 class="page-title">Hi, I'm Somdev Sangwan</h1>
+<style>
+/* No sheet: the window's the surface, as on Projects, and on it the Polaroid off the desk, taped
+   down, with a few words beside it, as a photo's written about rather than an article. Every link
+   is underlined in the ink of where it goes, so what he does is told in the site's own sections.
+   The page's own ink is a yellow that can't be read as text, so its links are in a darker one, the
+   same ink pressed harder. What's written by hand is in his pen, as everywhere. */
+@media screen and (min-width: 769px) {
+  html {
+    background: var(--background-color) var(--paper-grain);
+  }
 
-  <div class="about-grid">
+  html.dark-mode {
+    background-image: none;
+  }
+}
+
+.about {
+  --about-ink: #8f6200;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 2.5em;
+  max-width: 58em;
+  margin: 0 auto;
+  padding: 2.5em 1.25em 3.5em;
+  font-size: var(--reading-size);
+  line-height: 1.6;
+}
+
+/* Side by side once there's room for both at their size */
+@media (min-width: 60em) {
+  /* The words beside the photo, and under the photo, as on the back of it, how to reach him */
+  .about {
+    /* The photo gives way first, so the words keep their measure and the Polaroid keeps clear of the window's edge */
+    grid-template-columns: min(21em, 34vw) minmax(0, 29em);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "photo words" "reach words";
+    justify-content: center;
+    justify-items: stretch;
+    align-items: start;
+    column-gap: clamp(2.5em, 10vw - 3em, 4.5em);
+    padding-inline: 2em;
+    row-gap: 3em;
+    padding-top: 4.5em;
+  }
+
+  .about-polaroid { grid-area: photo; }
+  .about-words { grid-area: words; }
+  .about-reach { grid-area: reach; padding-left: 0.75em; }
+
+}
+
+.dark-mode .about {
+  --about-ink: var(--c-about);
+}
+
+/* Links are the site's own (.prose a): underlined in the ink of where they go, and in it on hover.
+   Where that's nowhere with an ink of its own, this page's, as it can be read */
+.about {
+  --accent-color: var(--about-ink);
+  --link-color: var(--about-ink);
+}
+
+.about a[data-page] {
+  --accent-color: var(--c);
+  --link-color: var(--c);
+}
+
+.about a:focus-visible {
+  outline: 2px solid var(--foreground-color);
+  outline-offset: 2px;
+}
+
+/* ---- The Polaroid: taped down at its top edge, lit from the top left like everything else ---- */
+
+.about-polaroid {
+  position: relative;
+  container-type: inline-size;
+  width: min(100%, 21em);
+  margin: 0.5em 0 0;
+  rotate: -2deg;
+}
+
+@media (max-width: 768px) {
+  .about-polaroid {
+    width: min(72%, 17em);
+    rotate: 2deg;
+  }
+}
+
+.about-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter:
+    drop-shadow(0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.22))
+    drop-shadow(2px 3px 6px rgba(var(--sheet-shadow), 0.14))
+    drop-shadow(6px 11px 24px rgba(var(--sheet-shadow), 0.09));
+}
+
+/* Paper in the dark too, only less of a lamp on it */
+.dark-mode .about-photo {
+  filter: brightness(0.82) drop-shadow(2px 4px 12px rgba(0, 0, 0, 0.55));
+}
+
+/* Pointed at, or tapped where there's nothing to point with, the same Polaroid, but cooler: only
+   the picture and what's written under it change. It lies exactly over the first, whose shadow
+   does for both. */
+.about-photo-cool {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: none;
+  transition: opacity 0.2s ease;
+}
+
+.dark-mode .about-photo-cool {
+  filter: brightness(0.82);
+}
+
+.about-caption {
+  display: grid;
+}
+
+.about-caption > span {
+  grid-area: 1 / 1;
+  transition: opacity 0.2s ease;
+}
+
+.about-caption-cool {
+  opacity: 0;
+}
+
+.about-polaroid.is-cool .about-photo-cool,
+.about-polaroid.is-cool .about-caption-cool {
+  opacity: 1;
+}
+
+.about-polaroid.is-cool .about-caption > span:first-child {
+  opacity: 0;
+}
+
+@media (hover: hover) {
+  .about-polaroid:hover .about-photo-cool,
+  .about-polaroid:hover .about-caption-cool {
+    opacity: 1;
+  }
+
+  .about-polaroid:hover .about-caption > span:first-child {
+    opacity: 0;
+  }
+}
+
+/* What's tapped, or pressed from the keyboard: the whole Polaroid */
+.about-flip {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.about-flip:focus-visible {
+  outline: 2px solid var(--heading-color);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-photo-cool,
+  .about-caption > span {
+    transition: none;
+  }
+}
+
+.about-tape {
+  position: absolute;
+  z-index: 1;
+  top: -0.9em;
+  left: 50%;
+  width: 44%;
+  height: auto;
+  translate: -50% 0;
+  rotate: 3deg;
+}
+
+.dark-mode .about-tape {
+  filter: brightness(0.82);
+}
+
+/* In pen on the strip under the picture, where a Polaroid's written on, and always there */
+.about-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 84%;
+  font-family: "Reenie Beanie", cursive;
+  /* As wide on the strip whatever the Polaroid's size */
+  font-size: 7cqi;
+  line-height: 1;
+  text-align: center;
+  color: #2a2620;
+  rotate: -1.5deg;
+}
+
+.dark-mode .about-caption {
+  opacity: 0.85;
+}
+
+/* ---- The words ---- */
+
+.about-words {
+  width: 100%;
+  max-width: 30em;
+}
+
+.about-name {
+  font-size: 2.1em;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.about-aka {
+  margin: 0.35em 0 1.6em;
+  font-size: 0.9em;
+  color: var(--muted-color);
+}
+
+.about-text p {
+  margin-bottom: 1.1em;
+}
+
+/* Room under the last line for the note under its last word */
+.about-text p.noted-under {
+  margin-bottom: 3.25em;
+}
+
+/* A remark about the word it's under, not the start of what's next: a little arrow from the
+   note up to "cats", the note kept inside the column (the script below) */
+.about-cats {
+  position: relative;
+}
+
+.about-meow {
+  position: absolute;
+  top: 1.05em;
+  left: 0.4em;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.1em;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 1.45em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--pen);
+  rotate: -2deg;
+  pointer-events: none;
+}
+
+/* Where "cats." leaves room on its line, the note's written there, after it, pointing back */
+.about-meow.beside {
+  top: auto;
+  bottom: 0.05em;
+  left: 100%;
+  margin-left: 0.35em;
+  align-items: center;
+}
+
+.about-meow-arrow-beside,
+.about-meow.beside .about-meow-arrow-under {
+  display: none;
+}
+
+.about-meow.beside .about-meow-arrow-beside {
+  display: block;
+  margin-bottom: 0;
+}
+
+.about-meow-arrow {
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
+  margin-bottom: 0.35em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- How to reach him ---- */
+
+.about-reach {
+  width: 100%;
+  max-width: 30em;
+}
+
+.about-reach p {
+  margin: 0;
+}
+
+/* What each part is, said quietly */
+.about-label {
+  margin: 0 0 0.35em;
+  font-size: 0.85em;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
+  color: var(--muted-color);
+}
+
+/* ---- The record: the blog's list of dated things, as it is there. No rules between them, so it's a
+   short list of what he's done and not a table to fill in. The years it's still going on are in
+   this page's ink, as where he is now. ---- */
+
+.about-record {
+  margin-top: 2.25em;
+}
+
+.about-record .about-label {
+  margin-bottom: 0.9em;
+  font-size: 1em;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+/* One grid for the whole list, so the years are one column, as wide as the widest of them */
+.about-record dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 1.25em;
+  align-items: baseline;
+  margin: 0;
+}
+
+.about-record dl > div {
+  display: contents;
+}
+
+.about-record dl > div + div > * {
+  margin-top: 1.4em;
+}
+
+.about-record dt {
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-color);
+  white-space: nowrap;
+}
+
+/* Each span of years spaced out to the column's width, as a typesetter would: a full pair of years
+   fills it as it is, and "2023–now", short of it, is tracked out, evenly, to the same */
+.about-span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.about-record dd {
+  margin: 0;
+}
+
+/* As the blog's dates are, with no room beside: a small line over what's dated */
+@media (max-width: 600px) {
+  .about-record dd {
+    grid-column: 1 / -1;
+  }
+
+  .about-record dl > div + div > dd {
+    margin-top: 0.1em;
+  }
+}
+
+/* What he was, to be found at a glance; what he did, under it, to be read if wanted */
+.about-role {
+  display: block;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--heading-color);
+}
+
+.about-detail {
+  display: block;
+  margin-top: 0.25em;
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--midground-color);
+  text-wrap: pretty;
+}
+
+.about-reach .about-mail {
+  margin: 0.15em 0 0.6em;
+  font-size: 1.35em;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.about-reach .about-mail {
+  color: var(--heading-color);
+}
+
+.about-reply {
+  display: inline-block;
+  margin-left: 0.35em;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 1.4em;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--pen);
+  rotate: -2deg;
+}
+
+/* Elsewhere: each place by its own mark, drawn the way the site's marks are, quiet as they are in
+   the bar, and lit as they are: in the colour that's that place's own */
+.about-reach .about-elsewhere {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15em;
+  margin: 0 0 0 -0.6em;
+  padding: 0;
+  list-style: none;
+}
+
+.about-elsewhere a {
+  display: grid;
+  place-items: center;
+  width: 2.6em;
+  height: 2.6em;
+  border-radius: 50%;
+  color: var(--nav-quiet);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.12s ease;
+  --own: var(--heading-color);
+}
+
+.about-elsewhere svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.about-elsewhere a[href*="instagram"] { --own: #c72a6e; }
+.about-elsewhere a[href*="linkedin"] { --own: #0a66c2; }
+.dark-mode .about-elsewhere a[href*="instagram"] { --own: #ff7ab0; }
+.dark-mode .about-elsewhere a[href*="linkedin"] { --own: #5aa9f0; }
+
+@media (hover: hover) {
+  .about-elsewhere a:hover {
+    background: none;
+    color: var(--own);
+  }
+}
+
+.about-elsewhere a:active,
+.about-elsewhere a:focus-visible {
+  color: var(--own);
+}
+
+@media print {
+  .about-tape {
+    display: none;
+  }
+
+  .about-photo {
+    filter: none;
+  }
+
+  .about-photo-cool,
+  .about-caption-cool,
+  .about-flip {
+    display: none;
+  }
+}
+</style>
+
+<div class="about">
+  <figure class="about-polaroid">
+    <img class="about-tape" src="{{ '/assets/images/table/tape-1.avif' | relative_url }}" alt="" width="280" height="60">
+    <img class="about-photo" src="{{ '/assets/images/polaroid-480.webp' | relative_url }}"
+      srcset="{{ '/assets/images/polaroid-480.webp' | relative_url }} 480w, {{ '/assets/images/polaroid-960.webp' | relative_url }} 960w"
+      sizes="(max-width: 768px) 72vw, 380px" width="480" height="578" fetchpriority="high"
+      alt="A Polaroid of Somdev in a black hoodie, against mist on a mountainside">
+    <img class="about-photo about-photo-cool" src="{{ '/assets/images/polaroid-cool-480.webp' | relative_url }}"
+      srcset="{{ '/assets/images/polaroid-cool-480.webp' | relative_url }} 480w, {{ '/assets/images/polaroid-cool-960.webp' | relative_url }} 960w"
+      sizes="(max-width: 768px) 72vw, 380px" width="480" height="578" decoding="async" aria-hidden="true"
+      alt="The same Polaroid, now of Somdev in sunglasses, arms crossed, against a pale sky">
+    <figcaption class="about-caption hand-note"><span class="about-caption-usual">me, usually</span><span class="about-caption-cool" aria-hidden="true">me, but cooler</span></figcaption>
+    <button type="button" class="about-flip" aria-pressed="false" aria-label="Me, but cooler"></button>
+  </figure>
+
+  <div class="about-words">
+    <h1 class="about-name">Somdev Sangwan</h1>
+    <p class="about-aka">s0md3v on most of the internet</p>
+
     <div class="about-text prose">
       <p>
-        I am a security researcher and developer with over 9 years of experience. I am best known for building
-        industry-standard security tools like Arjun and XSStrike, which are used by hackers worldwide and
-        have earned {{ site.data.stats.total_stars }} stars on GitHub and get {{ site.data.stats.monthly_downloads }} downloads every month.
+        I've been a security researcher and programmer since 2017, and these days I do product design too.
       </p>
       <p>
-        From leading research at a security product company to independent work and <a href="{{ '/now/' | relative_url }}">now</a> building my own product, I have
-        learned to balance both technical details and <i>what matters right now</i>.
+        Outside of work, I take <a data-page="gallery" href="{{ '/gallery' | relative_url }}">photos</a>, read
+        philosophy, build things <a data-page="playground" href="{{ '/playground/' | relative_url }}">for fun</a>,
+        and meow back at
+        <span class="about-cats">cats.<span class="hand-note about-meow"><svg class="about-meow-arrow about-meow-arrow-under" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21C13 21 7 17 6.5 6M3 9.5L6.4 5.6L10 9"/></svg><svg class="about-meow-arrow about-meow-arrow-beside" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14C15 16 9 15 4 10M4.4 15L3.6 9.6L9 9.4"/></svg>they find it convincing</span></span>
       </p>
       <p>
-        Outside of my profession, I do photography and writing. I like travelling to quiet mountains, reading, video
-        games, going on walks and <span class="sketch-anchor">cats<span class="sketch-note"
-            style="top: 1.6rem; left: 50%; transform: translateX(-50%); white-space: nowrap;">I can do a
-            realistic
-            meow</span></span>.
+        If you're here for the work, start with my <a data-page="projects" href="{{ '/projects' | relative_url }}">projects</a>.
+        If you're curious how this site was made, there's a <a href="{{ '/colophon' | relative_url }}">colophon</a>.
+        And if you want to know me better, here's <a data-page="taste" href="{{ '/taste/' | relative_url }}">what I like</a>.
       </p>
-
-
     </div>
 
-    <div class="about-image">
-      <div class="profile-container">
-        <img src="/assets/images/profile-320.webp"
-          srcset="/assets/images/profile-320.webp 320w, /assets/images/profile-640.webp 640w" sizes="320px"
-          alt="Somdev Sangwan" width="320" height="320" fetchpriority="high">
-        <div class="location-overlay">me at 10.071207, 77.2203605</div>
-      </div>
-
-      <div class="social-links">
-        <a href="https://github.com/s0md3v" aria-label="GitHub" class="social-btn">
-          <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-            xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
-            <path
-              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path
-              d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97811C12.8053 6.57488 11.1947 6.57488 9.66666 6.97811C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19"
-              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 15.7544" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round"></path>
-          </svg>
-        </a>
-        <a href="https://twitter.com/s0md3v" aria-label="Twitter" class="social-btn">
-          <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-            xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
-            <path
-              d="M23 3.01006C23 3.01006 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 23 3.01006 23 3.01006Z"
-              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </a>
-        <a href="https://www.linkedin.com/in/s0md3v" aria-label="LinkedIn" class="social-btn">
-          <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-            xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
-            <path
-              d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z"
-              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M7 17V13.5V10" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M11 17V13.75M11 10V13.75M11 13.75C11 10 17 10 17 13.75V17" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M7 7.01L7.01 6.99889" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </a>
-        <a href="https://instagram.com/s0md3v" aria-label="Instagram" class="social-btn">
-          <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-            xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
-            <path
-              d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"
-              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path
-              d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z"
-              stroke-width="1.5"></path>
-            <path d="M17.5 6.51L17.51 6.49889" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </a>
-        <a href="mailto:hello[at]somdev.in" aria-label="Email" class="social-btn">
-          <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
-            xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
-            <path d="M7 9L12 12.5L17 9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path
-              d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z"
-              stroke-width="1.5"></path>
-          </svg>
-        </a>
-      </div>
-      <div
-        style="font-family: 'Reenie Beanie', cursive; color: var(--link-visited); opacity: 0.8; font-size: 1.56rem; margin-top: -10px;">
-        I reply.
-      </div>
-    </div>
+    {% comment %} The record: dated, flat, every line linked to what shows it. Looks unlike the words
+       above, so a skimmer's eye finds it wherever it is, and asks nothing of anyone who's reading. {% endcomment %}
+    <section class="about-record prose" aria-labelledby="about-record-title">
+      <h2 class="about-label" id="about-record-title">s0md3v, so far</h2>
+      <dl>
+        <div>
+          <dt><span class="about-span" aria-hidden="true">{% assign chars = "2017–2020" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2017 to 2020</span></dt>
+          <dd>
+            <span class="about-role">Independent</span>
+            <span class="about-detail">Built <a href="https://github.com/s0md3v/XSStrike">XSStrike</a>,
+              <a href="https://github.com/s0md3v/Arjun">Arjun</a>,
+              <a href="https://github.com/s0md3v/Photon">Photon</a> and more,
+              {{ site.data.stats.total_stars }} GitHub stars.
+              Found bugs, including <a data-page="blog" href="{{ '/blog/modsecurity-redos' | relative_url }}">five CVEs in ModSecurity</a>,
+              and <a data-page="blog" href="{{ '/blog/' | relative_url }}">wrote about what I learned</a>.</span>
+          </dd>
+        </div>
+        <div>
+          <dt><span class="about-span" aria-hidden="true">{% assign chars = "2020–2023" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2020 to 2023</span></dt>
+          <dd>
+            <span class="about-role">Senior security researcher, <a href="https://redhuntlabs.com">RedHunt Labs</a></span>
+            <span class="about-detail">R&amp;D, including a scanner for the entire IPv4 range.</span>
+          </dd>
+        </div>
+        <div>
+          <dt><span class="about-span" aria-hidden="true">{% assign chars = "2023–now" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2023 to now</span></dt>
+          <dd>
+            <span class="about-role">Independent, again</span>
+            <span class="about-detail">Consulting, open source, and product design.</span>
+          </dd>
+        </div>
+      </dl>
+    </section>
   </div>
+
+  <section class="about-reach" aria-label="Write to me">
+    <p class="about-mail prose"><a href="mailto:hello[at]somdev.in">hello[at]somdev.in</a><span class="hand-note about-reply">I reply.</span></p>
+    <ul class="about-elsewhere" aria-label="Elsewhere">
+      <li><a href="https://instagram.com/s0md3v" aria-label="Instagram">{% include social/instagram.svg %}</a></li>
+      <li><a href="https://x.com/s0md3v" aria-label="X">{% include social/x.svg %}</a></li>
+      <li><a href="https://github.com/s0md3v" aria-label="GitHub">{% include social/github.svg %}</a></li>
+      <li><a href="https://www.linkedin.com/in/s0md3v" aria-label="LinkedIn">{% include social/linkedin.svg %}</a></li>
+    </ul>
+  </section>
 </div>
+
+<script>
+  // A tap swaps the Polaroid, and so does the keyboard. A mouse needn't: pointing at it already
+  // shows the other one, and a click would seem to do nothing.
+  (function () {
+    const flip = document.querySelector('.about-flip');
+    if (!flip) return;
+    const pointing = matchMedia('(hover: hover)');
+    flip.addEventListener('click', event => {
+      if (pointing.matches && event.detail !== 0) return;
+      const polaroid = flip.closest('.about-polaroid');
+      const cool = polaroid.classList.toggle('is-cool');
+      flip.setAttribute('aria-pressed', cool);
+      // What a screen reader finds in the Polaroid is what's shown in it
+      const hide = (selector, hidden) => {
+        const el = polaroid.querySelector(selector);
+        hidden ? el.setAttribute('aria-hidden', 'true') : el.removeAttribute('aria-hidden');
+      };
+      hide('.about-photo:not(.about-photo-cool)', cool);
+      hide('.about-caption-usual', cool);
+      hide('.about-photo-cool', !cool);
+      hide('.about-caption-cool', !cool);
+    });
+  })();
+
+  // The note's written after "cats." if there's room for it on that line, short of the window's
+  // edge; if not, under it, kept inside the column, with room made under the paragraph
+  (function () {
+    const note = document.querySelector('.about-meow');
+    if (!note) return;
+    const column = note.closest('.about-text');
+    const para = note.closest('p');
+    function fit() {
+      note.style.translate = '';
+      note.classList.add('beside');
+      para.classList.remove('noted-under');
+      if (note.getBoundingClientRect().right <= document.documentElement.clientWidth - 48) return;
+      note.classList.remove('beside');
+      para.classList.add('noted-under');
+      const n = note.getBoundingClientRect();
+      const c = column.getBoundingClientRect();
+      let dx = 0;
+      if (n.right > c.right) dx = c.right - n.right;
+      if (n.left + dx < c.left) dx = c.left - n.left;
+      note.style.translate = `${dx}px 0`;
+    }
+    fit();
+    new ResizeObserver(fit).observe(column);
+    addEventListener('resize', fit);
+    document.fonts?.ready.then(fit);
+  })();
+</script>

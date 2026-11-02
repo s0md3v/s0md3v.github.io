@@ -18,7 +18,7 @@ Unless the scope is extremely narrow and well-defined, successfully detecting so
 ## What is code?
 Researchers at Google published a research paper introducing a tool called [Magika](https://github.com/google/magika), designed to detect file types using deep learning. If you are a programmer and know how standard file type detection software work, you know how much of a terrible idea it is. Let me walk you through how I bypassed it.
 
-Imagine you’re shown a paused TV screen with a subtitled movie scene. The subtitle reads: `She said, 'ワンピースは本物です.'`
+Imagine you’re shown a paused TV screen with a subtitled movie scene. The subtitle reads: <code>She said, '<span lang="ja">ワンピースは本物です</span>.'</code>
 
 Now, is the movie in English or Japanese? It’s obvious that it’s in English, with Japanese being quoted. We infer this because we understand how language works. If a software was designed to simply count words, it would classify it as Japanese as there are more japanese words in it.
 

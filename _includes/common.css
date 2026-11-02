@@ -316,7 +316,7 @@ pre>code {
   font-family: "Reenie Beanie", cursive;
   font-size: 1.35em;
   line-height: 1;
-  color: var(--accent-color);
+  color: var(--pen);
   white-space: nowrap;
   pointer-events: none;
   rotate: -3deg;
@@ -336,6 +336,20 @@ pre>code {
 .post-list-title:hover {
   color: var(--accent-color);
   background: transparent;
+}
+
+.post-list-undated .post-list-entry {
+  display: block;
+}
+
+/* The essays page, when it has its preface: preface, then contents */
+.essays-preface h2,
+.essays-contents-title {
+  margin-top: 0;
+}
+
+.essays-preface {
+  margin-bottom: 3em;
 }
 
 @media (max-width: 600px) {
@@ -369,9 +383,13 @@ pre>code {
   --c-taste: #8a5a2c;
   --c-work: #0a7594;
   --nav-quiet: #736d62;
+  /* What's written by hand anywhere is written with one pen, his: the ballpoint on the homepage's
+     table (homepage.css), whatever section it's in. At night, the same blue, lighter, to be read */
+  --pen: rgb(30 45 115);
 }
 
 .dark-mode {
+  --pen: #93a6ee;
   --c-home: #ff8a7a;
   --c-projects: #6fd67a;
   --c-blog: #64b5f6;
@@ -824,157 +842,6 @@ html {
 p,
 li {
   font-family: var(--blog-font-family);
-}
-
-/* Hand-drawn note anchored to a word (used on the about page) */
-.sketch-anchor {
-  position: relative;
-  display: inline-block;
-}
-
-.sketch-note {
-  position: absolute;
-  pointer-events: none;
-  font-family: "Reenie Beanie", cursive;
-  color: var(--link-visited);
-  opacity: 0.8;
-  font-size: 1.56rem;
-  white-space: nowrap;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: max-content;
-}
-
-@media (max-width: 1100px) {
-  .sketch-note {
-    display: none;
-  }
-}
-
-.about-grid {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 30px;
-}
-
-.about-text {
-  flex: 1;
-}
-
-.about-image {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.profile-container {
-  position: relative;
-  width: 100%;
-  max-width: 320px;
-}
-
-.about-image img {
-  width: 100%;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-  display: block;
-}
-
-.location-overlay {
-  position: absolute;
-  top: 25px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: 'Reenie Beanie', cursive;
-  color: var(--link-visited);
-  font-size: 1.44rem;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: auto;
-  text-shadow: 0 0 10px var(--background-color);
-  z-index: 5;
-}
-
-.profile-container:hover .location-overlay {
-  opacity: 1;
-}
-
-.profile-container:hover img {
-  transform: scale(1.02);
-}
-
-.social-links {
-  display: flex;
-  margin-top: 5px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.social-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 5px;
-  margin: 5px;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--foreground-color);
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.social-btn:hover {
-  background: transparent;
-  color: var(--accent-color);
-  text-decoration: none;
-}
-
-.social-btn svg {
-  width: clamp(24px, 4vw, 42px);
-  height: clamp(24px, 4vw, 42px);
-}
-
-.social-btn svg path {
-  stroke: var(--foreground-color);
-  transition: stroke 0.3s ease;
-}
-
-.social-btn:hover svg path {
-  stroke: var(--accent-color);
-}
-
-.dark-mode .about-image img {
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
-}
-
-@media (min-width: 768px) {
-  .about-grid {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    align-items: start;
-    gap: 50px;
-  }
-
-  .about-image {
-    width: auto;
-    justify-self: end;
-  }
-
-  .profile-container {
-    max-width: 100%;
-  }
-
-  .about-image img {
-    max-width: 100%;
-  }
 }
 
 .paper-item {

@@ -11,15 +11,21 @@ layout: base
   <div class="wrapper">
     <h1 class="post-title">{{ page.title | escape }}</h1>
     <p class="post-meta">
-      {% assign word_count = content | strip_html | number_of_words %}
       {% if post_essay %}An essay by{% else %}By{% endif %}
       <a href="{{ '/about' | relative_url }}" rel="author">{{ page.author | default: site.author.name }}</a>
       <span aria-hidden="true">·</span>
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
       <span aria-hidden="true">·</span>
-      {{ word_count | divided_by: 200.0 | ceil }} min read
+      {{ content | reading_minutes }} min read
       {% if page.external %}
       <span class="post-meta-line">Also {{ page.external.status }} <a href="{{ page.external.href }}">{{ page.external.title | escape }}</a> on {{ page.external.date | date: "%-d %b %Y" }}</span>
+      {% endif %}
+      {% if post_essay %}
+      {% capture essays_preface %}{% include essays-preface.md %}{% endcapture %}
+      {% assign essays_preface = essays_preface | strip %}
+      {% if essays_preface != "" %}
+      <span class="post-meta-line">One of a series, read in order: <a href="{{ '/essays/' | relative_url }}#preface">start with the preface</a></span>
+      {% endif %}
       {% endif %}
       {% for extra in page.extras %}
       <span class="post-meta-line">See <a href="{{ extra.href }}">{{ extra.text | escape }}</a></span>
@@ -31,11 +37,20 @@ layout: base
     <div class="post-fin">{% include marks/{{ post_mark }}.svg %}</div>
   </div>
 
-  {% comment %} Off the sheet, where the post's over: one to read next, the one before it in time
-     among those a reader can come across (an unlisted post has one too, by its date), or, from
-     the first of them, the latest. And the rest of them. {% endcomment %}
+  {% comment %} Off the sheet, where the post's over: one to read next. Posts are a log, so it's the one
+     before this in time among those a reader can come across (an unlisted post has one too, by
+     its date), or, from the first of them, the latest. Essays are read in order, so it's the one
+     after, and after the last there's only the rest of them. {% endcomment %}
   {% assign post_end_docs = site[page.collection] | listed | sort: "date" %}
   {% assign post_next = nil %}
+  {% if post_essay %}
+  {% assign post_next_label = "Next" %}
+  {% assign post_passed = false %}
+  {% for doc in post_end_docs %}
+  {% if doc.url == page.url %}{% assign post_passed = true %}{% continue %}{% endif %}
+  {% if post_passed or doc.date > page.date %}{% assign post_next = doc %}{% break %}{% endif %}
+  {% endfor %}
+  {% else %}
   {% assign post_next_label = "Older" %}
   {% for doc in post_end_docs %}
   {% if doc.url == page.url or doc.date > page.date %}{% break %}{% endif %}
@@ -48,6 +63,7 @@ layout: base
   {% assign post_next_label = "Latest" %}
   {% endif %}
   {% endunless %}
+  {% endif %}
   <nav class="post-after" aria-label="More {% if post_essay %}essays{% else %}posts{% endif %}">
     <p class="post-after-line">
       {% if post_next %}<span class="post-next-label" id="post-next-label">{{ post_next_label }} {% if post_essay %}essay{% else %}post{% endif %}</span>{% endif %}
