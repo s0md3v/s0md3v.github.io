@@ -12,8 +12,10 @@
      each frame: fizz.draw();
 
    An arm that goes to something and stays there is fizz.reach({ x, y, present: true }). A pair of
-   eyes is fizz.eyes(), drawn with fizz.drawEyes(), on any canvas. It's the same animal on every
-   page: what's different goes in as options, at the top of Fizz().
+   eyes is fizz.eyes(), drawn with fizz.drawEyes(), on any canvas, or on it with fizz.peer().
+   Where something's in front of it, fizz.hole = [[x, y], ...]. Nothing else is drawn on its
+   canvas: with WebGL, what's seen is another one. It's the same animal on every page: what's
+   different goes in as options, at the top of Fizz().
 
    The way its tentacles move is adapted from Venom Button by exteestudio, which draws them in
    3D with WebGL; here they're flat, drawn with WebGL where there's WebGL, and on a canvas
@@ -523,13 +525,14 @@ void main() {
       gl.enable(gl.SCISSOR_TEST);
       gl.scissor(x0, t.h - y1, Math.max(x1 - x0, 0), Math.max(y1 - y0, 0));
     }
-    // Over what's there, added to it, the more of the two, or in place of it
+    // Over what's there, added to it, the more of the two, in place of it, or taken out of it
     function blend(mode) {
       if (mode === 'none') { gl.disable(gl.BLEND); return; }
       gl.enable(gl.BLEND);
       if (mode === 'max') { gl.blendEquation(gl.MAX); return; }
       gl.blendEquation(gl.FUNC_ADD);
-      gl.blendFunc(gl.ONE, mode === 'add' ? gl.ONE : gl.ONE_MINUS_SRC_ALPHA);
+      if (mode === 'out') gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
+      else gl.blendFunc(gl.ONE, mode === 'add' ? gl.ONE : gl.ONE_MINUS_SRC_ALPHA);
     }
     function use(prog) {
       gl.useProgram(prog.p);
@@ -705,6 +708,8 @@ void main() {
     const rooted = s => (opts.root ? Math.min(1, opts.root / Math.max(s.len, 1)) : 1);
     let canvas = null, ctx = null, shape = null, sil = null, low = null, lo = null, spill = null, pool = null, cut = null, cutter = null;
     let scale = 1, dpr = 1, top = 0, sinceNight = 0, lastNight = 0;
+    // For a page: eyes to draw on top of it once, and where it's hidden, as corners
+    let peering = null, hole = null;
 
     let time = opts.time ?? rand(0, 100), flow = opts.flow ?? rand(0, 50), aware = 0, focus = null, probeAt = opts.probeAt || 0;
     const strands = [], drops = [], ripples = [], tracks = [], flashes = [];
@@ -1573,11 +1578,13 @@ void main() {
     }
     // Where it's been, by night: a fading streak behind each bit, for as long as it's going on
     function trail(line) {
-      tracks.forEach((t, i) => {
-        const before = tracks.slice(Math.max(i - 8, 0), i).reverse().find(o => o.of === t.of);
-        if (!before || Math.hypot(t.x - before.x, t.y - before.y) > 40) return;
+      for (let i = 1; i < tracks.length; i++) {
+        const t = tracks[i];
+        let before = null;
+        for (let j = i - 1; j >= Math.max(i - 8, 0); j--) if (tracks[j].of === t.of) { before = tracks[j]; break; }
+        if (!before || Math.hypot(t.x - before.x, t.y - before.y) > 40) continue;
         line(before.x, before.y, t.x, t.y, t.r * 1.4 * (1 - t.age / 6), LIT, 0.16 * glow.n * (1 - t.age / 3));
-      });
+      }
     }
 
     const AWAY = 4000;
@@ -1828,7 +1835,7 @@ void main() {
     // triangles. Each list's one go on the graphics card.
     const batch = () => ({ f: new Float32Array(16 * 128), n: 0 });
     const shapes = () => ({ v: new Float32Array(8 * 2048), n: 0, ix: new Uint32Array(3 * 2048), k: 0 });
-    const B = { sil: batch(), clip: batch(), over: batch(), add: batch(), drops: batch(), ring: batch(), skin: batch(), gloss: batch(), a: batch(), b: batch(), c: batch() };
+    const B = { sil: batch(), clip: batch(), over: batch(), add: batch(), drops: batch(), ring: batch(), skin: batch(), gloss: batch(), a: batch(), b: batch(), c: batch(), eyes: batch() };
     const M = { sil: shapes(), flesh: shapes(), pool: shapes(), gel: shapes(), em: shapes() };
     const tints = new Map();
     const tint = c => {
@@ -2045,6 +2052,7 @@ void main() {
       G.inst(B.add);
       G.blend('over');
       G.inst(B.drops);
+      glOver();
     }
     function glNight() {
       const S = dpr * scale, n = glow.n, r = BODY * blob.size, level = nightLevel(), light = lightAt(), lr = radius(light), PF = 3;
@@ -2160,6 +2168,45 @@ void main() {
       G.blend('over');
       G.only([x, y, x + D, y + D]);
       G.grain(x, y, D, n);
+      glOver();
+    }
+    // What a page has asked for on top: eyes, and a hole where something's in front of it
+    function glOver() {
+      G.only(null);
+      if (peering) {
+        const put = dots(B.eyes);
+        eyesOf(...peering, (x, y, size, a) => put(SOFT, x, y, size, a));
+        G.blend('add');
+        G.inst(B.eyes);
+      }
+      if (hole && hole.length > 2) {
+        const pts = new Float32Array(256), n = Math.min(hole.length, 128);
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for (let i = 0; i < n; i++) {
+          const [x, y] = hole[i];
+          pts[i * 2] = x; pts[i * 2 + 1] = y;
+          x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+        }
+        G.blend('out');
+        G.poly({ pts, n, rect: [x0 - 2, y0 - 2, x1 + 2, y1 + 2] }, 0, [1, 1, 1, 1]);
+      }
+    }
+    // And on the canvas
+    function over() {
+      if (peering) {
+        world(ctx, dpr * scale);
+        drawEyes(ctx, ...peering);
+      }
+      if (hole && hole.length > 2) {
+        world(ctx, dpr * scale);
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        for (const [x, y] of hole) ctx.lineTo(x, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+      }
     }
 
     // On the graphics card if there's one to be had, and on the canvas if not, or if it's gone
@@ -2185,10 +2232,11 @@ void main() {
               const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0], loaded = (nav && nav.loadEventEnd) || 0;
               if (calm >= 20 || now - since > 4000 || (loaded && now - loaded > 3000)) {
                 tried = true;
-                // Off the page, and what's drawn's taken from it as a bitmap: copied straight
-                // from a WebGL canvas, Firefox swaps its red and blue
-                const w = canvas ? canvas.width : 1, h = canvas ? canvas.height : 1;
-                G = (window.OffscreenCanvas && kit(new OffscreenCanvas(w, h))) || kit(layer(w, h));
+                // A canvas of its own, which goes on the page in place of the one it was given.
+                // What's drawn is never copied from one to the other: in Firefox, whose canvases
+                // aren't on the graphics card, that's a trip back from it of the whole picture,
+                // every frame, and costs as much as a frame.
+                G = kit(layer(canvas ? canvas.width : 1, canvas ? canvas.height : 1));
               }
             }
           } else if (!G || G.lost || G.ready()) return done(!!G && !G.lost);
@@ -2200,33 +2248,56 @@ void main() {
     }
     function card() {
       prepare();
-      if (G && G.lost) G = null;
+      if (G && G.lost) {
+        G.el.remove();
+        if (shown) shown.disconnect();
+        shown = G = null;
+      }
       return G && G.ready() ? G : null;
     }
     function draw() {
       if (!canvas.width || !canvas.height) return;
       outline();
       if (card()) {
+        show();
         if (glow.night) glNight();
         else glDay();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = 1;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (G.el.transferToImageBitmap) {
-          const b = G.el.transferToImageBitmap();
-          ctx.drawImage(b, 0, 0);
-          b.close();
-        } else ctx.drawImage(G.el, 0, 0);
-        return;
+      } else {
+        flat();
+        if (glow.night) byNight();
+        else byDay();
+        over();
       }
-      flat();
-      if (glow.night) byNight();
-      else byDay();
+      peering = null;
+    }
+    // Its own canvas goes in just after the page's, and is whatever the page makes that one:
+    // the same class, the same style, and only there while it is. The page's is left empty.
+    let shown = null;
+    function show() {
+      if (!shown) {
+        shown = new MutationObserver(match);
+        shown.observe(canvas, { attributes: true, attributeFilter: ['class', 'style'] });
+        G.el.setAttribute('aria-hidden', 'true');
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        match();
+      }
+      if (G.el.previousSibling !== canvas && canvas.parentNode) {
+        canvas.after(G.el);
+        shown.observe(canvas.parentNode, { childList: true });
+      }
+    }
+    function match() {
+      if (!G) return;
+      if (!canvas.isConnected) { G.el.remove(); return; }
+      G.el.className = canvas.className;
+      G.el.style.cssText = canvas.style.cssText;
     }
 
     // A canvas of its own, and what goes with it
     function mount(el) {
+      if (shown) { shown.disconnect(); shown = null; }
+      if (G) G.el.remove();
       canvas = el;
       ctx = canvas.getContext('2d');
     }
@@ -2274,17 +2345,24 @@ void main() {
     // At x, y, for a body of radius R, facing out along nx, ny. `look`'s how far along the edge
     // they've slid, and `open` how much of them there is.
     function drawEyes(c, e, x, y, R, nx, ny, look, open) {
-      if (time > e.blink + 0.3) e.blink = time + rand(2, 5);
-      const tx = -ny, ty = nx, shut = 1 - 0.9 * bell(time - e.blink, 0.08);
       c.globalCompositeOperation = 'lighter';
-      for (const eye of e.pair) for (const m of eye) {
-        const ex = x + tx * (m.side * R * 0.3 + look) + tx * m.u * R * 0.075 + nx * m.v * R * 0.09 * shut, ey = y + ty * (m.side * R * 0.3 + look) + ty * m.u * R * 0.075 + ny * m.v * R * 0.09 * shut, size = m.size * R * 1.1;
-        c.globalAlpha = open * (0.68 + 0.3 * Math.sin(time * 2 + m.ph));
+      eyesOf(e, x, y, R, nx, ny, look, open, (ex, ey, size, a) => {
+        c.globalAlpha = a;
         c.drawImage(SOFT, ex - size, ey - size, size * 2, size * 2);
-      }
+      });
       c.globalAlpha = 1;
       c.globalCompositeOperation = 'source-over';
     }
+    function eyesOf(e, x, y, R, nx, ny, look, open, put) {
+      if (time > e.blink + 0.3) e.blink = time + rand(2, 5);
+      const tx = -ny, ty = nx, shut = 1 - 0.9 * bell(time - e.blink, 0.08);
+      for (const eye of e.pair) for (const m of eye) {
+        const ex = x + tx * (m.side * R * 0.3 + look) + tx * m.u * R * 0.075 + nx * m.v * R * 0.09 * shut, ey = y + ty * (m.side * R * 0.3 + look) + ty * m.u * R * 0.075 + ny * m.v * R * 0.09 * shut;
+        put(ex, ey, m.size * R * 1.1, open * (0.68 + 0.3 * Math.sin(time * 2 + m.ph)));
+      }
+    }
+    // The same, on top of it, the next time it's drawn, wherever it's drawn
+    function peer(...at) { peering = at; }
 
     return {
       blob, strands, drops, tracks, glow,
@@ -2295,7 +2373,8 @@ void main() {
       radius, edge, at, flash, ripple,
       sprout, reach, hair, probe, release,
       trace, flight, stir, move, ebb,
-      mount, size, draw, eyes, drawEyes, prepare,
+      get hole() { return hole; }, set hole(h) { hole = h; },
+      mount, size, draw, eyes, drawEyes, peer, prepare,
     };
   }
 

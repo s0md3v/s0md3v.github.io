@@ -67,7 +67,6 @@
   const fizz = Fizz({ body: R, most: 4, root: 60, mound: 2.2 });
   const { blob, glow } = fizz;
   const eyes = fizz.eyes();
-  const c = canvas.getContext('2d');
   const rise = document.createElement('i');
   const target = { x: 0, y: 0, present: true };
   const cursor = { x: null, y: null, moved: -Infinity };
@@ -125,12 +124,30 @@
     }
     const since = tapped < 0 ? 1 : age - tapped;
     target.x = at.tx - ox + scrollX;
-    target.y = at.ty - oy + scrollY + (since < 0.5 ? 5 * Math.abs(Math.sin(since * Math.PI * 4)) : 0);
+    target.y = at.ty - oy + scrollY + 16 * tap(since);
     if (age > REACH && !arm) arm = fizz.reach(target, { hold: [0, 0] });
     // What's thin hardly shines, so it's more of an arm by night
     if (arm) arm.vol = glow.night ? 4200 : 1500;
     fizz.move(dt);
     fizz.ebb(dt);
+  }
+
+  // A double tap, as a finger does it: drawn back a bit and struck, then drawn back less and
+  // struck again, quicker. How far back it is, t seconds in, as a share of the most. (The same in
+  // assets/js/sneakers.js, where it taps a sign.)
+  // Each strike aims a little past where it lands, as the tip's always a moment behind where
+  // it's going, and stays there a beat, so it's seen to land.
+  const TAP = [[0, 0], [0.22, 1], [0.31, -0.15], [0.38, 0], [0.47, 0.55], [0.53, -0.15], [0.6, 0]];
+  function tap(t) {
+    for (let i = 1; i < TAP.length; i++) {
+      const [t0, v0] = TAP[i - 1], [t1, v1] = TAP[i];
+      if (t >= t0 && t < t1) {
+        const f = (t - t0) / (t1 - t0);
+        // Drawn back easing off, and struck gathering speed
+        return v0 + (v1 - v0) * (v1 > v0 ? 1 - (1 - f) * (1 - f) : f * f);
+      }
+    }
+    return 0;
   }
 
   function look() {
@@ -142,11 +159,8 @@
     last = now;
     glow.night = !!document.querySelector('.dark-mode');
     for (acc += dt; acc >= SUB; acc -= SUB) step(SUB);
+    if (peek > 0.02) fizz.peer(eyes, blob.x, blob.y - R * 0.55, R, 0, -1, look(), peek);
     fizz.draw();
-    if (peek > 0.02) {
-      c.setTransform(dpr, 0, 0, dpr, 0, 0);
-      fizz.drawEyes(c, eyes, blob.x, blob.y - R * 0.55, R, 0, -1, look(), peek);
-    }
     const box = card.getBoundingClientRect();
     rise.style.transform = `translate(${blob.x + ox - scrollX - box.left}px, ${blob.y + oy - scrollY - box.top}px)`;
     rise.style.opacity = lump * (1 + 0.1 * Math.sin(fizz.time * 1.6));

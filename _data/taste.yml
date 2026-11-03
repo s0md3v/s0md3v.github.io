@@ -1,0 +1,268 @@
+# Everything on /taste. `opening` is any writing at the top and `closing` at the bottom (markdown);
+# `sections` are the rest, in order. Most things in a section need only a title and a slug (its picture is
+# assets/images/taste/<slug>-<width>.webp, made by _raw/taste_images.py). Everything else is optional:
+#   meta: a little more, under the title (an author, "s1 only!")
+#   note: what he'd say about it, written beside it in his pen. Each line of it is a line as he'd
+#         write it (a note is never wrapped for him), so break it where he'd pause. Two things
+#         side by side shouldn't both have notes, or they read as one line
+#   mark: favourite | recommend, a sticker on it saying "fav" or "start here"
+#   sticker: a sticker of his own, for what's worth knowing before you start ("s1 only!")
+#   note_above: written above its picture, outside it, not beside it
+#   url:  where it can be had, if it's something to read, watch or visit online
+#   mm:   for a thing he uses or wears, how wide it is as it's pictured, so they're at their own sizes
+#   foot: for a sneaker, where in its picture (0 to 1 across) a foot would sit in it, heel to toes:
+#         inside the heel counter and the toe box, not the midsole bulging past them. They're all
+#         his size, so it's the feet that are made the same length, and a chunky shoe looks it.
+#         Judged by eye from the pictures
+
+updated: 2026-11-03
+
+# What he's up to lately, said at the end of the page
+closing: |
+  Right now I'm building an app for your first brain, the one in your head. I'm also reading
+  sociology after a long stretch of psychology (political theory is next), and learning
+  marketing, which is admittedly unrelated.
+
+sections:
+
+- section: Watch
+  items:
+    - title: About Time
+      slug: about-time
+      mark: recommend
+    - title: Poor Things
+      slug: poor-things
+      mark: favourite
+    - title: Mard Ko Dard Nahi Hota
+      slug: mard-ko-dard-nahi-hota
+      note: |-
+        they made this one for me,
+        you prolly won't like it
+      note_above: true
+    - title: Past Lives
+      slug: past-lives
+    - title: La La Land
+      slug: la-la-land
+    - title: Fleabag
+      slug: fleabag
+    - title: Portrait of a Lady on Fire
+      slug: portrait-of-a-lady-on-fire
+    - title: Parasite
+      slug: parasite
+    - title: True Detective
+      slug: true-detective
+      sticker: s1 only!
+  videos:
+    label: videos
+    items:
+      - title: Capitalist conditioning
+        slug: yt-capitalist-conditioning
+        meta: revolutionaryth0t
+        url: https://www.youtube.com/watch?v=20JNerTHh6w
+      - title: Adorno's critique of society
+        slug: yt-adorno
+        meta: Popular Philosophy
+        url: https://www.youtube.com/watch?v=lpo4DKrykaw
+      - title: What makes a happy life?
+        slug: yt-happy-life
+        meta: Veritasium
+        url: https://youtu.be/vSQjk9jKarg
+      - title: Journey to the West
+        slug: yt-journey-to-the-west
+        meta: Overly Sarcastic Productions
+        url: https://www.youtube.com/watch?v=61nuXrvqNgI&list=PLDb22nlVXGgdg_NR_-GtTrMnbMVmtSSXa
+  more:
+    text: Want more movies? Find me on Letterboxd.
+    url: https://letterboxd.com/s0md3v/
+
+- section: Read
+  items:
+    - title: Nicomachean Ethics
+      slug: nicomachean-ethics
+      meta: Aristotle
+      note: |-
+        if you are going to read
+        one book in your life,
+        it should be this one.
+    - title: Famine, Affluence & Morality
+      slug: famine-affluence-morality
+      meta: Peter Singer
+      url: https://www.utilitarian.net/singer/by/1972----.htm
+      note: |-
+        *mocking voice*
+        'why me do good
+        when world bad.'
+        shut up
+    - title: Moral Saints
+      meta: Susan Wolf
+      url: https://www.philosophy.rutgers.edu/joomlatools-files/docman-files/MoralSaints.pdf
+      note: |-
+        read it after singer's,
+        should help with the gut punch
+      note_above: true
+    - title: The Tail End
+      meta: Tim Urban
+      url: https://waitbutwhy.com/2015/12/the-tail-end.html
+    - title: How Complex Systems Fail
+      meta: Richard Cook
+      url: https://how.complexsystems.fail/
+    - title: Why intelligence doesn't improve rationality
+      meta: Dianoia Protocol
+      url: https://dianoiaprotocol.substack.com/p/why-intelligence-doesnt-improve-rationality
+
+# His shers, the text checked on Rekhta
+- section: Poetry
+  items:
+    - text: maana ki is zameen ko na gulzaar kar sake<br>kuchh khaar kam to kar gaye guzre jidhar se hum
+      sher: true
+      by: Sahir Ludhianvi
+    - text: le de ke apne paas faqat ek nazar to hai<br>kyun dekhen zindagi ko kisi ki nazar se hum
+      sher: true
+      by: Sahir Ludhianvi
+    - text: main lautne ke iraade se ja raha hoon magar<br>safar safar hai mera intezaar mat karna
+      sher: true
+      by: Sahil Sahri
+    - text: na karen aap wafa hum ko kya<br>bewafa aap hi kahlaiyega
+      sher: true
+      by: Hasrat Mohani # Rekhta lists him; not confirmed elsewhere
+    - text: be-dili kya yoonhi din guzar jayenge<br>sirf zinda rahe hum to mar jayenge
+      sher: true
+      by: Jaun Elia
+- section: Listen
+  items:
+    - title: Flying Towards the City
+      slug: flying-towards-the-city
+      meta: Panther
+    - title: Day Dreamer
+      slug: day-dreamers
+      meta: Umair, Talha Anjum
+    - title: Hona Hi Tha
+      slug: hona-hi-tha
+      meta: Yungsta
+
+- section: Play
+  items:
+    - title: Disco Elysium
+      slug: disco-elysium
+      mark: favourite
+    - title: Baldur's Gate 3
+      slug: baldurs-gate-3
+      note: made a mod for it
+      note_above: true
+    - title: Dishonored
+      slug: dishonored
+    - title: Yakuza
+      slug: yakuza
+      meta: series
+      note: |-
+        i would like to think that i'm majima
+        but i'm just kiryu
+      note_above: true
+    - title: Cyberpunk 2077
+      slug: cyberpunk-2077
+    - title: "Black Myth: Wukong"
+      slug: black-myth-wukong
+
+- section: Sneakers
+  # Arranged like a shop window: the loudest first, the Ghost Smashers in the middle of the top
+  # shelf, no two alike in colour or height side by side, and the plain cream Converse to close
+  items:
+    - title: Nike Air Jordan 1 Spider-Verse
+      slug: jordan-1-spiderverse
+      foot: [0.04, 0.93]
+    - title: Puma RS-X Pikachu
+      slug: rsx-pikachu
+      foot: [0.08, 0.94]
+    - title: Reebok Ghost Smashers
+      slug: reebok-ghostbusters
+      foot: [0.15, 0.94]
+    - title: Puma RS-X Batman
+      slug: rsx-batman
+      foot: [0.09, 0.95]
+    - title: Nike Air Max Furyosa
+      slug: air-max-furyosa
+      foot: [0.06, 0.94]
+    - title: Nike Air Presto Mid Utility
+      slug: presto-orange
+      foot: [0.06, 0.93]
+    - title: New Balance Vision Racer
+      slug: vision-racer
+      foot: [0.12, 0.94]
+    - title: adidas Samba 2
+      slug: samba-2
+      foot: [0.03, 0.94]
+    - title: Nike SuperRep 3 AMP
+      slug: superrep-3-amp
+      foot: [0.1, 0.94]
+    - title: ASICS Gel-Lyte III
+      slug: gel-lyte-iii
+      foot: [0.03, 0.95]
+    - title: Converse Chuck Taylor All Star Throwback
+      slug: chuck-taylor-throwback
+      foot: [0.03, 0.9]
+
+# Use, put away for now
+# - section: Use
+#   items:
+#     - title: MX Keys
+#       slug: mx-keys
+#       mm: 430
+#     - title: MX Master 3S
+#       slug: mx-master-3s
+#       mm: 84
+#     - title: Vivo X100 Pro
+#       slug: vivo-x100-pro
+#       mm: 120
+#     - title: Sony WH-1000XM5
+#       slug: sony-wh-1000xm5
+#       mm: 175
+#     - title: Tangzu Wan'er S.G
+#       slug: tangzu-waner
+#       mm: 70
+#     - title: Machenike G5 Pro
+#       slug: machenike-g5-pro
+#       mm: 155
+#   machine:
+#     - name: CPU
+#       value: Intel i7-12700K
+#       note: best in class, circa 2020
+#     - name: GPU
+#       value: AMD Radeon RX 6900 XT
+#       note: this thing can render anything
+#     - name: Desk
+#       value: 6 ft, custom-built
+#     - name: OS
+#       value: Arch Linux, and Windows for games
+#     - name: Browser
+#       value: Firefox
+#       note: no google + ublock origin = bliss
+
+- section: Browse
+  items:
+    - title: Standard Ebooks
+      meta: Public-domain books, carefully typeset
+      url: https://standardebooks.org/
+    - title: Locustream Soundmap
+      meta: Live microphones left open around the world
+      url: https://locusonus.org/soundmap/
+    - title: Nokia Design Archive
+      meta: Decades of Nokia sketches, concepts and prototypes
+      url: https://nokiadesignarchive.aalto.fi/
+    - title: BBC Sound Effects
+      meta: The BBC's sound effects archive
+      url: https://sound-effects.bbcrewind.co.uk/
+    - title: The Grug Brained Developer
+      meta: On keeping software simple, by a caveman
+      url: https://grugbrain.dev/
+    - title: Bellingcat Challenges
+      meta: Geolocation and OSINT puzzles
+      url: https://challenge.bellingcat.com/
+    - title: News Minimalist
+      meta: Only the news that matters, ranked by significance
+      url: https://www.newsminimalist.com/
+    - title: GiveWell
+      meta: Where a donation does the most good
+      url: https://www.givewell.org/
+    - title: TabBoo
+      meta: Jump scares for the sites that distract you
+      url: https://tabboo.xyz/

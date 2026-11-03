@@ -1,0 +1,12 @@
+{%- comment -%} One thing on /taste that's better said than shown: a line in a list (pages/taste.html) {%- endcomment -%}
+{%- assign item = include.item -%}
+<li{% if item.note_above %} class="has-note-above"{% endif %}>
+  {%- if item.note and item.note_above %}
+  <p class="thing-note">{{ item.note }}</p>
+  {%- endif %}
+  <span class="line-name">{% if item.mark == "dislike" %}<s>{{ item.title }}</s><span class="sr-only"> (not for me)</span>{% elsif item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</span>
+  {%- if item.meta %}<span class="line-meta">{{ item.meta }}</span>{% endif %}
+  {%- if item.note and item.note_above != true %}
+  <p class="thing-note">{{ item.note }}</p>
+  {%- endif %}
+</li>

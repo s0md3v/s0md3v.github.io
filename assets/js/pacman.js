@@ -38,12 +38,33 @@
       haul, parted, stepBit: stepDrop,
     });
     const { blob, strands, drops, tracks, glow, edge, at, flash, ripple } = fizz;
-    // Ready to be drawn on the graphics card well before it's wanted, and not as it comes up
-    fizz.prepare();
     let meal = null, bait = null, line = null, gag = null;
     let prey = null, sated = 0;
     let canvas = null, dpr = 1, top = 0;
     let last = 0, acc = 0;
+    // Ready to be drawn on the graphics card well before it's wanted, and not as it comes up.
+    // Then it's drawn once, by day and by night, where it can't be seen, as the first time
+    // anything's drawn costs the most, and that shouldn't be as he bites.
+    fizz.prepare().then(on => {
+      if (!on) return;
+      if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 2000 });
+      else setTimeout(warm, 500);
+    });
+    function warm() {
+      if (canvas) return;
+      canvas = document.createElement('canvas');
+      fizz.mount(canvas);
+      fit();
+      blob.x = innerWidth / 2;
+      blob.y = innerHeight - BODY / 2;
+      const night = host.night();
+      for (const n of [!night, night]) {
+        glow.night = n;
+        glow.n = n ? 1 : 0;
+        fizz.draw();
+      }
+      canvas = null;
+    }
 
     const rest = () => innerHeight + BODY * 1.2;
 

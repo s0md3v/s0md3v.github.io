@@ -1,0 +1,43 @@
+{%- comment -%}
+  One thing on /taste with a picture, in the form its kind takes (pages/taste.html). A cover (a
+  film's poster, a book, a game's case) already says what it is, so it isn't named under it, only
+  to those who can't see it. What he'd say about one is written under it, or over it if it's marked
+  note_above.
+{%- endcomment -%}
+{%- assign item = include.item -%}
+{%- assign cover = false -%}
+{%- case include.kind -%}
+  {%- when "watch" -%}{%- assign form = "poster" -%}{%- assign widths = "320,640" -%}{%- assign sizes = "(max-width: 600px) 40vw, 150px" -%}{%- assign cover = true -%}
+  {%- when "read" -%}{%- assign form = "book" -%}{%- assign widths = "320,640" -%}{%- assign sizes = "(max-width: 600px) 36vw, 140px" -%}{%- assign cover = true -%}
+  {%- when "play" -%}{%- assign form = "case" -%}{%- assign widths = "320,640" -%}{%- assign sizes = "(max-width: 600px) 36vw, 140px" -%}{%- assign cover = true -%}
+  {%- when "listen" -%}{%- assign form = "record" -%}{%- assign widths = "320,640" -%}{%- assign sizes = "(max-width: 600px) 48vw, 180px" -%}
+  {%- when "screen" -%}{%- assign form = "screen" -%}{%- assign widths = "480,960" -%}{%- assign sizes = "(max-width: 600px) 70vw, 260px" -%}
+  {%- else -%}{%- assign form = "object" -%}{%- assign widths = "400,800" -%}{%- assign sizes = "(max-width: 600px) 50vw, 300px" -%}
+{%- endcase -%}
+{%- capture label -%}{{ item.title }}{% if item.meta %}, {{ item.meta }}{% endif %}{% if item.mark == "dislike" %} (not for me){% endif %}{%- endcapture -%}
+{%- assign size = site.data.taste_images[item.slug] -%}
+{%- assign w = widths | split: "," -%}
+<li class="thing is-{{ form }}{% if item.note_above %} has-note-above{% endif %}{% if item.mark %} is-{{ item.mark }}{% endif %}"{% if item.mm %} style="--mm: {{ item.mm }}"{% elsif item.foot %} style="--heel: {{ item.foot[0] }}; --toe: {{ item.foot[1] }}"{% endif %}>
+  {%- if item.note and item.note_above %}
+  <p class="thing-note">{{ item.note }}</p>
+  {%- endif %}
+  {% if item.url %}<a href="{{ item.url }}">{% endif %}
+  <span class="thing-picture {{ form }}">
+    {%- if size -%}
+    <img src="{{ '/assets/images/taste/' | append: item.slug | append: '-' | append: w[0] | append: '.avif' | relative_url }}"
+      srcset="{{ '/assets/images/taste/' | append: item.slug | append: '-' | append: w[0] | append: '.avif' | relative_url }} {{ w[0] }}w, {{ '/assets/images/taste/' | append: item.slug | append: '-' | append: w[1] | append: '.avif' | relative_url }} {{ w[1] }}w"
+      sizes="{{ sizes }}" width="{{ size[0] }}" height="{{ size[1] }}" loading="lazy" decoding="async" alt="{% if cover %}{{ label | escape }}{% endif %}">
+    {%- else -%}
+    <span class="thing-missing"{% if cover %} role="img" aria-label="{{ label | escape }}"{% else %} aria-hidden="true"{% endif %}></span>
+    {%- endif -%}
+    {%- if form == "record" -%}<span class="record-disc" aria-hidden="true"></span>{%- endif -%}
+    {%- if item.sticker -%}<span class="thing-mark">{{ item.sticker }}</span>{%- elsif item.mark == "favourite" -%}<span class="thing-mark">fav</span>{%- elsif item.mark == "recommend" -%}<span class="thing-mark">start here</span>{%- endif -%}
+  </span>
+  {%- unless cover %}
+  <span class="thing-name">{% if item.mark == "dislike" %}<s>{{ item.title }}</s><span class="sr-only"> (not for me)</span>{% else %}{{ item.title }}{% endif %}{% if item.meta %}<span class="thing-meta">{{ item.meta }}</span>{% endif %}</span>
+  {%- endunless %}
+  {% if item.url %}</a>{% endif %}
+  {%- if item.note and item.note_above != true %}
+  <p class="thing-note">{{ item.note }}</p>
+  {%- endif %}
+</li>

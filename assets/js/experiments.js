@@ -190,6 +190,20 @@ void main() { gl_Position = vec4(vec2(gl_VertexID & 1, gl_VertexID >> 1) * 2. - 
     return w;
   }
 
+  // The most of each of a texture's four, as big as it gets, over each square of it u_n across
+  const GREATEST = program(`
+uniform sampler2D u_f;
+uniform int u_n;
+void main() {
+  ivec2 b = ivec2(gl_FragCoord.xy) * u_n, size = textureSize(u_f, 0);
+  vec4 m = vec4(0);
+  for (int j = 0; j < u_n; j++) for (int i = 0; i < u_n; i++) {
+    ivec2 k = b + ivec2(i, j);
+    if (k.x < size.x && k.y < size.y) m = max(m, abs(texelFetch(u_f, k, 0)));
+  }
+  o = m;
+}`);
+
   let K = null, asked = false, built = false;
   function kit() {
     // Off the page, and what's drawn's taken from it as a bitmap: copied straight from a WebGL
@@ -266,6 +280,49 @@ void main() { gl_Position = vec4(vec2(gl_VertexID & 1, gl_VertexID >> 1) * 2. - 
       return ts.every(t => target(t) && (gl.clear(gl.COLOR_BUFFER_BIT), true));
     };
     k.go = () => gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    // How big each of a texture's four gets, all over it, as it's needed to know when to stop:
+    // it's told a frame or two late, never waited for, and of which step it was asked at
+    k.watch = () => {
+      let blocks = null, asked = null;
+      const most = k.texture(1, 1, gl.RGBA32F, gl.RGBA, gl.FLOAT, null), got = new Float32Array(4);
+      let read = null;
+      const W = {
+        told: null,
+        hear() {
+          if (asked && gl.clientWaitSync(asked.sync, 0, 0) !== gl.TIMEOUT_EXPIRED) {
+            gl.bindBuffer(gl.PIXEL_PACK_BUFFER, read);
+            gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, got);
+            gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+            gl.deleteSync(asked.sync);
+            W.told = { step: asked.step, most: Array.from(got) };
+            asked = null;
+          }
+        },
+        // (what it's been told, if it's of a step after `since`)
+        since: step => (W.told && W.told.step > step ? W.told.most : null),
+        ask(t, step) {
+          if (asked) return;
+          const n = Math.ceil(t.w / 8), m = Math.ceil(t.h / 8);
+          if (!blocks || blocks.w !== n || blocks.h !== m) blocks = k.texture(n, m, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
+          for (const [from, to, by] of [[t, blocks, 8], [blocks, most, Math.max(n, m)]]) {
+            k.into(GREATEST, to);
+            k.bind(GREATEST, 'u_f', 0, from);
+            gl.uniform1i(GREATEST.u('u_n'), by);
+            k.go();
+          }
+          // (made as it's first read into, not before, or it's taken as written twice)
+          if (!read) {
+            read = gl.createBuffer();
+            gl.bindBuffer(gl.PIXEL_PACK_BUFFER, read);
+            gl.bufferData(gl.PIXEL_PACK_BUFFER, 16, gl.STREAM_READ);
+          } else gl.bindBuffer(gl.PIXEL_PACK_BUFFER, read);
+          gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, 0);
+          gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+          asked = { step, sync: gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0) };
+        },
+      };
+      return W;
+    };
     // What was drawn, onto a canvas, where it's wanted there
     k.put = (ctx, x, y, w = k.width, h = k.height) => {
       if (!bitmaps) return ctx.drawImage(el, 0, el.height - k.height, k.width, k.height, x, y, w, h);
@@ -644,6 +701,9 @@ void main() { gl_Position = vec4(vec2(gl_VertexID & 1, gl_VertexID >> 1) * 2. - 
     }
 
     function bleed(dt) {
+      // (on the graphics card, where it can be; it never can while he's first made)
+      const K = card(), T = K && filmFor(K);
+      if (T) return bleedOnCard(T, dt);
       let changed = carry();
       // From the wound, until there's no more to come, and less as there's less behind it
       const [wx, wy] = onGrid(WOUND[0], WOUND[1]);
@@ -892,13 +952,192 @@ void main() {
         return K.texture(HW, HH, gl.RGBA16F, gl.RGBA, gl.FLOAT, out, true);
       };
       return (onCard = {
-        K, a: pack(cover, nx, ny, nz), b: pack(crease, tone, thin, sheen), c: pack(hue, shade),
+        K, a: pack(cover, nx, ny, nz), b: pack(crease, tone, thin, sheen), c: pack(hue, shade, wide),
         pool: K.texture(G, G, gl.R32F, gl.RED, gl.FLOAT, pool),
       });
     }
     // Whether the blood was last painted by it, so if it's painted on the canvas again, it's all
     // painted
     let carded = false;
+
+    // ---- The blood, on the graphics card ----
+    //
+    // The same film, every cell at once. Spreading, each cell takes what flows to or from each
+    // of its neighbours, as before; carried, where each cell's blood goes is worked out first,
+    // and then each cell gathers what's come to it from those round it, so it's still moved,
+    // never made. (Thrashing hard enough to throw it further than that in a frame, it goes as far.)
+    const REACH = 6;
+    const FILM = `
+const float G = ${G}.;
+ivec2 here() { return ivec2(gl_FragCoord.xy); }
+bool on(ivec2 k) { return k.x >= 0 && k.y >= 0 && k.x < ${G} && k.y < ${G}; }
+`;
+    // From the wound, as much as was let out at each cell round it
+    const WOUNDED = program(FILM + `
+uniform sampler2D u_pool;
+uniform vec2 u_at;
+uniform ivec2 u_cell;
+uniform float u_amount;
+void main() {
+  ivec2 k = here(), d = k - u_cell;
+  vec4 h = texelFetch(u_pool, k, 0);
+  vec2 e = vec2(k) - u_at;
+  if (abs(d.x) <= 2 && abs(d.y) <= 2) h.r += u_amount * exp(-dot(e, e) / 2.5);
+  o = h;
+}`);
+    // Spreading: and how much flowed, at most, in the steps so far
+    const SPREAD = program(FILM + `
+uniform sampler2D u_pool, u_paper;
+uniform float u_k, u_first;
+void main() {
+  ivec2 k = here();
+  vec2 a = texelFetch(u_pool, k, 0).rg;
+  float ra = texelFetch(u_paper, k, 0).r, h = a.x, most = u_first > 0. ? 0. : a.y;
+  const ivec2 BY[4] = ivec2[](ivec2(1, 0), ivec2(-1, 0), ivec2(0, 1), ivec2(0, -1));
+  for (int n = 0; n < 4; n++) {
+    ivec2 b = k + BY[n];
+    if (!on(b)) continue;
+    float hb = texelFetch(u_pool, b, 0).r;
+    if (a.x <= .001 && hb <= .001) continue;
+    float mean = .5 * (a.x + hb);
+    float flow = u_k * min(1., mean * mean * mean) * (a.x - hb) * .5 * (ra + texelFetch(u_paper, b, 0).r);
+    h -= flow;
+    most = max(most, abs(flow));
+  }
+  o = vec4(h, most, 0, 0);
+}`);
+    // Where what's at each cell under him goes, as he turns: and how much of it
+    const MOVE = program(FILM + `
+uniform sampler2D u_pool, u_paper, u_fc;
+uniform vec2 u_turn;
+uniform float u_turned, u_out;
+uniform vec4 u_box;
+const vec2 FROM = vec2(${n4(X0)}, ${n4(Y0)});
+const float RES = ${n4(RES)}, PX = ${n4(PX)}, SG = ${n4(SG)};
+const ivec2 SIZE = ivec2(${HW}, ${HH});
+void main() {
+  ivec2 k = here();
+  float h = texelFetch(u_pool, k, 0).r;
+  o = vec4(0);
+  if (h <= .001 || float(k.x) < u_box.x || float(k.x) > u_box.y || float(k.y) < u_box.z || float(k.y) > u_box.w) return;
+  // How much of him's about here
+  vec2 r = vec2(k) - G / 2.;
+  float cs = u_turn.x, sn = u_turn.y;
+  ivec2 at = ivec2((vec2(PX + (cs * r.x + sn * r.y) / SG, (-sn * r.x + cs * r.y) / SG) - FROM) * RES);
+  float w = at.x >= 0 && at.y >= 0 && at.x < SIZE.x && at.y < SIZE.y ? texelFetch(u_fc, at, 0).b : 0.;
+  if (w < .02) return;
+  float round_ = .35 * u_turned * w * (1. - smoothstep(.35 * SG, .6 * SG, length(r))), run = u_out * w * texelFetch(u_paper, k, 0).g;
+  vec2 by = vec2(-r.y * round_ + r.x * run, r.x * round_ + r.y * run);
+  float far = length(by);
+  if (far > ${REACH - 1}.) by *= ${REACH - 1}. / far;
+  o = vec4(clamp(vec2(k) + by, 0., G - 1.001), h, 0);
+}`);
+    // What's come to each cell, shared among the four round where it went
+    const GATHER = program(FILM + `
+uniform sampler2D u_pool, u_moves;
+uniform vec4 u_box;
+uniform int u_reach;
+void main() {
+  ivec2 k = here();
+  vec2 p = texelFetch(u_pool, k, 0).rg;
+  float h = texelFetch(u_moves, k, 0).z > 0. ? 0. : p.x;
+  if (float(k.x) >= u_box.x && float(k.x) <= u_box.y && float(k.y) >= u_box.z && float(k.y) <= u_box.w) {
+    for (int j = -u_reach; j <= u_reach; j++) for (int i = -u_reach; i <= u_reach; i++) {
+      ivec2 s = k + ivec2(i, j);
+      if (!on(s)) continue;
+      vec4 q = texelFetch(u_moves, s, 0);
+      if (q.z <= 0.) continue;
+      vec2 d = abs(q.xy - vec2(k));
+      if (d.x < 1. && d.y < 1.) h += q.z * (1. - d.x) * (1. - d.y);
+    }
+  }
+  o = vec4(h, p.y, 0, 0);
+}`);
+
+    // The film there, how many steps it's taken there, and the last that anything was let out
+    // or moved: what it's told of how much it's still spreading only counts from after that
+    let film = null, bled = 0, stirredAt = 0;
+    function filmFor(K) {
+      if (film && film.K === K) return film;
+      film = null;
+      if (!K.floats) return null;
+      const gl = K.gl, field = (internal, format, data) => K.texture(G, G, internal, format, gl.FLOAT, data);
+      const deep = new Float32Array(2 * G * G), paper = new Float32Array(2 * G * G);
+      for (let k = 0; k < G * G; k++) {
+        deep[2 * k] = pool[k];
+        paper[2 * k] = rough[k];
+        paper[2 * k + 1] = RUN[k];
+      }
+      const T = {
+        K, C: cardFor(K), paper: field(gl.RG32F, gl.RG, paper), moves: field(gl.RGBA32F, gl.RGBA, null),
+        pool: { now: field(gl.RG32F, gl.RG, deep), next: field(gl.RG32F, gl.RG, null), swap() { [this.now, this.next] = [this.next, this.now]; } },
+      };
+      if (!K.clear(T.pool.next, T.moves)) return null;
+      T.watch = K.watch();
+      return (film = T);
+    }
+    function spill(T, P, into, set, fields) {
+      const { K } = T;
+      K.into(P, into);
+      Object.entries(fields).forEach(([n, t], i) => K.bind(P, n, i, t));
+      set(K.gl, P);
+      K.go();
+    }
+
+    function carryOnCard(T) {
+      const turned = angle - carriedAt;
+      if (Math.abs(turned) < 1e-4) return false;
+      carriedAt = angle;
+      if (Math.abs(turned) > 0.4) return false;
+      const mid = angle - turned / 2, [i0, i1, j0, j1] = under();
+      spill(T, MOVE, T.moves, (gl, P) => {
+        gl.uniform2f(P.u('u_turn'), Math.cos(mid), Math.sin(mid));
+        gl.uniform1f(P.u('u_turned'), turned);
+        gl.uniform1f(P.u('u_out'), Math.abs(turned) * 0.6);
+        gl.uniform4f(P.u('u_box'), i0, i1, j0, j1);
+      }, { u_pool: T.pool.now, u_paper: T.paper, u_fc: T.C.c });
+      spill(T, GATHER, T.pool.next, (gl, P) => {
+        gl.uniform4f(P.u('u_box'), i0 - REACH, i1 + REACH, j0 - REACH, j1 + REACH);
+        gl.uniform1i(P.u('u_reach'), REACH);
+      }, { u_pool: T.pool.now, u_moves: T.moves });
+      T.pool.swap();
+      return true;
+    }
+
+    function bleedOnCard(T, dt) {
+      T.watch.hear();
+      bled++;
+      let changed = carryOnCard(T);
+      const [wx, wy] = onGrid(WOUND[0], WOUND[1]);
+      const wi = Math.round(wx), wj = Math.round(wy);
+      if (total < LETHAL && wi > 2 && wj > 2 && wi < G - 3 && wj < G - 3) {
+        const amount = 5 * (0.3 + 0.7 * (1 - total / CAP)) * (1 + Math.min(4, strain * strain)) * dt;
+        for (let j = wj - 2; j <= wj + 2; j++) {
+          for (let i = wi - 2; i <= wi + 2; i++) total += amount * Math.exp(-((i - wx) ** 2 + (j - wy) ** 2) / 2.5);
+        }
+        spill(T, WOUNDED, T.pool.next, (gl, P) => {
+          gl.uniform2f(P.u('u_at'), wx, wy);
+          gl.uniform2i(P.u('u_cell'), wi, wj);
+          gl.uniform1f(P.u('u_amount'), amount);
+        }, { u_pool: T.pool.now });
+        T.pool.swap();
+        changed = true;
+      }
+      const PASSES = Math.max(8, Math.ceil((dt * 48 * 2) / 0.2));
+      const k = (48 * dt * Math.exp(-deadFor / 12)) / PASSES;
+      for (let pass = 0; pass < PASSES; pass++) {
+        spill(T, SPREAD, T.pool.next, (gl, P) => {
+          gl.uniform1f(P.u('u_k'), k);
+          gl.uniform1f(P.u('u_first'), pass ? 0 : 1);
+        }, { u_pool: T.pool.now, u_paper: T.paper });
+        T.pool.swap();
+      }
+      T.watch.ask(T.pool.now, bled);
+      if (changed) stirredAt = bled;
+      const told = T.watch.since(stirredAt), most = told ? told[1] : Infinity;
+      if (changed || most > 1e-5) bloodChanged = true;
+      return changed || most > 4e-5;
+    }
 
     // He's drawn at full resolution, or, while he's turning fast, where it can't be seen, at half
     let bodies = null;
@@ -1016,10 +1255,11 @@ void main() {
         shown = bodies[0];
         // All of the blood, as it's no more work than some of it
         if (force || due || (turned && bloodChanged)) {
-          K.update(C.pool, pool);
+          const T = film && film.K === K ? film : null;
+          if (!T) K.update(C.pool, pool);
           const P = K.use(BLOOD, 0, 0, BR, BR);
           gl.uniform1f(P.u('u_dark'), dark ? 1 : 0);
-          K.bind(P, 'u_pool', 0, C.pool);
+          K.bind(P, 'u_pool', 0, T ? T.pool.now : C.pool);
           K.go();
           bloodCtx.clearRect(0, 0, BR, BR);
           K.put(bloodCtx, 0, 0);
@@ -2100,30 +2340,15 @@ void main() {
   float around = (water(k - X) ? at(u_waves, k - X).x - h : 0.) + (water(k + X) ? at(u_waves, k + X).x - h : 0.) + (water(k - Y) ? at(u_waves, k - Y).x - h : 0.) + (water(k + Y) ? at(u_waves, k + Y).x - h : 0.);
   o = vec4((2. * h - w.y + .32 * G * G * around) * info(k).z, h, 0, 0);
 }`);
-    // How fast the water's going, how hard the ripples are pushing the inks, and how high they
-    // are, at most, eight cells by eight; then of those, all of it
+    // At each cell, how fast the water's going, how hard the ripples are pushing the inks, and
+    // how high they are, so the most of each can be known
     const MEASURE = program(SIM + `
 uniform sampler2D u_vel, u_waves;
-uniform int u_n;
 void main() {
-  ivec2 b = here() * u_n;
-  vec4 m = vec4(0);
-  for (int j = 0; j < u_n; j++) for (int i = 0; i < u_n; i++) {
-    ivec2 k = b + ivec2(i, j);
-    if (k.x >= S || k.y >= S || !water(k)) continue;
-    vec2 v = abs(at(u_vel, k).xy), w = at(u_waves, k).xy, n = abs(20. * G * G * (w.x - w.y) * slope(u_waves, k));
-    m = max(m, vec4(max(v.x, v.y), max(n.x, n.y), max(abs(w.x), abs(w.y)), 0));
-  }
-  o = m;
-}`);
-    const BLOCKS = Math.ceil(S / 8);
-    const MOSTOF = program(`
-uniform sampler2D u_blocks;
-uniform int u_n;
-void main() {
-  vec4 m = vec4(0);
-  for (int j = 0; j < u_n; j++) for (int i = 0; i < u_n; i++) m = max(m, texelFetch(u_blocks, ivec2(i, j), 0));
-  o = m;
+  ivec2 k = here();
+  if (!water(k)) { o = vec4(0); return; }
+  vec2 v = abs(at(u_vel, k).xy), w = at(u_waves, k).xy, n = abs(20. * G * G * (w.x - w.y) * slope(u_waves, k));
+  o = vec4(max(v.x, v.y), max(n.x, n.y), max(abs(w.x), abs(w.y)), 0);
 }`);
 
     // (each cell: whether it's water, its share of its neighbours' pressure, how much of a ripple
@@ -2162,18 +2387,10 @@ void main() {
       T.there = field(gl.RGBA32F, gl.RGBA, null);
       T.back = field(gl.RGBA32F, gl.RGBA, null);
       T.waves = both(gl.RG32F, gl.RG, mix(2, wave, was));
-      T.blocks = K.texture(BLOCKS, BLOCKS, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
-      T.most = K.texture(1, 1, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
-      const all = [T.vel.next, T.p.next, T.div, T.course, T.ink.next, T.there, T.back, T.waves.next, T.blocks, T.most];
+      T.stats = field(gl.RGBA32F, gl.RGBA, null);
       // Where floats can't be drawn into after all, it's worked out on the canvas
-      if (!K.clear(...all)) return null;
-      T.read = gl.createBuffer();
-      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, T.read);
-      gl.bufferData(gl.PIXEL_PACK_BUFFER, 16, gl.STREAM_READ);
-      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-      T.told = null;
-      T.asked = null;
-      T.got = new Float32Array(4);
+      if (!K.clear(T.vel.next, T.p.next, T.div, T.course, T.ink.next, T.there, T.back, T.waves.next, T.stats)) return null;
+      T.watch = K.watch();
       return (sim = T);
     }
 
@@ -2187,33 +2404,15 @@ void main() {
       K.go();
     }
 
-    // What it was told of the steps before, if it's come; and asked again, of this one
-    function hear(T) {
-      const gl = T.K.gl;
-      if (T.asked && gl.clientWaitSync(T.asked.sync, 0, 0) !== gl.TIMEOUT_EXPIRED) {
-        gl.bindBuffer(gl.PIXEL_PACK_BUFFER, T.read);
-        gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, T.got);
-        gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-        gl.deleteSync(T.asked.sync);
-        T.told = { step: T.asked.step, fastest: T.got[0], nudging: T.got[1], highest: T.got[2] };
-        T.asked = null;
-      }
-    }
-    function ask(T) {
-      if (T.asked) return;
-      const gl = T.K.gl;
-      pass(T, MEASURE, T.blocks, (gl, P) => gl.uniform1i(P.u('u_n'), 8), { u_vel: T.vel.now, u_waves: T.waves.now });
-      pass(T, MOSTOF, T.most, (gl, P) => gl.uniform1i(P.u('u_n'), BLOCKS), { u_blocks: T.blocks });
-      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, T.read);
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, 0);
-      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-      T.asked = { step: steps, sync: gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0) };
-    }
-    // What it's been told, if it's of how things are since they were last started
-    const told = (T, since) => (T.told && T.told.step > since ? T.told : null);
+    // What it's been told of a step since it was last started: how fast the water's going, how
+    // hard the ripples push the inks, and how high they are
+    const told = (T, since) => {
+      const m = T.watch.since(since);
+      return m && { fastest: m[0], nudging: m[1], highest: m[2] };
+    };
 
     function stepOnCard(T, dt, spreading, wells) {
-      hear(T);
+      T.watch.hear();
       steps++;
       const keep = 1 - 0.5 * dt;
       // Ripples, as they've come, eight at a time
@@ -2306,7 +2505,10 @@ void main() {
           rippling = false;
         }
       }
-      if (flowing || rippling) ask(T);
+      if (flowing || rippling) {
+        pass(T, MEASURE, T.stats, null, { u_vel: T.vel.now, u_waves: T.waves.now });
+        T.watch.ask(T.stats, steps);
+      }
       return true;
     }
 

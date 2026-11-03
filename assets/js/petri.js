@@ -29,8 +29,6 @@
   // Where a box's middle is, from the corner of another
   const middle = (r, box) => [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
 
-  const ctx = canvas.getContext('2d');
-
   let scale = 1, dpr = 1, frames = 0;
   const cur = { x: -1e4, y: -1e4, present: false };
   let lastSnap = -1, lastSpawn = -1, lastMicro = -1, nextProbe = 2.2, lastFeel = 6;
@@ -263,16 +261,9 @@
     paintDen();
   }
   // It's under the Polaroid, so where the Polaroid is there's none of it
-  function cutOut() {
-    const k = dpr * scale, f = 1 / (scale * den.lift);
-    ctx.setTransform(k, 0, 0, k, 0, 0);
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    for (const [x, y] of den.quad) ctx.lineTo((x - den.x) * f + MID, (y - den.y) * f + MID);
-    ctx.closePath();
-    ctx.fill();
-    ctx.globalCompositeOperation = 'source-over';
+  function underneath() {
+    const f = 1 / (scale * den.lift);
+    return den.quad.map(([x, y]) => [(x - den.x) * f + MID, (y - den.y) * f + MID]);
   }
   function paintDen() {
     const c = den.c, night = glow.night, R = den.R, s = den.s, hideX = den.hx, hideY = den.hy;
@@ -1496,8 +1487,8 @@ void main() {
     while (acc >= SUB && n < 14) { step(SUB); acc -= SUB; n++; }
     if (n === 14) acc = 0;
     const busy = cur.present || leap || ready > 0.01 || den.state || strands.some(s => s.kind !== 'probe') || drops.length;
+    fizz.hole = den.out ? underneath() : null;
     if (busy || !(frames++ & 1)) fizz.draw();
-    if (den.out) cutOut();
   }
   function wake() {
     if (running || !arrived || (!seen && !den.out) || document.hidden) return;
