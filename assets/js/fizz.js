@@ -2185,7 +2185,10 @@ void main() {
               const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0], loaded = (nav && nav.loadEventEnd) || 0;
               if (calm >= 20 || now - since > 4000 || (loaded && now - loaded > 3000)) {
                 tried = true;
-                G = kit(layer(canvas ? canvas.width : 1, canvas ? canvas.height : 1));
+                // Off the page, and what's drawn's taken from it as a bitmap: copied straight
+                // from a WebGL canvas, Firefox swaps its red and blue
+                const w = canvas ? canvas.width : 1, h = canvas ? canvas.height : 1;
+                G = (window.OffscreenCanvas && kit(new OffscreenCanvas(w, h))) || kit(layer(w, h));
               }
             }
           } else if (!G || G.lost || G.ready()) return done(!!G && !G.lost);
@@ -2210,7 +2213,11 @@ void main() {
         ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(G.el, 0, 0);
+        if (G.el.transferToImageBitmap) {
+          const b = G.el.transferToImageBitmap();
+          ctx.drawImage(b, 0, 0);
+          b.close();
+        } else ctx.drawImage(G.el, 0, 0);
         return;
       }
       flat();

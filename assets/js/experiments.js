@@ -160,6 +160,192 @@
     return c;
   }
 
+  // ---- Drawn on the graphics card, where it can be ----
+  //
+  // What each is made of, a pixel at a time, is worked out there: one WebGL context for them all,
+  // on a canvas of its own, each drawing on it what it needs and copying that onto its own canvas,
+  // with whatever's drawn round it. It's only asked for once the page has come up and settled, as
+  // getting one can hold the page up a while, and its programs are built while the page goes on;
+  // till then, and wherever there's none (or only one without a graphics card, which is slower
+  // than a canvas), they're drawn as they always were.
+  const glsl = v => `vec3(${v.map(c => c.toFixed(6)).join(', ')})`;
+  const GLSL = `#version 300 es
+precision highp float;
+precision highp int;
+const vec3 LIGHT = ${glsl(LIGHT)}, HALF = ${glsl(HALF)};
+// Where this pixel's middle is, on the canvas it's for, from its top left
+uniform vec3 u_area;
+vec2 px() { return vec2(u_area.x + gl_FragCoord.x, u_area.y + u_area.z - gl_FragCoord.y); }
+out vec4 o;
+`;
+  const QUAD = `#version 300 es
+void main() { gl_Position = vec4(vec2(gl_VertexID & 1, gl_VertexID >> 1) * 2. - 1., 0, 1); }`;
+
+  const wanted = [];
+  // A program, to be built with the rest when there's a context
+  function program(src) {
+    const at = new Map();
+    const w = { src, p: null, u: n => { if (!at.has(n)) at.set(n, w.gl.getUniformLocation(w.p, n)); return at.get(n); } };
+    wanted.push(w);
+    return w;
+  }
+
+  let K = null, asked = false, built = false;
+  function kit() {
+    // Off the page, and what's drawn's taken from it as a bitmap: copied straight from a WebGL
+    // canvas, Firefox swaps its red and blue
+    const OPTS = { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false, failIfMajorPerformanceCaveat: true };
+    let el = null, gl = null, bitmaps = false;
+    try {
+      if (window.OffscreenCanvas) {
+        el = new OffscreenCanvas(1, 1);
+        gl = el.getContext('webgl2', OPTS);
+        bitmaps = !!gl;
+      }
+      if (!gl) {
+        el = layer(1, 1);
+        gl = el.getContext('webgl2', OPTS);
+      }
+    } catch (e) { return null; }
+    if (!gl) return null;
+    const k = { gl, el, lost: false };
+    // Lost, they're drawn as they were
+    el.addEventListener('webglcontextlost', () => {
+      k.lost = true;
+      redraw();
+    });
+    k.quick = gl.getExtension('KHR_parallel_shader_compile');
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, QUAD);
+    gl.compileShader(vs);
+    // Its programs are built one a frame, as building them all at once, the first time they're
+    // seen, can hold the page up for a good part of a second
+    k.build = w => {
+      const fs = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fs, GLSL + w.src);
+      gl.compileShader(fs);
+      w.gl = gl;
+      w.fs = fs;
+      w.p = gl.createProgram();
+      gl.attachShader(w.p, vs);
+      gl.attachShader(w.p, fs);
+      gl.linkProgram(w.p);
+    };
+    // Drawn in its bottom left, at the size wanted; it's only ever made bigger
+    k.use = (w, x, y, width, height) => {
+      if (el.width < width) el.width = width;
+      if (el.height < height) el.height = height;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, width, height);
+      gl.useProgram(w.p);
+      gl.uniform3f(w.u('u_area'), x, y, height);
+      k.width = width;
+      k.height = height;
+      return w;
+    };
+    // Or into a texture, all of it, where it can be (only some can be drawn into)
+    k.floats = !!gl.getExtension('EXT_color_buffer_float');
+    const target = t => {
+      if (!t.fb) {
+        t.fb = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, t.fb);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+        t.complete = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+      } else gl.bindFramebuffer(gl.FRAMEBUFFER, t.fb);
+      gl.viewport(0, 0, t.w, t.h);
+      return t.complete;
+    };
+    k.into = (w, t) => {
+      target(t);
+      gl.useProgram(w.p);
+      return w;
+    };
+    k.clear = (...ts) => {
+      gl.clearColor(0, 0, 0, 0);
+      return ts.every(t => target(t) && (gl.clear(gl.COLOR_BUFFER_BIT), true));
+    };
+    k.go = () => gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    // What was drawn, onto a canvas, where it's wanted there
+    k.put = (ctx, x, y, w = k.width, h = k.height) => {
+      if (!bitmaps) return ctx.drawImage(el, 0, el.height - k.height, k.width, k.height, x, y, w, h);
+      const b = el.transferToImageBitmap();
+      ctx.drawImage(b, 0, b.height - k.height, k.width, k.height, x, y, w, h);
+      b.close();
+    };
+    k.texture = (w, h, internal, format, type, data, linear) => {
+      const t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      const f = linear ? gl.LINEAR : gl.NEAREST;
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, f);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, f);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, internal, w, h, 0, format, type, data);
+      Object.assign(t, { w, h, format, type });
+      return t;
+    };
+    k.update = (t, data) => {
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, t.w, t.h, t.format, t.type, data);
+    };
+    k.bind = (w, name, unit, t) => {
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.uniform1i(w.u(name), unit);
+    };
+    return k;
+  }
+
+  // Whether it's all built yet, which is only asked of the graphics card, not waited for
+  function ready() {
+    if (built) return true;
+    const { gl, quick } = K;
+    if (quick && !wanted.every(w => gl.getProgramParameter(w.p, quick.COMPLETION_STATUS_KHR))) return false;
+    for (const w of wanted) {
+      if (!gl.getProgramParameter(w.p, gl.LINK_STATUS)) {
+        if (!gl.isContextLost()) console.warn('The experiments are drawn on canvases, as WebGL failed:', gl.getShaderInfoLog(w.fs) + gl.getProgramInfoLog(w.p));
+        K.lost = true;
+        return false;
+      }
+    }
+    return (built = true);
+  }
+
+  // Asked for once the page has loaded and its frames have come steadily a while (or it's been
+  // long enough); when it's built, each is drawn again with it
+  function prepare() {
+    if (asked || !wanted.length) return;
+    asked = true;
+    let since = 0, last = 0, calm = 0, made = false, next = 0;
+    const tick = now => {
+      if (!made) {
+        if (document.readyState === 'complete') {
+          since = since || now;
+          calm = last && now - last < 20 ? calm + 1 : 0;
+          last = now;
+          if (calm >= 20 || now - since > 4000) {
+            made = true;
+            K = kit();
+          }
+        }
+      } else if (!K || K.lost) return;
+      else if (next < wanted.length) K.build(wanted[next++]);
+      else if (ready()) return redraw();
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // The context, if it's ready to draw with
+  function card() {
+    return K && !K.lost && built && !K.gl.isContextLost() ? K : null;
+  }
+
+  function redraw() {
+    for (const thing of things) if (thing.w) thing.draw(true);
+  }
+
   // ---- Red is pain: a green plastic soldier, lying down, aiming at the pointer ----
   //
   // Moulded, so it's lit as a shape is: he's built once as a relief (a height for every point of
@@ -623,6 +809,97 @@
       bloodCtx.putImageData(bloodImage, 0, 0, x0, y0, x1 - x0 + 1, y1 - y0 + 1);
     }
 
+    // On the graphics card, him and his blood, a pixel at a time, from all that's known of him at
+    // each place in him, and how deep the blood is at each in the grid
+    const n4 = v => v.toFixed(5);
+    const BODY = program(`
+uniform sampler2D u_fa, u_fb, u_fc;
+uniform vec2 u_turn, u_mid, u_cast;
+uniform float u_s, u_shadow;
+uniform vec3 u_base;
+const vec2 FROM = vec2(${n4(X0)}, ${n4(Y0)}), SIZE = vec2(${HW}, ${HH});
+const float RES = ${n4(RES)}, PX = ${n4(PX)};
+
+void main() {
+  vec2 d = (px() - u_mid) / u_s;
+  float cs = u_turn.x, sn = u_turn.y;
+  vec2 l = vec2(PX + cs * d.x + sn * d.y, -sn * d.x + cs * d.y);
+  vec2 f = (l - FROM) * RES - .5;
+  float c = 0., hue = 0.;
+  vec4 A = vec4(0), B = vec4(0);
+  if (f.x >= 0. && f.y >= 0. && f.x < SIZE.x - 1. && f.y < SIZE.y - 1.) {
+    vec2 uv = (f + .5) / SIZE;
+    A = texture(u_fa, uv);
+    B = texture(u_fb, uv);
+    hue = texture(u_fc, uv).r;
+    c = A.x;
+  }
+  ivec2 si = ivec2((l - u_cast - FROM) * RES);
+  float sh = si.x >= 0 && si.y >= 0 && si.x < int(SIZE.x) && si.y < int(SIZE.y) ? texelFetch(u_fc, si, 0).g * u_shadow : 0.;
+  if (c <= .002 && sh <= .002) { o = vec4(0); return; }
+  if (c <= .002) { o = vec4(0, 0, 0, sh); return; }
+  float nl = length(A.yzw);
+  vec3 n = A.yzw / (nl > 0. ? nl : 1.);
+  vec3 a = vec3(cs * n.x - sn * n.y, sn * n.x + cs * n.y, n.z);
+  float diffuse = max(0., dot(a, LIGHT)), facing = max(0., dot(a, HALF));
+  float f2 = facing * facing, f4 = f2 * f2, f16 = f4 * f4 * f4 * f4;
+  float gloss = (f16 * f2 * .16 + f4 * .035) * B.w;
+  float lit = (.4 + .72 * diffuse) * (1. - B.x) * B.y;
+  float glow = B.z * (.25 + .5 * diffuse);
+  float alpha = c + (1. - c) * sh, tint = hue * lit;
+  vec3 col = c * (u_base * lit + vec3(12, 2, -8) * tint + vec3(72, 78, 20) * glow + vec3(255, 255, 230) * gloss);
+  o = vec4(clamp(col / alpha, 0., 255.) * alpha / 255., alpha);
+}`);
+    const BLOOD = program(`
+uniform sampler2D u_pool;
+uniform float u_dark;
+const float G = ${G}., STEP = ${G / (G * 2)};
+
+float at(ivec2 i) { return texelFetch(u_pool, i, 0).r; }
+float deep(vec2 x) {
+  x = clamp(x, 0., G - 1.001);
+  ivec2 i = ivec2(x);
+  vec2 t = x - vec2(i);
+  return mix(mix(at(i), at(i + ivec2(1, 0)), t.x), mix(at(i + ivec2(0, 1)), at(i + ivec2(1, 1)), t.x), t.y);
+}
+
+void main() {
+  vec2 x = px() * STEP - .5;
+  float h = deep(x);
+  if (h < .04) { o = vec4(0); return; }
+  float hx = deep(x + vec2(1, 0)) - deep(x - vec2(1, 0)), hy = deep(x + vec2(0, 1)) - deep(x - vec2(0, 1));
+  float slope = length(vec2(hx, hy)) * .5 * STEP + 1e-5;
+  float wet = clamp(.5 + (h - .08) / slope, 0., 1.);
+  if (wet <= .001) { o = vec4(0); return; }
+  float thick = smoothstep(.12, .9, h);
+  vec3 col = vec3(132, 16, 18) - vec3(80, 10, 10) * thick;
+  vec3 n = normalize(vec3(-hx * .9, -hy * .9, 1));
+  float diffuse = max(0., dot(n, LIGHT)), facing = max(0., dot(n, HALF));
+  float f3 = facing * facing * facing, f6 = f3 * f3, f12 = f6 * f6, f24 = f12 * f12;
+  float f90 = f24 * f24 * f24 * f12 * f6;
+  float shine = (f90 * 1.4 + f12 * .1) * wet;
+  col = col * (.7 + .4 * diffuse) + vec3(255, 240, 235) * shine;
+  if (u_dark > 0.) col *= .75;
+  o = vec4(clamp(col, 0., 255.) / 255. * wet, wet);
+}`);
+    // (all that's known of him, and the blood, on the graphics card, once they're there)
+    let onCard = null;
+    function cardFor(K) {
+      if (onCard && onCard.K === K) return onCard;
+      const gl = K.gl, pack = (...fields) => {
+        const out = new Float32Array(4 * n);
+        fields.forEach((f, c) => { for (let k = 0; k < n; k++) out[4 * k + c] = f[k]; });
+        return K.texture(HW, HH, gl.RGBA16F, gl.RGBA, gl.FLOAT, out, true);
+      };
+      return (onCard = {
+        K, a: pack(cover, nx, ny, nz), b: pack(crease, tone, thin, sheen), c: pack(hue, shade),
+        pool: K.texture(G, G, gl.R32F, gl.RED, gl.FLOAT, pool),
+      });
+    }
+    // Whether the blood was last painted by it, so if it's painted on the canvas again, it's all
+    // painted
+    let carded = false;
+
     // He's drawn at full resolution, or, while he's turning fast, where it can't be seen, at half
     let bodies = null;
     function resize() {
@@ -634,19 +911,13 @@
       bloodChanged = true;
     }
 
-    function paintBody(at) {
-      const { w, h, q } = at;
-      const data = at.image.data;
-      const s = Math.min(thing.w, thing.h) * SIZE * q;
+    // His shadow's cast away from the window, whichever way he's turned
+    const ox = 0.028, oy = 0.04;
+    // Where he, or his shadow, can be, drawn `s` long on a canvas w by h: round the box he's
+    // drawn in, turned as he is
+    function where(w, h, s) {
       const cx = w / 2, cy = h / 2;
       const cos = Math.cos(angle), sin = Math.sin(angle);
-      // His shadow's cast away from the window, whichever way he's turned
-      const ox = 0.028, oy = 0.04;
-      const sox = cos * ox + sin * oy, soy = -sin * ox + cos * oy;
-      const dark = night();
-      const base = dark ? [58, 76, 32] : [70, 92, 38];
-      const shadowAlpha = dark ? 0.5 : 0.3;
-      // Only where he, or his shadow, can be: round the box he's drawn in, turned as he is
       let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
       for (const [lx, ly] of [[X0, Y0], [X1, Y0], [X0, Y1], [X1, Y1]]) {
         const ex = lx - PX, ey = ly;
@@ -654,9 +925,20 @@
         x0 = Math.min(x0, sx); x1 = Math.max(x1, sx + ox * s);
         y0 = Math.min(y0, sy); y1 = Math.max(y1, sy + oy * s);
       }
-      // Only what's changed: where he was last time, cleared, and where he is now
-      const bx0 = Math.max(0, Math.floor(x0)), bx1 = Math.min(w, Math.ceil(x1));
-      const by0 = Math.max(0, Math.floor(y0)), by1 = Math.min(h, Math.ceil(y1));
+      return [Math.max(0, Math.floor(x0)), Math.max(0, Math.floor(y0)), Math.min(w, Math.ceil(x1)), Math.min(h, Math.ceil(y1))];
+    }
+
+    function paintBody(at) {
+      const { w, h, q } = at;
+      const data = at.image.data;
+      const s = Math.min(thing.w, thing.h) * SIZE * q;
+      const cx = w / 2, cy = h / 2;
+      const cos = Math.cos(angle), sin = Math.sin(angle);
+      const sox = cos * ox + sin * oy, soy = -sin * ox + cos * oy;
+      const dark = night();
+      const base = dark ? [58, 76, 32] : [70, 92, 38];
+      const shadowAlpha = dark ? 0.5 : 0.3;
+      const [bx0, by0, bx1, by1] = where(w, h, s);
       if (at.was) {
         const [ax0, ay0, ax1, ay1] = at.was;
         for (let y = ay0; y < ay1; y++) data.fill(0, 4 * (ax0 + w * y), 4 * (ax1 + w * y));
@@ -725,6 +1007,51 @@
       const due = bloodChanged && (force || now - bloodPainted >= 50);
       if (!force && !turned && !due) return;
       const dark = night();
+      const { ctx, w, h } = thing;
+      const side = Math.min(w, h);
+      const K = card();
+      if (K) {
+        const C = cardFor(K), gl = K.gl;
+        drawn = angle;
+        shown = bodies[0];
+        // All of the blood, as it's no more work than some of it
+        if (force || due || (turned && bloodChanged)) {
+          K.update(C.pool, pool);
+          const P = K.use(BLOOD, 0, 0, BR, BR);
+          gl.uniform1f(P.u('u_dark'), dark ? 1 : 0);
+          K.bind(P, 'u_pool', 0, C.pool);
+          K.go();
+          bloodCtx.clearRect(0, 0, BR, BR);
+          K.put(bloodCtx, 0, 0);
+          bloodChanged = false;
+          bloodPainted = now;
+          carded = true;
+        }
+        ctx.clearRect(0, 0, w, h);
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(blood, (w - side) / 2, (h - side) / 2, side, side);
+        const s = side * SIZE, [bx0, by0, bx1, by1] = where(w, h, s);
+        if (bx1 <= bx0 || by1 <= by0) return;
+        const cos = Math.cos(angle), sin = Math.sin(angle);
+        const P = K.use(BODY, bx0, by0, bx1 - bx0, by1 - by0);
+        gl.uniform2f(P.u('u_turn'), cos, sin);
+        gl.uniform2f(P.u('u_mid'), w / 2, h / 2);
+        gl.uniform2f(P.u('u_cast'), cos * ox + sin * oy, -sin * ox + cos * oy);
+        gl.uniform1f(P.u('u_s'), s);
+        gl.uniform1f(P.u('u_shadow'), dark ? 0.5 : 0.3);
+        gl.uniform3fv(P.u('u_base'), dark ? [58, 76, 32] : [70, 92, 38]);
+        K.bind(P, 'u_fa', 0, C.a);
+        K.bind(P, 'u_fb', 1, C.b);
+        K.bind(P, 'u_fc', 2, C.c);
+        K.go();
+        K.put(ctx, bx0, by0);
+        return;
+      }
+      // (all of it, if it was last painted on the graphics card)
+      if (carded) {
+        painted = [0, 0, BR - 1, BR - 1];
+        carded = false;
+      }
       if (force || turned) {
         drawn = angle;
         shown = bodies[fast && !force ? 1 : 0];
@@ -735,10 +1062,8 @@
         bloodChanged = false;
         bloodPainted = now;
       } else if (turned && bloodChanged) paintBlood(dark, under());
-      const { ctx, w, h } = thing;
       ctx.clearRect(0, 0, w, h);
       // The grid's the whole of what he's drawn on, square, in its middle
-      const side = Math.min(w, h);
       ctx.imageSmoothingEnabled = true;
       ctx.drawImage(blood, (w - side) / 2, (h - side) / 2, side, side);
       ctx.drawImage(shown.canvas, 0, 0, w, h);
@@ -988,6 +1313,81 @@
     }
 
 
+    // On the graphics card, the same, a pixel at a time: where the eye's line meets its skin, and
+    // how that's lit, from its skin and its slope there as they were worked out once
+    const BALL = program(`
+uniform mat3 u_m;
+uniform float u_r, u_c, u_outer2, u_ambient;
+uniform int u_steps;
+uniform sampler2D u_colour, u_normal;
+const int MAP = ${MAP};
+
+float gap(vec2 d, float d2, float z) {
+  float l2 = d2 + z * z, l = sqrt(l2);
+  vec3 q = u_m * vec3(d, z);
+  float t = clamp(q.z / l, -1., 0.99999);
+  float r = .95 + .06 * t - .09 * t * t - .2 * exp(-(1. - t) * 14.) - .1 * exp(-(1. + t) * 16.);
+  float across2 = dot(q.xy, q.xy);
+  if (across2 > 1e-6 * l2) {
+    float c = q.x / sqrt(across2), c2 = c * c;
+    r += .025 * c * (16. * c2 * c2 - 20. * c2 + 5.) * (across2 / l2) * (.6 - .4 * q.z / l);
+  }
+  return r - l;
+}
+
+bool meet(vec2 d, out vec3 q) {
+  float d2 = dot(d, d);
+  if (d2 >= u_outer2) return false;
+  float top = sqrt(u_outer2 - d2), stride = max(.05, top / 3.);
+  float out_ = top, outGap = 0., z = top, margin = -1.;
+  bool known = false;
+  for (int n = 0; n < u_steps && z > -top; n++) {
+    z -= stride;
+    float g = gap(d, d2, z);
+    if (g >= 0.) { margin = g; break; }
+    out_ = z; outGap = g; known = true;
+  }
+  if (margin < 0.) return false;
+  float into = z, intoGap = margin;
+  for (int n = 0; n < 2; n++) {
+    float mid = .5 * (out_ + into), g = gap(d, d2, mid);
+    if (g >= 0.) { into = mid; intoGap = g; }
+    else { out_ = mid; outGap = g; known = true; }
+  }
+  if (!known) outGap = gap(d, d2, out_);
+  q = u_m * vec3(d, out_ + (into - out_) * outGap / (outGap - intoGap));
+  return true;
+}
+
+ivec2 texel(vec3 q) {
+  float s = abs(q.x) + abs(q.y) + abs(q.z);
+  vec2 uv = q.xy / (s > 0. ? s : 1.);
+  if (q.z < 0.) uv = (1. - abs(uv.yx)) * vec2(uv.x < 0. ? -1. : 1., uv.y < 0. ? -1. : 1.);
+  return clamp(ivec2(floor((uv + 1.) * .5 * float(MAP))), 0, MAP - 1);
+}
+
+void main() {
+  vec2 d = (px() - u_c) / u_r;
+  vec3 q;
+  bool found = false;
+  // Just past its edge, its colour's carried on a pixel or two, so what's just inside the
+  // outline it's cut to, scaled up, isn't thinned by what's outside it
+  float l = length(d) * u_r;
+  for (int k = 0; k < u_steps / 4 + 1 && !found && (k == 0 || l > float(k)); k++) found = meet(k == 0 ? d : d * (1. - float(k) / l), q);
+  if (!found) { o = vec4(0); return; }
+  ivec2 t = texel(q);
+  vec3 n = texelFetch(u_normal, t, 0).xyz * u_m;
+  vec4 c = texelFetch(u_colour, t, 0);
+  float diffuse = max(0., dot(n, LIGHT)), facing = max(0., dot(n, HALF));
+  float f2 = facing * facing, f4 = f2 * f2, f8 = f4 * f4, f32 = f8 * f8 * f8 * f8;
+  float gloss = (f32 * f8 * f4 * .32 + f4 * f2 * .05) * (1. - c.a * .6);
+  float lit = (u_ambient + .82 * diffuse) * (1. - .15 * c.a) * (.8 + .2 * n.z);
+  o = vec4(clamp(c.rgb * lit + vec3(255, 250, 235) * gloss, 0., 255.) / 255., 1);
+}`);
+    // (its skin and slopes, on the graphics card, once it's there; and how it's turned, for it)
+    let onCard = null;
+    const turned = new Float32Array(9);
+
     // Its outline, as it's turned now, every way out from its middle. All of it that's seen that
     // way lies in the half of the plane through the eye's line and that way, and as all of it
     // is seen from its middle, the furthest it reaches that way is the furthest its skin does
@@ -1060,6 +1460,43 @@
 
       if (!maps) bake();
       const size = ball.size, c = size / 2;
+      // And cut to its outline, at the screen's own resolution: smooth, however coarse its colour
+      const cut = put => {
+        ctx.save();
+        ctx.beginPath();
+        const rim = outline();
+        for (let k = 0; k < RIM; k++) {
+          const a = (k / RIM) * TAU;
+          ctx.lineTo(x + Math.cos(a) * rim[k] * R, y + Math.sin(a) * rim[k] * R);
+        }
+        ctx.closePath();
+        ctx.clip();
+        put(x - c / ball.q, y - c / ball.q, size / ball.q, size / ball.q);
+        ctx.restore();
+      };
+      const K = card();
+      if (K) {
+        const gl = K.gl;
+        if (!onCard || onCard.K !== K) {
+          onCard = {
+            K, colour: K.texture(MAP, MAP, gl.RGBA32F, gl.RGBA, gl.FLOAT, maps.colour),
+            normal: K.texture(MAP, MAP, gl.RGB32F, gl.RGB, gl.FLOAT, maps.normal),
+          };
+        }
+        const P = K.use(BALL, 0, 0, size, size);
+        turned.set(m);
+        gl.uniformMatrix3fv(P.u('u_m'), false, turned);
+        gl.uniform1f(P.u('u_r'), r);
+        gl.uniform1f(P.u('u_c'), c);
+        gl.uniform1f(P.u('u_outer2'), OUTER2);
+        gl.uniform1f(P.u('u_ambient'), dark ? 0.24 : 0.32);
+        gl.uniform1i(P.u('u_steps'), 8);
+        K.bind(P, 'u_colour', 0, onCard.colour);
+        K.bind(P, 'u_normal', 1, onCard.normal);
+        K.go();
+        cut((dx, dy, dw, dh) => K.put(ctx, dx, dy, dw, dh));
+        return;
+      }
       const { inside, locals, from, to } = ball;
       // Where it was on each row, and three pixels round that, if that's all that's looked at
       const NEAR = 3;
@@ -1170,19 +1607,7 @@
         }
       }
       ball.canvas.getContext('2d').putImageData(ball.image, 0, 0);
-      // And cut to its outline, at the screen's own resolution: smooth, however coarse its colour
-      ctx.save();
-      ctx.beginPath();
-      const rim = outline();
-      for (let k = 0; k < RIM; k++) {
-        const a = (k / RIM) * TAU;
-        ctx.lineTo(x + Math.cos(a) * rim[k] * R, y + Math.sin(a) * rim[k] * R);
-      }
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(ball.canvas, x - c / ball.q, y - c / ball.q, size / ball.q, size / ball.q);
-      ctx.restore();
-
+      cut((dx, dy, dw, dh) => ctx.drawImage(ball.canvas, dx, dy, dw, dh));
     }
 
     function step(dt) {
@@ -1483,6 +1908,7 @@
       changed = true;
       const reach = 5 * G;
       spread *= G * G;
+      if (onCard) return splashes.push([x, y, by, spread]);
       for (let j = Math.max(1, Math.floor(y - reach)); j <= Math.min(N, y + reach); j++) {
         for (let i = Math.max(1, Math.floor(x - reach)); i <= Math.min(N, x + reach); i++) {
           wave[i + S * j] -= inside[i + S * j] * by * Math.exp(-((i - x) ** 2 + (j - y) ** 2) / spread);
@@ -1498,12 +1924,419 @@
       return (inside[k + S] ? f[k + S] : f[k]) - (inside[k - S] ? f[k - S] : f[k]);
     }
 
+    // ---- The same, on the graphics card ----
+    //
+    // Each of its fields a texture, and each step what it was on the canvas, a pass over every
+    // cell at once: the pressure's settled by updating every other cell, then the rest, in turn,
+    // which comes to the same as going along them in order. What it has to know to stop, that the
+    // water's stopped or the ripples are too low to see, it's told a frame or two late, without
+    // waiting: only what it learns of a step after anything's started it again goes.
+    const SIM = `
+uniform sampler2D u_cell;
+const float N = ${N}., G = ${G.toFixed(6)};
+const int S = ${S};
+ivec2 here() { return ivec2(gl_FragCoord.xy); }
+vec4 info(ivec2 k) { return texelFetch(u_cell, k, 0); }
+bool water(ivec2 k) { return info(k).x > 0.; }
+// Where a cell's worked out from: itself, if it's water; the water next to it, if it's just past
+// it, so the edge reads; or nowhere
+bool from_(out ivec2 k) {
+  k = here();
+  float c = info(k).w;
+  if (water(k)) return true;
+  if (c == 0.) return false;
+  k += c == 1. ? ivec2(-1, 0) : c == 2. ? ivec2(1, 0) : c == 3. ? ivec2(0, -1) : ivec2(0, 1);
+  return true;
+}
+vec4 at(sampler2D f, ivec2 k) { return texelFetch(f, k, 0); }
+vec4 between(sampler2D f, vec2 x) {
+  x = clamp(x, .5, N + .5);
+  ivec2 i = ivec2(x);
+  vec2 t = x - vec2(i);
+  return mix(mix(at(f, i), at(f, i + ivec2(1, 0)), t.x), mix(at(f, i + ivec2(0, 1)), at(f, i + ivec2(1, 1)), t.x), t.y);
+}
+// The way the surface slopes at a cell, flat where it meets the edge
+vec2 slope(sampler2D f, ivec2 k) {
+  float h = at(f, k).x;
+  ivec2 X = ivec2(1, 0), Y = ivec2(0, 1);
+  return vec2((water(k + X) ? at(f, k + X).x : h) - (water(k - X) ? at(f, k - X).x : h), (water(k + Y) ? at(f, k + Y).x : h) - (water(k - Y) ? at(f, k - Y).x : h));
+}
+`;
+    const MOST = 8;
+    const SPLASH = program(SIM + `
+uniform sampler2D u_waves;
+uniform vec4 u_drop[${MOST}];
+uniform int u_count;
+uniform float u_reach;
+void main() {
+  ivec2 k = here();
+  vec4 w = at(u_waves, k);
+  vec2 p = vec2(k);
+  if (water(k)) for (int n = 0; n < u_count; n++) {
+    vec4 d = u_drop[n];
+    if (p.x < floor(d.x - u_reach) || p.x > d.x + u_reach || p.y < floor(d.y - u_reach) || p.y > d.y + u_reach) continue;
+    vec2 e = p - d.xy;
+    w.x -= d.z * exp(-dot(e, e) / d.w);
+  }
+  o = w;
+}`);
+    const STIR = program(SIM + `
+uniform sampler2D u_vel;
+uniform float u_keep, u_stirring, u_reach, u_wide;
+uniform vec4 u_stir;
+void main() {
+  ivec2 k = here();
+  if (!water(k)) { o = vec4(0); return; }
+  vec2 v = at(u_vel, k).xy * u_keep, p = vec2(k);
+  if (u_stirring > 0. && p.x >= floor(u_stir.x - u_reach) && p.x <= u_stir.x + u_reach && p.y >= floor(u_stir.y - u_reach) && p.y <= u_stir.y + u_reach) {
+    vec2 e = p - u_stir.xy;
+    v += u_stir.zw * exp(-dot(e, e) / u_wide);
+  }
+  o = vec4(v, 0, 0);
+}`);
+    const ADVECT = program(SIM + `
+uniform sampler2D u_vel;
+uniform float u_dt;
+void main() {
+  ivec2 k = here();
+  o = water(k) ? vec4(between(u_vel, vec2(k) - u_dt * at(u_vel, k).xy).xy, 0, 0) : vec4(0);
+}`);
+    const DIVERGE = program(SIM + `
+uniform sampler2D u_vel;
+void main() {
+  ivec2 k = here(), X = ivec2(1, 0), Y = ivec2(0, 1);
+  o = water(k) ? vec4(-.5 * (at(u_vel, k + X).x - at(u_vel, k - X).x + at(u_vel, k + Y).y - at(u_vel, k - Y).y), 0, 0, 0) : vec4(0);
+}`);
+    const PRESS = program(SIM + `
+uniform sampler2D u_p, u_div;
+uniform int u_parity;
+void main() {
+  ivec2 k = here(), X = ivec2(1, 0), Y = ivec2(0, 1);
+  float p = at(u_p, k).x;
+  if (water(k) && ((k.x + k.y) & 1) == u_parity) p = (at(u_div, k).x + at(u_p, k - X).x + at(u_p, k + X).x + at(u_p, k - Y).x + at(u_p, k + Y).x) * info(k).y;
+  o = vec4(p, 0, 0, 0);
+}`);
+    const UNSQUEEZE = program(SIM + `
+uniform sampler2D u_vel, u_p;
+float p(ivec2 k, float h) { return water(k) ? at(u_p, k).x : h; }
+void main() {
+  ivec2 k = here(), X = ivec2(1, 0), Y = ivec2(0, 1);
+  if (!water(k)) { o = vec4(0); return; }
+  float h = at(u_p, k).x;
+  o = vec4(at(u_vel, k).xy - .5 * vec2(p(k + X, h) - p(k - X, h), p(k + Y, h) - p(k - Y, h)), 0, 0);
+}`);
+    // The way the inks go: with the water, out from each drop that's spreading, and on with each
+    // ripple, the way it's going
+    const COURSE = program(SIM + `
+uniform sampler2D u_vel, u_waves;
+uniform float u_rippling;
+uniform vec4 u_drop[${MOST}];
+uniform int u_count;
+void main() {
+  ivec2 k = here();
+  if (!water(k)) { o = vec4(0); return; }
+  vec2 c = at(u_vel, k).xy;
+  if (u_rippling > 0.) {
+    vec4 w = at(u_waves, k);
+    c -= 20. * G * G * (w.x - w.y) * slope(u_waves, k);
+  }
+  for (int n = 0; n < u_count; n++) {
+    vec2 d = vec2(k) - u_drop[n].xy;
+    c += d * u_drop[n].z / max(1.44 * G * G, dot(d, d));
+  }
+  o = vec4(c, 0, 0);
+}`);
+    const WELL = program(SIM + `
+uniform sampler2D u_ink;
+uniform vec4 u_drop[${MOST}], u_tint[${MOST}];
+uniform int u_count;
+void main() {
+  ivec2 k = here();
+  vec4 c = at(u_ink, k);
+  if (water(k)) for (int n = 0; n < u_count; n++) {
+    vec2 d = vec2(k) - u_drop[n].xy;
+    float d2 = dot(d, d), core = u_drop[n].z;
+    if (d2 >= core * core) continue;
+    c.rgb += (u_tint[n].rgb - c.rgb) * min(1., (core - max(1.2 * G, sqrt(d2))) * .8 / G);
+  }
+  o = c;
+}`);
+    const THERE = program(SIM + `
+uniform sampler2D u_old, u_course;
+uniform float u_dt;
+void main() {
+  ivec2 k;
+  o = from_(k) ? between(u_old, vec2(k) - u_dt * at(u_course, k).xy) : vec4(0);
+}`);
+    const BACK = program(SIM + `
+uniform sampler2D u_old, u_there, u_course;
+uniform float u_dt;
+void main() {
+  ivec2 k;
+  o = from_(k) ? 1.5 * at(u_old, k) - .5 * between(u_there, vec2(k) + u_dt * at(u_course, k).xy) : vec4(0);
+}`);
+    const CARRY = program(SIM + `
+uniform sampler2D u_old, u_back, u_course;
+uniform float u_dt, u_fade;
+void main() {
+  ivec2 k;
+  if (!from_(k)) { o = vec4(0); return; }
+  vec2 x = clamp(vec2(k) - u_dt * at(u_course, k).xy, .5, N + .5);
+  ivec2 i = ivec2(x);
+  vec4 a = at(u_old, i), b = at(u_old, i + ivec2(1, 0)), c = at(u_old, i + ivec2(0, 1)), d = at(u_old, i + ivec2(1, 1));
+  o = u_fade * max(min(min(a, b), min(c, d)), min(max(max(a, b), max(c, d)), between(u_back, x)));
+}`);
+    const FADE = program(SIM + `
+uniform sampler2D u_ink;
+uniform float u_fade;
+void main() { o = at(u_ink, here()) * u_fade; }`);
+    const WAVES = program(SIM + `
+uniform sampler2D u_waves;
+void main() {
+  ivec2 k = here(), X = ivec2(1, 0), Y = ivec2(0, 1);
+  if (!water(k)) { o = vec4(0); return; }
+  vec2 w = at(u_waves, k).xy;
+  float h = w.x;
+  float around = (water(k - X) ? at(u_waves, k - X).x - h : 0.) + (water(k + X) ? at(u_waves, k + X).x - h : 0.) + (water(k - Y) ? at(u_waves, k - Y).x - h : 0.) + (water(k + Y) ? at(u_waves, k + Y).x - h : 0.);
+  o = vec4((2. * h - w.y + .32 * G * G * around) * info(k).z, h, 0, 0);
+}`);
+    // How fast the water's going, how hard the ripples are pushing the inks, and how high they
+    // are, at most, eight cells by eight; then of those, all of it
+    const MEASURE = program(SIM + `
+uniform sampler2D u_vel, u_waves;
+uniform int u_n;
+void main() {
+  ivec2 b = here() * u_n;
+  vec4 m = vec4(0);
+  for (int j = 0; j < u_n; j++) for (int i = 0; i < u_n; i++) {
+    ivec2 k = b + ivec2(i, j);
+    if (k.x >= S || k.y >= S || !water(k)) continue;
+    vec2 v = abs(at(u_vel, k).xy), w = at(u_waves, k).xy, n = abs(20. * G * G * (w.x - w.y) * slope(u_waves, k));
+    m = max(m, vec4(max(v.x, v.y), max(n.x, n.y), max(abs(w.x), abs(w.y)), 0));
+  }
+  o = m;
+}`);
+    const BLOCKS = Math.ceil(S / 8);
+    const MOSTOF = program(`
+uniform sampler2D u_blocks;
+uniform int u_n;
+void main() {
+  vec4 m = vec4(0);
+  for (int j = 0; j < u_n; j++) for (int i = 0; i < u_n; i++) m = max(m, texelFetch(u_blocks, ivec2(i, j), 0));
+  o = m;
+}`);
+
+    // (each cell: whether it's water, its share of its neighbours' pressure, how much of a ripple
+    // it keeps, and which way the water is from it, if it's just past it)
+    const CELLS = new Float32Array(4 * cells);
+    for (let k = 0; k < cells; k++) {
+      CELLS[4 * k] = inside[k];
+      CELLS[4 * k + 1] = shared[k];
+      CELLS[4 * k + 2] = calm[k];
+    }
+    pastCells.forEach((k, n) => { CELLS[4 * k + 3] = [-1, 1, -S, S].indexOf(pastFrom[n] - k) + 1; });
+
+    // Its fields there, and how many steps it's taken there; and when it was last stirred, or
+    // rippled, so what it's told of a step before that isn't taken as now
+    let sim = null, steps = 0, stirredAt = 0, rippledAt = 0, onCard = false;
+    const splashes = [];
+    function simFor(K) {
+      if (sim && sim.K === K) return sim;
+      sim = null;
+      if (!K.floats) return null;
+      const gl = K.gl, T = { K };
+      const field = (internal, format, data) => K.texture(S, S, internal, format, gl.FLOAT, data);
+      const both = (internal, format, data) => ({ now: field(internal, format, data), next: field(internal, format, null), swap() { [this.now, this.next] = [this.next, this.now]; } });
+      const mix = (n, ...fs) => {
+        const out = new Float32Array(n * cells);
+        fs.forEach((f, c) => { for (let k = 0; k < cells; k++) out[n * k + c] = f[k]; });
+        return out;
+      };
+      // What it's got to, on the canvas, so it goes on from there
+      T.cell = K.texture(S, S, gl.RGBA32F, gl.RGBA, gl.FLOAT, CELLS);
+      T.vel = both(gl.RG32F, gl.RG, mix(2, u, v));
+      T.p = both(gl.R32F, gl.RED, p);
+      T.div = field(gl.R32F, gl.RED, null);
+      T.course = field(gl.RG32F, gl.RG, null);
+      T.ink = both(gl.RGBA32F, gl.RGBA, mix(4, ...ink));
+      T.there = field(gl.RGBA32F, gl.RGBA, null);
+      T.back = field(gl.RGBA32F, gl.RGBA, null);
+      T.waves = both(gl.RG32F, gl.RG, mix(2, wave, was));
+      T.blocks = K.texture(BLOCKS, BLOCKS, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
+      T.most = K.texture(1, 1, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
+      const all = [T.vel.next, T.p.next, T.div, T.course, T.ink.next, T.there, T.back, T.waves.next, T.blocks, T.most];
+      // Where floats can't be drawn into after all, it's worked out on the canvas
+      if (!K.clear(...all)) return null;
+      T.read = gl.createBuffer();
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, T.read);
+      gl.bufferData(gl.PIXEL_PACK_BUFFER, 16, gl.STREAM_READ);
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+      T.told = null;
+      T.asked = null;
+      T.got = new Float32Array(4);
+      return (sim = T);
+    }
+
+    // A pass, into a texture, with these in it
+    function pass(T, P, into, set, fields) {
+      const { K } = T, gl = K.gl;
+      K.into(P, into);
+      K.bind(P, 'u_cell', 0, T.cell);
+      Object.entries(fields).forEach(([n, t], i) => K.bind(P, n, i + 1, t));
+      if (set) set(gl, P);
+      K.go();
+    }
+
+    // What it was told of the steps before, if it's come; and asked again, of this one
+    function hear(T) {
+      const gl = T.K.gl;
+      if (T.asked && gl.clientWaitSync(T.asked.sync, 0, 0) !== gl.TIMEOUT_EXPIRED) {
+        gl.bindBuffer(gl.PIXEL_PACK_BUFFER, T.read);
+        gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, T.got);
+        gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+        gl.deleteSync(T.asked.sync);
+        T.told = { step: T.asked.step, fastest: T.got[0], nudging: T.got[1], highest: T.got[2] };
+        T.asked = null;
+      }
+    }
+    function ask(T) {
+      if (T.asked) return;
+      const gl = T.K.gl;
+      pass(T, MEASURE, T.blocks, (gl, P) => gl.uniform1i(P.u('u_n'), 8), { u_vel: T.vel.now, u_waves: T.waves.now });
+      pass(T, MOSTOF, T.most, (gl, P) => gl.uniform1i(P.u('u_n'), BLOCKS), { u_blocks: T.blocks });
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, T.read);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, 0);
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+      T.asked = { step: steps, sync: gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0) };
+    }
+    // What it's been told, if it's of how things are since they were last started
+    const told = (T, since) => (T.told && T.told.step > since ? T.told : null);
+
+    function stepOnCard(T, dt, spreading, wells) {
+      hear(T);
+      steps++;
+      const keep = 1 - 0.5 * dt;
+      // Ripples, as they've come, eight at a time
+      while (splashes.length) {
+        const some = splashes.splice(0, MOST);
+        pass(T, SPLASH, T.waves.next, (gl, P) => {
+          gl.uniform4fv(P.u('u_drop'), some.flat());
+          gl.uniform1i(P.u('u_count'), some.length);
+          gl.uniform1f(P.u('u_reach'), 5 * G);
+        }, { u_waves: T.waves.now });
+        T.waves.swap();
+        rippledAt = steps;
+      }
+      // Slowed to nothing, it's stopped, all of it
+      const heard = told(T, stirredAt);
+      if (!stir && flowing && heard && heard.fastest * keep < STOPPED) {
+        T.K.clear(T.vel.now, T.vel.next, T.p.now, T.p.next);
+        flowing = false;
+      } else if (stir || flowing) {
+        pass(T, STIR, T.vel.next, (gl, P) => {
+          gl.uniform1f(P.u('u_keep'), flowing ? keep : 1);
+          gl.uniform1f(P.u('u_stirring'), stir ? 1 : 0);
+          gl.uniform1f(P.u('u_reach'), 7 * G);
+          gl.uniform1f(P.u('u_wide'), 10 * G * G);
+          if (stir) gl.uniform4f(P.u('u_stir'), stir.x, stir.y, stir.dx, stir.dy);
+        }, { u_vel: T.vel.now });
+        T.vel.swap();
+        if (stir) stirredAt = steps;
+        stir = null;
+        flowing = true;
+        pass(T, ADVECT, T.vel.next, (gl, P) => gl.uniform1f(P.u('u_dt'), dt), { u_vel: T.vel.now });
+        T.vel.swap();
+        pass(T, DIVERGE, T.div, null, { u_vel: T.vel.now });
+        for (let n = 0; n < 12; n++) {
+          pass(T, PRESS, T.p.next, (gl, P) => gl.uniform1i(P.u('u_parity'), n & 1), { u_p: T.p.now, u_div: T.div });
+          T.p.swap();
+        }
+        pass(T, UNSQUEEZE, T.vel.next, null, { u_vel: T.vel.now, u_p: T.p.now });
+        T.vel.swap();
+      }
+
+      // Where it's welling up, it's all the new ink
+      if (spreading) {
+        pass(T, WELL, T.ink.next, (gl, P) => {
+          gl.uniform4fv(P.u('u_drop'), wells.flatMap(d => [d.x, d.y, d.core, 0]));
+          gl.uniform4fv(P.u('u_tint'), wells.flatMap(d => [...d.tint, 0]));
+          gl.uniform1i(P.u('u_count'), wells.length);
+        }, { u_ink: T.ink.now });
+        T.ink.swap();
+        changed = true;
+      }
+      uncarried += dt;
+      unfaded += dt;
+      carryNext = !carryNext;
+      if (carryNext) {
+        const nudged = told(T, rippledAt);
+        if (flowing || spreading || (rippling && !(nudged && nudged.nudging <= 0.02 * G))) {
+          pass(T, COURSE, T.course, (gl, P) => {
+            gl.uniform1f(P.u('u_rippling'), rippling ? 1 : 0);
+            if (wells.length) gl.uniform4fv(P.u('u_drop'), wells.flatMap(d => [d.x, d.y, d.out, 0]));
+            gl.uniform1i(P.u('u_count'), wells.length);
+          }, { u_vel: T.vel.now, u_waves: T.waves.now });
+          const set = (gl, P) => {
+            gl.uniform1f(P.u('u_dt'), uncarried);
+            gl.uniform1f(P.u('u_fade'), Math.exp(-unfaded / 50));
+          };
+          pass(T, THERE, T.there, set, { u_old: T.ink.now, u_course: T.course });
+          pass(T, BACK, T.back, set, { u_old: T.ink.now, u_there: T.there, u_course: T.course });
+          pass(T, CARRY, T.ink.next, set, { u_old: T.ink.now, u_back: T.back, u_course: T.course });
+          T.ink.swap();
+          unfaded = 0;
+          changed = true;
+        } else if (unfaded >= 0.25) {
+          // Nothing's moving it: it only thins
+          pass(T, FADE, T.ink.next, (gl, P) => gl.uniform1f(P.u('u_fade'), Math.exp(-unfaded / 50)), { u_ink: T.ink.now });
+          T.ink.swap();
+          unfaded = 0;
+          changed = true;
+        }
+        uncarried = 0;
+      }
+
+      if (rippling) {
+        changed = true;
+        pass(T, WAVES, T.waves.next, null, { u_waves: T.waves.now });
+        T.waves.swap();
+        const heard = told(T, rippledAt);
+        if (heard && heard.highest < FLAT) {
+          T.K.clear(T.waves.now, T.waves.next);
+          rippling = false;
+        }
+      }
+      if (flowing || rippling) ask(T);
+      return true;
+    }
+
     function step(dt) {
+      const K = card(), T = K && simFor(K);
+      // (what it's got to on the graphics card's lost with it, and it goes on from where it was
+      // before it was there)
+      if (onCard && !T) splashes.length = 0;
+      onCard = !!T;
       clock += dt;
       if (clock >= due) {
         letFall();
         // The first few close together, so it isn't long bare
         due = clock + (clock < 3 ? 0.9 : 2.5 + random() * 4.5);
+      }
+      if (T) {
+        // Each drop that's spreading: where, how far its new ink's welled up, and how hard it's
+        // pushing what's round it out (at most eight; there are never that many at once)
+        let spreading = false;
+        const wells = [];
+        for (const drop of drops) {
+          drop.age += dt;
+          const q = drop.flow * Math.exp(-drop.age / 0.5);
+          if (q < G * G) continue;
+          spreading = true;
+          const spread = drop.flow * 0.5 * (1 - Math.exp(-drop.age / 0.5));
+          wells.push({ x: drop.x, y: drop.y, core: Math.sqrt(spread / Math.PI) * 0.8, out: q / TAU, tint: drop.ink.map(c => c * drop.strength) });
+        }
+        while (drops.length && drops[0].age > 4) drops.shift();
+        return stepOnCard(T, dt, spreading, wells.slice(0, MOST));
       }
       const keep = 1 - 0.5 * dt;
       let fastest = 0;
@@ -1691,6 +2524,55 @@
       c.restore();
     }
 
+    // On the graphics card, each cell's colour, from its inks, and the ripples it's seen through
+    const SURFACE = program(`
+uniform sampler2D u_ink, u_waves, u_cell;
+uniform vec3 u_base, u_paper;
+uniform float u_dark, u_rippling;
+const float N = ${N}., G = ${G.toFixed(6)};
+
+bool water(ivec2 k) { return texelFetch(u_cell, k, 0).x > 0.; }
+float wave(ivec2 k) { return texelFetch(u_waves, k, 0).x; }
+float slope(ivec2 k, ivec2 by) {
+  float h = wave(k);
+  return (water(k + by) ? wave(k + by) : h) - (water(k - by) ? wave(k - by) : h);
+}
+
+void main() {
+  ivec2 k = ivec2(px()) + 1;
+  if (!water(k)) { o = vec4(0); return; }
+  float gx = 0., gy = 0.;
+  ivec2 sk = k;
+  if (u_rippling > 0.) {
+    gx = slope(k, ivec2(1, 0)) * G;
+    gy = slope(k, ivec2(0, 1)) * G;
+    sk = ivec2(clamp(floor(vec2(k) + vec2(gx, gy) * 5. * G + .5), 1., N));
+    if (!water(sk)) sk = k;
+  }
+  vec3 ink = texelFetch(u_ink, sk, 0).rgb;
+  vec3 c = u_base * exp(-ink);
+  if (u_dark > 0.) {
+    float cover = 1. - exp(-(ink.r + ink.g + ink.b) * .9);
+    c = u_paper * (1. - cover) + c * .7 * cover;
+  }
+  if (u_rippling > 0.) {
+    float tilt = -(gx * .55 + gy * .65);
+    c = c * (1. + tilt * .6) + pow(max(0., tilt), 2.) * (u_dark > 0. ? 200. : 300.);
+  }
+  o = vec4(clamp(c, 0., 255.) / 255., 1);
+}`);
+    // Where it's worked out on the canvas, what's drawn's sent there to be drawn
+    let shown = null;
+    function shownFor(K) {
+      if (shown && shown.K === K) return shown;
+      const gl = K.gl;
+      return (shown = {
+        K, cell: K.texture(S, S, gl.RGBA32F, gl.RGBA, gl.FLOAT, CELLS),
+        ink: K.texture(S, S, gl.RGBA32F, gl.RGBA, gl.FLOAT, null), waves: K.texture(S, S, gl.R32F, gl.RED, gl.FLOAT, null),
+        inks: new Float32Array(4 * cells),
+      });
+    }
+
     function draw(force) {
       const { ctx, w } = thing;
       if (!shape || (!force && !changed)) return;
@@ -1698,6 +2580,38 @@
       const dark = night();
       if (force || !paper) paper = wetPaper();
       if (force || !overlay) paintOverlay(dark);
+      const K = card();
+      if (K) {
+        const gl = K.gl;
+        let fields = onCard && sim && sim.K === K ? { cell: sim.cell, ink: sim.ink.now, waves: sim.waves.now } : null;
+        if (!fields) {
+          const C = shownFor(K), [r, g, b] = ink;
+          for (let k = 0; k < cells; k++) {
+            C.inks[4 * k] = r[k];
+            C.inks[4 * k + 1] = g[k];
+            C.inks[4 * k + 2] = b[k];
+          }
+          K.update(C.ink, C.inks);
+          if (rippling) K.update(C.waves, wave);
+          fields = C;
+        }
+        const P = K.use(SURFACE, 0, 0, N, N);
+        gl.uniform3fv(P.u('u_base'), dark ? [236, 234, 228] : paper);
+        gl.uniform3fv(P.u('u_paper'), paper);
+        gl.uniform1f(P.u('u_dark'), dark ? 1 : 0);
+        gl.uniform1f(P.u('u_rippling'), rippling ? 1 : 0);
+        K.bind(P, 'u_ink', 0, fields.ink);
+        K.bind(P, 'u_waves', 1, fields.waves);
+        K.bind(P, 'u_cell', 2, fields.cell);
+        K.go();
+        ctx.clearRect(0, 0, w, w);
+        ctx.save();
+        ctx.clip(shape);
+        K.put(ctx, box.x, box.y, box.size, box.size);
+        ctx.restore();
+        ctx.drawImage(overlay, 0, 0);
+        return;
+      }
       const [ar, ag, ab] = ink;
       const data = tinyImage.data;
       const base = dark ? [236, 234, 228] : paper;
@@ -1782,6 +2696,7 @@
         }
         wave.fill(0);
         was.fill(0);
+        if (onCard && sim) sim.K.clear(sim.waves.now, sim.waves.next);
         if (thing.w) thing.draw(true);
       };
       work();
@@ -1896,6 +2811,108 @@
       moved = true;
     }
 
+    // On the graphics card, all of that a pixel at a time: each clip's wire, which is on top, and
+    // the shadow, from how much wire there is just off that way
+    const f = n => n.toFixed(4);
+    const CLIPS = program(`
+uniform vec2 u_hook[${COUNT + 1}];
+uniform float u_unit;
+uniform vec2 u_size, u_cast;
+uniform vec3 u_room, u_paper;
+uniform float u_shadow;
+uniform int u_count, u_taps;
+const float WIRE = ${f(WIRE)}, LOW = ${f(LOW)};
+const vec3 LEGS[${LEGS.length / 3}] = vec3[](${Array.from({ length: LEGS.length / 3 }, (_, k) => `vec3(${f(LEGS[3 * k])}, ${f(LEGS[3 * k + 1])}, ${f(LEGS[3 * k + 2])})`).join(', ')});
+const vec4 TURNS[${TURNS.length / 4}] = vec4[](${Array.from({ length: TURNS.length / 4 }, (_, k) => `vec4(${f(TURNS[4 * k])}, ${f(TURNS[4 * k + 1])}, ${f(TURNS[4 * k + 2])}, ${f(TURNS[4 * k + 3])})`).join(', ')});
+
+float wire(vec2 P, out vec2 g) {
+  float best = 1e9;
+  g = vec2(0);
+  for (int k = 0; k < LEGS.length(); k++) {
+    vec2 d = P - vec2(LEGS[k].x, clamp(P.y, LEGS[k].y, LEGS[k].z));
+    float l = length(d);
+    if (l < best) { best = l; g = d; }
+  }
+  for (int k = 0; k < TURNS.length(); k++) {
+    vec2 d = P - TURNS[k].xy;
+    if (d.y * TURNS[k].w < 0.) continue;
+    float l = max(length(d), 1e-9), e = abs(l - TURNS[k].z);
+    if (e < best) { best = e; g = d / l * (l > TURNS[k].z ? 1. : -1.); }
+  }
+  float l = length(g);
+  if (l > 0.) g /= l;
+  return best;
+}
+
+// How much of a clip's wire is over a place, and which way it faces there
+float clip(int i, vec2 p, out vec3 n) {
+  vec2 d = u_hook[i + 1] - u_hook[i], f = d / max(length(d), 1e-9), e = vec2(-f.y, f.x), q = p - u_hook[i];
+  vec2 P = vec2(dot(q, e) / u_unit + .5, dot(q, f) / u_unit + LOW);
+  n = vec3(0);
+  if (P.x < -.1 || P.x > 1.1 || P.y < -.1 || P.y > 4.1) return 0.;
+  vec2 g;
+  float w = wire(P, g), t = min(1., w / WIRE);
+  n = vec3((g.x * e.x + g.y * f.x) * t, (g.x * e.y + g.y * f.y) * t, sqrt(1. - t * t));
+  return min(1., (WIRE - w) * u_unit + .5);
+}
+
+float mask(vec2 p) {
+  vec3 n;
+  float most = 0.;
+  for (int i = 0; i < u_count; i++) most = max(most, clip(i, p, n));
+  return most;
+}
+
+bool over(int a, int b, vec2 p) {
+  if (abs(a - b) != 1) return a > b;
+  int i = min(a, b), j = i + 1;
+  vec2 d = u_hook[j] - u_hook[i];
+  return d.x * (p.y - u_hook[j].y) - d.y * (p.x - u_hook[j].x) > 0. ? a == i : a == j;
+}
+
+vec3 shade(vec3 n) {
+  float facing = max(0., dot(n, HALF));
+  float f2 = facing * facing, f4 = f2 * f2, f8 = f4 * f4, f16 = f8 * f8;
+  float glint = f16 * .75 + f4 * .12;
+  float side = min(1., (1. - n.z) * 1.3) * (.85 + .3 * dot(n.xy, LIGHT.xy));
+  return mix(u_room, u_paper, side) + vec3(255, 255, 250) * glint;
+}
+
+void main() {
+  vec2 p = px();
+  int top = -1, under = -1;
+  float tc = 0., uc = 0.;
+  vec3 tn = vec3(0), un = vec3(0);
+  for (int i = 0; i < u_count; i++) {
+    vec3 n;
+    float c = clip(i, p, n);
+    if (c <= 0.) continue;
+    if (top < 0 || over(i, top, p)) {
+      under = top; uc = tc; un = tn;
+      top = i; tc = c; tn = n;
+    } else if (under < 0 || over(i, under, p)) {
+      under = i; uc = c; un = n;
+    }
+  }
+  float sh = 0.;
+  vec2 c = floor(p) - u_cast;
+  if (c.x > 0. && c.y > 0. && c.x < u_size.x - 1. && c.y < u_size.y - 1.) {
+    // (a loop, as the five of it written out are five times the work to build)
+    const vec3 TAPS[5] = vec3[](vec3(0, 0, .5), vec3(-1, 0, .125), vec3(1, 0, .125), vec3(0, -1, .125), vec3(0, 1, .125));
+    for (int t = 0; t < u_taps; t++) sh += mask(c + .5 + TAPS[t].xy) * TAPS[t].z;
+  }
+  sh *= u_shadow;
+  if (sh <= .003 && tc <= 0.) { o = vec4(0); return; }
+  vec4 C = vec4(0, 0, 0, sh);
+  if (under >= 0) C = C * (1. - uc) + vec4(shade(un), 1) * uc;
+  if (top >= 0) C = C * (1. - tc) + vec4(shade(tn), 1) * tc;
+  o = vec4(clamp(C.rgb / C.a, 0., 255.) * C.a / 255., C.a);
+}`);
+    const hooks = new Float32Array(2 * (COUNT + 1));
+    // (whether what's on its canvas was last drawn that way, so if it's drawn as it was again,
+    // all of it is)
+    let carded = false;
+
     // Which of two clips lies on the other, here: where two are hooked, each lies over the other
     // on one side of the hook and under it on the other; anywhere else, the later one's on top
     function over(a, b, px, py) {
@@ -1943,10 +2960,34 @@
       // (and its shadow, a little way off)
       x1 = Math.min(w, x1 + Math.abs(sx) + 2); y1 = Math.min(h, y1 + Math.abs(sy) + 2);
       x0 = Math.max(0, x0 - 2); y0 = Math.max(0, y0 - 2);
+      const K = card();
+      if (K) {
+        ctx.clearRect(0, 0, w, h);
+        carded = true;
+        if (x1 <= x0 || y1 <= y0) return;
+        const P = K.use(CLIPS, x0, y0, x1 - x0, y1 - y0), gl = K.gl;
+        for (let i = 0; i <= COUNT; i++) {
+          hooks[2 * i] = x[i];
+          hooks[2 * i + 1] = y[i];
+        }
+        gl.uniform2fv(P.u('u_hook'), hooks);
+        gl.uniform1f(P.u('u_unit'), unit);
+        gl.uniform2f(P.u('u_size'), w, h);
+        gl.uniform2f(P.u('u_cast'), sx, sy);
+        gl.uniform3fv(P.u('u_room'), room);
+        gl.uniform3fv(P.u('u_paper'), paper);
+        gl.uniform1f(P.u('u_shadow'), shadowAlpha);
+        gl.uniform1i(P.u('u_count'), COUNT);
+        gl.uniform1i(P.u('u_taps'), 5);
+        K.go();
+        K.put(ctx, x0, y0);
+        return;
+      }
       if (was) {
         for (let py = was[1]; py < was[3]; py++) data.fill(0, 4 * (was[0] + w * py), 4 * (was[2] + w * py));
       }
-      const dirty = was ? [Math.min(x0, was[0]), Math.min(y0, was[1]), Math.max(x1, was[2]), Math.max(y1, was[3])] : [0, 0, w, h];
+      const dirty = was && !carded ? [Math.min(x0, was[0]), Math.min(y0, was[1]), Math.max(x1, was[2]), Math.max(y1, was[3])] : [0, 0, w, h];
+      carded = false;
       was = [x0, y0, x1, y1];
 
       // Each clip's wire, where it is
@@ -2185,9 +3226,7 @@
   });
 
   // Night and day draw them differently
-  new MutationObserver(() => {
-    for (const thing of things) if (thing.w) thing.draw(true);
-  }).observe(root, { attributes: true, attributeFilter: ['class'] });
+  new MutationObserver(redraw).observe(root, { attributes: true, attributeFilter: ['class'] });
 
   still.addEventListener('change', () => {
     for (const thing of things) {
@@ -2197,4 +3236,6 @@
       wake(thing);
     }
   });
+
+  prepare();
 })();
