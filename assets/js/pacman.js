@@ -31,13 +31,15 @@
     const UP = -Math.PI / 2;
     const fizz = Fizz({
       body: BODY, most: MAX_STRANDS, bit: BIT, blob: { la: UP, takeAt: UP },
-      area: () => [innerWidth, innerHeight], under: 300, blend: 'lighter',
+      area: () => [innerWidth, innerHeight], under: 300,
       aside: () => canvas.width / dpr + 100,
       grainAt: (size, S) => [Math.round(blob.x * S - size / 2), Math.round((blob.y - top) * S - size / 2)],
       aims: { line: () => [gag.x, gag.y] },
       haul, parted, stepBit: stepDrop,
     });
     const { blob, strands, drops, tracks, glow, edge, at, flash, ripple } = fizz;
+    // Ready to be drawn on the graphics card well before it's wanted, and not as it comes up
+    fizz.prepare();
     let meal = null, bait = null, line = null, gag = null;
     let prey = null, sated = 0;
     let canvas = null, dpr = 1, top = 0;

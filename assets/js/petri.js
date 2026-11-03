@@ -38,7 +38,7 @@
     body: BODY, most: MAX_STRANDS, snap: { stretch: 1.75, len: 285 },
     time: still ? 40 : rand(0, 100), flow: rand(0, 50), probeAt: Math.random() * 6.28,
     blob: { x: MID, y: MID, tx: MID, ty: MID, next: 3, grow: still ? 1 : 0.2 },
-    area: () => [VIEW, VIEW], bound: glass, parted, stepBit: stepDrop, lit: litGlass,
+    area: () => [VIEW, VIEW], bound: glass, parted, stepBit: stepDrop, glass: litGlass,
   });
   const { blob, strands, drops, glow, edge, at, flash, ripple } = fizz;
   fizz.focus = cur;
@@ -78,13 +78,21 @@
     Object.assign(den, { R, dx, dy, ex, ey, nx, ny, quad: [world(-hw, -hh), world(hw, -hh), world(hw, hh), world(-hw, hh)],
       hx: ex - nx * R * 0.86, hy: ey - ny * R * 0.86, px: ex - nx * R * 0.3, py: ey - ny * R * 0.3 });
   }
+  // What it draws of itself in and by the Polaroid, the rise and its eyes, is only ever over
+  // the Polaroid or just off its edge, so that's all its canvas covers
   function sizeDen() {
     const box = table.getBoundingClientRect(), s = Math.min(dpr, 1.5);
-    den.canvas.width = Math.round(box.width * s); den.canvas.height = Math.round(box.height * s);
-    den.s = s; den.W = box.width; den.H = box.height;
     plot();
+    const xs = den.quad.map(q => q[0]), ys = den.quad.map(q => q[1]), m = den.R * 1.2;
+    const x0 = Math.floor(Math.max(Math.min(...xs) - m, 0)), y0 = Math.floor(Math.max(Math.min(...ys) - m, 0));
+    const x1 = Math.ceil(Math.min(Math.max(...xs) + m, box.width)), y1 = Math.ceil(Math.min(Math.max(...ys) + m, box.height));
+    Object.assign(den.canvas.style, { left: `${x0}px`, top: `${y0}px`, width: `${x1 - x0}px`, height: `${y1 - y0}px` });
+    const cw = Math.max(Math.round((x1 - x0) * s), 1), ch = Math.max(Math.round((y1 - y0) * s), 1);
+    if (den.canvas.width !== cw) den.canvas.width = cw;
+    if (den.canvas.height !== ch) den.canvas.height = ch;
+    Object.assign(den, { s: den.canvas.width / (x1 - x0), bx: x0, by: y0, W: x1 - x0, H: y1 - y0 });
   }
-  function openDen() {
+  function makeDen() {
     if (!den.canvas) {
       den.canvas = layer();
       den.canvas.className = 'fizz-leap';
@@ -94,6 +102,9 @@
       den.eyes = fizz.eyes();
     }
     sizeDen();
+  }
+  function openDen() {
+    makeDen();
     den.canvas.style.display = 'block';
   }
   // Round the wall, faster and faster, on the glass: it's what's holding it to the curve. The
@@ -139,6 +150,49 @@
     blob.sizeV += 0.8;
     flash(blob.x, blob.y, 0.5);
     if (hovered) setHovered(true);
+  }
+  // Where it comes from in the first place: as if it had been under the Polaroid all along.
+  // Not till everything it'll want is ready: drawing it on the graphics card, its skin for when
+  // it's on him, and the first time anything's drawn of it, since the first time costs the most.
+  // All that's done while there's nothing to see, and nothing to drop a frame of.
+  let arrived = false;
+  function getReady() {
+    if (arrived) return;
+    const K = kit, leaps = polaroid && polaroid.offsetWidth && matchMedia('(hover: hover)').matches;
+    if (leaps && !(K && (K.gpu || K.pending === false) && K.warm)) return setTimeout(() => whenIdle(getReady), 100);
+    fizz.draw();
+    warmDen().then(() => requestAnimationFrame(arrive));
+  }
+  // What it shows on and by the Polaroid, drawn once unseen, and wiped again, or what was drawn
+  // to get it ready is the first thing that's seen
+  function warmDen() {
+    if (!polaroid || !polaroid.offsetWidth || !window.createImageBitmap) return Promise.resolve();
+    makeDen();
+    Object.assign(den, { bulge: 1, p: 1 });
+    paintDen();
+    Object.assign(den, { bulge: 0, p: 0 });
+    return createImageBitmap(den.canvas).then(b => b.close(), () => {}).then(paintDen);
+  }
+  function arrive() {
+    if (arrived) return;
+    arrived = true;
+    canvas.style.transition = 'opacity 0.8s';
+    canvas.style.opacity = '';
+    // Already on him, before there was anything here to notice
+    if (about && about.matches(':hover')) hovered = true;
+    if (polaroid && polaroid.offsetWidth) {
+      blob.grow = 1;
+      strands.length = drops.length = 0;
+      // What shows of it on and by the Polaroid comes up with the rest of it, and not first
+      makeDen();
+      den.canvas.style.opacity = 0;
+      openDen();
+      getComputedStyle(den.canvas).opacity;
+      den.canvas.style.transition = 'opacity 0.8s';
+      den.canvas.style.opacity = '';
+      Object.assign(den, { out: true, state: 'hidden', t: 0, p: 0, bulge: 0, quiet: 0, x: den.hx, y: den.hy, tilt: Math.atan2(-den.ny, -den.nx), lift: 1 });
+    }
+    wake();
   }
   function roam(dt) {
     const go = (x, y, f) => { den.x = den.x0 + (x - den.x0) * f; den.y = den.y0 + (y - den.y0) * f; };
@@ -223,8 +277,8 @@
   function paintDen() {
     const c = den.c, night = glow.night, R = den.R, s = den.s, hideX = den.hx, hideY = den.hy;
     const quad = () => { c.moveTo(...den.quad[0]); for (let i = 1; i < 4; i++) c.lineTo(...den.quad[i]); c.closePath(); };
-    c.setTransform(s, 0, 0, s, 0, 0);
-    c.clearRect(0, 0, den.W, den.H);
+    c.setTransform(s, 0, 0, s, -den.bx * s, -den.by * s);
+    c.clearRect(den.bx, den.by, den.W, den.H);
     // Under the photo, it shows as a rise in it, lit on one side
     if (den.bulge > 0.01) {
       c.save();
@@ -244,7 +298,7 @@
     }
     if (den.p > 0.02) {
       c.save();
-      c.beginPath(); c.rect(0, 0, den.W, den.H); quad(); c.clip('evenodd');
+      c.beginPath(); c.rect(den.bx, den.by, den.W, den.H); quad(); c.clip('evenodd');
       paintEyes(c, den.ex + den.nx * R * 0.2, den.ey + den.ny * R * 0.2, R);
       c.restore();
     }
@@ -272,17 +326,9 @@
     }
     return r;
   }
-  // The lit side of the glass, nearest it, inside the rim
-  function litGlass(c, level, r) {
-    if (den.out) return;
-    const near = c.createRadialGradient(blob.x, blob.y, r * 0.6, blob.x, blob.y, WALL * 1.5);
-    near.addColorStop(0, `rgba(${LIT}, ${(0.5 * level).toFixed(3)})`);
-    near.addColorStop(1, `rgba(${LIT}, 0)`);
-    c.strokeStyle = near;
-    c.lineWidth = 2.2;
-    c.beginPath();
-    c.arc(MID, MID, WALL + 4.5, 0, 6.29);
-    c.stroke();
+  // The glass, inside the rim, for its near side to be lit
+  function litGlass() {
+    return den.out ? null : { x: MID, y: MID, r: WALL + 4.5, width: 2.2, far: WALL * 1.5 };
   }
 
   function spawnReach(toward, k) {
@@ -581,16 +627,32 @@
   // What it leaves where it's been: a film, thin in the middle and thick at the edge, because
   // that's where a drying liquid leaves what was in it. It's only a picture, so it costs
   // nothing to hold or to fade.
+  // How much of it there is at each level of what was there, looked up and not worked out:
+  // below the level it fades out within a little, and above it it's thicker towards the edge
+  const FILM = (() => {
+    const lo = -0.15, step = 1 / 2048, n = Math.ceil((1.2 - lo) / step) + 1, a = new Float32Array(n);
+    for (let k = 0; k < n; k++) { const v = lo + k * step; a[k] = v > 0 ? 0.5 + 0.5 * bell(v, 0.22) : bell(v, 0.06); }
+    return { lo, inv: 1 / step, a, last: n - 1 };
+  })();
   function paintFilm(el, F) {
     const W = el.width, H = el.height, c = el.getContext('2d'), image = c.createImageData(W, H), px = image.data;
-    const [r, g, b] = glow.night ? [130, 200, 140] : [74, 62, 38], most = glow.night ? 0.16 : 0.22;
+    const [r, g, b] = glow.night ? [130, 200, 140] : [74, 62, 38], most = 255 * (glow.night ? 0.16 : 0.22);
+    // Patchy, as it dries: three waves across it, each split into a part along and a part down
+    // so that nothing's worked out a pixel at a time
+    const waves = [[0.043, 0.021, 1], [0.017, -0.051, 1], [0.11, 0.083, 0.6]];
+    const along = waves.map(([kx, , w]) => [Float32Array.from({ length: W }, (_, x) => w * Math.sin(x * kx)), Float32Array.from({ length: W }, (_, x) => w * Math.cos(x * kx))]);
+    const down = waves.map(([, ky]) => [Float32Array.from({ length: H }, (_, y) => Math.cos(y * ky)), Float32Array.from({ length: H }, (_, y) => Math.sin(y * ky))]);
+    const { lo, inv, a: A, last } = FILM, [[s0, c0], [s1, c1], [s2, c2]] = along;
     for (let y = 1; y < H - 1; y++) {
-      for (let x = 0; x < W; x++) {
-        const i = y * W + x, v = F[i] - 0.42, a = v > 0 ? 0.5 + 0.5 * bell(v, 0.22) : bell(v, 0.06);
+      const C0 = down[0][0][y], S0 = down[0][1][y], C1 = down[1][0][y], S1 = down[1][1][y], C2 = down[2][0][y], S2 = down[2][1][y];
+      for (let x = 0, i = y * W; x < W; x++, i++) {
+        const v = F[i] - 0.42;
+        if (v < lo) continue;
+        const a = A[Math.min(((v - lo) * inv + 0.5) | 0, last)];
         if (a < 0.01) continue;
-        const o = i * 4, patchy = Math.sin(x * 0.043 + y * 0.021) + Math.sin(x * 0.017 - y * 0.051) + 0.6 * Math.sin(x * 0.11 + y * 0.083);
+        const o = i * 4, patchy = s0[x] * C0 + c0[x] * S0 + s1[x] * C1 + c1[x] * S1 + s2[x] * C2 + c2[x] * S2;
         px[o] = r; px[o + 1] = g; px[o + 2] = b;
-        px[o + 3] = 255 * most * a * clamp(0.6 + 0.3 * patchy, 0, 1);
+        px[o + 3] = most * a * clamp(0.6 + 0.3 * patchy, 0, 1);
       }
     }
     c.putImageData(image, 0, 0);
@@ -598,7 +660,7 @@
   function paintFilms() {
     const K = kit;
     K.filmNight = glow.night;
-    const F = K.run.G.slice(), { W, H } = K;
+    const F = K.run.G.slice(), { W } = K;
     for (const d of K.run.drops) {
       if (!d.left) continue;
       const L = Math.ceil(d.r);
@@ -699,24 +761,35 @@
     stage.setAttribute('aria-hidden', 'true');
     const [midX, midY] = middle(r, box), turned = getComputedStyle(polaroid).rotate;
     Object.assign(stage.style, { left: `${midX - sw / 2}px`, top: `${midY - sh / 2}px`, width: `${sw}px`, height: `${sh}px`, rotate: turned });
-    const skin = layer(W, H), top = layer(Math.round(sw * px), Math.round(sh * px)), film = layer(W, H), mark = layer(W, H);
+    // Its skin's on a canvas to begin with, and moves to the graphics card when there's time
+    const skin = layer(W, H);
+    const top = layer(Math.round(sw * px), Math.round(sh * px)), film = layer(W, H), mark = layer(W, H);
     const halo = document.createElement('div');
     film.style.opacity = mark.style.opacity = halo.style.opacity = 0;
     stage.append(film, mark, halo, skin, top);
-    const fly = layer(Math.round(box.width * Math.min(dpr, 1.5)), Math.round(box.height * Math.min(dpr, 1.5)));
+    const fly = layer(1, 1);
     fly.className = 'fizz-leap';
     table.append(fly, stage);
-    const fx = pad + w * HEAD.x, fy = pad + h * HEAD.y, N = W * H, a = (parseFloat(turned) || 0) * Math.PI / 180;
+    const fx = pad + w * HEAD.x, fy = pad + h * HEAD.y, a = (parseFloat(turned) || 0) * Math.PI / 180;
     // At night it lights what's round it. Over a wide area and held for as long as he's pointed
     // at, so it's left to the browser and not drawn every frame.
     Object.assign(halo.style, { position: 'absolute', left: `${fx - U * 3.4}px`, top: `${fy - U * 3.4}px`, width: `${U * 6.8}px`, height: `${U * 6.8}px`, background: 'radial-gradient(closest-side, rgba(190, 236, 165, 0.3), rgba(190, 236, 165, 0.1) 45%, rgba(190, 236, 165, 0))' });
     const ox = fx - sw / 2, oy = fy - sh / 2;
-    const c = skin.getContext('2d'), image = c.createImageData(W, H);
-    const cx = fx / g, cy = fy / g, lump = buildLump(W, H, cx, cy, U / g), K = { stage, top, fly, c, fc: fly.getContext('2d'), tc: top.getContext('2d'), image, data: new Uint32Array(image.data.buffer), rgba: image.data,
-      W, H, g, U, fx, fy, cx, cy, px, inset: pad / g, near: extent(lump, W, H), film, mark, halo, filmNight: null, stress: 0, blink: 0, angle: a, flyScale: fly.width / box.width, height: new Float32Array(N), wx: new Float32Array(W), wy: new Float32Array(H),
+    const cx = fx / g, cy = fy / g, lump = buildLump(W, H, cx, cy, U / g), K = { stage, top, fly, skin, gpu: null, fc: fly.getContext('2d'), tc: top.getContext('2d'),
+      W, H, g, U, fx, fy, cx, cy, px, inset: pad / g, near: extent(lump, W, H), film, mark, halo, filmNight: null, stress: 0, blink: 0, angle: a, domes: [],
       landX: midX + ox * Math.cos(a) - oy * Math.sin(a), landY: midY + ox * Math.sin(a) + oy * Math.cos(a),
       run: buildRun(W, H, cx, cy, R / g), lump, specks: buildSpecks(), env: buildRoom(glow.night), tails: Array.from({ length: 5 }, () => rand(0, 6.28)),
       strings: Array.from({ length: 8 }, (_, i) => ({ a: ((i + rand(0.2, 0.8)) / 8) * 6.28, snap: rand(0.4, 0.8), width: rand(0.05, 0.1) * U / g })) };
+    // The way it flies is only as big as from anywhere in the dish to where it lands, with room
+    // for the shadow it throws, and it's that and not the whole table that's drawn over
+    const from = canvas.getBoundingClientRect(), dx = from.left - box.left + MID * scale, dy = from.top - box.top + MID * scale, reach = WALL * scale * 1.3, M = BODY * scale * 4;
+    const x0 = Math.floor(Math.max(Math.min(dx - reach, K.landX) - M, 0)), y0 = Math.floor(Math.max(Math.min(dy - reach, K.landY) - M, 0));
+    const x1 = Math.ceil(Math.min(Math.max(dx + reach, K.landX) + M, box.width)), y1 = Math.ceil(Math.min(Math.max(dy + reach, K.landY) + M, box.height)), s = Math.min(dpr, 1.5);
+    Object.assign(fly.style, { left: `${x0}px`, top: `${y0}px`, width: `${x1 - x0}px`, height: `${y1 - y0}px` });
+    fly.width = Math.max(Math.round((x1 - x0) * s), 1);
+    fly.height = Math.max(Math.round((y1 - y0) * s), 1);
+    Object.assign(K, { flyScale: fly.width / (x1 - x0), flyBox: [x0, y0, x1 - x0, y1 - y0] });
+    flatSkin(K, true);
     return K;
   }
 
@@ -725,48 +798,24 @@
   // the way the edge of any water does. At night it still stands in front of what's behind
   // it: it's what it gives off that shows.
   function paintSkin(t, peel) {
-    const K = kit, { W, H, cx, cy, height, rgba: px, lump: C } = K, { G, A, drops } = K.run;
-    if (K.env.night !== glow.night) K.env = buildRoom(glow.night);
-    const { room, w: EW, h: EH, night } = K.env, cells = K.U / K.g;
+    const K = kit, { W, H, cx, cy } = K, { drops } = K.run;
+    if (K.gpu && K.gpu.lost) flatSkin(K);
+    if (K.env.night !== glow.night) { K.env = buildRoom(glow.night); if (K.gpu) K.gpu.room(K.env); }
+    const { w: EW, h: EH, night } = K.env, cells = K.U / K.g;
     // It hits, flattens further than it can hold, and draws back a little. Pulled off him it
     // draws in on itself, and the thin of it goes first.
     const m = ease(FACE.spread, FACE.gather, t), pull = ease(0, 1, peel), iso = 0.42 + 0.55 * Math.exp(-t * 20) - 0.09 * Math.exp(-t * 6) * Math.cos(t * 17) - 0.025 * m * Math.sin(fizz.time * 1.25) + 0.6 * peel * peel;
     const spreading = t < 0.22, shrink = 1 + 2.4 * pull, zoom = (1 + 2.2 * m) * shrink, solid = m >= 1 && t >= DROPS && !peel;
     // Never still: slow swells going through it, and it's what makes it a liquid
-    const wx = K.wx, wy = K.wy, scaleX = K.g / K.U, heave = 0.09 * ease(0.4, 1, m);
-    for (let x = 0; x < W; x++) wx[x] = Math.sin(x * scaleX * 2.6 + fizz.time * 1.3) + 0.6 * Math.sin(x * scaleX * 5.1 - fizz.time * 1.9);
-    for (let y = 0; y < H; y++) wy[y] = Math.sin(y * scaleX * 2.2 - fizz.time * 1.1) + 0.6 * Math.sin(y * scaleX * 4.7 + fizz.time * 1.7);
+    const scaleX = K.g / K.U, heave = 0.09 * ease(0.4, 1, m);
     const { x0, x1, y0, y1 } = solid ? K.near : { x0: 0, x1: W - 1, y0: 0, y1: H - 1 };
-    K.c.clearRect(0, 0, W, H);
-    K.data.fill(0);
-    height.fill(0);
-    for (let y = y0; y <= y1; y++) {
-      for (let i = y * W + x0, x = x0; x <= x1; x++, i++) {
-        let value;
-        if (solid) value = C[i] + heave * (wx[x] + wy[y]);
-        else {
-          const dx = x - cx, dy = y - cy;
-          value = 0;
-          if (m < 1) value = sample(G, W, H, cx + dx * zoom, cy + dy * zoom) * (1 - m);
-          if (m > 0) value += ((peel ? sample(C, W, H, cx + dx * shrink, cy + dy * shrink) : C[i]) + heave * (wx[x] + wy[y])) * m;
-        }
-        const over = (value - iso) / 0.5;
-        if (over <= 0) continue;
-        let v = over >= 1 ? 1 + 0.16 * Math.min(over - 1, 7) : Math.sqrt(1 - (1 - over) * (1 - over));
-        if (spreading) v *= clamp((t - A[i]) / 0.03, 0, 1);
-        height[i] = v;
-      }
-    }
-    // Stamped on after: a dome that stands up off whatever's there
+    // Stamped on after: domes that stand up off whatever's there, as [x, y, radius, height]
+    const domes = K.domes;
+    domes.length = 0;
     const dome = (x, y, r, tall) => {
-      const L = Math.ceil(r), ix = Math.round(x), iy = Math.round(y), inv = 1 / (r * r);
+      const L = Math.ceil(r), ix = Math.round(x), iy = Math.round(y);
       if (ix - L < 1 || iy - L < 1 || ix + L >= W - 1 || iy + L >= H - 1) return;
-      for (let v = -L; v <= L; v++) for (let u = -L; u <= L; u++) {
-        const d = u * u + v * v;
-        if (d >= r * r) continue;
-        const i = (iy + v) * W + ix + u, h = tall * Math.sqrt(1 - d * inv);
-        if (h > height[i]) height[i] = h;
-      }
+      domes.push(ix, iy, r, tall);
     };
     if (!solid) {
       for (const d of drops) {
@@ -797,10 +846,50 @@
     // hit, and all of it for a moment after. It's torn just the same pulling away.
     const struck = 0.42 * Math.exp(-t * 2.4), hurt = 0.3 * Math.sin(Math.PI * Math.min(peel * 1.1, 1));
     K.stress = night ? Math.max(struck, hurt) : 0;
+    // Its shadow, cast a little way from each of three heights
     const a0 = K.angle, sx = glow.x * Math.cos(a0) + glow.y * Math.sin(a0), sy = -glow.x * Math.sin(a0) + glow.y * Math.cos(a0), d1 = cells * 0.035;
-    const at1 = Math.round(sy * d1) * W + Math.round(sx * d1), at2 = Math.round(sy * d1 * 2.2) * W + Math.round(sx * d1 * 2.2), at3 = Math.round(sy * d1 * 3.6) * W + Math.round(sx * d1 * 3.6);
-    const [sr, sg, sb] = night ? [3, 5, 6] : [28, 34, 44], cast = night ? 0.4 : 0.42;
+    const off = [1, 2.2, 3.6].map(k => [Math.round(sx * d1 * k), Math.round(sy * d1 * k)]);
+    const shade = night ? [3, 5, 6] : [28, 34, 44], cast = night ? 0.4 : 0.42;
     const K2 = 6.4, far = EH * 0.5, lx = -0.42, ly = -0.62, hz = 1.66, hl = 1 / Math.sqrt(lx * lx + ly * ly + hz * hz), in0 = K.inset, rx = EW / (W - in0 * 2), ry = EH / (H - in0 * 2);
+    if (K.gpu) {
+      K.gpu.paint({ cx, cy, m, zoom, shrink, heave, iso, t, scaleX, time: fizz.time, solid, peel: !!peel, spreading, domes, x0, y0, x1, y1,
+        K2, far, lx, ly, hz, hl, in0, rx, ry, cells, struck, hurt, cast, night, shade, off });
+      return;
+    }
+
+    const { height, rgba: px, lump: C } = K, { G, A } = K.run, room = K.env.room, wx = K.wx, wy = K.wy;
+    for (let x = 0; x < W; x++) wx[x] = Math.sin(x * scaleX * 2.6 + fizz.time * 1.3) + 0.6 * Math.sin(x * scaleX * 5.1 - fizz.time * 1.9);
+    for (let y = 0; y < H; y++) wy[y] = Math.sin(y * scaleX * 2.2 - fizz.time * 1.1) + 0.6 * Math.sin(y * scaleX * 4.7 + fizz.time * 1.7);
+    K.c.clearRect(0, 0, W, H);
+    K.data.fill(0);
+    height.fill(0);
+    for (let y = y0; y <= y1; y++) {
+      for (let i = y * W + x0, x = x0; x <= x1; x++, i++) {
+        let value;
+        if (solid) value = C[i] + heave * (wx[x] + wy[y]);
+        else {
+          const dx = x - cx, dy = y - cy;
+          value = 0;
+          if (m < 1) value = sample(G, W, H, cx + dx * zoom, cy + dy * zoom) * (1 - m);
+          if (m > 0) value += ((peel ? sample(C, W, H, cx + dx * shrink, cy + dy * shrink) : C[i]) + heave * (wx[x] + wy[y])) * m;
+        }
+        const over = (value - iso) / 0.5;
+        if (over <= 0) continue;
+        let v = over >= 1 ? 1 + 0.16 * Math.min(over - 1, 7) : Math.sqrt(1 - (1 - over) * (1 - over));
+        if (spreading) v *= clamp((t - A[i]) / 0.03, 0, 1);
+        height[i] = v;
+      }
+    }
+    for (let k = 0; k < domes.length; k += 4) {
+      const ix = domes[k], iy = domes[k + 1], r = domes[k + 2], tall = domes[k + 3], L = Math.ceil(r), inv = 1 / (r * r);
+      for (let v = -L; v <= L; v++) for (let u = -L; u <= L; u++) {
+        const d = u * u + v * v;
+        if (d >= r * r) continue;
+        const i = (iy + v) * W + ix + u, h = tall * Math.sqrt(1 - d * inv);
+        if (h > height[i]) height[i] = h;
+      }
+    }
+    const [at1, at2, at3] = off.map(([x, y]) => y * W + x), [sr, sg, sb] = shade;
     for (let y = Math.max(y0, 1); y <= Math.min(y1, H - 2); y++) {
       const line = y * W;
       for (let x = Math.max(x0, 1); x <= Math.min(x1, W - 2); x++) {
@@ -837,12 +926,262 @@
     K.c.putImageData(K.image, 0, 0, x0, y0, x1 - x0 + 1, y1 - y0 + 1);
   }
 
+  // ---- Its skin, on the graphics card ----
+
+  // The same sums as paintSkin's, a pixel at a time, which is what a graphics card is for: how
+  // high it stands at each point, kept as two bytes of a picture, and then how that's lit.
+  // Where there's no WebGL, or it's lost, it's done in the page's own time, as before.
+  const SKIN_VS = `#version 300 es
+void main() { vec2 q = vec2(gl_VertexID & 1, gl_VertexID >> 1); gl_Position = vec4(q * 2. - 1., 0., 1.); }
+`;
+  const SKIN_HEIGHT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform highp sampler2D u_G;
+uniform highp sampler2D u_A;
+uniform highp sampler2D u_C;
+uniform highp sampler2D u_D;
+uniform vec2 u_size;
+uniform vec2 u_c;
+uniform vec4 u_k;
+uniform vec4 u_j;
+uniform ivec4 u_f;
+out vec4 o;
+float at(highp sampler2D s, int x, int y) { return texelFetch(s, ivec2(x, y), 0).r; }
+float sampled(highp sampler2D s, float x, float y) {
+  float fx = floor(x), fy = floor(y);
+  int ix = int(fx), iy = int(fy);
+  if (ix < 0 || iy < 0 || ix >= int(u_size.x) - 1 || iy >= int(u_size.y) - 1) return 0.;
+  float u = x - fx, v = y - fy, a = at(s, ix, iy), b = at(s, ix + 1, iy), c = at(s, ix, iy + 1), d = at(s, ix + 1, iy + 1);
+  float top = a + (b - a) * u, under = c + (d - c) * u;
+  return top + (under - top) * v;
+}
+void main() {
+  int x = int(gl_FragCoord.x), y = int(u_size.y) - 1 - int(gl_FragCoord.y);
+  float fx = float(x), fy = float(y), m = u_k.x, heave = u_k.w, sc = u_j.z, tm = u_j.w;
+  float swell = sin(fx * sc * 2.6 + tm * 1.3) + .6 * sin(fx * sc * 5.1 - tm * 1.9) + sin(fy * sc * 2.2 - tm * 1.1) + .6 * sin(fy * sc * 4.7 + tm * 1.7);
+  float value = 0.;
+  if (u_f.x == 1) value = at(u_C, x, y) + heave * swell;
+  else {
+    float dx = fx - u_c.x, dy = fy - u_c.y;
+    if (m < 1.) value = sampled(u_G, u_c.x + dx * u_k.y, u_c.y + dy * u_k.y) * (1. - m);
+    if (m > 0.) value += ((u_f.y == 1 ? sampled(u_C, u_c.x + dx * u_k.z, u_c.y + dy * u_k.z) : at(u_C, x, y)) + heave * swell) * m;
+  }
+  float over = (value - u_j.x) / .5, h = 0.;
+  if (over > 0.) {
+    h = over >= 1. ? 1. + .16 * min(over - 1., 7.) : sqrt(1. - (1. - over) * (1. - over));
+    if (u_f.z == 1) h *= clamp((u_j.y - at(u_A, x, y)) / .03, 0., 1.);
+  }
+  for (int k = 0; k < u_f.w; k++) {
+    vec4 d = texelFetch(u_D, ivec2(k, 0), 0);
+    float u = fx - d.x, v = fy - d.y, L = ceil(d.z), dd = u * u + v * v;
+    if (abs(u) > L || abs(v) > L || dd >= d.z * d.z) continue;
+    h = max(h, d.w * sqrt(1. - dd / (d.z * d.z)));
+  }
+  float q = floor(clamp(h / 2.5, 0., 1.) * 65535. + .5), hi = floor(q / 256.);
+  o = vec4(hi / 255., (q - hi * 256.) / 255., 0., 1.);
+}
+`;
+  const SKIN_LIGHT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform highp sampler2D u_H;
+uniform highp sampler2D u_R;
+uniform vec2 u_size;
+uniform vec2 u_c;
+uniform vec4 u_l1;
+uniform vec4 u_l2;
+uniform vec4 u_l3;
+uniform vec4 u_l4;
+uniform vec4 u_l5;
+uniform vec3 u_shade;
+uniform ivec4 u_o1;
+uniform ivec2 u_o3;
+uniform ivec2 u_env;
+out vec4 o;
+float height(int x, int y) {
+  if (x < 0 || y < 0 || x >= int(u_size.x) || y >= int(u_size.y)) return 0.;
+  vec2 v = texelFetch(u_H, ivec2(x, int(u_size.y) - 1 - y), 0).rg;
+  return (v.x * 65280. + v.y * 255.) / 65535. * 2.5;
+}
+void main() {
+  int x = int(gl_FragCoord.x), y = int(u_size.y) - 1 - int(gl_FragCoord.y);
+  float fx = float(x), fy = float(y), h = height(x, y);
+  float K2 = u_l1.x, far = u_l1.y, lx = u_l1.z, ly = u_l1.w, hz = u_l2.x, hl = u_l2.y, in0 = u_l2.z, rx = u_l2.w;
+  float ry = u_l3.x, cells = u_l3.y, t = u_l3.z, m = u_l3.w, struck = u_l4.x, hurt = u_l4.y, shed = u_l4.z, night = u_l4.w;
+  if (h < .006) {
+    float dark = min(height(x + u_o1.x, y + u_o1.y), 1.) * .5 + clamp(height(x + u_o1.z, y + u_o1.w) - .5, 0., 1.) * .35 + clamp(height(x + u_o3.x, y + u_o3.y) - .95, 0., .5) * .3;
+    float a = dark > .004 ? shed * dark : 0.;
+    o = vec4(u_shade / 255. * a, a);
+    return;
+  }
+  float nx = (height(x - 1, y) - height(x + 1, y)) * K2, ny = (height(x, y - 1) - height(x, y + 1)) * K2;
+  float c = 1. / sqrt(nx * nx + ny * ny + 1.), steep = 1. - c, fresnel = steep * steep * steep;
+  int ex = clamp(int((fx - in0) * rx - nx * c * far), 0, u_env.x - 1), ey = clamp(int((fy - in0) * ry - ny * c * far), 0, u_env.y - 1);
+  float seen = texelFetch(u_R, ivec2(ex, ey), 0).r;
+  float facing = max((nx * lx + ny * ly + hz) * c * hl, 0.), f2 = facing * facing, f4 = f2 * f2, f8 = f4 * f4, spec = f8 * f8 * f8 * f8 * f8;
+  float reflect = (.2 + .8 * fresnel) * seen, body = 1. - exp(-h * 9.), r, g, b, a;
+  if (night > .5) {
+    float sc = u_l5.x, tm = u_l5.y, swell = sin(fx * sc * 2.6 + tm * 1.3) + .6 * sin(fx * sc * 5.1 - tm * 1.9) + sin(fy * sc * 2.2 - tm * 1.1) + .6 * sin(fy * sc * 4.7 + tm * 1.7);
+    float ringAt = length(vec2(fx - u_c.x, fy - u_c.y)) / cells - 11. * t, ring = t < .9 ? .5 * exp(-(ringAt / .8) * (ringAt / .8)) * exp(-t * 3.) : 0.;
+    float deep = min(h, 1.6) / 1.6, cloud = .14 + .1 * deep, em = body * (cloud + .55 * steep + .08 * swell * m + struck + hurt + ring), lamp = reflect * .7 + spec * .3;
+    r = 10. + 182. * em + 255. * lamp; g = 26. + 226. * em + 228. * lamp; b = 20. + 150. * em + 196. * lamp;
+    a = (1. - exp(-h * h * 3.2)) * (.86 + .14 * steep);
+  } else {
+    float lit = spec * .8 + reflect * .9, thin = 1. - body;
+    r = (12. + 29. * thin) * (1. - lit) + 226. * lit;
+    g = (30. + 86. * thin) * (1. - lit) + 232. * lit;
+    b = (24. + 58. * thin) * (1. - lit) + 222. * lit;
+    a = max(1. - exp(-h * h * 3.2), lit * (1. - exp(-h * h * 3.2)));
+  }
+  a = clamp(a, 0., 1.);
+  o = vec4(clamp(vec3(r, g, b), 0., 255.) / 255. * a, a);
+}
+`;
+  function skinner(el, W, H) {
+    let gl = null;
+    try { gl = el.getContext('webgl2', { premultipliedAlpha: true, antialias: false, depth: false, stencil: false, failIfMajorPerformanceCaveat: true }); } catch (e) { return null; }
+    if (!gl) return null;
+    const build = fs => {
+      const p = gl.createProgram();
+      const parts = [[gl.VERTEX_SHADER, SKIN_VS], [gl.FRAGMENT_SHADER, fs]].map(([type, src]) => {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        gl.attachShader(p, s);
+        return s;
+      });
+      gl.linkProgram(p);
+      const at = new Map();
+      return { p, parts, u: n => { if (!at.has(n)) at.set(n, gl.getUniformLocation(p, n)); return at.get(n); } };
+    };
+    // Built while the page goes on, where that's allowed: it's done in idle time, well before
+    // it's needed, and if it isn't ready when it is, the skin's done on a canvas instead
+    const rise = build(SKIN_HEIGHT), light = build(SKIN_LIGHT), quick = gl.getExtension('KHR_parallel_shader_compile');
+    let done = false;
+    const field = (w, h, data, format = gl.R32F, layout = gl.RED) => {
+      const t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, format, w, h, 0, layout, gl.FLOAT, data);
+      return t;
+    };
+    const tall = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tall);
+    gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RG8, W, H);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tall, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    const vao = gl.createVertexArray();
+    let G = null, A = null, C = null, R = null, env = [1, 1], D = null, most = 0;
+    const S = { lost: false };
+    el.addEventListener('webglcontextlost', () => { S.lost = true; });
+    const bind = (prog, unit, name, t) => { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t); gl.uniform1i(prog.u(name), unit); };
+    const only = (x0, y0, x1, y1) => { gl.enable(gl.SCISSOR_TEST); gl.scissor(x0, H - 1 - y1, x1 - x0 + 1, y1 - y0 + 1); };
+    const wipe = () => { gl.disable(gl.SCISSOR_TEST); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); };
+    return Object.assign(S, {
+      ready() {
+        if (done || S.lost) return done;
+        if (quick && ![rise, light].every(q => gl.getProgramParameter(q.p, quick.COMPLETION_STATUS_KHR))) return false;
+        for (const q of [rise, light]) {
+          if (!gl.getProgramParameter(q.p, gl.LINK_STATUS)) {
+            if (!gl.isContextLost()) console.warn('The skin is drawn on a canvas, as WebGL failed:', q.parts.map(s => gl.getShaderInfoLog(s)).join('\n') + gl.getProgramInfoLog(q.p));
+            S.lost = true;
+            return false;
+          }
+        }
+        return (done = true);
+      },
+      // What it's made from, once
+      load(K) { G = field(W, H, K.run.G); A = field(W, H, K.run.A); C = field(W, H, K.lump); S.room(K.env); },
+      room(e) { if (R) gl.deleteTexture(R); R = field(e.w, e.h, e.room); env = [e.w, e.h]; },
+      clear() { gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, W, H); wipe(); },
+      paint(p) {
+        const n = p.domes.length / 4;
+        if (n > most || !D) {
+          most = Math.max(64, n * 2);
+          if (D) gl.deleteTexture(D);
+          D = field(most, 1, null, gl.RGBA32F, gl.RGBA);
+        }
+        if (n) {
+          gl.bindTexture(gl.TEXTURE_2D, D);
+          gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, n, 1, gl.RGBA, gl.FLOAT, new Float32Array(p.domes));
+        }
+        gl.bindVertexArray(vao);
+        gl.disable(gl.BLEND);
+        gl.viewport(0, 0, W, H);
+        // How high it stands
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+        wipe();
+        only(p.x0, p.y0, p.x1, p.y1);
+        gl.useProgram(rise.p);
+        bind(rise, 0, 'u_G', G); bind(rise, 1, 'u_A', A); bind(rise, 2, 'u_C', C); bind(rise, 3, 'u_D', D);
+        gl.uniform2f(rise.u('u_size'), W, H);
+        gl.uniform2f(rise.u('u_c'), p.cx, p.cy);
+        gl.uniform4f(rise.u('u_k'), p.m, p.zoom, p.shrink, p.heave);
+        gl.uniform4f(rise.u('u_j'), p.iso, p.t, p.scaleX, p.time);
+        gl.uniform4i(rise.u('u_f'), p.solid ? 1 : 0, p.peel ? 1 : 0, p.spreading ? 1 : 0, n);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        // And how it's lit
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        wipe();
+        only(Math.max(p.x0, 1), Math.max(p.y0, 1), Math.min(p.x1, W - 2), Math.min(p.y1, H - 2));
+        gl.useProgram(light.p);
+        bind(light, 0, 'u_H', tall); bind(light, 1, 'u_R', R);
+        gl.uniform2f(light.u('u_size'), W, H);
+        gl.uniform2f(light.u('u_c'), p.cx, p.cy);
+        gl.uniform4f(light.u('u_l1'), p.K2, p.far, p.lx, p.ly);
+        gl.uniform4f(light.u('u_l2'), p.hz, p.hl, p.in0, p.rx);
+        gl.uniform4f(light.u('u_l3'), p.ry, p.cells, p.t, p.m);
+        gl.uniform4f(light.u('u_l4'), p.struck, p.hurt, p.cast, p.night ? 1 : 0);
+        gl.uniform4f(light.u('u_l5'), p.scaleX, p.time, 0, 0);
+        gl.uniform3f(light.u('u_shade'), ...p.shade);
+        gl.uniform4i(light.u('u_o1'), p.off[0][0], p.off[0][1], p.off[1][0], p.off[1][1]);
+        gl.uniform2i(light.u('u_o3'), p.off[2][0], p.off[2][1]);
+        gl.uniform2i(light.u('u_env'), env[0], env[1]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      },
+    });
+  }
+  // On a canvas: to begin with, and when the graphics card's gone
+  function flatSkin(K, kept) {
+    const skin = kept ? K.skin : layer(K.W, K.H), c = skin.getContext('2d'), image = c.createImageData(K.W, K.H);
+    if (!kept) K.skin.replaceWith(skin);
+    Object.assign(K, { skin, gpu: null, c, image, data: new Uint32Array(image.data.buffer), rgba: image.data, height: new Float32Array(K.W * K.H), wx: new Float32Array(K.W), wy: new Float32Array(K.H) });
+  }
+  // And onto the graphics card, once the page has settled and Fizz is on it, so nothing waits on
+  // it: its programs are built while the page goes on, and it changes over only when they're
+  // ready and it isn't on him. False once it's known it can't.
+  function cardSkin(K) {
+    if (K.gpu || K.pending === false) return;
+    if (!K.pending) {
+      const el = layer(K.W, K.H), gpu = skinner(el, K.W, K.H);
+      if (!gpu) { K.pending = false; return; }
+      gpu.load(K);
+      K.pending = { el, gpu };
+    }
+    const { el, gpu } = K.pending;
+    if (!gpu.ready()) { if (gpu.lost) K.pending = false; return; }
+    if (leap) return;
+    // The lights may have changed while it waited
+    gpu.room(K.env);
+    el.style.cssText = K.skin.style.cssText;
+    K.skin.replaceWith(el);
+    Object.assign(K, { skin: el, gpu, pending: null, c: null, image: null, data: null, rgba: null, height: null });
+  }
+
   // Over the table, in a high arc. From above all that shows of height is a shadow left
   // behind, and that it's a little nearer the eye.
   function paintFlight(z) {
-    const K = kit, c = K.fc, night = glow.night, box = table.getBoundingClientRect(), from = canvas.getBoundingClientRect();
-    c.setTransform(K.flyScale, 0, 0, K.flyScale, 0, 0);
-    c.clearRect(0, 0, box.width, box.height);
+    const K = kit, c = K.fc, night = glow.night, box = table.getBoundingClientRect(), from = canvas.getBoundingClientRect(), [bx, by, bw, bh] = K.flyBox;
+    c.setTransform(K.flyScale, 0, 0, K.flyScale, -bx * K.flyScale, -by * K.flyScale);
+    c.clearRect(bx, by, bw, bh);
     if (z === null) return;
     const x0 = from.left - box.left + blob.x * scale, y0 = from.top - box.top + blob.y * scale;
     const f = ease(0, 1, z), x = x0 + (K.landX - x0) * f, y = y0 + (K.landY - y0) * f, up = Math.sin(Math.PI * z), r0 = BODY * scale * 0.42, r = r0 * (1 + 0.42 * up);
@@ -914,7 +1253,27 @@
   // Made ahead, when nothing's going on, so that it can go the moment it's asked to
   const whenIdle = window.requestIdleCallback || (f => setTimeout(f, 200));
   function prepare() {
-    if (polaroid && !still && matchMedia('(hover: hover)').matches) whenIdle(() => { if (!kit && polaroid.offsetWidth) kit = build(); });
+    if (polaroid && !still && matchMedia('(hover: hover)').matches) whenIdle(() => { if (!kit && polaroid.offsetWidth) { kit = build(); dry(); fizz.prepare().then(upgrade); whenIdle(warm); } });
+  }
+  // The first time the browser's asked to draw anything like the leap, it works out how to on
+  // the graphics card, and that takes a frame or two: so it's asked once, unseen, beforehand
+  function warm() {
+    const K = kit;
+    if (!K || leap || !window.createImageBitmap) { if (K) K.warm = true; return; }
+    paintFlight(0.5);
+    const done = () => { K.warm = true; if (kit === K && !leap) paintFlight(null); };
+    createImageBitmap(K.fly).then(b => { b.close(); done(); }, done);
+  }
+  // Its skin moved to the graphics card when there's time: after Fizz is, and in idle time
+  function upgrade() {
+    const K = kit;
+    if (!K || K.gpu || K.pending === false) return;
+    if (!leap) cardSkin(K);
+    if (kit === K && !K.gpu && K.pending !== false) setTimeout(() => whenIdle(upgrade), 250);
+  }
+  // What it'll leave, made in time to spare and not as it lands
+  function dry() {
+    whenIdle(() => { if (kit && kit.filmNight !== glow.night) paintFilms(); });
   }
 
   function bearing() {
@@ -924,7 +1283,7 @@
 
   function setHovered(on) {
     hovered = on;
-    if (!on || leap || den.state) return;
+    if (!on || leap || den.state || !arrived) return;
     kit = kit || build();
     clearTimeout(drying);
     kit.stage.style.rotate = getComputedStyle(polaroid).rotate;
@@ -973,7 +1332,8 @@
       paintSkin(hit, L.peel);
       paintSpecks(hit, L.peel, dt);
     } else if (L.was) {
-      K.c.clearRect(0, 0, K.W, K.H);
+      if (K.gpu) K.gpu.clear();
+      else K.c.clearRect(0, 0, K.W, K.H);
       K.tc.clearRect(0, 0, K.top.width, K.top.height);
       K.halo.style.opacity = 0;
       L.wet = false;
@@ -1073,7 +1433,10 @@
     }
     glow.night = night;
     // What it's left is still there when the lights change, and looks as it should in the new light
-    if (kit && kit.filmNight !== night && kit.stage.style.display === 'block') paintFilms();
+    if (kit && kit.filmNight !== night) {
+      if (kit.stage.style.display === 'block') paintFilms();
+      else dry();
+    }
     if (still) glow.n = night ? 1 : 0;
     glow.cast = [sx * 0.7, sy * 0.7, Math.max(get('--sb') * 0.6, 1)];
     glow.touch = [get('--cx') || 0.6, get('--cy') || 0.8, Math.max(get('--cb'), 0.6)];
@@ -1123,7 +1486,7 @@
   // Runs while it can be seen, and at half speed when it's only itself to mind
   let running = false, seen = true, last = 0, acc = 0;
   function frame(now) {
-    if ((!seen && !den.out) || document.hidden) { running = false; return; }
+    if (!arrived || (!seen && !den.out) || document.hidden) { running = false; return; }
     requestAnimationFrame(frame);
     const dt = Math.min((now - last) / 1000, 0.1);
     last = now;
@@ -1137,7 +1500,7 @@
     if (den.out) cutOut();
   }
   function wake() {
-    if (running || (!seen && !den.out) || document.hidden) return;
+    if (running || !arrived || (!seen && !den.out) || document.hidden) return;
     running = true;
     last = performance.now();
     requestAnimationFrame(frame);
@@ -1145,7 +1508,16 @@
   new IntersectionObserver(([entry]) => { seen = entry.isIntersecting; if (seen) wake(); }).observe(canvas);
   document.addEventListener('visibilitychange', wake);
   layout();
+  // It isn't there when the page comes up. Once it can be drawn on the graphics card it comes
+  // out from under the Polaroid, where it goes when it's frightened, and creeps home. If it
+  // can't be, it comes anyway, a little later, and is drawn on the canvas.
+  if (still) arrived = true;
+  else {
+    canvas.style.opacity = 0;
+    fizz.prepare().then(getReady);
+    const late = () => setTimeout(arrive, 6000);
+    if (document.readyState === 'complete') late();
+    else addEventListener('load', late, { once: true });
+  }
   wake();
-  // Already on it, before there was anything here to notice
-  if (about && about.matches(':hover')) setHovered(true);
 })();

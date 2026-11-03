@@ -2596,12 +2596,6 @@ html:not(.dark-mode) .pi-screen {
   pointer-events: none;
 }
 
-.fizz-leap {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
 /* Where it's been, in the labels' ink: nothing by day, and it comes up as the room goes dark */
 .fizz-prints {
   position: absolute;

@@ -64,7 +64,7 @@
   // Whatever's showing of it: home is a name at this width, and the rest are icons
   const mark = [...item.children].find(el => el.getBoundingClientRect().width) || item;
   const canvas = document.createElement('canvas');
-  const fizz = Fizz({ body: R, most: 4, blend: 'lighter', root: 60, mound: 2.2 });
+  const fizz = Fizz({ body: R, most: 4, root: 60, mound: 2.2 });
   const { blob, glow } = fizz;
   const eyes = fizz.eyes();
   const c = canvas.getContext('2d');
@@ -162,5 +162,9 @@
   fit();
   glow.night = !!document.querySelector('.dark-mode');
   glow.n = glow.night ? 1 : 0;
-  requestAnimationFrame(frame);
+  // It stays under the card till it can be drawn on the graphics card, or it's been a while
+  let woke = false;
+  const wake = () => { if (!woke) { woke = true; requestAnimationFrame(frame); } };
+  fizz.prepare().then(wake);
+  setTimeout(wake, 6000);
 })();
