@@ -125,10 +125,10 @@ redirect_from:
 
 /* What he'd say about a thing, in his pen, written in the margin by it: it starts a little in
    from the thing's edge, and each line is as long as he wrote it (_data/taste.yml), never
-   wrapped to the width of whatever it's beside */
+   wrapped to the width of whatever it's beside. Its lines are <br>s, as the minifier takes
+   newlines out of the page */
 .thing-note {
   width: max-content;
-  white-space: pre-line;
   margin: 0.2em 0 0 0.6em;
   font-family: "Reenie Beanie", cursive;
   font-size: 1.35em;
@@ -358,7 +358,9 @@ redirect_from:
    room they need, however few there are. */
 .read-layout {
   display: grid;
-  grid-template-columns: minmax(0, max-content) minmax(14em, 22em);
+  /* the books take what the essays leave, not their own width, which Firefox takes to be one
+     book's for a row that wraps */
+  grid-template-columns: minmax(0, 1fr) minmax(14em, 22em);
   gap: 2.5em 6em;
   align-items: start;
 }
@@ -869,6 +871,7 @@ redirect_from:
   .shelf-play .things { --rw: 34vw; }
   /* each book's note is wider than it is here, so they're set far enough apart for both */
   .shelf-read .things { column-gap: 4.25em; }
+  .shelf-read .thing-note { font-size: min(1.35em, 5.5vw); }
   .shelf-listen .things { --rw: 46vw; }
   .shelf-watch .screens { --rw: 70vw; }
   .shelf-sneakers .things { --rw: 48vw; gap: 0; }
@@ -970,7 +973,7 @@ redirect_from:
           <li>
             <span class="line-was"><span class="sr-only">I used to think: </span>{{ change.was }}</span><span class="changed-arrow" aria-hidden="true">→</span><span class="line-name"><span class="sr-only">Now I think: </span>{{ change.now }}</span>
             {%- if change.note %}
-            <p class="thing-note">{{ change.note }}</p>
+            <p class="thing-note">{{ change.note | newline_to_br | strip_newlines }}</p>
             {%- endif %}
           </li>
           {%- endfor %}
@@ -1045,7 +1048,7 @@ redirect_from:
           <span class="line-label">{{ spec.name }}</span>
           <span class="line-name">{{ spec.value }}</span>
           {%- if spec.note %}
-          <p class="thing-note">{{ spec.note }}</p>
+          <p class="thing-note">{{ spec.note | newline_to_br | strip_newlines }}</p>
           {%- endif %}
         </li>
         {%- endfor %}

@@ -19,7 +19,7 @@
 {%- assign w = widths | split: "," -%}
 <li class="thing is-{{ form }}{% if item.note_above %} has-note-above{% endif %}{% if item.mark %} is-{{ item.mark }}{% endif %}"{% if item.mm %} style="--mm: {{ item.mm }}"{% elsif item.foot %} style="--heel: {{ item.foot[0] }}; --toe: {{ item.foot[1] }}"{% endif %}>
   {%- if item.note and item.note_above %}
-  <p class="thing-note">{{ item.note }}</p>
+  <p class="thing-note">{{ item.note | newline_to_br | strip_newlines }}</p>
   {%- endif %}
   {% if item.url %}<a href="{{ item.url }}">{% endif %}
   <span class="thing-picture {{ form }}">
@@ -38,6 +38,6 @@
   {%- endunless %}
   {% if item.url %}</a>{% endif %}
   {%- if item.note and item.note_above != true %}
-  <p class="thing-note">{{ item.note }}</p>
+  <p class="thing-note">{{ item.note | newline_to_br | strip_newlines }}</p>
   {%- endif %}
 </li>

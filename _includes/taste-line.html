@@ -2,11 +2,11 @@
 {%- assign item = include.item -%}
 <li{% if item.note_above %} class="has-note-above"{% endif %}>
   {%- if item.note and item.note_above %}
-  <p class="thing-note">{{ item.note }}</p>
+  <p class="thing-note">{{ item.note | newline_to_br | strip_newlines }}</p>
   {%- endif %}
   <span class="line-name">{% if item.mark == "dislike" %}<s>{{ item.title }}</s><span class="sr-only"> (not for me)</span>{% elsif item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</span>
   {%- if item.meta %}<span class="line-meta">{{ item.meta }}</span>{% endif %}
   {%- if item.note and item.note_above != true %}
-  <p class="thing-note">{{ item.note }}</p>
+  <p class="thing-note">{{ item.note | newline_to_br | strip_newlines }}</p>
   {%- endif %}
 </li>
