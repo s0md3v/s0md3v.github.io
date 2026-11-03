@@ -358,9 +358,11 @@ redirect_from:
    room they need, however few there are. */
 .read-layout {
   display: grid;
-  /* the books take what the essays leave, not their own width, which Firefox takes to be one
-     book's for a row that wraps */
-  grid-template-columns: minmax(0, 1fr) minmax(14em, 22em);
+  /* as wide as the books in a row (four at most, then they wrap), counted rather than measured,
+     as Firefox measures a row that wraps as one book */
+  --row: min(var(--books, 4), 4);
+  grid-template-columns: minmax(0, calc(var(--row) * 10.5em + (var(--row) - 1) * 3.5em)) minmax(14em, 22em);
+  justify-content: start;
   gap: 2.5em 6em;
   align-items: start;
 }
@@ -1001,7 +1003,10 @@ redirect_from:
     </ul>
 
     {% else %}
-    {% if kind == "read" %}<div class="read-layout">{% endif %}
+    {%- if kind == "read" %}
+    {%- assign books = shelf.items | where_exp: "item", "item.slug" %}
+    <div class="read-layout" style="--books: {{ books.size }}">
+    {%- endif %}
     <ul class="things">
       {%- for item in shelf.items %}
       {%- if item.slug %}
