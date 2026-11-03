@@ -4,6 +4,8 @@ title: About
 description: "Somdev Sangwan (s0md3v) is a security researcher and programmer, the author of XSStrike and Arjun, who does product design too."
 ink: about
 permalink: /about
+# Work had a page of its own, and is said here now
+redirect_from: /work
 order: 4
 ---
 
@@ -423,6 +425,15 @@ order: 4
   rotate: -2deg;
 }
 
+/* Whether he's taking work, said under where to write about it, as quietly as the record's details */
+.about-reach .about-work {
+  margin: 0 0 1em;
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--midground-color);
+  text-wrap: pretty;
+}
+
 /* Elsewhere: each place by its own mark, drawn the way the site's marks are, quiet as they are in
    the bar, and lit as they are: in the colour that's that place's own */
 .about-reach .about-elsewhere {
@@ -559,6 +570,7 @@ order: 4
 
   <section class="about-reach" aria-label="Write to me">
     <p class="about-mail prose"><a href="mailto:hello[at]somdev.in">hello[at]somdev.in</a><span class="hand-note about-reply">I reply.</span></p>
+    <p class="about-work">I'm taking a break from new work for now. If you have genuinely interesting contract work or a full-time remote role, I would still love to take a look.</p>
     <ul class="about-elsewhere" aria-label="Elsewhere">
       <li><a href="https://instagram.com/s0md3v" aria-label="Instagram">{% include social/instagram.svg %}</a></li>
       <li><a href="https://x.com/s0md3v" aria-label="X">{% include social/x.svg %}</a></li>

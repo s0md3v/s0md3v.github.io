@@ -6,10 +6,6 @@ links:
     label: about
     url: /about
     tooltip: Somdev Sangwan aka s0md3v
-  work:
-    label: work with me
-    url: /work
-    tooltip: need help with your security product?
   projects:
     label: projects
     url: /projects
@@ -34,10 +30,6 @@ links:
     label: experiments
     url: /playground/
     tooltip: random experiments
-  now:
-    label: my life rn
-    url: /now/
-    tooltip: what am i doing?
   taste:
     label: taste
     url: /taste/
@@ -51,5 +43,4 @@ header:
 
 homepage_extra:
   - playground
-  - now
   - taste

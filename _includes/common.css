@@ -379,9 +379,7 @@ pre>code {
   --c-philosophy: #7c3aed;
   --c-papers: #086fbd;
   --c-playground: #5b7500;
-  --c-now: #c2410c;
   --c-taste: #8a5a2c;
-  --c-work: #0a7594;
   --nav-quiet: #736d62;
   /* What's written by hand anywhere is written with one pen, his: the ballpoint on the homepage's
      table (homepage.css), whatever section it's in. At night, the same blue, lighter, to be read */
@@ -399,9 +397,7 @@ pre>code {
   --c-philosophy: #c4a1ff;
   --c-papers: #4dbbff;
   --c-playground: #c0e84a;
-  --c-now: #ff9a4d;
   --c-taste: #d9a066;
-  --c-work: #5ccbe8;
   --nav-quiet: #8f8a81;
 }
 
@@ -414,9 +410,7 @@ pre>code {
 [data-page="philosophy"] { --c: var(--c-philosophy); }
 [data-page="papers"] { --c: var(--c-papers); }
 [data-page="playground"] { --c: var(--c-playground); }
-[data-page="now"] { --c: var(--c-now); }
 [data-page="taste"] { --c: var(--c-taste); }
-[data-page="work"] { --c: var(--c-work); }
 
 /* The window's scrollbar is on all the time, so it's the quiet grey tinted with the page's colour:
    thinning the colour instead would lose the yellow against the desk */
@@ -842,28 +836,6 @@ html {
 p,
 li {
   font-family: var(--blog-font-family);
-}
-
-.work-cta {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 12px 24px;
-  background-color: transparent;
-  color: var(--foreground-color);
-  font-family: inherit;
-  font-weight: 600;
-  text-decoration: none;
-  border: 2px solid var(--accent-color);
-  border-radius: 8px;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  font-size: 1.2rem;
-}
-
-.work-cta:hover {
-  background-color: var(--accent-color);
-  color: var(--on-accent-color);
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* On paper, it's just the text, in black whichever theme it's printed from */

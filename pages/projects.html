@@ -342,13 +342,6 @@ order: 1
   line-height: 1;
   rotate: -2deg;
 }
-.today .now-link:hover {
-  background: var(--label-paper);
-  color: var(--c-now);
-  text-decoration: underline;
-  text-decoration-color: currentColor;
-  text-underline-offset: 0.2em;
-}
 
 /* Wide enough for both sides of the line */
 @media (min-width: 1160px) {
@@ -575,7 +568,7 @@ order: 1
       {% endif %}
       {% endfor %}
     </ol>
-    <p class="today prose"><a class="now-link" href="{{ '/now' | relative_url }}"><span>now</span></a><span>The rest is on <a href="https://github.com/s0md3v">GitHub</a>.</span></p>
+    <p class="today prose"><span class="now-link"><span>now</span></span><span>The rest is on <a href="https://github.com/s0md3v">GitHub</a>.</span></p>
     <div class="pac" aria-hidden="true">
       <svg viewBox="-15 -15 30 30">
         <path class="jaw-l" d="M0-14A14 14 0 0 0 0 14Z"/>
