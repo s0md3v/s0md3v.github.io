@@ -230,23 +230,8 @@ layout_style: "homepage"
 
     <a class="obj grounded" id="papers" href="{{ n.papers.url | relative_url }}">
       <span class="under"><span class="tag t3"><span>{{ n.papers.label | escape }}</span></span></span>
-      <span class="lift"><span class="item">
-        <span class="page" aria-hidden="true"><span class="page-body">
-          <span class="page-title"><span>Bypassing XSS<svg class="page-marker" viewBox="0 0 708 133" preserveAspectRatio="none"><path d="M27 10C38 6 59 12 81 13C102 14 130 18 153 18C176 18 194 15 216 14C239 12 262 10 285 9C308 8 328 10 351 9C374 8 398 5 420 3C443 2 463 -1 485 -1C507 -1 527 3 551 5C575 6 601 7 627 7C652 7 687 0 701 3C715 6 710 19 709 27C708 35 697 42 696 50C694 58 703 64 700 74C698 83 686 96 682 104C677 112 685 118 675 121C665 124 644 122 623 122C602 123 575 125 551 126C527 127 506 129 483 128C460 127 439 123 416 122C393 121 368 121 346 120C324 120 309 121 287 121C265 121 238 120 215 122C192 123 176 127 153 129C130 132 106 134 80 135C54 137 15 143 1 137C-13 131 -4 112 -3 102C-1 91 7 84 10 74C13 63 11 49 14 38C17 27 16 15 27 10Z" /><path d="M41 36C58 34 105 31 139 30C172 29 203 28 236 27C270 27 301 27 334 26C367 26 415 26 432 26C448 26 448 26 432 27C415 27 367 29 334 30C301 31 270 33 236 33C203 34 172 34 139 34C105 35 58 36 41 36C24 37 24 37 41 36ZM189 67C210 66 268 63 309 62C350 61 388 62 429 61C469 60 507 59 548 58C589 58 647 57 668 57C688 57 688 57 668 58C647 59 589 61 548 62C507 64 469 65 429 66C388 67 350 67 309 68C268 68 210 68 189 67C169 67 169 67 189 67ZM81 107C101 106 159 105 199 104C239 103 277 103 317 102C357 101 395 101 435 100C475 99 533 99 553 99C573 99 573 99 553 99C533 100 475 102 435 104C395 105 357 106 317 107C277 107 239 108 199 108C159 108 101 108 81 108C61 108 61 108 81 107ZM34 14C38 6 46 5 48 12C50 20 45 47 45 60C45 72 49 73 46 86C43 98 34 126 28 134C22 142 14 141 12 133C10 125 16 99 18 87C20 74 23 73 26 61C29 48 30 23 34 14ZM681 8C684 1 692 -1 693 6C694 13 689 37 689 48C689 60 693 62 690 74C687 86 678 110 673 117C667 125 660 124 659 116C658 109 663 87 665 75C667 64 670 61 673 49C676 38 678 15 681 8Z" /></svg></span> <span>Detection Mechanisms<svg class="page-marker" viewBox="0 0 1028 133" preserveAspectRatio="none"><path d="M27 10C38 5 58 8 79 8C100 9 127 11 150 12C173 13 191 14 213 15C235 15 259 16 282 16C305 16 326 16 348 15C371 14 390 11 413 10C435 9 457 11 480 10C502 10 520 7 543 6C565 5 589 6 612 5C635 4 659 2 680 1C701 0 715 -1 738 0C761 0 791 2 814 3C838 4 853 4 874 4C895 5 912 7 937 7C962 8 1005 3 1021 7C1037 10 1030 21 1029 29C1028 36 1017 44 1016 51C1014 59 1023 65 1020 73C1018 82 1006 95 1002 102C997 110 1006 114 995 118C984 122 957 124 937 125C916 126 896 126 874 126C852 126 830 124 808 124C786 124 767 124 745 124C722 125 698 126 676 127C654 128 638 131 616 130C593 130 570 128 546 127C522 125 498 124 476 122C454 121 438 119 416 119C394 118 370 121 348 122C325 123 307 124 285 124C262 125 238 126 216 126C193 127 176 126 152 126C129 127 102 127 77 128C51 129 15 138 1 133C-13 128 -4 109 -3 98C-1 88 7 82 10 71C13 61 11 47 14 37C17 26 16 14 27 10Z" /><path d="M54 34C78 33 149 32 198 31C247 30 293 28 342 28C391 27 437 28 486 28C535 28 606 29 630 29C655 29 655 29 630 30C606 30 535 32 486 33C437 33 391 32 342 32C293 33 247 35 198 35C149 36 78 35 54 35C29 35 29 35 54 34ZM272 67C302 66 389 63 449 62C509 61 565 62 625 61C685 61 742 61 802 60C862 60 948 59 978 59C1008 59 1008 59 978 60C948 61 862 63 802 64C742 66 685 68 625 68C565 69 509 67 449 67C389 67 302 68 272 68C242 68 242 69 272 67ZM113 101C143 101 228 99 287 98C346 98 402 97 461 97C520 96 576 96 635 96C694 96 780 97 809 98C839 98 839 98 809 99C780 99 694 99 635 100C576 100 520 101 461 102C402 102 346 102 287 103C228 103 143 102 113 102C84 102 84 102 113 101ZM34 15C38 7 46 6 48 13C50 20 45 45 45 57C45 69 49 71 46 83C43 95 34 120 28 128C22 135 14 134 12 127C10 119 16 96 18 84C20 72 23 70 26 58C29 46 30 23 34 15ZM1001 11C1004 4 1012 2 1013 9C1014 15 1009 38 1009 49C1009 61 1013 64 1010 75C1007 87 998 110 993 117C987 124 980 123 979 116C978 109 983 87 985 76C987 65 990 61 993 50C996 39 998 18 1001 11Z" /></svg></span></span>
-          <span class="page-author">Somdev Sangwan</span>
-          <span class="page-cols">
-          <span class="page-h">Abstract</span>
-          <span>This paper pro&shy;poses a well-defined method&shy;ol&shy;ogy to <span class="page-word">bypass</span> Cross Site Script&shy;ing (XSS) secu&shy;rity mech&shy;a&shy;nisms by mak&shy;ing as&shy;sump&shy;tions about the rules being used to detect <span class="page-word">ma&shy;li&shy;cious</span> strings by send&shy;ing <span class="page-word">probes</span> and craft&shy;ing pay&shy;loads based on the as&shy;sump&shy;tions.</span>
-          <span>The pro&shy;posed method&shy;ol&shy;ogy con&shy;sists of three phases: de&shy;ter&shy;min&shy;ing <span class="page-word">pay&shy;load</span> struc&shy;ture, prob&shy;ing and <span class="page-word">ob&shy;fus&shy;ca&shy;tion</span>.</span>
-          <span>De&shy;ter&shy;min&shy;ing var&shy;i&shy;ous pay&shy;load struc&shy;tures for a given con&shy;text pro&shy;vides a pre&shy;cise idea of the op&shy;ti&shy;mal test&shy;ing ap&shy;proach. The next phase, prob&shy;ing, in&shy;volves test&shy;ing var&shy;i&shy;ous strings against the tar&shy;get's secu&shy;rity mech&shy;a&shy;nisms. The tar&shy;get's re&shy;sponses are an&shy;a&shy;lyzed in order to make as&shy;sump&shy;tions based on the anal&shy;y&shy;sis.</span>
-          <span>Fi&shy;nally, ob&shy;fus&shy;ca&shy;tion and other tweaks are made to the pay&shy;load if re&shy;quired.</span>
-          <span class="page-h">To the Reader</span>
-          <span>The au&shy;thor as&shy;sumes that the reader has at least basic level knowl&shy;edge of Cross Site Script&shy;ing, Hy&shy;per&shy;text Mark&shy;up Lan&shy;guage (HTML) and Java&shy;Script.</span>
-          <span>{string} is used through&shy;out the paper to rep&shy;re&shy;sent com&shy;po&shy;nents of a pay&shy;load scheme. {?string} rep&shy;re&shy;sents an op&shy;tion&shy;al com&shy;po&shy;nent.</span>
-          <span>The word <b>pri&shy;mary char&shy;ac&shy;ter</b> refers to a char&shy;ac&shy;ter which must be in&shy;cluded in a pay&shy;load. It is ad&shy;vised to URL en&shy;code URL un&shy;safe char&shy;ac&shy;ters such as + and &amp; be&shy;fore using them in pay&shy;loads.</span>
-          <span>While prob&shy;ing, a harm&shy;less string should be used in&shy;stead of {java&shy;script}.</span>
-          </span>
-        </span></span>
+      <span class="lift"><span class="item leaves">
+        {% include leaves/bypassing-xss-detection.html %}
       </span></span>
     </a>
 
@@ -2416,7 +2401,7 @@ layout_style: "homepage"
       // to it, and the tap is for the link, so its title's already been gone over when
       // it's first seen.
       const paper = document.getElementById('papers');
-      const words = [...paper.querySelectorAll('.page-word')];
+      const words = [...paper.querySelectorAll('.leaf-word')];
       const mark = () => {
         if (paper.classList.contains('marked')) words.shift()?.classList.add('marked');
         else paper.classList.add('marked');
@@ -2429,7 +2414,7 @@ layout_style: "homepage"
           seen.disconnect();
           mark();
         }, { threshold: 1 });
-        ready.get(paper).then(() => seen.observe(paper.querySelector('.page-title span + span')));
+        ready.get(paper).then(() => seen.observe(paper.querySelector('.leaf-title > span + span')));
       }
 
       if (!still && 'IntersectionObserver' in window) {

@@ -844,25 +844,6 @@ li {
   font-family: var(--blog-font-family);
 }
 
-.paper-item {
-  margin-bottom: 3em;
-}
-
-.paper-item h2 {
-  font-size: 1.2em;
-  letter-spacing: -0.01em;
-  margin: 0 0 0.5em;
-}
-
-.paper-item p {
-  margin-bottom: 1.2em;
-  text-wrap: pretty;
-}
-
-.paper-link {
-  font-size: 0.85em;
-}
-
 .work-cta {
   display: inline-block;
   margin-top: 1rem;

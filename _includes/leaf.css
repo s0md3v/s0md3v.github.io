@@ -1,0 +1,191 @@
+/* ---- A paper's first page, printed: on the table (_includes/homepage.css) and on Papers ----
+   What's printed on it is in _includes/leaves/. Its sizes are all shares of the sheet's width,
+   so it's the same page however big it's put down. */
+
+/* Two sheets of the business card's stock, a little brighter: the page, in front, and
+   one under it, a little turned, showing past it. Each is one card, stood on end and
+   grown till it covers the sheet. */
+.leaves {
+  position: relative;
+  display: block;
+  aspect-ratio: 1000 / 1311;
+  container-type: inline-size;
+}
+
+.leaves::before,
+.leaf::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #e7e0d6 url('{{ "/assets/images/table/card.webp" | relative_url }}') center / cover;
+  filter: brightness(1.05);
+}
+
+/* Turned with its card, so its sides are swapped: 95.2% of the sheets across, 99% of their
+   height down */
+.leaves::before {
+  left: 51.8%;
+  top: 49.9%;
+  width: calc(100cqi * 1.311 * 0.99);
+  height: 95.2cqi;
+  translate: -50% -50%;
+  rotate: 91.2deg;
+}
+
+/* Set as a journal would: US letter, Times, 0.75in margins, two columns */
+.leaf {
+  position: absolute;
+  z-index: 1;
+  left: 2%;
+  top: 4.4%;
+  width: 91%;
+  height: 94.3%;
+  overflow: hidden;
+  container-type: inline-size;
+  background: #f2ebe1;
+  /* On the sheet under it */
+  box-shadow: 0 0 0.25cqi rgb(60 45 30 / 0.18);
+}
+
+/* The page is 91% of the sheets across and 94.3% of their height, which is 1311/1000 of
+   their width */
+.leaf::before {
+  width: calc(100cqi * 0.943 * 1.311 / 0.91);
+  height: 100cqi;
+  translate: -50% -50%;
+  rotate: 90deg;
+}
+
+.leaf-body {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 11.5% 8.8% 9%;
+  font: 2.9cqi/1.22 "Times New Roman", "Liberation Serif", Tinos, Times, serif;
+  color: #1d1b18;
+  mix-blend-mode: multiply;
+}
+
+.leaf-title {
+  font-weight: 700;
+  font-size: 4.8cqi;
+  line-height: 1.16;
+  text-align: center;
+}
+
+.leaf-title > span {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+/* A pass of a yellow highlighter over each line of the title: drawn, not ruled, as the
+   pen's strike is. It starts and stops past the words, and drifts across them. The ink's
+   multiplied, so the print shows through it and it's darker where the passes overlap.
+   Laid over what's under it, it needs no night of its own: the room's light dims it too.
+   It's there once the paper's .marked. */
+.leaf-marker {
+  position: absolute;
+  left: -0.3em;
+  top: -0.1em;
+  width: calc(100% + 0.68em);
+  height: 1.38em;
+  overflow: visible;
+  fill: rgb(255 238 80);
+  mix-blend-mode: multiply;
+  visibility: hidden;
+}
+
+/* Where the felt laid down more ink */
+.leaf-marker path + path {
+  fill: rgb(242 190 0 / 0.3);
+}
+
+/* At an even pace, so the longer line takes longer, with a moment to bring the pen back */
+.marked .leaf-marker {
+  visibility: visible;
+  animation: leaf-mark 0.34s cubic-bezier(0.3, 0.2, 0.5, 1) 0.12s backwards;
+}
+
+.marked .leaf-title > span + span .leaf-marker {
+  animation-duration: 0.5s;
+  animation-delay: 0.6s;
+}
+
+/* Its leading edge slanted, like the pen's chisel tip */
+@keyframes leaf-mark {
+  from { clip-path: polygon(-12% -30%, -4% -30%, -10% 130%, -12% 130%); }
+  to { clip-path: polygon(-12% -30%, 112% -30%, 106% 130%, -12% 130%); }
+}
+
+/* The words picked out of the abstract, each in one short pass of the same pen, so each is one
+   word, kept whole on its line. The pass is the word's own background, run on a little past it
+   either side, and not a box put over it: in the second of two columns, Firefox puts a box like
+   that lines below its word. The page under it is multiplied, so the print still shows through. */
+.leaf-word {
+  white-space: nowrap;
+  padding: 0 0.15em 0.05em;
+  margin: 0 -0.15em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 133' preserveAspectRatio='none'%3E%3Cpath fill='%23ffee50' d='M9 15C42 8 92 14 142 11C192 8 248 14 291 8L296 17C293 42 299 88 294 121C250 128 198 121 150 125C100 129 52 122 7 128L3 117C7 90 1 42 6 22Z'/%3E%3C/svg%3E") 0 0 / 0 100% no-repeat;
+}
+
+/* Drawn across from the left, as the title is */
+.leaf-word.marked {
+  background-size: 100% 100%;
+  animation: leaf-word-mark 0.22s cubic-bezier(0.3, 0.2, 0.5, 1) backwards;
+}
+
+@keyframes leaf-word-mark {
+  from { background-size: 0 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marked .leaf-marker,
+  .leaf-word.marked {
+    animation: none;
+  }
+}
+
+.leaf-author {
+  font-size: 3cqi;
+  text-align: center;
+  margin: 1.8cqi 0 4.8cqi;
+}
+
+/* However much of the writing a face's widths leave room for, in whole lines. No paragraph
+   is spaced from the next, and a heading is two lines, so the columns' lines stay level. */
+.leaf-cols {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  columns: 2;
+  column-gap: 3.4cqi;
+  column-fill: auto;
+  text-align: justify;
+}
+
+.leaf-cols > span {
+  display: block;
+  text-indent: 1em;
+}
+
+.leaf-cols > .leaf-h {
+  font-weight: 700;
+  line-height: 2.4;
+  text-align: center;
+  text-indent: 0;
+  break-after: avoid;
+}
+
+.leaf-h + span {
+  text-indent: 0;
+}
+
+/* A numbered list, set in from the column's edge, its lines after the first under its words */
+.leaf-cols > .leaf-item {
+  padding-left: 2.2em;
+  text-indent: -1.1em;
+}
