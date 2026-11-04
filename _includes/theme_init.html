@@ -2,7 +2,7 @@
     :root {
         --base-font-size: 1rem;
         --blog-font-size: 1rem;
-        --base-font-family: {% if page.layout_style == 'homepage' %}"Source Serif 4", Georgia, "Times New Roman", serif{% else %}"Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif{% endif %};
+        --base-font-family: {% if page.layout_style == 'homepage' %}"Source Serif 4", Georgia, "Times New Roman", serif{% else %}"Lexend", "Lexend Fallback", "Helvetica Neue", Helvetica, Arial, sans-serif{% endif %};
         --blog-font-family: var(--base-font-family);
 
         /* Reading pages are a sheet: --background-color is the sheet, and --surround-color is
@@ -110,6 +110,9 @@
 </style>
 
 <script>
+    // Lets CSS tell a page that has scripts from one that doesn't
+    document.documentElement.classList.add('js');
+
     const themes = ["light", "dark"];
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
 

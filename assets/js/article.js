@@ -28,7 +28,8 @@
     const said = document.createElement('span');
     said.className = 'sr-only';
     said.setAttribute('role', 'status');
-    if (blocks.length) content.append(said);
+    const links = content.querySelectorAll('.section-link');
+    if (blocks.length || links.length) content.append(said);
     blocks.forEach(pre => {
         const box = pre.parentElement.classList.contains('highlight') ? pre.parentElement : pre;
         const button = document.createElement('button');
@@ -63,6 +64,38 @@
         } else {
             box.append(button);
         }
+    });
+
+    // A section's "#" copies the address of the section, rather than jumping the heading to the
+    // top. Where there's no clipboard it's a link to the section, as it always was.
+    links.forEach(link => {
+        let back;
+        link.addEventListener('click', async event => {
+            if (!navigator.clipboard) return;
+            event.preventDefault();
+            try {
+                await navigator.clipboard.writeText(location.origin + location.pathname + link.hash);
+            } catch {
+                location.hash = link.hash;
+                return;
+            }
+            history.replaceState(null, '', link.hash);
+            link.querySelector('.section-copied')?.remove();
+            const note = document.createElement('span');
+            note.className = 'section-copied';
+            note.setAttribute('aria-hidden', 'true');
+            note.textContent = 'copied';
+            link.append(note);
+            if (note.getBoundingClientRect().right > document.documentElement.clientWidth - 6) note.classList.add('above');
+            link.classList.add('copied');
+            said.textContent = 'Copied';
+            clearTimeout(back);
+            back = setTimeout(() => {
+                note.remove();
+                link.classList.remove('copied');
+                said.textContent = '';
+            }, 1000);
+        });
     });
 
     // Where there's room beside the sheet, each note is on a slip of its own, tucked under the
@@ -136,10 +169,22 @@
             let below = -Infinity;
             refs.forEach(({ ref, slip }) => {
                 const line = ref.closest('p, li, blockquote, td, dd') || ref;
-                const lineHeight = parseFloat(getComputedStyle(line).lineHeight) || 0;
-                const refTop = ref.getBoundingClientRect().top - sheetBox.top;
-                // Level with the top of its line, as far as the slips above it allow
-                const top = Math.max(refTop - lineHeight * 0.3, below + GAP);
+                // Baseline to baseline: the slip's first line on the line its number is on, as far
+                // as the slips above it allow. A glyph's box ends a descent (0.25em in Lexend) below
+                // its baseline. The letter before the number is measured, not the raised number.
+                const sup = ref.closest('sup') || ref;
+                const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+                let text = null;
+                while (walker.nextNode() && sup.compareDocumentPosition(walker.currentNode) & Node.DOCUMENT_POSITION_PRECEDING) {
+                    if (walker.currentNode.length) text = walker.currentNode;
+                }
+                const glyph = document.createRange();
+                if (text) { glyph.setStart(text, text.length - 1); glyph.setEnd(text, text.length); } else glyph.selectNode(sup);
+                const lineFs = parseFloat(getComputedStyle(text ? text.parentElement : line).fontSize);
+                const refBase = glyph.getBoundingClientRect().bottom - 0.25 * lineFs - sheetBox.top;
+                const num = slip.querySelector('.slip-number');
+                const slipBase = num.getBoundingClientRect().bottom - 0.25 * parseFloat(getComputedStyle(num).fontSize) - slip.getBoundingClientRect().top;
+                const top = Math.max(refBase - slipBase, below + GAP);
                 slip.style.top = `${Math.round(top)}px`;
                 below = top + slip.offsetHeight;
             });

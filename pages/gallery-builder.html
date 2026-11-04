@@ -106,13 +106,15 @@ unlisted: true
         const grid = document.getElementById('gallery-grid');
         const exportBtn = document.getElementById('export-json');
 
-        // Probe 0..100.webp; missing images remove themselves via onerror
-        const images = [];
+        // The gallery as it is, in its order, then any photo in assets/photos that isn't in it yet
+        // (probing 0..100.webp; missing ones remove themselves via onerror)
+        const images = {{ site.data.gallery | jsonify }};
+        const listed = new Set(images.map(img => img.filename));
         for (let i = 0; i <= 100; i++) {
+            if (listed.has(`${i}.webp`)) continue;
             images.push({
                 filename: `${i}.webp`,
                 path: `/assets/photos/${i}.webp`,
-                is_wide: false,
                 row_span: 16
             });
         }
@@ -183,8 +185,9 @@ unlisted: true
             imgData.imgElement.onload = () => {
                 const img = el.querySelector('img');
                 const ratio = img.naturalWidth / img.naturalHeight;
+                // A new photo is wide if it's landscape; a listed one keeps what the gallery says
                 const autoWide = ratio > 1.2;
-                updateItemSpan(el, autoWide);
+                updateItemSpan(el, imgData.is_wide ?? autoWide);
             };
 
             return el;

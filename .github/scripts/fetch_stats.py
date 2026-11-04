@@ -32,7 +32,6 @@ PYPI_PROJECTS = [
     "regxy",
     "rewise",
     "subgpt",
-    "tt",
     "tuff",
     "uro",
     "velocity",

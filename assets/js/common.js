@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setupSoundButtons() {
         const soundButtons = document.querySelectorAll('.sound-options button');
+        if (!soundButtons.length || !window.siteSound) return;
         const show = () => setActiveOption(soundButtons, document.querySelector(`.sound-options button[data-sound="${siteSound.enabled ? 'on' : 'off'}"]`));
         show();
 
@@ -252,23 +253,9 @@ document.addEventListener('DOMContentLoaded', function () {
         document.fonts.ready.then(placeNotes);
     }
 
-    const consoleStyles = [
-        'color: #e17800',
-        'font-size: 24px',
-        'font-family: monospace',
-        'font-weight: bold',
-        'text-shadow: 2px 2px 0px rgba(0,0,0,0.2)'
-    ].join(';');
-
-    const infoStyles = [
-        'color: #828282',
-        'font-size: 14px',
-        'font-family: sans-serif'
-    ].join(';');
-
-    console.log('%cHello there! 👋', consoleStyles);
-    console.log(
-        '%cWant to see how this works?\nhttps://github.com/s0md3v/s0md3v.github.io',
-        infoStyles
-    );
+    // For whoever opens the console, in his words, in the page's own ink
+    const main = document.querySelector('main');
+    const ink = main && getComputedStyle(main).getPropertyValue('--c').trim();
+    console.log('%cis this really the best thing you can be doing right now? clock is ticking.',
+        `${ink ? `color: ${ink}; ` : ''}font-size: 14px; font-family: sans-serif`);
 });

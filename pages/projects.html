@@ -5,6 +5,12 @@ description: "Open source security tools and projects by Somdev Sangwan."
 ink: projects
 permalink: /projects
 order: 1
+# Its preview when shared: its thing on the desk (scripts/make_share_cards.py)
+image:
+  path: /assets/share/projects.jpg
+  width: 1200
+  height: 630
+  alt: "A Raspberry Pi on a desk, its screen showing ~/projects and its GitHub stars"
 ---
 
 <style>
@@ -61,8 +67,9 @@ order: 1
   position: sticky;
   top: 0;
   z-index: 2;
-  width: calc(100% + var(--indent) - var(--line-x) + 0.3em);
-  margin: 0 0 0.7em calc(var(--line-x) - var(--indent) - 0.3em);
+  /* --indent and --line-x come in as ems of this size, so they're brought back to the timeline's */
+  width: calc(100% + (var(--indent) - var(--line-x)) / 2.1 + 0.3em);
+  margin: 0 0 0.7em calc((var(--line-x) - var(--indent)) / 2.1 - 0.3em);
   padding: 0.05em 0.3em;
   background: var(--label-paper);
   color: var(--pen);
@@ -266,6 +273,16 @@ order: 1
   font-weight: 500;
   color: var(--heading-color);
 }
+/* Where there's no pointer to show they're links, a faint line under each name says so */
+@media (hover: none) {
+  .major h3 a,
+  .minor-name {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--c) 40%, transparent);
+    text-decoration-thickness: max(1px, 0.04em);
+    text-underline-offset: 0.2em;
+  }
+}
 .minor-about {
   grid-row: 2;
   grid-column: 1 / -1;
@@ -361,6 +378,10 @@ order: 1
   }
   .year + .year {
     margin-top: 4.5em;
+  }
+  /* Quiet years, one after another, are closer together */
+  .year:not(:has(.year-majors)) + .year:not(:has(.year-majors)) {
+    margin-top: 2.5em;
   }
   .year h2 {
     /* Under the bar, when it's there, and on the line, in the rail */
@@ -539,7 +560,7 @@ order: 1
         {% if majors.size > 0 %}
         <div class="year-majors">
           {% for project in majors %}
-          <article class="major">
+          <article class="major" id="{{ project.title | slugify }}">
             <div class="major-head">
               <h3><a href="{{ project.href }}">{{ project.title }}</a></h3>
               {% include stars.html count=project.stars %}

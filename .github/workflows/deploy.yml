@@ -4,6 +4,10 @@ on:
   push:
     branches: ["main"]
   workflow_dispatch:
+  # Fresh stats are pushed with [skip ci], so their run deploys them instead
+  workflow_run:
+    workflows: ["Update Stats"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -16,6 +20,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,6 +41,7 @@ jobs:
           JEKYLL_ENV: production
 
       - name: Upload artifact
+        # v3 ships dotfolders like .well-known. v4 drops them; v5 needs include-hidden-files: true
         uses: actions/upload-pages-artifact@v3
 
   deploy:

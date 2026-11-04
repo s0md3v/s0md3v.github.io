@@ -423,15 +423,6 @@
         "filename": "49.webp"
     },
     {
-        "path": "/assets/photos/50.webp",
-        "width": 1440,
-        "height": 1800,
-        "aspect_ratio": 0.8,
-        "is_wide": false,
-        "row_span": 16,
-        "filename": "50.webp"
-    },
-    {
         "path": "/assets/photos/51.webp",
         "width": 1440,
         "height": 1800,

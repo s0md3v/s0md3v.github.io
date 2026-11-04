@@ -20,6 +20,12 @@ html {
   background: color-mix(in srgb, var(--accent-color) 22%, transparent);
 }
 
+/* A line someone shared a link to, marked the same way */
+::target-text {
+  background: color-mix(in srgb, var(--accent-color) 30%, transparent);
+  color: inherit;
+}
+
 /* Grain would only lift a sheet this dark off its colour */
 .dark-mode .wrapper {
   background-image: none;
@@ -135,6 +141,18 @@ h6 {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* A space between a note and the words it's written beside: there when they're copied, not seen */
+.copy-gap {
+  white-space: pre;
+}
+
+/* What's only drawn, or only a button, isn't copied with the words around it */
+.about-span,
+.copy-code {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 ul,
@@ -281,7 +299,11 @@ pre>code {
 }
 
 /* Post lists (blog, essays): a quiet column of years beside the titles */
+/* A note can stick out past the list's edge before common.js has moved it in, and mustn't widen the
+   page while it does */
 .post-list {
+  position: relative;
+  overflow-x: clip;
   margin: 0;
   list-style: none;
 }
@@ -300,7 +322,6 @@ pre>code {
 .post-list-date {
   font-size: 0.85em;
   color: var(--muted-color);
-  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -333,6 +354,11 @@ pre>code {
   transition: color 0.15s ease;
 }
 
+/* What's been read is a little lighter, still easy to read */
+.post-list-title:visited {
+  color: color-mix(in srgb, var(--heading-color) 70%, var(--background-color));
+}
+
 .post-list-title:hover {
   color: var(--accent-color);
   background: transparent;
@@ -361,6 +387,16 @@ pre>code {
 
   .post-list>li {
     margin-bottom: 1.1em;
+  }
+
+  /* Stacked, a note's written under its own title, with room of its own: a little in from it and
+     still at its slant, so it's a note, not a subtitle */
+  .post-list-note {
+    position: static;
+    display: block;
+    width: max-content;
+    margin: 0.1em 0 0 0.6em;
+    translate: none !important;
   }
 }
 
@@ -444,12 +480,13 @@ body {
   }
 }
 
+/* Clear of a phone's notch, held sideways, whichever side it's on */
 .header {
   position: sticky;
   top: 0;
   z-index: 100;
   align-self: center;
-  width: min(46rem, 100% - 2 * var(--nav-shoulder) - 1rem);
+  width: min(46rem, 100% - 2 * var(--nav-shoulder) - 1rem, 100% - 2 * max(env(safe-area-inset-left), env(safe-area-inset-right)));
   border-radius: 0 0 1.25rem 1.25rem;
   background: var(--background-color);
   /* A filter, so that the line follows the shoulders too */
@@ -733,11 +770,17 @@ html {
     padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
   }
 
+  /* Its words are clear of a notch or a camera at either side */
+  .wrapper {
+    padding-left: max(var(--sheet-margin), env(safe-area-inset-left));
+    padding-right: max(var(--sheet-margin), env(safe-area-inset-right));
+  }
+
   .header {
     position: fixed;
     inset: auto 0 0;
     width: auto;
-    padding-bottom: env(safe-area-inset-bottom);
+    padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     border-radius: 1.25rem 1.25rem 0 0;
     filter: drop-shadow(0 -1px 0 var(--border-color)) drop-shadow(0 -2px 6px rgba(0, 0, 0, 0.06));
   }
@@ -814,8 +857,8 @@ html {
   .settings-dropdown {
     top: auto;
     bottom: calc(100% + 0.5rem);
-    right: 0.5rem;
-    max-width: calc(100vw - 1rem);
+    right: calc(0.5rem + env(safe-area-inset-right));
+    max-width: calc(100vw - 1rem - env(safe-area-inset-left) - env(safe-area-inset-right));
     max-height: calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom) - 1rem);
   }
 

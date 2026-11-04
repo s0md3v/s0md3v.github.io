@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+# Crawlers that collect for AI training, not search
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
+User-agent: Bytespider
+Disallow: /
+
 Sitemap: https://somdev.in/sitemap.xml

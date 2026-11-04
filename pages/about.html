@@ -7,6 +7,12 @@ permalink: /about
 # Work had a page of its own, and is said here now
 redirect_from: /work
 order: 4
+# Its preview when shared: its thing on the desk (scripts/make_share_cards.py)
+image:
+  path: /assets/share/about.jpg
+  width: 1200
+  height: 630
+  alt: "A Polaroid of Somdev on a desk, labelled about"
 ---
 
 <style>
@@ -522,9 +528,9 @@ order: 4
       </p>
       <p>
         Outside of work, I take <a data-page="gallery" href="{{ '/gallery' | relative_url }}">photos</a>, read
-        philosophy, build things <a data-page="playground" href="{{ '/playground/' | relative_url }}">for fun</a>,
+        <a data-page="philosophy" href="{{ site.data.navigation.links.philosophy.url | relative_url }}">philosophy</a>, build things <a data-page="playground" href="{{ '/playground/' | relative_url }}">for fun</a>,
         and meow back at
-        <span class="about-cats">cats.<span class="hand-note about-meow"><svg class="about-meow-arrow about-meow-arrow-under" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21C13 21 7 17 6.5 6M3 9.5L6.4 5.6L10 9"/></svg><svg class="about-meow-arrow about-meow-arrow-beside" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14C15 16 9 15 4 10M4.4 15L3.6 9.6L9 9.4"/></svg>they find it convincing</span></span>
+        <span class="about-cats">cats.<span class="hand-note about-meow"><span class="sr-only copy-gap"> </span><svg class="about-meow-arrow about-meow-arrow-under" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21C13 21 7 17 6.5 6M3 9.5L6.4 5.6L10 9"/></svg><svg class="about-meow-arrow about-meow-arrow-beside" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14C15 16 9 15 4 10M4.4 15L3.6 9.6L9 9.4"/></svg>they find it convincing</span></span>
       </p>
       <p>
         If you're here for the work, start with my <a data-page="projects" href="{{ '/projects' | relative_url }}">projects</a>.
@@ -541,7 +547,7 @@ order: 4
         <div>
           <dt><span class="about-span" aria-hidden="true">{% assign chars = "2017–2020" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2017 to 2020</span></dt>
           <dd>
-            <span class="about-role">Independent</span>
+            <span class="about-role">Independent<span class="sr-only">. </span></span>
             <span class="about-detail">Built <a href="https://github.com/s0md3v/XSStrike">XSStrike</a>,
               <a href="https://github.com/s0md3v/Arjun">Arjun</a>,
               <a href="https://github.com/s0md3v/Photon">Photon</a> and more,
@@ -553,14 +559,14 @@ order: 4
         <div>
           <dt><span class="about-span" aria-hidden="true">{% assign chars = "2020–2023" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2020 to 2023</span></dt>
           <dd>
-            <span class="about-role">Senior security researcher, <a href="https://redhuntlabs.com">RedHunt Labs</a></span>
+            <span class="about-role">Senior security researcher, <a href="https://redhuntlabs.com">RedHunt Labs</a><span class="sr-only">. </span></span>
             <span class="about-detail">R&amp;D, including a scanner for the entire IPv4 range.</span>
           </dd>
         </div>
         <div>
           <dt><span class="about-span" aria-hidden="true">{% assign chars = "2023–now" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2023 to now</span></dt>
           <dd>
-            <span class="about-role">Independent, again</span>
+            <span class="about-role">Independent, again<span class="sr-only">. </span></span>
             <span class="about-detail">Consulting, open source, and product design.</span>
           </dd>
         </div>
@@ -569,7 +575,7 @@ order: 4
   </div>
 
   <section class="about-reach" aria-label="Write to me">
-    <p class="about-mail prose"><a href="mailto:hello[at]somdev.in">hello[at]somdev.in</a><span class="hand-note about-reply">I reply.</span></p>
+    <p class="about-mail prose"><a href="mailto:hello[at]somdev.in">hello[at]somdev.in</a><span class="hand-note about-reply"><span class="sr-only copy-gap"> </span>I reply.</span></p>
     <p class="about-work">I'm taking a break from new work for now. If you have genuinely interesting contract work or a full-time remote role, I would still love to take a look.</p>
     <ul class="about-elsewhere" aria-label="Elsewhere">
       <li><a href="https://instagram.com/s0md3v" aria-label="Instagram">{% include social/instagram.svg %}</a></li>
@@ -612,7 +618,7 @@ order: 4
     const column = note.closest('.about-text');
     const para = note.closest('p');
     function fit() {
-      note.style.translate = '';
+      note.style.translate = ''; note.style.marginLeft = '';
       note.classList.add('beside');
       para.classList.remove('noted-under');
       if (note.getBoundingClientRect().right <= document.documentElement.clientWidth - 48) return;
@@ -623,7 +629,8 @@ order: 4
       let dx = 0;
       if (n.right > c.right) dx = c.right - n.right;
       if (n.left + dx < c.left) dx = c.left - n.left;
-      note.style.translate = `${dx}px 0`;
+      // Moved in its own place, not only where it's drawn, so it can't widen the page
+      note.style.marginLeft = `${dx}px`;
     }
     fit();
     new ResizeObserver(fit).observe(column);

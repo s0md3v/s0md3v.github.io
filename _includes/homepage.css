@@ -13,6 +13,8 @@
    long one. The table fits the window, so here, only when there's something to scroll. */
 html:has(.table) {
   overflow-y: auto;
+  /* Pulled past its ends, it's more table, not white */
+  background: var(--surround-color);
 }
 
 .dark-mode {
@@ -28,16 +30,20 @@ html:has(.table) {
 
 .table {
   /* 1u is 1/100th of a 16:10 frame that fits the viewport; where it's the window's
-     width that limits it, a little less, so there's table to spare at the sides */
-  --u: min(0.85vw, 1.6svh);
-  /* Where things are: across, as on a 2:1 window, which leaves margins at the sides;
-     down, still the whole height, if not too sparse */
-  --uy: min(1.6svh, 1.25 * var(--u));
-  --ux: min(0.76vw, var(--uy));
+     width that limits it, a little less, so there's table to spare at the sides. On a
+     window nearly square, half a screen, it grows back towards 1vw as the window gets
+     taller, so things aren't small on a mostly empty table just before the phone's desk. */
+  --u: min(clamp(0.85vw, 0.44svh + 0.45vw, 1vw), 1.6svh);
+  /* Where things are: across, as on a 2:1 window, which leaves margins at the sides, or
+     a little wider with the things themselves; down, still the whole height, if not too
+     sparse */
+  --uy: min(1.6svh, 1.55 * var(--u));
+  --ux: min(max(0.76vw, 0.86 * var(--u)), var(--uy));
   position: relative;
   height: 100svh;
   min-height: 520px;
-  overflow: hidden;
+  /* Not hidden: that can still be scrolled, and focus would shift the table */
+  overflow: clip;
   isolation: isolate;
   flex-shrink: 0;
   /* Not the reading font. What's on the table is set in fonts of its own, but the glow ink's
@@ -57,6 +63,11 @@ html:has(.table) {
 #intro :is(.intro-text, .pen, .intro-pen, .intro-note) {
   -webkit-user-select: text;
   user-select: text;
+}
+
+/* Tapped, a thing on the table doesn't flash a box over itself */
+.table {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .u-probe {
@@ -246,6 +257,12 @@ a.obj:not(.grounded):focus-visible {
   outline-offset: 4px;
 }
 
+/* At night, light dashes on a band of dark, to show on the dark table and in the lamp's pool */
+.dark-mode .table :focus-visible {
+  outline-color: #e6e2da;
+  box-shadow: 0 0 0 7px rgb(16 15 15 / 0.75);
+}
+
 .item {
   display: block;
   position: relative;
@@ -397,6 +414,12 @@ a.obj:not(.grounded):focus-visible {
 .intro-back {
   justify-content: center;
   padding-bottom: 9%;
+}
+
+/* The address goes whole, in one click */
+.intro-back [data-email] {
+  -webkit-user-select: all;
+  user-select: all;
 }
 
 .intro-back .intro-lines {
@@ -918,7 +941,7 @@ a.obj:not(.grounded):focus-visible {
 #gallery {
   /* A little bigger than to scale, for its buttons */
   --x: 37.5; --y: -7.5; --w: 17.5; --r: 7deg; --h0: 2.5;
-  --tx: 42%; --ty: 124%; --tw: 9; --tr: -3deg;
+  --tx: 42%; --ty: 112%; --tw: 9; --tr: -3deg;
   z-index: 41;
 }
 
@@ -1349,7 +1372,7 @@ html:not(.dark-mode) .cam-screen {
   /* Its cable is round too (see #uses) */
   --w: 12; --r: 5deg; --h0: 0.25; --round: 2.5;
   /* Clear of the papers on a narrower table */
-  left: min(calc(50% + 33 * var(--ux)), calc(100% - 24 * var(--u)));
+  left: min(calc(50% + 33 * var(--ux)), calc(100% - 25 * var(--u)));
   top: calc(100% + 0.7 * var(--u));
   z-index: 41;
 }
@@ -1468,6 +1491,16 @@ html:not(.dark-mode) .phone-screen {
 
 .table .app:active .app-icon {
   scale: 1.2;
+}
+
+/* On touch, each app's tap area is its tile of the home screen, as tall as a fingertip
+   and out to the screen's edges, and no two overlap. The icons stay as they are. */
+@media (pointer: coarse) {
+  .table .app { position: relative; }
+  .table .app::after { content: ""; position: absolute; inset: -6.8cqi 0 -3cqi; }
+  .table :is(.app-github, .app-mail)::after { left: -3cqi; }
+  .table .app-linkedin::after { right: -3cqi; }
+  .table .app-mail::after { top: -3cqi; bottom: -6.8cqi; }
 }
 
 .app-github { --tile: #fff; --glyph: #181717; }
@@ -2068,8 +2101,9 @@ html:not(.dark-mode) .pi-screen {
   visibility: hidden;
 }
 
+/* Inherited, so it's not there before the Pi is */
 .pi-page.pi-shown {
-  visibility: visible;
+  visibility: inherit;
 }
 
 .pi-page b {
@@ -2584,6 +2618,9 @@ html:not(.dark-mode) .pi-screen {
   position: absolute;
   z-index: 43;
   pointer-events: none;
+  /* Till petri.js sizes it, a canvas is 300 by 150, and would push the phone's table about */
+  width: 0;
+  height: 0;
 }
 
 /* What takes over the man in the Polaroid, over .light, in the window of the photo, turned
@@ -2793,8 +2830,10 @@ html:not(.dark-mode) .sw-sun {
 /* ---- Phones, and upright tablets, which the table's too wide for ---- */
 
 @media (max-width: 700px), (max-aspect-ratio: 4/5) {
+  /* An upright tablet gets a phone's desk at most 540px across, centred: past that it's a
+     close-up. Wider than 900px it grows again, so the earphones' cable still leaves the table. */
   .table {
-    --u: 1vw;
+    --u: min(1vw, max(5.4px, 0.6vw));
     --ux: var(--u);
     --uy: var(--u);
     height: calc(385 * var(--u));
@@ -2816,21 +2855,21 @@ html:not(.dark-mode) .sw-sun {
   #switch { --w: 10; left: calc(100% - 9 * var(--u)); top: calc(11 * var(--u)); }
   #about { --x: -22; --y: 31; --w: 32; }
   /* Its plug in a laptop just off the side of the table, so no cable */
-  #projects { --x: 31; --y: 40; --w: 46; --r: 0deg; }
+  #projects { --y: 40; --w: 46; --r: 0deg; left: calc(100% - 19 * var(--u)); }
   #projects .cable,
   .pi-plug { display: none; }
-  #blog { --w: 44; left: calc(27 * var(--u)); top: calc(170 * var(--u)); }
-  #phone { --w: 38; --r: -4deg; left: calc(73 * var(--u)); top: calc(178 * var(--u)); }
+  #blog { --w: 44; left: calc(50% - 23 * var(--u)); top: calc(170 * var(--u)); }
+  #phone { --w: 38; --r: -4deg; left: calc(50% + 23 * var(--u)); top: calc(178 * var(--u)); }
   #phone .run-down { display: none; }
   #phone .run-side { display: inline; }
   /* Out, its cable off to the side: it fell the other way */
   #phone { --loose-dx: 22; --loose-dy: -24.5; --loose-turn: 70; }
   .table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged { --dx: var(--loose-dx); --dy: var(--loose-dy); --turn: var(--loose-turn); }
-  #papers { --w: 38; --r: 5deg; left: calc(100% - 21 * var(--u)); top: calc(268 * var(--u)); }
+  #papers { --w: 38; --r: 5deg; left: calc(50% + 29 * var(--u)); top: calc(268 * var(--u)); }
   #papers .tag { --tx: 18%; --tw: 22; }
   #philosophy { --x: -22; --y: 240; --w: 26; --tw: 26; }
   #gallery { --x: -20; --y: 304; --w: 36; --tw: 22; }
   #playground { --x: 24; --y: 336; --w: 24; --tw: 27; }
-  #uses { --w: 30; left: calc(30 * var(--u)); top: calc(100% - 14 * var(--u)); }
+  #uses { --w: 30; left: calc(50% - 20 * var(--u)); top: calc(100% - 14 * var(--u)); }
   #uses .tag { --tw: 18; }
 }

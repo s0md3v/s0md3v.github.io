@@ -16,6 +16,7 @@ kramdown:
     default_lang: plaintext
 url: "https://somdev.in"
 title: "Somdev Sangwan"
+tagline: "hacker & maker"
 permalink: pretty
 
 collections:
@@ -46,7 +47,7 @@ defaults:
       author: Somdev Sangwan
       type: philosophy
 
-description: "Somdev Sangwan is a security researcher & developer. He also writes about epistemology and ethics."
+description: "Somdev Sangwan (s0md3v) is a security researcher and programmer, the author of XSStrike and Arjun, who does product design too."
 author:
   name: Somdev Sangwan
   twitter: s0md3v
@@ -79,6 +80,10 @@ jekyll-minifier:
 
 sass:
   style: compressed
+
+# Jekyll skips dotfolders unless they're named here
+include:
+  - .well-known
 
 exclude:
   - "denoise*.html"

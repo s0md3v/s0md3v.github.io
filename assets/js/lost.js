@@ -29,6 +29,9 @@
   // that's been cut short in pasting is the other way to get here.
   function nearest(path) {
     const want = tidy(path), end = want.split('/').pop();
+    // A whole word of only one address, so that /blog/xsstrike finds it
+    const named = end.length >= 4 ? pages.filter(known => ('-' + tidy(known.url).split('/').pop() + '-').includes('-' + end + '-')) : [];
+    if (named.length === 1) return named[0];
     let best = null, least = Infinity;
     for (const known of pages) {
       const full = tidy(known.url) || 'home', tail = full.split('/').pop();
@@ -46,11 +49,19 @@
   }
 
   const page = nearest(location.pathname);
+  // Out by only a slash, a capital or a .html, it's the same address, so it goes straight there
+  if (page && tidy(page.url) && tidy(page.url) === tidy(location.pathname) && page.url !== location.pathname) {
+    location.replace(page.url + location.search + location.hash);
+    return;
+  }
   if (page && tidy(page.url)) {
     const link = document.createElement('a');
     link.href = page.url;
     link.textContent = page.title;
-    way.replaceChildren('You probably want ', link, '.');
+    // Its own stop, if its title has one
+    way.replaceChildren('You probably want ', link, /[?!.]$/.test(page.title) ? '' : '.');
+    const id = section(page.url);
+    if (id) way.dataset.page = id;
   }
 
   // ---- What's under the card ----

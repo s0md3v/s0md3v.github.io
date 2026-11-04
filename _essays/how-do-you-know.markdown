@@ -68,6 +68,7 @@ Knowledge is a belief that's both justified and true.
 If you asked someone in 200 BCE if something is crawling in your eyelashes, they would look at them carefully and say no. If you ask, "Do you really know that?" and they would say, "Of course, I'm looking at them there's nothing crawling there."
 
 We have microscopes now and thus can see the mites that live in the eyelashes of almost everyone.
+
 ![A demodex mite under a microscope: a tiny elongated, translucent creature of the kind that lives in eyelashes](/assets/inline/demodex.jpg)
 
 For roughly two centuries, scientists believed that Newton's laws of motion and gravity can explain all physical reality. Then electromagnetism, quantum physics, relativity and speed of light made us realized things are not so simple, just like the microscope in our example. We now know that newton's laws applied to many things but not everything.

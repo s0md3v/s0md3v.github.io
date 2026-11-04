@@ -1,0 +1,103 @@
+/* The feed, opened in a browser instead of a reader: a sheet with what it is and what's in it.
+   CSS can't make an RSS file's links clickable, so it's for reading, not browsing. */
+@namespace atom url(http://www.w3.org/2005/Atom);
+@namespace content url(http://purl.org/rss/1.0/modules/content/);
+@namespace dc url(http://purl.org/dc/elements/1.1/);
+
+@font-face {
+  font-family: "Lexend";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/assets/fonts/Lexend-Variable-latin.woff2") format("woff2");
+}
+
+rss {
+  --surround: #e4e0d6;
+  --sheet: #f6f3ea;
+  --ink: #26231f;
+  --quiet: #655e56;
+  --rule: rgb(38 35 31 / 0.12);
+  display: block;
+  min-height: 100vh;
+  padding: 3rem 1.25rem;
+  background: var(--surround);
+  color: var(--ink);
+  font: 17px/1.55 "Lexend", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  rss {
+    --surround: #000;
+    --sheet: #100f0f;
+    --ink: #cecdc3;
+    --quiet: #9f9d96;
+    --rule: rgb(206 205 195 / 0.14);
+  }
+}
+
+channel {
+  display: block;
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: 2.5rem 2.25rem 2rem;
+  background: var(--sheet);
+  box-shadow: 0.5px 0.5px 1px rgb(0 0 0 / 0.12), 2px 3px 7px rgb(0 0 0 / 0.08);
+}
+
+/* What this is, first */
+channel::before {
+  content: "A feed. Add this page's address to a feed reader, and new posts show up there.";
+  display: block;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--quiet);
+  font-size: 0.85em;
+}
+
+channel > title {
+  display: block;
+  font-size: 1.6em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+channel > description {
+  display: block;
+  margin: 0.4em 0 2em;
+  color: var(--quiet);
+}
+
+item {
+  display: block;
+  padding: 0.9em 0;
+  border-top: 1px solid var(--rule);
+}
+
+item > title {
+  display: block;
+  font-weight: 500;
+}
+
+item > pubDate,
+item > link {
+  display: block;
+  color: var(--quiet);
+  font-size: 0.8em;
+  overflow-wrap: anywhere;
+}
+
+/* The rest is for readers */
+channel > link,
+channel > pubDate,
+channel > lastBuildDate,
+channel > generator,
+atom|link,
+item > description,
+item > guid,
+item > category,
+content|encoded,
+dc|creator {
+  display: none;
+}

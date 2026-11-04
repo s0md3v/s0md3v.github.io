@@ -19,6 +19,23 @@ permalink: /404.html
     overflow: hidden;
   }
 }
+/* On a phone it's the same card, with nothing under it */
+@media (max-width: 768px) {
+  .wrapper {
+    width: calc(100% - 2.5rem);
+    padding: 2em 1.5em;
+    margin: 22svh auto 0;
+    background-image: var(--paper-grain);
+    box-shadow:
+      0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.2),
+      2px 3px 7px rgba(var(--sheet-shadow), 0.14),
+      5px 9px 26px rgba(var(--sheet-shadow), 0.08);
+  }
+  /* By night a card's the page's own colour, so it's on the table, as it is on a wider screen */
+  html.dark-mode {
+    background: var(--surround-color);
+  }
+}
 .number {
   margin: 0;
   font-size: 4.5em;
@@ -32,6 +49,13 @@ permalink: /404.html
 .way {
   margin: 0.5em 0 0;
   color: var(--midground-color);
+}
+/* Underlined in the ink of where it goes */
+.way a {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, var(--c, currentColor) 60%, transparent);
 }
 /* It's under the card, and the card comes up over it, lit from the top left */
 .rise {

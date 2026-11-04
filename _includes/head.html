@@ -1,7 +1,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% comment %} Edge to edge past a notch, except the desk, whose sides Safari fills with the table's colour {% endcomment %}
+  <meta name="viewport" content="width=device-width, initial-scale=1{% unless page.layout_style == 'homepage' %}, viewport-fit=cover{% endunless %}">
   <meta name="theme-color" content="#f6f3ea">
   <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ '/feed.xml' | absolute_url }}">
@@ -144,6 +145,16 @@
       src: url('{{ "/assets/fonts/Lexend-Variable-latin.woff2" | relative_url }}') format('woff2');
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
+
+    /* Arial at Lexend's size, so a visit that stays in the fallback reads nearly the same */
+    @font-face {
+      font-family: 'Lexend Fallback';
+      src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Roboto'), local('Liberation Sans');
+      size-adjust: 110%;
+      ascent-override: 91%;
+      descent-override: 23%;
+      line-gap-override: 0%;
+    }
     {% endunless %}
 
     {% if uses_handwritten_font %}
@@ -180,7 +191,8 @@
     })();
   </script>
   {% endif %}
-  <script src="{{ '/assets/js/sound.js' | relative_url }}" defer></script>
+  {% comment %} The desk makes no clicks, so it doesn't need the click {% endcomment %}
+  {% unless page.layout_style == 'homepage' %}<script src="{{ '/assets/js/sound.js' | relative_url }}" defer></script>{% endunless %}
   <script src="{{ '/assets/js/common.js' | relative_url }}" defer></script>
 
   {% if page.custom_css %}

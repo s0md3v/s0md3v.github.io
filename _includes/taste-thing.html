@@ -26,7 +26,7 @@
     {%- if size -%}
     <img src="{{ '/assets/images/taste/' | append: item.slug | append: '-' | append: w[0] | append: '.avif' | relative_url }}"
       srcset="{{ '/assets/images/taste/' | append: item.slug | append: '-' | append: w[0] | append: '.avif' | relative_url }} {{ w[0] }}w, {{ '/assets/images/taste/' | append: item.slug | append: '-' | append: w[1] | append: '.avif' | relative_url }} {{ w[1] }}w"
-      sizes="{{ sizes }}" width="{{ size[0] }}" height="{{ size[1] }}" loading="lazy" decoding="async" alt="{% if cover %}{{ label | escape }}{% endif %}">
+      sizes="{{ sizes }}" width="{{ size[0] }}" height="{{ size[1] }}" loading="lazy" decoding="async" alt="{% if cover %}{{ label | escape }}{% endif %}"{% if cover %} title="{{ label | escape }}"{% endif %}>
     {%- else -%}
     <span class="thing-missing"{% if cover %} role="img" aria-label="{{ label | escape }}"{% else %} aria-hidden="true"{% endif %}></span>
     {%- endif -%}
@@ -34,7 +34,7 @@
     {%- if item.sticker -%}<span class="thing-mark">{{ item.sticker }}</span>{%- elsif item.mark == "favourite" -%}<span class="thing-mark">fav</span>{%- elsif item.mark == "recommend" -%}<span class="thing-mark">start here</span>{%- endif -%}
   </span>
   {%- unless cover %}
-  <span class="thing-name">{% if item.mark == "dislike" %}<s>{{ item.title }}</s><span class="sr-only"> (not for me)</span>{% else %}{{ item.title }}{% endif %}{% if item.meta %}<span class="thing-meta">{{ item.meta }}</span>{% endif %}</span>
+  <span class="thing-name">{% if item.mark == "dislike" %}<s>{{ item.title }}</s><span class="sr-only"> (not for me)</span>{% else %}{{ item.title }}{% endif %}{% if item.meta %}<span class="sr-only">, by </span><span class="thing-meta">{{ item.meta }}</span>{% endif %}</span>
   {%- endunless %}
   {% if item.url %}</a>{% endif %}
   {%- if item.note and item.note_above != true %}

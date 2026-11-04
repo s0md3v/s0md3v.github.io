@@ -33,6 +33,11 @@
   display: block;
 }
 
+/* The line breaks between its parts, never inside a name, a date or "10 min read" */
+.post-meta .nowrap {
+  white-space: nowrap;
+}
+
 /* ---- Its text ---- */
 
 .post-content {
@@ -62,6 +67,11 @@
   .post-content p,
   .post-content li {
     hyphens: auto;
+    /* Only words of ten letters or more, four on each side, and never three lines running */
+    hyphenate-limit-chars: 10 4 4;
+    -webkit-hyphenate-limit-before: 4;
+    -webkit-hyphenate-limit-after: 4;
+    -webkit-hyphenate-limit-lines: 2;
   }
 }
 
@@ -105,8 +115,10 @@
   margin-top: 0.5em;
 }
 
-/* Each section can be linked to: its heading shows the link as a pointer comes to it */
+/* Each section can be linked to: its heading shows the link as a pointer or the keyboard comes to
+   it, and a press copies its address */
 .post-content .section-link {
+  position: relative;
   margin-left: 0.3em;
   color: var(--muted-color);
   font-weight: 400;
@@ -115,14 +127,57 @@
   transition: opacity 0.15s ease;
 }
 
-.post-content :is(h2, h3):hover .section-link {
+/* Drawn, not written, so it isn't copied with the heading */
+.post-content .section-link::before {
+  content: "#";
+}
+
+.post-content :is(h2, h3):hover .section-link,
+.post-content .section-link:focus-visible,
+.post-content .section-link.copied {
   opacity: 1;
 }
 
+/* Where there's no pointer it's always there, faintly, and a finger's width to press */
 @media (hover: none) {
   .post-content .section-link {
-    display: none;
+    display: inline-block;
+    opacity: 0.35;
+    padding: 0.2em 0.4em;
+    margin: -0.2em -0.4em -0.2em -0.1em;
+    background: none;
   }
+
+  .section-copied {
+    translate: -0.2em -50%;
+  }
+}
+
+/* Said for a moment beside the "#" once its address is copied */
+.section-copied {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  translate: 0.4em -50%;
+  font-family: var(--base-font-family);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--midground-color);
+  white-space: nowrap;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* No room beside it at the page's edge: above it instead */
+.section-copied.above {
+  left: auto;
+  right: 0;
+  top: auto;
+  bottom: 100%;
+  translate: 0 -0.15em;
 }
 
 .post-content ul,
@@ -274,7 +329,7 @@
   line-height: 0;
 }
 
-.post-content .footnotes {
+.post-content .notes {
   margin-top: 3em;
   padding-top: 1.5em;
   border-top: 1px solid var(--border-color);
@@ -283,14 +338,14 @@
 }
 
 /* Some posts already introduce their notes with a "References" heading */
-.post-content :is(h2, h3, h4):not(.sr-only)+.footnotes {
+.post-content :is(h2, h3, h4):not(.sr-only)+.notes {
   margin-top: 0;
   padding-top: 0;
   border-top: 0;
 }
 
 /* Gone to a note, or back from it: it's marked, so you can tell which it was */
-.post-content .footnotes li:target,
+.post-content .notes li:target,
 .post-content sup:target>a {
   background: color-mix(in srgb, var(--link-color) 14%, transparent);
   box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--link-color) 14%, transparent);
@@ -421,24 +476,26 @@
     var(--code-bg);
 }
 
-/* Copy, in the block's top corner: there to be found where there's a pointer, and always there
-   where there isn't */
+/* Copy, a tab on the block's top edge, off the code so it never covers the end of a line: there
+   to be found where there's a pointer, and always there where there isn't */
 .post-content .highlight {
   position: relative;
+  margin-top: 1.6em;
 }
 
 .copy-code {
   position: absolute;
-  top: 0.45em;
-  right: 0.45em;
-  padding: 0.2em 0.6em;
+  bottom: 100%;
+  right: 0.6em;
+  padding: 0.15em 0.65em;
   font: inherit;
   font-size: 0.75em;
   line-height: 1.4;
   color: var(--muted-color);
   background: var(--code-bg);
   border: 1px solid var(--border-color);
-  border-radius: 0.35em;
+  border-bottom: 0;
+  border-radius: 0.35em 0.35em 0 0;
   cursor: pointer;
 }
 
@@ -503,6 +560,11 @@
 /* By day, printed on the sheet: white is the paper's own colour */
 .light-mode .post-content :is(img, video) {
   mix-blend-mode: multiply;
+}
+
+/* A picture keeps its distance from the paragraph over it, even one written straight under it */
+.post-content :is(a.full-size, p > img) {
+  margin-top: 1.2em;
 }
 
 /* One that's bigger than it can be shown opens full size */
@@ -623,8 +685,17 @@
   .post-after,
   .copy-code,
   .section-link,
-  .slips {
+  .slips,
+  .slips-on .slips,
+  .post-content a.reversefootnote {
     display: none;
+  }
+
+  /* A source on paper can't be clicked, so its address is printed after it */
+  .post-content .notes a[href^="http"]::after {
+    content: " — " attr(href);
+    font-size: 0.85em;
+    word-break: break-all;
   }
 
   /* Nothing scrolls on paper */

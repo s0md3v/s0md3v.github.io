@@ -24,6 +24,12 @@ papers:
       characters), we can determine if a string "sounds" like a word in a given language. If it's pronounceable,
       it's likely not random junk. This is much faster than dictionary lookups and more accurate than standard
       entropy checks for detecting machine-generated strings.
+# Its preview when shared: its thing on the desk (scripts/make_share_cards.py)
+image:
+  path: /assets/share/papers.jpg
+  width: 1200
+  height: 630
+  alt: "A printed paper, Bypassing XSS Detection Mechanisms, on a desk, labelled papers"
 ---
 
 <style>
@@ -47,7 +53,7 @@ papers:
   row-gap: 4.5em;
   max-width: 58em;
   margin: 0 auto;
-  padding: 2.5em 1.25em 3.5em;
+  padding: 2.5em max(1.25em, env(safe-area-inset-right)) 3.5em max(1.25em, env(safe-area-inset-left));
   font-size: var(--reading-size);
   line-height: 1.6;
 }
@@ -155,6 +161,13 @@ papers:
 
 .paper-words p + p {
   margin-top: 1.1em;
+}
+
+/* As in a post: at the size of the words around it, whatever size the reader reads at */
+.paper-words code {
+  font-size: 0.85em;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
 }
 </style>
 

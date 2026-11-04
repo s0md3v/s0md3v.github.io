@@ -7,8 +7,10 @@
 #   only as they're scrolled to, and, if they're bigger than they can be shown, open full size.
 # - Footnotes are named for what they are, not read out as "1" and an arrow, and the notes are
 #   under a heading, if the post hasn't given them one, so they can be found by it.
-# - Each section can be linked to: its heading has a link to itself, for a pointer to copy (a screen
-#   reader would only hear it as part of the heading's name, and the address bar has it anyway).
+# - Each section can be linked to: its heading has a link to itself, which copies its address
+#   (article.js), from a pointer, a finger or the keyboard. Its "#" is drawn by the stylesheet, so it
+#   isn't copied with the heading, and it's named for what it does.
+# - Code is left as it is by a page translator.
 module ArticleHtml
   COLLECTIONS = %w(blog essays).freeze
   START = '<div class="post-content">'
@@ -23,6 +25,7 @@ module ArticleHtml
     body = pictures(body, source)
     body = sections(body)
     body = footnotes(body)
+    body = code(body)
     html[0...from] + body + html[to..]
   end
 
@@ -62,15 +65,21 @@ module ArticleHtml
     body = body.gsub(%r{<a href="#fnref:([^"]+)" class="reversefootnote"}) do
       %(<a href="#fnref:#{$1}" class="reversefootnote" aria-label="Back to where note #{shown[$1.sub(/:\d+\z/, "")] || $1} was")
     end
-    body.sub(%r{(</h[1-6]>\s*)?(<div class="footnotes" role="doc-endnotes">)}) do
+    # Called "notes", not "footnotes", which Reader View takes for clutter and leaves out
+    body = body.sub('<div class="footnotes" role="doc-endnotes">', '<div class="notes" role="doc-endnotes">')
+    body.sub(%r{(</h[1-6]>\s*)?(<div class="notes" role="doc-endnotes">)}) do
       $1 ? $1 + $2 : %(<h2 class="sr-only" id="notes">Notes</h2>\n#{$2})
     end
+  end
+
+  def self.code(body)
+    body.gsub(/<(code|pre class="highlight")(?=[\s>])/) { %(<#{$1} translate="no") }
   end
 
   def self.sections(body)
     body.gsub(%r{<h([23]) id="([^"]+)">(.*?)</h\1>}m) do
       level, id, text = $1, $2, $3
-      %(<h#{level} id="#{id}">#{text}<a class="section-link" href="##{id}" aria-hidden="true" tabindex="-1">#</a></h#{level}>)
+      %(<h#{level} id="#{id}">#{text}<a class="section-link" href="##{id}" aria-label="Copy link to this section"></a></h#{level}>)
     end
   end
 end

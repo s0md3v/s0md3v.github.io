@@ -9,31 +9,32 @@ layout: base
 
 <main class="blog-content" data-page="{{ post_mark }}" id="main-content" tabindex="-1">
   <div class="wrapper">
-    <h1 class="post-title">{{ page.title | escape }}</h1>
-    <p class="post-meta">
-      {% if post_essay %}An essay by{% else %}By{% endif %}
-      <a href="{{ '/about' | relative_url }}" rel="author">{{ page.author | default: site.author.name }}</a>
-      <span aria-hidden="true">·</span>
-      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>
-      <span aria-hidden="true">·</span>
-      {{ content | reading_minutes }} min read
-      {% if page.external %}
-      <span class="post-meta-line">Also {{ page.external.status }} <a href="{{ page.external.href }}">{{ page.external.title | escape }}</a> on {{ page.external.date | date: "%-d %b %Y" }}</span>
-      {% endif %}
-      {% if post_essay %}
-      {% capture essays_preface %}{% include essays-preface.md %}{% endcapture %}
-      {% assign essays_preface = essays_preface | strip %}
-      {% if essays_preface != "" %}
-      <span class="post-meta-line">One of a series, read in order: <a href="{{ '/essays/' | relative_url }}#preface">start with the preface</a></span>
-      {% endif %}
-      {% endif %}
-      {% for extra in page.extras %}
-      <span class="post-meta-line">See <a href="{{ extra.href }}">{{ extra.text | escape }}</a></span>
-      {% endfor %}
-    </p>
-    <div class="post-content">
-      {{ content }}
-    </div>
+    {% comment %} An <article>, title to notes, so Reader View takes the post and leaves the rest {% endcomment %}
+    <article>
+      <h1 class="post-title">{{ page.title | escape }}</h1>
+      <p class="post-meta">
+        {% if post_essay %}An essay by{% else %}By{% endif %}
+        <span class="nowrap"><a href="{{ '/about' | relative_url }}" rel="author">{{ page.author | default: site.author.name }}</a></span>&nbsp;<span aria-hidden="true">·</span>
+        <span class="nowrap"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time></span>&nbsp;<span aria-hidden="true">·</span>
+        <span class="nowrap">{{ content | reading_minutes }} min read</span>
+        {% if page.external %}
+        <span class="post-meta-line">Also {{ page.external.status }} <a href="{{ page.external.href }}">{{ page.external.title | escape }}</a> on {{ page.external.date | date: "%-d %b %Y" }}</span>
+        {% endif %}
+        {% if post_essay %}
+        {% capture essays_preface %}{% include essays-preface.md %}{% endcapture %}
+        {% assign essays_preface = essays_preface | strip %}
+        {% if essays_preface != "" %}
+        <span class="post-meta-line">One of a series, read in order: <a href="{{ '/essays/' | relative_url }}#preface">start with the preface</a></span>
+        {% endif %}
+        {% endif %}
+        {% for extra in page.extras %}
+        <span class="post-meta-line">See <a href="{{ extra.href }}">{{ extra.text | escape }}</a></span>
+        {% endfor %}
+      </p>
+      <div class="post-content">
+        {{ content }}
+      </div>
+    </article>
     <div class="post-fin">{% include marks/{{ post_mark }}.svg %}</div>
   </div>
 
