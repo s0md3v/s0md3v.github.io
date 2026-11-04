@@ -11,10 +11,14 @@ image:
   width: 1200
   height: 630
   alt: "A Raspberry Pi on a desk, its screen showing ~/projects and its GitHub stars"
+# The rest, a line each, in this order: tools that say most about what he can build first, then the
+# odd one out, then what's a collection or a library rather than a tool. Anything else that's
+# picked up 1,000 stars goes after them, most liked first.
+rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-a-hacker, huepy]
 ---
 
 <style>
-/* All paper: the window's the sheet, as a timeline is looked at whole, not read down a column */
+/* All paper: the window's the sheet */
 @media screen and (min-width: 769px) {
   html {
     background: var(--background-color) var(--paper-grain);
@@ -25,292 +29,273 @@ image:
   }
 }
 
-.timeline {
+/* One list: the few that are his best, in his order, each with what it's for and how it does it,
+   then everything else people know him by, a line each, in the order up top. Opposite each name,
+   as a date is opposite a job, how many like it, and its star, which is what he eats
+   (assets/js/trail.js): he goes down the stars, and each he's been past is left an outline, with
+   bits of the bait between them. */
+.field {
   font-size: var(--reading-size);
   line-height: 1.6;
-  max-width: 39em;
+  max-width: 46em;
   width: 100%;
   margin: 0 auto;
-  padding: 2.5em 1.25em 3em;
-  --line-x: 0.35em;
-  --indent: 1.6em;
-  /* From a row to the line */
-  --to-line: calc(var(--line-x) - var(--indent));
-  --label-paper: var(--background-color);
+  padding: 3em 1.25em 3em;
+  /* The stars' column, his, and the counts', each right after its star */
+  --gutter: 2.2em;
+  --count: 2.7em;
+  --line-x: calc(100% - var(--count) - var(--gutter) / 2);
+  --between: 2.4em;
+  --pixel: 2px;
 }
-
-@media screen and (min-width: 769px) {
-  .timeline {
-    --label-paper: var(--background-color) var(--paper-grain);
-  }
-
-  .dark-mode .timeline {
-    --label-paper: var(--background-color);
+@media (min-width: 769px) {
+  .field {
+    padding: 5em 2.5em 5em;
+    --gutter: 1.7em;
+    --count: 2.9em;
+    --pixel: 3px;
   }
 }
-
 .chart {
   position: relative;
 }
-.years {
+.projects {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.year {
-  padding-left: var(--indent);
-}
-/* In one column it's simply the year's */
-.year-label {
-  display: contents;
-}
-.year + .year {
-  margin-top: 3.5em;
-}
-.year h2 {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  /* --indent and --line-x come in as ems of this size, so they're brought back to the timeline's */
-  width: calc(100% + (var(--indent) - var(--line-x)) / 2.1 + 0.3em);
-  margin: 0 0 0.7em calc((var(--line-x) - var(--indent)) / 2.1 - 0.3em);
-  padding: 0.05em 0.3em;
-  background: var(--label-paper);
-  color: var(--pen);
-  font-family: "Reenie Beanie", cursive;
-  font-size: 2.1em;
-  font-weight: 400;
-  line-height: 1;
-  rotate: -2deg;
-}
-/* Nobody writes two the same */
-.year:nth-child(even) h2 {
-  rotate: 1.5deg;
-}
-.year:nth-child(3n) h2 {
-  rotate: -3.5deg;
-}
-
-/* The bait: bits of what's under the page, drawn as it's drawn (_raw/bits.py). By day a dark
-   gel, wet, with the window in it and a bottle's green where it's thin; by night the same, lit
-   from inside by a speck or two. They're all lit from the top left, so none of them turns. */
-:root {
-  --bit-1: url("{{ '/assets/images/bits/' | relative_url }}bit1-day.svg");
-  --bit-2: url("{{ '/assets/images/bits/' | relative_url }}bit2-day.svg");
-  --bit-3: url("{{ '/assets/images/bits/' | relative_url }}bit3-day.svg");
-  --pellet: url("{{ '/assets/images/bits/' | relative_url }}pellet-day.svg");
-  --chunk: url("{{ '/assets/images/bits/' | relative_url }}chunk-day.svg");
-  --run: url("{{ '/assets/images/bits/' | relative_url }}strip-day.svg");
-  --bit-lift: drop-shadow(1px 1px 1px rgb(28 34 44 / 0.55)) drop-shadow(2px 3px 2px rgb(28 34 44 / 0.2));
-}
-.dark-mode {
-  --bit-1: url("{{ '/assets/images/bits/' | relative_url }}bit1-night.svg");
-  --bit-2: url("{{ '/assets/images/bits/' | relative_url }}bit2-night.svg");
-  --bit-3: url("{{ '/assets/images/bits/' | relative_url }}bit3-night.svg");
-  --pellet: url("{{ '/assets/images/bits/' | relative_url }}pellet-night.svg");
-  --chunk: url("{{ '/assets/images/bits/' | relative_url }}chunk-night.svg");
-  --run: url("{{ '/assets/images/bits/' | relative_url }}strip-night.svg");
-  --bit-lift: drop-shadow(0 0 0.25em rgb(128 196 136 / 0.5));
-}
-.major::before,
-.minors li::before,
-.major-head::after,
-.today::before {
-  translate: -50% -50%;
-  background: var(--bit-1) center / 100% 100% no-repeat;
-  filter: var(--bit-lift);
-}
-.major-head::after {
-  background-image: var(--pellet);
-}
-/* They're alive, if you look: each swells a little, now and then, in its own time */
-@media (prefers-reduced-motion: no-preference) {
-  .major::before,
-  .minors li::before,
-  .major-head::after,
-  .today::before {
-    animation: alive 9s ease-in-out infinite;
-  }
-  .minors li:nth-child(2n)::before {
-    animation-delay: -3.1s;
-    animation-duration: 11s;
-  }
-  .minors li:nth-child(3n)::before {
-    animation-delay: -6.4s;
-  }
-  .minors li:nth-child(5n)::before {
-    animation-delay: -1.7s;
-    animation-duration: 13s;
-  }
-  .major:nth-child(2n) .major-head::after {
-    animation-delay: -4.6s;
-  }
-}
-@keyframes alive {
-  0%, 80%, 100% { scale: 1; }
-  88% { scale: 1.14 0.92; }
-  94% { scale: 0.96 1.06; }
-}
-
-.major {
-  position: relative;
-}
-.major::before {
-  content: "";
-  position: absolute;
-  top: 1.2em;
-  left: var(--to-line);
-  width: 0.9em;
-  height: 0.78em;
-}
-.major + .major {
-  margin-top: 2.75em;
-}
-.major-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0 1em;
-}
-.major h3 {
-  margin: 0;
-  font-size: 2.1em;
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-.major h3 a {
-  color: var(--heading-color);
-}
-.major h3 a:hover,
-.minor-name:hover {
-  color: var(--c);
-  background: none;
-}
-/* A count's the same size wherever it is, whatever it's beside */
-.major-head .stars {
-  font-size: 0.81em;
-}
-.major p {
-  margin: 0.5em 0 0;
-  color: var(--midground-color);
-}
-.major strong {
-  font-weight: 400;
-  color: var(--foreground-color);
-}
-.major-post {
-  display: inline-block;
-  margin-top: 0.5em;
-  font-size: 0.9em;
-  color: var(--c);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--c) 40%, transparent);
-  text-underline-offset: 0.2em;
-}
-.major-post:hover,
-.minor-post:hover {
-  background: none;
-  text-decoration-color: currentColor;
-}
-
-.stars {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3em;
-  color: var(--muted-color);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.stars svg {
-  width: 0.85em;
-  height: 0.85em;
-}
-
-.minors {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  line-height: 1.45;
-}
-.year-majors + .minors {
-  margin-top: 2.5em;
-}
-.minors li {
-  position: relative;
+.project {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 1em;
+  grid-template-columns: minmax(0, 1fr) var(--gutter) var(--count);
   align-items: baseline;
+  line-height: 1.55;
 }
-.minors li > * {
-  font-size: 0.9em;
+.project + .project {
+  margin-top: 0.5em;
 }
-/* Left out for him */
-.minors li::before {
-  content: "";
-  position: absolute;
-  top: 0.65em;
-  left: var(--to-line);
-  width: 0.5em;
-  height: 0.42em;
+/* The proud ones well apart, and the rest a little further from them still */
+.shown + .shown {
+  margin-top: 2.4em;
 }
-.minors li:nth-child(3n)::before {
-  width: 0.58em;
-  height: 0.38em;
-  background-image: var(--bit-2);
+.shown + .project:not(.shown) {
+  margin-top: 3.75em;
 }
-.minors li:nth-child(4n + 1)::before {
-  width: 0.42em;
-  height: 0.48em;
-  background-image: var(--bit-3);
+.line {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 1.25em;
 }
-.minors li:nth-child(7n)::before {
-  width: 0.6em;
-  height: 0.46em;
-  background-image: var(--bit-2);
-}
-.minors li + li {
-  margin-top: 0.8em;
-}
-.minor-name {
-  font-weight: 500;
+.name {
+  font-weight: 400;
   color: var(--heading-color);
 }
-/* Where there's no pointer to show they're links, a faint line under each name says so */
+/* A featured one's name, a size up and heavier, and what it is as bright as it */
+.shown .name {
+  font-size: 1.2em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.shown .label {
+  margin-left: 0.6em;
+  color: var(--heading-color);
+}
+.name:hover {
+  color: var(--c);
+  background: none;
+}
 @media (hover: none) {
-  .major h3 a,
-  .minor-name {
+  .name {
     text-decoration: underline;
     text-decoration-color: color-mix(in srgb, var(--c) 40%, transparent);
     text-decoration-thickness: max(1px, 0.04em);
     text-underline-offset: 0.2em;
   }
 }
-.minor-about {
-  grid-row: 2;
-  grid-column: 1 / -1;
+/* Every one's first line the same: its name, and what it is after it */
+.label {
+  margin-left: 0.4em;
   color: var(--midground-color);
 }
-.minor-post {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--c) 60%, transparent);
-  text-underline-offset: 0.2em;
+/* Under a featured one's, why there's call for it and how it goes about it: the only thing that
+   sets it apart, besides its name's weight */
+.about {
+  margin: 0.35em 0 0;
+  max-width: 34em;
+  color: var(--midground-color);
+  text-wrap: pretty;
 }
-.minors li > .stars {
-  font-size: 0.81em;
+/* Its star in his column, on the middle of the name's small letters, and its count after it */
+.project .stars {
+  display: contents;
+}
+.project .stars > span[aria-hidden="true"] {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: start;
+  color: var(--muted-color);
+  font-size: 0.8em;
+  font-variant-numeric: tabular-nums;
+}
+.project .stars svg {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  align-self: start;
+  width: 0.95em;
+  height: 0.95em;
+  margin-top: calc((1.55em - 0.95em) / 2 + 0.03em);
+  color: var(--c);
+}
+/* Where there's less room, the count's under its star, so the words have the room */
+@media (max-width: 768px) {
+  .field {
+    --count: 0em;
+    --gutter: 2.6em;
+  }
+  .project {
+    min-height: 2.45em;
+  }
+  .project .stars > span[aria-hidden="true"] {
+    grid-column: 2;
+    justify-self: center;
+    align-self: start;
+    /* Below the star, in its own ems */
+    margin-top: calc(((1.55em - 0.95em) / 2 + 0.03em + 0.95em + 0.12em) / 0.7);
+    font-size: 0.7em;
+    line-height: 1.2;
+  }
+  .project.shown .stars svg {
+    margin-top: calc((1.55em - 0.95em) / 2 + 0.03em + 0.13em);
+  }
+  .shown .stars > span[aria-hidden="true"] {
+    margin-top: calc(((1.55em - 0.95em) / 2 + 0.03em + 0.13em + 0.95em + 0.12em) / 0.7);
+  }
+  /* A featured one's what-it-is gets a line of its own under its name, rather than breaking across two */
+  .shown .label {
+    display: block;
+    margin: 0.1em 0 0;
+    line-height: 1.35;
+  }
+}
+/* A featured one's line's taller, its name being bigger, so its star's a little lower */
+.shown .stars svg {
+  margin-top: calc((1.55em - 0.95em) / 2 + 0.03em + 0.24em);
+}
+/* Eaten, it's only the shape of one: been there, not empty */
+.project .stars svg.eaten {
+  color: color-mix(in srgb, var(--muted-color) 70%, transparent);
+}
+.project .stars svg.eaten path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .project .stars svg:not(.eaten) {
+    animation: alive 9s ease-in-out infinite;
+    animation-delay: calc(var(--n) * -2.3s);
+  }
+}
+
+/* Between the stars, the bait: bits of what's under the page, drawn as it's drawn (_raw/bits.py),
+   no two quite alike. Eaten, they're gone. */
+.trail {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+.bit {
+  position: absolute;
+  width: 0.3em;
+  height: 0.26em;
+  translate: -50% -50%;
+  background: var(--bit-1) center / 100% 100% no-repeat;
+  filter: var(--bit-lift);
+}
+.bit.b2 {
+  width: 0.34em;
+  height: 0.23em;
+  background-image: var(--bit-2);
+}
+.bit.b3 {
+  width: 0.25em;
+  height: 0.29em;
+  background-image: var(--bit-3);
+}
+/* At night, lit up enough to be seen at a glance */
+.dark-mode .bit {
+  filter: var(--bit-lift) brightness(2.4) saturate(0.8);
+}
+.bit.eaten {
+  visibility: hidden;
+}
+
+/* What he's after at the end: a star of the stuff the bait is, the homepage's dish's (_raw/bits.py).
+   By day a dark gel, wet, with the window in it and a bottle's green where it's thin; by night the
+   same, lit from inside by a speck or two. Lit from the top left, so it doesn't turn. */
+:root {
+  --bit-1: url("{{ '/assets/images/bits/' | relative_url }}bit1-day.svg");
+  --bit-2: url("{{ '/assets/images/bits/' | relative_url }}bit2-day.svg");
+  --bit-3: url("{{ '/assets/images/bits/' | relative_url }}bit3-day.svg");
+  --chunk-star: url("{{ '/assets/images/bits/' | relative_url }}chunk-star-day.svg");
+  --bit-lift: drop-shadow(1px 1px 1px rgb(28 34 44 / 0.55)) drop-shadow(2px 3px 2px rgb(28 34 44 / 0.2));
+}
+.dark-mode {
+  --bit-1: url("{{ '/assets/images/bits/' | relative_url }}bit1-night.svg");
+  --bit-2: url("{{ '/assets/images/bits/' | relative_url }}bit2-night.svg");
+  --bit-3: url("{{ '/assets/images/bits/' | relative_url }}bit3-night.svg");
+  --chunk-star: url("{{ '/assets/images/bits/' | relative_url }}chunk-star-night.svg");
+  --bit-lift: drop-shadow(0 0 0.25em rgb(128 196 136 / 0.5));
+}
+/* How alive they are */
+@keyframes alive {
+  0%, 80%, 100% { scale: 1; }
+  88% { scale: 1.14 0.92; }
+  94% { scale: 0.96 1.06; }
+}
+
+/* All of that was to get him here: the big one, at the end of the trail, in his column, the last
+   line in line with the rest */
+.today {
+  position: relative;
+  margin: calc(var(--between) + 0.5em) 0 0;
+  color: var(--midground-color);
+}
+.today > span {
+  font-size: 0.9em;
+}
+.today::before {
+  content: "";
+  position: absolute;
+  /* On the middle of the small letters beside it, as each star is by its project */
+  top: calc(50% + 0.1em);
+  left: var(--line-x);
+  width: 1.9em;
+  height: 1.9em;
+  translate: -50% -50%;
+  background: var(--chunk-star) center / 100% 100% no-repeat;
+  filter: var(--bit-lift);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .today::before {
+    animation: alive 9s ease-in-out infinite;
+  }
+}
+.today.eaten::before {
+  opacity: 0;
+  animation: none;
 }
 
 /* The line it's on, which has been there all along, lying however it fell. It's on the page like
-   anything else that's on the page, over "now" as well. */
+   anything else that's on the page. */
 @media (min-width: 1160px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .today::after {
     content: "";
     position: absolute;
     z-index: 3;
-    top: -1.1em;
+    top: calc(50% + 0.75em);
     bottom: -5em;
     left: var(--line-x);
     width: 20px;
@@ -326,159 +311,19 @@ image:
   }
 }
 
-/* All of that was to get him here */
-.today::before {
-  content: "";
-  position: absolute;
-  top: -1.75em;
-  left: var(--line-x);
-  width: 1.9em;
-  height: 1.55em;
-  background-image: var(--chunk);
-}
-.today {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1.25em;
-  margin: 3.5em 0 0;
-  color: var(--midground-color);
-}
-.today > span {
-  font-size: 0.9em;
-}
-.today .now-link {
-  position: relative;
-  z-index: 2;
-  margin-left: calc(var(--line-x) - 0.3em);
-  padding: 0.05em 0.3em;
-  background: var(--label-paper);
-  color: var(--pen);
-  text-decoration: none;
-}
-/* Sized in here, as the link's measures are the rail's */
-.now-link span {
-  display: block;
-  font-family: "Reenie Beanie", cursive;
-  font-size: 2.1em;
-  line-height: 1;
-  rotate: -2deg;
-}
 
-/* Wide enough for both sides of the line */
-@media (min-width: 1160px) {
-  .timeline {
-    max-width: 78em;
-    padding: 3em 2.5em 5em;
-    --rail: 10.75em;
-    --left: calc((100% - var(--rail)) / 2);
-    --line-x: calc(var(--left) + var(--rail) - 2.75em);
-    --indent: 0;
-    --to-line: -2.75em;
-  }
-  .year {
-    display: grid;
-    grid-template-columns: var(--left) var(--rail) minmax(0, 1fr);
-    align-items: start;
-  }
-  .year + .year {
-    margin-top: 4.5em;
-  }
-  /* Quiet years, one after another, are closer together */
-  .year:not(:has(.year-majors)) + .year:not(:has(.year-majors)) {
-    margin-top: 2.5em;
-  }
-  .year {
-    position: relative;
-  }
-  /* The stretch of the line the year has, which its label stays in as it's scrolled past. A year
-     can sit beside the one before it (assets/js/timeline.js), so that's to where the next one
-     starts, not to the end of what's in it. */
-  .year-label {
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: var(--left);
-    width: var(--rail);
-    pointer-events: none;
-  }
-  .year h2 {
-    /* Under the bar, when it's there, and on the line, in the rail */
-    top: 4.6rem;
-    width: 1.9em;
-    margin: 0.3em calc(2.75em / 2.1 - 0.95em) 0 auto;
-    padding: 0;
-    text-align: center;
-  }
-  .year-majors {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  /* A major's a power pellet, at the end of a run of pellets out to it */
-  .major::before {
-    display: none;
-  }
-  .major-head {
-    position: relative;
-  }
-  .major-head::before,
-  .major-head::after {
-    content: "";
-    position: absolute;
-    top: 1.64em;
-  }
-  .major-head::before {
-    left: calc(100% + 0.6em);
-    width: calc(var(--rail) - 2.75em - 0.6em);
-    height: 0.6em;
-    margin-top: -0.3em;
-    /* Clear of the big one at the end */
-    box-sizing: border-box;
-    padding-right: 1.15em;
-    background: var(--run) 0 0 / 3em 100% round no-repeat content-box;
-    filter: var(--bit-lift);
-    /* He eats them from the line outwards, one at a time */
-    clip-path: inset(-4px var(--gone, 0px) -4px 0);
-  }
-  .major-head::after {
-    left: calc(100% + var(--rail) - 2.75em);
-    width: 0.9em;
-    height: 0.78em;
-  }
-  .minors {
-    grid-column: 3;
-    grid-row: 1;
-    margin-top: 0.98em;
-  }
-  .year-majors + .minors {
-    margin-top: 0.98em;
-  }
-  .today {
-    position: relative;
-    margin-top: 4.5em;
-    padding-left: calc(var(--left) + var(--rail));
-  }
-  .today .now-link {
-    position: absolute;
-    left: var(--line-x);
-    translate: -50% 0;
-    margin: 0;
-  }
-}
-
-/* He goes where you're reading, at his own pace, eating what's on the way */
+/* He follows the trail at his own pace, eating what's on it: 13 pixels across */
 .pac {
   position: absolute;
   z-index: 3;
   top: 0;
-  left: var(--line-x);
-  width: 30px;
-  height: 30px;
-  margin: -15px 0 0 -15px;
+  left: 0;
+  width: calc(13 * var(--pixel));
+  height: calc(13 * var(--pixel));
+  margin: calc(-6.5 * var(--pixel)) 0 0 calc(-6.5 * var(--pixel));
   pointer-events: none;
-  /* Lit from the top left, whichever way he's facing */
-  filter: drop-shadow(1px 2px 1.5px rgba(var(--sheet-shadow), 0.35));
+  /* Lit from the top left, whichever way he's facing, and his shadow's pixels too */
+  filter: drop-shadow(var(--pixel) var(--pixel) 0 rgba(var(--sheet-shadow), 0.3));
 }
 .pac[hidden] {
   display: none;
@@ -492,30 +337,31 @@ image:
 .pac path {
   fill: #f7b000;
 }
-.jaw-l {
-  transform: rotate(-24deg);
-}
-.jaw-r {
-  transform: rotate(24deg);
-}
-.pac.walking .jaw-l {
-  animation: chomp-l 0.15s ease-in-out infinite alternate;
-}
-.pac.walking .jaw-r {
-  animation: chomp-r 0.15s ease-in-out infinite alternate;
-}
-@keyframes chomp-l {
-  from { transform: rotate(-3deg); }
-  to { transform: rotate(-38deg); }
-}
-@keyframes chomp-r {
-  from { transform: rotate(3deg); }
-  to { transform: rotate(38deg); }
-}
-.eaten::before,
-.major.eaten .major-head::after {
+/* Standing, his mouth's open. Walking, it's open, half shut, shut, half open, and again. */
+.pac .half,
+.pac .shut {
   opacity: 0;
-  animation: none;
+}
+.pac.walking .open {
+  animation: chomp-open 0.3s step-end infinite;
+}
+.pac.walking .half {
+  animation: chomp-half 0.3s step-end infinite;
+}
+.pac.walking .shut {
+  animation: chomp-shut 0.3s step-end infinite;
+}
+@keyframes chomp-open {
+  0% { opacity: 1; }
+  25%, 100% { opacity: 0; }
+}
+@keyframes chomp-half {
+  0%, 50% { opacity: 0; }
+  25%, 75% { opacity: 1; }
+}
+@keyframes chomp-shut {
+  0%, 75% { opacity: 0; }
+  50% { opacity: 1; }
 }
 
 /* It's the one from the dish on the homepage. Nothing's keeping it there. */
@@ -529,79 +375,66 @@ image:
   pointer-events: none;
 }
 
-@media (max-width: 1159px) {
-  .pac {
-    width: 24px;
-    height: 24px;
-    margin: -12px 0 0 -12px;
-  }
-}
 
 @media print {
   .pac {
     display: none;
   }
-  .year h2 {
-    position: static;
-  }
 }
 </style>
 
-<div class="timeline">
+<div class="field">
   <h1 class="sr-only">Projects</h1>
 
-  {% assign first_year = site.data.projects | map: 'year' | sort | first %}
-  {% assign last_year = site.time | date: '%Y' | plus: 0 %}
   <div class="chart">
-    <ol class="years">
-      {% for y in (first_year..last_year) %}
-      {% assign majors = site.data.projects | where: 'year', y %}
-      {% assign minors = site.data.repos | where: 'year', y %}
-      {% if majors.size > 0 or minors.size > 0 %}
-      <li class="year" data-year="{{ y }}">
-        <div class="year-label"><h2>{{ y }}</h2></div>
-        {% if majors.size > 0 %}
-        <div class="year-majors">
-          {% for project in majors %}
-          <article class="major" id="{{ project.title | slugify }}">
-            <div class="major-head">
-              <h3><a href="{{ project.href }}">{{ project.title }}</a></h3>
-              {% include stars.html count=project.stars %}
-            </div>
-            <p><strong>{{ project.what | smartify }}</strong> {{ project.why | smartify }} {{ project.how | smartify }}</p>
-            {% if project.post %}
-            {% assign post = site.blog | where: 'slug', project.post | first %}
-            <a class="major-post" href="{{ post.url | relative_url }}">{{ post.title | smartify }}</a>
-            {% endif %}
-          </article>
-          {% endfor %}
+    <ol class="projects">
+      {%- assign featured = site.data.projects | where: "featured", true %}
+      {%- for project in featured %}
+      <li class="project shown" id="{{ project.title | slugify }}" style="--n: {{ forloop.index0 }}">
+        {%- assign label = project.what | strip %}{% assign last = label | slice: -1 %}{% if last == '.' %}{% assign n = label.size | minus: 1 %}{% assign label = label | slice: 0, n %}{% endif %}
+        <div class="line">
+          <a class="name" href="{{ project.href }}">{{ project.title }}</a><span class="label">{{ label | smartify }}</span>
+          <p class="about">{{ project.why | smartify }} {{ project.how | smartify }}</p>
         </div>
-        {% endif %}
-        {% if minors.size > 0 %}
-        <ul class="minors">
-          {% for repo in minors %}
-          <li>
-            <a class="minor-name" href="{{ repo.href }}">{{ repo.name }}</a>
-            <span class="minor-about">{% if repo.post %}{% assign post = site.blog | where: 'slug', repo.post | first %}<a class="minor-post" href="{{ post.url | relative_url }}">{{ repo.description | smartify }}</a>{% else %}{{ repo.description | smartify }}{% endif %}</span>
-            {% include stars.html count=repo.stars %}
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
+        {%- include stars.html count=project.stars %}
       </li>
-      {% endif %}
-      {% endfor %}
+      {%- endfor %}
+      {%- comment -%} Then the rest of what most people know him by, in the order up top {%- endcomment -%}
+      {%- assign picks = site.data.projects | where_exp: "p", "p.featured != true" %}
+      {%- assign known = picks | concat: site.data.repos | where_exp: "p", "p.stars >= 1000" %}
+      {%- assign rest = "" | split: "" %}
+      {%- for name in page.rest %}
+      {%- assign found = known | where_exp: "p", "p.title == name or p.name == name" %}
+      {%- assign rest = rest | concat: found %}
+      {%- endfor %}
+      {%- assign by_stars = known | sort: "stars" | reverse %}
+      {%- for p in by_stars %}
+      {%- assign nm = p.title | default: p.name %}
+      {%- unless page.rest contains nm %}
+      {%- assign found = known | where_exp: "q", "q.title == nm or q.name == nm" %}
+      {%- assign rest = rest | concat: found %}
+      {%- endunless %}
+      {%- endfor %}
+      {%- for project in rest %}
+      {%- assign name = project.title | default: project.name %}
+      {%- assign label = project.what | default: project.description | strip %}{% assign last = label | slice: -1 %}{% if last == '.' %}{% assign n = label.size | minus: 1 %}{% assign label = label | slice: 0, n %}{% endif %}
+      <li class="project" id="{{ name | slugify }}" style="--n: {{ forloop.index0 | plus: 2 }}">
+        <span class="line"><a class="name" href="{{ project.href }}">{{ name }}</a><span class="label">{{ label | smartify }}</span></span>
+        {%- include stars.html count=project.stars %}
+      </li>
+      {%- endfor %}
     </ol>
-    <p class="today prose"><span class="now-link"><span>now</span></span><span>The rest is on <a href="https://github.com/s0md3v">GitHub</a>.</span></p>
+    <p class="today prose"><span>The rest is on <a href="https://github.com/s0md3v">GitHub</a>.</span></p>
     <div class="pac" aria-hidden="true">
-      <svg viewBox="-15 -15 30 30">
-        <path class="jaw-l" d="M0-14A14 14 0 0 0 0 14Z"/>
-        <path class="jaw-r" d="M0-14A14 14 0 0 1 0 14Z"/>
+      <svg viewBox="0 0 13 13" shape-rendering="crispEdges">
+        <path class="open" d="M2 2h2v1h-2zM9 2h2v1h-2zM1 3h3v1h-3zM9 3h3v1h-3zM0 4h5v1h-5zM8 4h5v1h-5zM0 5h6v1h-6zM7 5h6v1h-6zM0 6h13v1h-13zM0 7h13v1h-13zM0 8h13v1h-13zM1 9h11v1h-11zM2 10h9v1h-9zM3 11h7v1h-7zM4 12h5v1h-5z"/>
+        <path class="half" d="M4 0h1v1h-1zM8 0h1v1h-1zM3 1h2v1h-2zM8 1h2v1h-2zM2 2h3v1h-3zM8 2h3v1h-3zM1 3h5v1h-5zM7 3h5v1h-5zM0 4h6v1h-6zM7 4h6v1h-6zM0 5h6v1h-6zM7 5h6v1h-6zM0 6h13v1h-13zM0 7h13v1h-13zM0 8h13v1h-13zM1 9h11v1h-11zM2 10h9v1h-9zM3 11h7v1h-7zM4 12h5v1h-5z"/>
+        <path class="shut" d="M4 0h5v1h-5zM3 1h7v1h-7zM2 2h9v1h-9zM1 3h11v1h-11zM0 4h13v1h-13zM0 5h13v1h-13zM0 6h13v1h-13zM0 7h13v1h-13zM0 8h13v1h-13zM1 9h11v1h-11zM2 10h9v1h-9zM3 11h7v1h-7zM4 12h5v1h-5z"/>
       </svg>
     </div>
   </div>
 </div>
 
 <script src="{{ '/assets/js/fizz.js' | relative_url }}" defer></script>
-<script src="{{ '/assets/js/timeline.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/trail.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/pacman.js' | relative_url }}" defer></script>

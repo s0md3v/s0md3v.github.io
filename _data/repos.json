@@ -140,7 +140,7 @@
     "href": "https://github.com/s0md3v/AwesomeXSS",
     "year": 2018,
     "stars": 5155,
-    "description": "Awesome XSS stuff",
+    "description": "Payloads, tricks and references for finding XSS",
     "post": null
   },
   {
@@ -212,7 +212,7 @@
     "href": "https://github.com/s0md3v/Striker",
     "year": 2017,
     "stars": 2352,
-    "description": "Striker is an offensive information and vulnerability scanner",
+    "description": "Offensive information gathering and vulnerability scanner",
     "post": null
   },
   {

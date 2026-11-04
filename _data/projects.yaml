@@ -1,4 +1,5 @@
 - title: XSStrike
+  featured: true
   href: https://github.com/s0md3v/XSStrike
   post: making-of-xsstrike
   stars: 15239
@@ -6,36 +7,31 @@
   what: Most advanced XSS detection suite.
   why: Scanners usually just inject a list of payloads and see what sticks, missing
     context-aware vulnerabilities.
-  how: It parses the page's HTML to understand the context of the reflection and generates
+  how: It parses the page's HTML to understand the reflection's context and generates
     working payloads on the fly.
-- title: Arjun
-  href: https://github.com/s0md3v/Arjun
-  post: making-of-arjun
-  stars: 6435
-  year: 2018
-  what: HTTP parameter discovery suite.
-  why: Web apps often have hidden parameters that are vulnerable to attacks, but they
-    aren't linked anywhere in the UI.
-  how: It makes smart requests with giant lists of parameter names to figure out what
-    the server accepts, while bypassing rate limits.
 - title: Photon
+  featured: true
   href: https://github.com/s0md3v/Photon
   stars: 13317
   year: 2018
   what: Incredibly fast crawler designed for OSINT.
   why: Extracting intelligence from a target manually is painful, and standard web
     crawlers aren't built for reconnaissance.
-  how: Uses multi-threading to rapidly crawl domains and extract URLs, emails, social
-    accounts, and keys into a neat structure.
-- title: Smap
-  href: https://github.com/s0md3v/Smap
-  stars: 3313
-  year: 2022
-  what: A drop-in nmap replacement powered by shodan.io.
-  why: Active port scanning is inherently noisy and gets your IP address blocked by
-    firewalls.
-  how: It queries Shodan's API and perfectly mimics nmap's CLI arguments and output.
+  how: It uses multithreading to rapidly crawl domains and extract URLs, emails,
+    social accounts, and keys into a neat structure.
+- title: Arjun
+  featured: true
+  href: https://github.com/s0md3v/Arjun
+  post: making-of-arjun
+  stars: 6435
+  year: 2018
+  what: HTTP parameter discovery suite.
+  why: Web apps often have hidden, vulnerable parameters that aren't linked anywhere
+    in the UI.
+  how: It makes smart requests with giant lists of parameter names to figure out what
+    the server accepts, while bypassing rate limits.
 - title: overthink
+  featured: true
   href: https://github.com/s0md3v/overthink
   stars: 41
   year: 2026
@@ -43,7 +39,26 @@
   why: Agents often jump to answers when a task is ambiguous, risky, or needs real
     judgment.
   how: Adds thinking modes for modeling, creating, diagnosing, verifying, evaluating,
-    deciding, tasting, and synthesizing before the agent answers.
+    deciding, tasting, and synthesizing before answering.
+- title: Smap
+  featured: true
+  href: https://github.com/s0md3v/Smap
+  stars: 3313
+  year: 2022
+  what: A drop-in nmap replacement powered by shodan.io.
+  why: Active port scanning is inherently noisy and gets your IP address blocked by
+    firewalls.
+  how: It queries Shodan's API and perfectly mimics nmap's command-line arguments
+    and output.
+- title: Be-a-hacker
+  href: https://github.com/s0md3v/be-a-hacker
+  stars: 2910
+  year: 2020
+  what: Roadmap for a self-taught hacker.
+  why: Information security is overwhelming for beginners without a clear, structured
+    learning path.
+  how: Lays out a curated, step-by-step syllabus of free resources to learn networking,
+    Linux, and web application hacking.
 - title: uro
   href: https://github.com/s0md3v/uro
   stars: 1599
@@ -52,16 +67,16 @@
   why: Wayback machine and crawlers give you huge lists of URLs, but most of them
     are basically duplicates with different parameter values.
   how: It parses URL paths and parameters to mathematically filter out the redundant
-    ones, leaving you with just the unique attack surface.
-- title: hardcodes
-  href: https://github.com/s0md3v/hardcodes
-  stars: 285
-  year: 2020
-  what: Extracts hardcoded strings from source code.
-  why: Developers accidentally leave API keys and sensitive info inside strings, and
-    normal grepping gets messy with comments.
-  how: Uses a modular tokenizer that actually understands comments and string syntax
-    across over 20 different programming languages.
+    ones, leaving just the unique attack surface.
+- title: huepy
+  href: https://github.com/s0md3v/huepy
+  stars: 1478
+  year: 2018
+  what: Python library to print awesomely in terminals.
+  why: Adding colored text in CLI tools shouldn't require memorizing ugly ANSI escape
+    codes.
+  how: It gives you a clean API with simple semantic functions to add colors, backgrounds,
+    and markers to your script's output.
 - title: Orbit
   href: https://github.com/s0md3v/Orbit
   stars: 623
@@ -71,21 +86,12 @@
     without visualizing the flow.
   how: It crawls transaction history across multiple blocks and draws a comprehensive
     relationship graph between addresses.
-- title: huepy
-  href: https://github.com/s0md3v/huepy
-  stars: 1478
-  year: 2018
-  what: Python library to print awesomely in terminals.
-  why: Adding colored text in CLI tools shouldn't require memorizing ugly ANSI escape
-    codes and writing boilerplate.
-  how: Gives you a clean API with simple semantic functions to add colors, backgrounds,
-    and markers to your script's output.
-- title: Be-a-hacker
-  href: https://github.com/s0md3v/be-a-hacker
-  stars: 2910
+- title: hardcodes
+  href: https://github.com/s0md3v/hardcodes
+  stars: 285
   year: 2020
-  what: Roadmap for a self-taught hacker.
-  why: Information security is overwhelming for beginners without a clear, structured
-    learning path.
-  how: Lays out a curated, step-by-step syllabus using free resources to learn networking,
-    Linux, and web application hacking.
+  what: Extracts hardcoded strings from source code.
+  why: Developers accidentally leave API keys and sensitive info inside strings, and
+    normal grepping gets messy with comments.
+  how: Uses a modular tokenizer that actually understands comments and string syntax
+    across over 20 different programming languages.

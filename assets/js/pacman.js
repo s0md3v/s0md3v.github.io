@@ -378,36 +378,35 @@
   // ---- Him ----
 
   const chart = document.querySelector('.chart');
-  if (!chart) return;
+  if (!chart || !chart.trail) return;
   const pac = chart.querySelector('.pac');
   const face = pac.firstElementChild;
   const header = document.querySelector('header');
   const wide = matchMedia('(min-width: 1160px)');
   const mouse = matchMedia('(hover: hover) and (pointer: fine)');
-  const place = (out, y, angle) => {
-    pac.style.transform = `translate(${-out}px, ${y}px)`;
+  // Where he is is how far along the trail he's got (assets/js/trail.js)
+  let trail = chart.trail;
+  let s = 0;
+  let angle = 180;
+  const place = () => {
+    const p = trail.at(s);
+    pac.style.transform = `translate(${p.x}px, ${p.y}px)`;
     face.style.transform = `rotate(${angle}deg)`;
   };
 
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    place(0, 14, 180);
+    const still = () => { trail = chart.trail; s = trail.sAtY(14); place(); };
+    still();
+    chart.addEventListener('trail', still);
     return;
   }
 
   // Level one of the arcade game: 60.6 pixels a second, and he's 13 across. Off-screen is the
   // only time he goes any faster.
   const SPEED = (60.6 / 13) * pac.offsetWidth;
-  const DOWN = 180;
-  const UP = 0;
-  const LEFT = -90;
-  const RIGHT = 90;
 
-  let stops = [];
-  let branches = [];
-  let branch = null;
-  let out = 0;
-  let y = 0;
-  let angle = DOWN;
+  let food = [];
+  let stop = 0;
   let last = 0;
   let frame = 0;
   let taken = false;
@@ -418,138 +417,61 @@
 
   const fromBottom = () => document.documentElement.scrollHeight - innerHeight - scrollY;
   const atBottom = () => fromBottom() < 3;
-  const lineX = () => chart.getBoundingClientRect().left + parseFloat(getComputedStyle(pac).left);
-  // Everything he can eat, by how far down it is
+  const top = () => chart.getBoundingClientRect().top;
+  const eat = () => {
+    for (const bit of food) {
+      if (bit.s <= s + 12) bit.el.classList.add('eaten');
+    }
+  };
+
+  // Everything he can eat, by how far along it is. When the page reflows he stays where he is on
+  // it: past the end is the end, and whatever's now behind him has been eaten.
   function survey() {
-    const top = chart.getBoundingClientRect().top;
-    stops = [...chart.querySelectorAll('.minors li')].map(el => ({
-      el,
-      y: el.getBoundingClientRect().top - top + 12,
-    }));
-    const heads = [...chart.querySelectorAll('.major')].map(el => ({ el, head: el.querySelector('.major-head') }));
-    // With nothing under the page to stop him, he gets it
-    if (!wide.matches || !mouse.matches) {
-      const chunk = theEnd();
-      stops.push({ el: chunk.el, y: chunk.middle - top - chunk.height });
-    }
-    if (!wide.matches) {
-      stops.push(...heads.map(({ el }) => ({ el, y: el.getBoundingClientRect().top - top + 24 })));
-      branches = [];
-      settle();
-      return;
-    }
-    branches = heads.map(({ el, head }) => {
-      const run = getComputedStyle(head, '::before');
-      const length = parseFloat(run.width);
-      const clear = parseFloat(run.paddingRight);
-      const known = branches.find(known => known.el === el);
-      return {
-        el,
-        length,
-        // They're laid in threes
-        clear,
-        step: (length - clear) / (3 * Math.max(1, Math.round((length - clear) / (3 * parseFloat(run.fontSize))))),
-        y: head.getBoundingClientRect().top - top + parseFloat(run.top),
-        done: known ? known.done : false,
-      };
-    });
-    settle();
-  }
-
-  // When the page reflows he stays where he is on it: past the end is the end, and whatever's now
-  // behind him has been eaten
-  function settle() {
-    const chunk = theEnd();
-    const end = chunk.middle - chart.getBoundingClientRect().top - chunk.height / 2 - 13;
-    if (y > end) {
-      y = end;
-      place(out, y, angle);
-    }
-    stops.forEach(stop => {
-      if (y + 12 >= stop.y) stop.el.classList.add('eaten');
-    });
-    branches.forEach(run => {
-      if (run !== branch && !run.done && y >= run.y) finish(run);
-    });
-  }
-
-  // Up to the big one, at the end of the trail, with his mouth on it
-  function theEnd() {
-    const today = chart.querySelector('.today'), chunk = getComputedStyle(today, '::before');
-    const middle = today.getBoundingClientRect().top + parseFloat(chunk.top);
-    return { el: today, middle, height: parseFloat(chunk.height), width: parseFloat(chunk.width) };
+    const y = trail.at(s).y;
+    trail = chart.trail;
+    const { end } = trail;
+    stop = trail.sAtY(end.y - end.height / 2 - 13);
+    food = [...trail.bits];
+    // With nothing under the page to stop him, he gets the big one too
+    if (!wide.matches || !mouse.matches) food.push({ el: end.el, s: trail.sAtY(end.y - end.height), y: end.y - end.height });
+    s = Math.min(trail.sAtY(y), stop);
+    eat();
+    place();
   }
 
   // On to the last thing there is to eat on the screen, and there he waits for more. With nothing
   // left in sight he stays where he is, if that's somewhere he can be seen.
   function wanted() {
     const bar = header.getBoundingClientRect();
-    const top = chart.getBoundingClientRect().top;
-    const floor = (bar.top > innerHeight / 2 ? bar.top : innerHeight) - 24 - top;
-    const chunk = theEnd();
-    const end = chunk.middle - top - chunk.height / 2 - 13;
-    if (end <= floor) return end;
-    let food = -Infinity;
-    for (const stop of stops) {
-      if (stop.y <= floor && !stop.el.classList.contains('eaten')) food = Math.max(food, stop.y - 10);
+    const t = top();
+    const floor = (bar.top > innerHeight / 2 ? bar.top : innerHeight) - 24 - t;
+    const { end } = trail;
+    if (end.y - end.height / 2 - 13 <= floor) return stop;
+    let next = -Infinity;
+    for (const bit of food) {
+      if (bit.y <= floor && !bit.el.classList.contains('eaten')) next = Math.max(next, bit.s - 10);
     }
-    for (const run of branches) {
-      if (run.y <= floor && !run.done) food = Math.max(food, run.y + 2);
-    }
-    return food > -Infinity ? food : clamp(y, Math.min(innerHeight * 0.25 - top, floor), floor);
+    if (next > -Infinity) return next;
+    return trail.sAtY(clamp(trail.at(s).y, Math.min(innerHeight * 0.25 - t, floor), floor));
   }
 
+  // He faces the way the trail goes, or back up it
   const swing = (facing, dt) => {
     angle += (((facing - angle + 540) % 360) - 180) * Math.min(1, dt * 18);
-  };
-  const eatRun = (run, reach) => {
-    const gone = Math.min(run.length, run.clear + Math.max(0, Math.ceil((reach - run.clear) / run.step)) * run.step);
-    run.el.style.setProperty('--gone', `${gone.toFixed(1)}px`);
-  };
-  const finish = run => {
-    run.done = true;
-    run.el.classList.add('eaten');
-    eatRun(run, run.length);
   };
 
   function walk(time) {
     const dt = Math.min(0.05, (time - last) / 1000 || 0.016);
     last = time;
     // Nobody's watching him off-screen, so he's only ever just out of sight
-    const top = chart.getBoundingClientRect().top;
-    const seenAt = y + top;
+    const t = top();
+    const seenAt = trail.at(s).y + t;
     if (seenAt < -40 || seenAt > innerHeight + 40) {
-      y = clamp(seenAt, -40, innerHeight + 40) - top;
-      if (branch) finish(branch);
-      out = 0;
-      branch = null;
-      place(out, y, angle);
-      stops.forEach(stop => {
-        if (y + 12 >= stop.y) stop.el.classList.add('eaten');
-      });
-      branches.forEach(run => {
-        if (!run.done && y >= run.y) finish(run);
-      });
+      s = trail.sAtY(clamp(seenAt, -40, innerHeight + 40) - t);
+      eat();
+      place();
     }
-    const away = clamp(wanted(), -40 - top, innerHeight + 40 - top) - y;
-
-    // Down a run of pellets and back, unless you've gone on without him
-    if (branch) {
-      const going = branch.going;
-      out += (going ? 1 : -1) * SPEED * dt;
-      swing(going ? LEFT : RIGHT, dt);
-      if (going) {
-        eatRun(branch, out + 10);
-        if (out >= branch.length) branch.going = false;
-      } else if (out <= 0) {
-        out = 0;
-        branch = null;
-      }
-      pac.classList.add('walking');
-      place(out, y, angle);
-      frame = requestAnimationFrame(walk);
-      return;
-    }
+    const away = clamp(wanted(), trail.sAtY(-40 - t), trail.sAtY(innerHeight + 40 - t)) - s;
 
     if (Math.abs(away) < 1.5) {
       frame = 0;
@@ -558,25 +480,13 @@
       return;
     }
 
-    y += Math.sign(away) * Math.min(Math.abs(away), SPEED * dt);
-    swing(away > 0 ? DOWN : UP, dt);
-    if (away > 0) {
-      stops.forEach(stop => {
-        if (y + 12 >= stop.y) stop.el.classList.add('eaten');
-      });
-      for (const run of branches) {
-        if (run.done || y < run.y) continue;
-        y = run.y;
-        run.done = true;
-        run.el.classList.add('eaten');
-        branch = run;
-        branch.going = true;
-        break;
-      }
-    }
+    s += Math.sign(away) * Math.min(Math.abs(away), SPEED * dt);
+    const p = trail.at(s);
+    swing(Math.atan2(p.dx, -p.dy) * 180 / Math.PI + (away > 0 ? 0 : 180), dt);
+    if (away > 0) eat();
 
     pac.classList.add('walking');
-    place(out, y, angle);
+    place();
     frame = requestAnimationFrame(walk);
   }
 
@@ -589,7 +499,13 @@
   addEventListener('scroll', () => {
     wake();
   }, { passive: true });
+  chart.addEventListener('trail', () => {
+    if (taken) return;
+    survey();
+    wake();
+  });
   addEventListener('resize', () => {
+    if (taken) return;
     survey();
     wake();
   });
@@ -597,10 +513,14 @@
   function snatch() {
     taken = true;
     const box = pac.getBoundingClientRect();
-    const chunk = theEnd();
-    const bait = { x: lineX(), y: chunk.middle, r: (chunk.width + chunk.height) / 4, take: () => chunk.el.classList.add('eaten') };
+    // Out of the cut, into the hand that's got him
+    chart.append(pac);
+    const where = chart.getBoundingClientRect();
+    const { end } = trail;
+    const bait = { x: where.left + end.x, y: where.top + end.y, r: (end.width + end.height) / 4, take: () => end.el.classList.add('eaten') };
     pac.style.position = 'fixed';
     pac.style.left = '0';
+    pac.style.top = '0';
     pac.style.transform = `translate(${box.left + box.width / 2}px, ${box.top + box.height / 2}px)`;
     // Open, with that in it
     pac.classList.remove('walking');
@@ -613,13 +533,10 @@
     });
   }
 
-  survey();
-  new ResizeObserver(survey).observe(chart);
-  document.fonts.ready.then(survey);
   // He comes out from under the navigation, which is over him, and well under it, since the page
   // can still settle a little. On a phone that's at the bottom, so he comes in from the top.
   const bar = header.getBoundingClientRect().bottom;
-  y = (bar < innerHeight / 2 ? bar : 0) - pac.offsetHeight - 2 - chart.getBoundingClientRect().top;
-  place(out, y, angle);
+  s = trail.sAtY((bar < innerHeight / 2 ? bar : 0) - pac.offsetHeight - 2 - top());
+  survey();
   wake();
 })();

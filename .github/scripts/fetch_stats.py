@@ -49,6 +49,8 @@ ARCHIVE_KEEP = {
     "dishtance": "Find where a photo or video was shot from a satellite dish in it",
     "shades": "Dark and monochrome modes for Linux",
     "roop": "Stable diffusion extension for character consistency",
+    "awesomexss": "Payloads, tricks and references for finding XSS",
+    "striker": "Offensive information gathering and vulnerability scanner",
 }
 # Written up on the blog
 ARCHIVE_POSTS = {"dishtance": "dishtance"}
