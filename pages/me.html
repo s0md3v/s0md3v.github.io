@@ -1,20 +1,22 @@
 ---
 layout: default
-title: Taste
-description: "What I watch, read, listen to and play, the poetry I keep, the sneakers I wear, and the corners of the web I like."
-ink: taste
-permalink: /taste/
+title: Somu
+description: "The rest of Somdev: his story, what he believes, and what he watches, reads, listens to, plays and wears."
+ink: me
+permalink: /me/
+# /now and /beliefs redirect to their sections (pages/now.html, pages/beliefs.html)
 redirect_from:
+  - /taste/
   - /uses/
   - /favorites/
 # Its preview when shared: its thing on the desk (scripts/make_share_cards.py)
 image:
-  path: /assets/share/taste.jpg
+  path: /assets/share/me.jpg
   width: 1200
   height: 630
-  alt: "A pair of earphones on a desk, labelled taste"
+  alt: "A pair of earphones on a desk, labelled somu"
 ---
-{% assign taste = site.data.taste %}
+{% assign taste = site.data.me %}
 <style>
 @media screen and (min-width: 769px) {
   html {
@@ -39,22 +41,174 @@ image:
   overflow-x: clip;
 }
 
-.taste-opening {
-  max-width: 34em;
-  font-size: 1.12em;
+/* The top: hello, and his life beside the photo */
+.me-top.has-photo {
+  display: grid;
+  grid-template-columns: minmax(0, 34em) minmax(0, 21em);
+  grid-template-rows: auto 1fr;
+  justify-content: space-between;
+  column-gap: 4em;
+  align-items: start;
+}
+
+.me-top.has-photo .me-photo {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.me-hello {
+  max-width: 18em;
+  margin: 0.4em 0 0;
+  font-size: 1.9em;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--heading-color);
+  text-wrap: balance;
+}
+
+.me-story {
+  margin-top: 2em;
+  font-size: 1.06em;
+  line-height: 1.6;
+  color: var(--foreground-color);
+}
+
+.me-story p {
+  margin: 0 0 1em;
+  text-wrap: pretty;
+}
+
+.me-story a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--link-color) 55%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+.me-story a:hover {
+  background: none;
+  color: var(--accent-color);
+}
+
+/* The years down the left, as he wrote them: "2004ish" in his pen, "2007–2014" as 2007, to, 2014, a line each */
+.life {
+  margin: 2.25em 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.life > li {
+  display: grid;
+  grid-template-columns: 4.75em minmax(0, 1fr);
+  column-gap: 1.25em;
+  margin: 0 0 1.25em;
+}
+
+.life-year {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--heading-color);
 }
 
-.taste-opening p {
-  margin: 0 0 0.85em;
+.life-ish {
+  display: inline-block;
+  margin-left: 0.1em;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 1.95em;
+  font-weight: 400;
+  line-height: 0;
+  color: var(--pen);
+  rotate: -4deg;
 }
 
-.taste-opening em {
-  font-family: "Reenie Beanie", cursive;
-  font-size: 1.3em;
-  font-style: normal;
-  line-height: 1;
-  color: var(--pen);
+.life-end {
+  display: block;
+}
+
+.life-to {
+  display: block;
+  font-weight: 400;
+  color: var(--muted-color);
+}
+
+.life-text p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .life > li {
+    display: block;
+  }
+
+  .life-year {
+    display: block;
+    margin-bottom: 0.1em;
+  }
+
+  .me-top .me-photo {
+    max-width: none;
+  }
+
+  .life-end,
+  .life-to {
+    display: inline;
+  }
+}
+
+.me-photo {
+  position: sticky;
+  top: 6em;
+  margin: 0.4em 0 0;
+}
+
+.me-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 0.35em;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 14px 32px -14px rgb(0 0 0 / 0.35);
+}
+
+.me-photo figcaption {
+  margin-top: 0.7em;
+}
+
+/* Placeholders, outside production only */
+.gap {
+  margin: 0 0 1em;
+  padding: 0.8em 1em;
+  border: 1.5px dashed color-mix(in srgb, var(--muted-color) 60%, transparent);
+  border-radius: 0.5em;
+  font-size: 0.85em;
+  color: var(--muted-color);
+}
+
+.me-photo.is-gap .gap {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
+}
+
+@media (max-width: 860px) {
+  .me-top.has-photo {
+    display: block;
+  }
+
+  .me-photo {
+    position: static;
+    max-width: 20em;
+    margin: 2.5em 0 0;
+  }
+}
+
+.then-entry + .then-entry {
+  margin-top: 1.5em;
 }
 
 .taste-closing {
@@ -71,6 +225,26 @@ image:
   margin: 0 0 0.85em;
 }
 
+.me-mail {
+  margin: 2.5em 0 0;
+  font-weight: 500;
+}
+
+.me-mail a {
+  color: var(--heading-color);
+}
+
+.me-reply {
+  display: inline-block;
+  margin-left: 0.4em;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 1.4em;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--pen);
+  rotate: -2deg;
+}
+
 .taste-updated {
   margin: 0;
   font-size: 0.8em;
@@ -82,8 +256,8 @@ image:
   scroll-margin-top: 5em;
 }
 
-.taste-top + .shelf {
-  margin-top: 3.5em;
+.me-top + .shelf {
+  margin-top: 6em;
 }
 
 .page-title + .shelf {
@@ -139,10 +313,12 @@ image:
   color: var(--muted-color);
 }
 
+/* Its lines are <br>s, as he'd break them */
 .shelf-aside {
   font-family: "Reenie Beanie", cursive;
   font-size: 1.35em;
-  line-height: 1;
+  line-height: 1.05;
+  white-space: nowrap;
   color: var(--pen);
   rotate: -1.5deg;
 }
@@ -321,12 +497,20 @@ image:
   display: inline-flex;
   align-items: baseline;
   gap: 0.5em;
+  padding: 0.45em 0.9em;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
   cursor: pointer;
-  font-family: "Reenie Beanie", cursive;
-  font-size: 1.45em;
-  line-height: 1.1;
-  color: var(--pen);
+  font-size: 0.9em;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--heading-color);
   list-style: none;
+  transition: border-color 0.15s ease;
+}
+
+.shelf-extra summary:hover {
+  border-color: color-mix(in srgb, var(--muted-color) 60%, transparent);
 }
 
 .shelf-extra summary::-webkit-details-marker {
@@ -512,7 +696,7 @@ image:
   --ratio: 2.4;
 }
 
-/* All his size, so the foot in each is the same length (_data/taste.yml says where it sits) */
+/* All his size, so the foot in each is the same length (_data/me.yml says where it sits) */
 .shelf-sneakers .thing-picture img {
   width: calc(82% / (var(--toe, 1) - var(--heel, 0)));
   max-width: none;
@@ -743,6 +927,180 @@ image:
   font-weight: 400;
 }
 
+.belief-groups {
+  display: grid;
+  gap: 3em 4em;
+  max-width: 40em;
+}
+
+/* Label-maker tape, embossed: what people could call him, peeled off to what's underneath */
+.labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em 1.6em;
+  margin: 0 0 3.25em;
+}
+
+.label-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85em 0.65em;
+  max-width: 44em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.label {
+  --tape: #1c1b1a;
+  position: relative;
+  display: inline-block;
+  padding: 0.5em 0.85em 0.42em;
+  border-radius: 2px;
+  background: var(--tape);
+  box-shadow: 0 1px 1.5px rgb(0 0 0 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.09);
+  color: #f3f0e8;
+  font-size: 0.72em;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.13em;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 0 -0.5px 0 rgb(255 255 255 / 0.35), 0 1px 0 rgb(0 0 0 / 0.55);
+  white-space: nowrap;
+  rotate: var(--tilt, -1deg);
+  transition: translate 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dark-mode .label {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.6), inset 0 0 0 1px rgb(255 255 255 / 0.13), inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+.label-strip li:nth-child(3n + 2) .label { --tilt: 1.6deg; }
+.label-strip li:nth-child(4n + 3) .label { --tilt: -2.2deg; }
+.label-strip li:nth-child(5n) .label { --tilt: 0.6deg; }
+.label-strip li:nth-child(4n + 2) .label { --tape: #a3271f; }
+.label-strip li:nth-child(5n + 4) .label { --tape: #1f4c9c; }
+
+/* A corner lifts, so it reads as something to peel */
+.label::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0.7em;
+  height: 0.7em;
+  border-top-right-radius: 2px;
+  background: linear-gradient(225deg, var(--background-color) 50%, color-mix(in srgb, var(--tape) 70%, #fff) 50%);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.label:hover {
+  background: var(--tape);
+  color: #f3f0e8;
+  translate: 0 -1px;
+  box-shadow: 0 3px 6px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.09);
+}
+
+.label:hover::after,
+.label:focus-visible::after {
+  opacity: 1;
+}
+
+.label:focus-visible {
+  outline: 2px solid var(--foreground-color);
+  outline-offset: 3px;
+}
+
+.label.peeling {
+  animation: peel 0.42s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes peel {
+  35% {
+    transform: translate(-1px, -4px) rotate(-5deg) scale(1.05);
+    box-shadow: 0 8px 14px rgb(0 0 0 / 0.28);
+  }
+  100% {
+    transform: translate(1.4em, -2.6em) rotate(16deg) scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* What's left where it was: a little glue */
+.label.peeled {
+  background: color-mix(in srgb, var(--foreground-color) 7%, transparent);
+  box-shadow: none;
+  color: transparent;
+  text-shadow: none;
+  animation: residue 0.3s ease;
+}
+
+.label.peeled::after {
+  display: none;
+}
+
+@keyframes residue {
+  from { opacity: 0; }
+}
+
+.labels-note {
+  margin: 0;
+  font-family: "Reenie Beanie", cursive;
+  font-size: 1.45em;
+  line-height: 1;
+  color: var(--pen);
+  rotate: -1.5deg;
+}
+
+.belief-group,
+#life {
+  scroll-margin-top: 6em;
+}
+
+.belief-group.arrived {
+  animation: arrived 1.8s ease-out;
+}
+
+@keyframes arrived {
+  from {
+    box-shadow: 0 0 0 0.9em color-mix(in srgb, var(--pen) 10%, transparent);
+    background: color-mix(in srgb, var(--pen) 10%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label,
+  .label.peeled,
+  .belief-group.arrived {
+    animation: none;
+    transition: none;
+  }
+}
+
+.belief-head {
+  margin: 0 0 0.35em;
+  font-size: 1.2em;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--heading-color);
+  text-wrap: balance;
+}
+
+.belief-group .beliefs > li {
+  padding: 0.5em 0;
+}
+
+@media (min-width: 1000px) {
+  .belief-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: none;
+  }
+}
+
 .changed {
   margin-top: 2.75em;
 }
@@ -923,6 +1281,14 @@ image:
   }
 }
 
+@media (max-width: 600px) {
+  .shelf-aside {
+    flex-basis: 100%;
+    margin-left: 0.15em;
+    font-size: min(1.35em, 5.2vw);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .record-disc,
   .shelf-extra summary::after {
@@ -931,14 +1297,36 @@ image:
 }
 </style>
 
+{%- comment -%} Placeholders show only outside production {%- endcomment -%}
+{%- assign draft = false %}{% if jekyll.environment != "production" %}{% assign draft = true %}{% endif %}
 <div class="taste">
-  <h1 class="page-title phone-only">Taste</h1>
+  <h1 class="page-title phone-only">Somu</h1>
 
-  {%- if taste.opening %}
-  <header class="taste-top">
-    <div class="taste-opening">{{ taste.opening | markdownify }}</div>
+  <header class="me-top{% if taste.photo.src or draft %} has-photo{% endif %}">
+    <p class="me-hello">{{ taste.hello }}</p>
+
+    {%- if taste.photo.src %}
+    <figure class="me-photo">
+      {%- assign photo = '/assets/images/me/' | append: taste.photo.src %}
+      <img src="{{ photo | append: '-540.webp' | relative_url }}" srcset="{{ photo | append: '-540.webp' | relative_url }} 540w, {{ photo | append: '-1080.webp' | relative_url }} 1080w" sizes="(max-width: 860px) 20em, 21em" width="1080" height="1350" alt="{{ taste.photo.alt | escape }}" fetchpriority="high">
+      {%- if taste.photo.note %}
+      <figcaption class="thing-note">{{ taste.photo.note | newline_to_br | strip_newlines }}</figcaption>
+      {%- endif %}
+    </figure>
+    {%- elsif draft %}
+    <figure class="me-photo is-gap"><p class="gap">Photo</p></figure>
+    {%- endif %}
+
+    <div class="me-story">
+      {{ taste.opening | markdownify }}
+      <ol class="life" id="life">
+        {%- for year in taste.life %}
+        {%- assign span = year.year | split: "–" %}
+        <li><span class="life-year">{{ span[0] | replace: "ish", '<span class="life-ish">ish</span>' }}{% if span[1] %} <span class="life-end"><span class="life-to">to</span> {{ span[1] }}</span>{% endif %}</span><div class="life-text">{{ year.text | markdownify }}</div></li>
+        {%- endfor %}
+      </ol>
+    </div>
   </header>
-  {%- endif %}
 
   {% for shelf in taste.sections %}
   {% assign kind = shelf.section | slugify %}
@@ -946,20 +1334,37 @@ image:
     <div class="shelf-head">
       <h2 class="shelf-title" id="shelf-{{ kind }}">{{ shelf.section }}<a class="shelf-link" href="#{{ kind }}" aria-hidden="true" tabindex="-1"></a></h2>
       {%- if shelf.items.first.slug %}
-      <span class="shelf-count" aria-hidden="true">{{ shelf.items | where_exp: "item", "item.slug" | size }}</span>
+      <span class="shelf-count" aria-hidden="true">{{ shelf.items | size }}</span>
       {%- endif %}
       {%- if shelf.aside %}
-      <span class="shelf-aside">{{ shelf.aside }}</span>
+      <span class="shelf-aside">{{ shelf.aside | newline_to_br | strip_newlines }}</span>
       {%- endif %}
     </div>
 
     {% case kind %}
     {% when "believe" %}
-    <ol class="lines beliefs">
-      {%- for belief in shelf.principles %}
-      <li><span class="line-name">{{ belief.text }}</span></li>
+    {%- if shelf.labels %}
+    <div class="labels">
+      <ul class="label-strip">
+        {%- for label in shelf.labels %}
+        <li><a class="label" href="#{{ label.to }}" data-to="{{ label.to }}">{{ label.text }}</a></li>
+        {%- endfor %}
+      </ul>
+      <p class="labels-note">labels make people less than they are</p>
+    </div>
+    {%- endif %}
+    <div class="belief-groups">
+      {%- for group in shelf.groups %}
+      <div class="belief-group" id="{{ group.id }}">
+        <h3 class="belief-head">{{ group.label | smartify }}</h3>
+        <ul class="lines beliefs">
+          {%- for belief in group.principles %}
+          <li><span class="line-name">{{ belief.text | smartify }}</span></li>
+          {%- endfor %}
+        </ul>
+      </div>
       {%- endfor %}
-    </ol>
+    </div>
     {% if shelf.changed %}
     <div class="changed">
         <h3 class="lines-label">{{ shelf.changed.label }}</h3>
@@ -1057,13 +1462,25 @@ image:
   </section>
   {% endfor %}
 
-  {% if taste.closing %}
-  <section class="shelf taste-closing" id="lately" aria-labelledby="shelf-lately">
+  {% if taste.now %}
+  <section class="shelf taste-closing" id="now" aria-labelledby="shelf-now">
     <div class="shelf-head">
-      <h2 class="shelf-title" id="shelf-lately">Lately<a class="shelf-link" href="#lately" aria-hidden="true" tabindex="-1"></a></h2>
+      <h2 class="shelf-title" id="shelf-now">Now<a class="shelf-link" href="#now" aria-hidden="true" tabindex="-1"></a></h2>
     </div>
-    {{ taste.closing | markdownify }}
-    <p class="taste-updated">As of {{ taste.updated | date: "%B %Y" }}</p>
+    {{ taste.now.text | markdownify }}
+    <p class="taste-updated">As of {{ taste.now.updated | date: "%B %Y" }}</p>
+    <p class="me-mail"><a href="mailto:hello[at]somdev.in">hello[at]somdev.in</a><span class="me-reply"><span class="sr-only"> </span>I reply.</span></p>
+    {%- if taste.then.size > 0 %}
+    <details class="shelf-extra then">
+      <summary>and before that</summary>
+      {%- for was in taste.then %}
+      <div class="then-entry">
+        <p class="taste-updated">{{ was.updated | date: "%B %Y" }}</p>
+        {{ was.text | markdownify }}
+      </div>
+      {%- endfor %}
+    </details>
+    {%- endif %}
   </section>
   {% endif %}
 </div>
@@ -1101,6 +1518,31 @@ image:
     });
     reach();
     new ResizeObserver(reach).observe(document.body);
+  })();
+
+  // A label peels off and goes to what's under it; tapping the glue left behind sticks it back
+  (function () {
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    document.querySelectorAll('.label').forEach(label => label.addEventListener('click', event => {
+      const target = document.getElementById(label.dataset.to);
+      if (!target) return;
+      event.preventDefault();
+      if (label.classList.contains('peeled')) {
+        label.classList.remove('peeled');
+        return;
+      }
+      const arrive = () => {
+        label.classList.remove('peeling');
+        label.classList.add('peeled');
+        target.scrollIntoView({ behavior: still.matches ? 'auto' : 'smooth', block: 'start' });
+        target.classList.remove('arrived');
+        void target.offsetWidth;
+        target.classList.add('arrived');
+      };
+      if (still.matches) return arrive();
+      label.classList.add('peeling');
+      label.addEventListener('animationend', arrive, { once: true });
+    }));
   })();
 
   (function () {

@@ -384,7 +384,7 @@ pre>code {
   --c-philosophy: #7c3aed;
   --c-papers: #086fbd;
   --c-playground: #5b7500;
-  --c-taste: #8a5a2c;
+  --c-me: #8a5a2c;
   --nav-quiet: #736d62;
   --pen: rgb(30 45 115);
 }
@@ -400,7 +400,7 @@ pre>code {
   --c-philosophy: #c4a1ff;
   --c-papers: #4dbbff;
   --c-playground: #c0e84a;
-  --c-taste: #d9a066;
+  --c-me: #d9a066;
   --nav-quiet: #8f8a81;
 }
 
@@ -413,7 +413,7 @@ pre>code {
 [data-page="philosophy"] { --c: var(--c-philosophy); }
 [data-page="papers"] { --c: var(--c-papers); }
 [data-page="playground"] { --c: var(--c-playground); }
-[data-page="taste"] { --c: var(--c-taste); }
+[data-page="me"] { --c: var(--c-me); }
 
 html[data-page] {
   scrollbar-color: color-mix(in srgb, var(--c) 45%, var(--nav-quiet)) transparent;
@@ -511,6 +511,11 @@ body {
 
 .nav-links li {
   margin: 0;
+}
+
+/* On wider screens .nav-title names the section instead */
+.nav-links .nav-here {
+  display: none;
 }
 
 .nav-item {
@@ -753,6 +758,10 @@ html {
 
   .nav-title {
     display: none;
+  }
+
+  .nav-links .nav-here {
+    display: block;
   }
 
   .nav-links li,

@@ -30,10 +30,10 @@ links:
     label: experiments
     url: /playground/
     tooltip: random experiments
-  taste:
-    label: taste
-    url: /taste/
-    tooltip: stuff i love, stuff i use
+  me:
+    label: somu
+    url: /me/
+    tooltip: the rest of me
 
 header:
   - projects
@@ -43,4 +43,8 @@ header:
 
 homepage_extra:
   - playground
-  - taste
+  - me
+
+# Not in the header, but get a tab of their own on phones while you're in them
+phone_extra:
+  - me

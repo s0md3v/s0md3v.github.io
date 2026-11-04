@@ -14,7 +14,7 @@
   {% endif %}
 
   {% comment %} Other pages opt in to Reenie Beanie with `handwritten_font: true` in their front matter {% endcomment %}
-  {% assign handwritten_urls = "/,/about/,/projects/,/taste/" | split: "," %}
+  {% assign handwritten_urls = "/,/about/,/projects/,/me/" | split: "," %}
   {% assign page_url_key = page.url | remove: "index.html" | append: "/" | replace: "//", "/" %}
   {% if page.handwritten_font or handwritten_urls contains page_url_key %}
     {% assign uses_handwritten_font = true %}

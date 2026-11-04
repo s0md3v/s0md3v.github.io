@@ -1,0 +1,314 @@
+# Everything on /me.
+#
+# `photo`, `hello`, `opening` (markdown) and `life` (a year, or years, each with markdown) are the top; `now` is
+# the end, and an old `now` moves to the top of `then` with its date. `sections` are the rest, in order.
+# A thing needs only a title and a slug (picture: assets/images/taste/<slug>-<width>.avif, made by _raw/taste_images.py).
+#   meta: a little more, under the title (an author, "s1 only!")
+#   note: what he'd say about it, in his pen beside it. Each line is as he'd write it (never wrapped), so break
+#         where he'd pause. Two things side by side shouldn't both have notes, or they read as one line
+#   mark: favourite | recommend, a sticker on it saying "fav" or "start here"
+#   sticker: a sticker of his own, for what's worth knowing before you start ("s1 only!")
+#   note_above: written above its picture, outside it, not beside it
+#   url:  where it can be had, if it's something to read, watch or visit online
+#   mm:   for a thing he uses or wears, how wide it is as it's pictured, so they're at their own sizes
+#   foot: for a sneaker, where in its picture (0 to 1 across) a foot would sit, heel to toes: inside the heel
+#         counter and the toe box, not the midsole bulging past them. Judged by eye; they're all his size,
+#         so the feet are made the same length
+
+# src is the name in assets/images/me/, made at 540 and 1080 wide (<name>-<width>.webp)
+photo:
+  src: valley
+  alt: Somdev sitting on a rock in a green valley, looking out at snowy mountains
+
+hello: Hey, how are you doing? I love you.
+
+opening: |
+  Writing about yourself is hard. I can just write about what I do, like, dislike and be done with it. But
+  those things alone don't tell you much about a person.
+
+  On the other hand, being completely “real” isn't good either. Because if I tell you my flaws, you might
+  think I'm very honest or I'm too hard on myself. If I tell you my qualities, you might think I think too
+  highly of myself.
+
+  But you won't do that, right? Okay.
+
+  Let me start with a quick recap of my life.
+
+life:
+  - year: "1999"
+    text: "Born, in abject poverty in a village in northern India."
+  - year: "2002"
+    text: "At the age of 3, I can read Hindi, count numbers, and know tables up to 10 – all thanks to my father. I take admission in a government school and the teachers propose to get me in 2nd grade but my father decides I'm too young."
+  - year: "2004"
+    text: "I end up skipping 3rd grade."
+  - year: "2004ish"
+    text: "Me and a girl named Bindiya are the smartest ones in the class, there's an air of competition. She has cable TV at home and tells the other kids stories from the TV show *Hatim*."
+  - year: "2007ish"
+    text: "My sisters start tutoring kids, we are no longer in abject poverty, we are in normal poverty. I want to be a scientist."
+  - year: "2007–2014"
+    text: "I get regularly thrashed by teachers at school for not doing my homework, I think writing is boring. I do well in exams and finish in top 5. I develop an unrequited *crush* that goes on for about 4 years. We got a cable TV, I love *Ben 10* and *Inazuma Eleven*. I have a $6 (yep) 8‑bit console and I want to be a video game designer. My favorite games are *Super Contra 7*, *The Incredibles*, and *Double Dragon*."
+  - year: "2015"
+    text: "I change schools for my 11th grade, a girl develops an *unrequited* crush on me. I start using internet. It's 20MB a day, I use facebook and download music. I can't keep up with physics and maths.\n\nMy father is getting off at the last bus stop, returning from a pilgrimage. He finds an abandoned bag on a seat. The bag has a laptop and no identifiable material in the bag. Instead of handing it over to an official/police, he brings it home because that's what the policeman would do too. I love the laptop. I stumble across a facebook group about hacking and start learning hacking. I create my own group named *Ultimate Hackers* and start posting things as I learn them, people like it."
+  - year: "2016"
+    text: "I start my Bachelor of Science course in college. It includes three subjects: Physics, Chemistry, and Maths. I'm not “smart” anymore. *Ultimate Hackers* grows to 40k members. With the few other admins, we start a website for blogs, I'm writing the most of them."
+  - year: "2017"
+    text: "I join twitter. While I was being proud of myself for basic hacking, people here were hacking browsers. This is a whole new world for me. I continue to write blogs and start doing programming. My first ever software is named Breacher and it's open source. I build about 7 more that year and 2 of them got popular. I'm making a name for myself. I have to skip college for a week because my girlfriend's brother wants to *honour kill* me, relationship is over."
+  - year: "2018"
+    text: "I play a prank claiming that I have died on my facebook account to see how people would react. The other admins decide that I'm an attention-seeker so they decide to delete the website where I had written 100+ articles and they had written about 8. I build 6 more software, I'm famous now."
+  - year: "2019"
+    text: "I have talent and an audience but I lack the knowledge needed to utilize it properly that comes with privilege. My family doesn't understand what I do on the laptop all day. I'm subjected to mental abuse. My girlfriend of 2 years has cheated on me. My laptop's “A” is broken and there's a huge dead pixel area in the top-right. My weight is 43 kg at the age of 20. Published two research papers, released more software."
+  - year: "2020"
+    text: "I got a job. It pays 3 times more than the job my parents wanted me to get. I'm respected and not poor. I travel and discover that I love nature and stillness. I build 2 software, I don't have the hunger anymore. This job is underpaying me but I don't know any better. I build a workspace for myself with a beastly gaming computer."
+  - year: "2021–2022"
+    text: "I am depressed. No one had taught me what to do after I “make it”, everything was just to get here. Now what? Years of unprocessed misery has caught up to me. I travel some more. Finish top 5 in a hacking competition. Try to get the passion back but I can't. I'm completely dysfunctional and clinically depressed. Longest I have gone without showering is about 4 weeks. I drink my first ever strawberry shake made from real strawberries, this is my new thing. I get into pop-philosophy in hopes of figuring *it* (everything) out and start writing mini-essays about human condition on instagram."
+  - year: "2023"
+    text: "Quit my job at the start of the year. Immediately got offered a job that pays 5 times more and rejected it, I'm not doing *this* anymore. Trying to get my funk back, I can't. I have started doing photography. People love what I write on instagram. “With the effort it takes me to get out of bed, I could have built pyramids.”"
+  - year: "2024"
+    text: "I am still depressed and it has taken a toll on my mind, body, and social life. But I'm reading actual philosophy. It is helping me get *it* but the brain is out of juice to do anything. I try dabbling in new hobbies to crawl back out of this dump, I can't.\n\nIt's 5AM in October, I just woke from a weird dream. My entire body is spasming and shaking. After orienting myself, I notice the constant weight I used to feel on my chest and the brain are just gone. I think it will go away in a few minutes, it doesn't. Doesn't go after a day too, like anxiety and depression were turned off with a switch. I don't understand what happened but decide that I'm not going to let this opportunity slide, I'm not going to fall back into the same loop again. I start therapy. I go on a trip to Kashmir and then to Kerala, back to back."
+  - year: "2025"
+    text: "I found out that what happened to me with the dream in 2024 is what psychologists call a quantum change (yep, that's the word). I'm recovering, slowly becoming functional. I just went through hell and I have no worries for the first time in my life. It's september, I finally have a good idea. I'm going to build a software that could have helped me, my first product. I'm working really hard. It's november, the culmination of all the philosophy I've read and openness to experience I've practiced – happens. Simply existing feels like I have bitten into a strawberry. I'm happy for no reason, I couldn't be sad even if I wanted to."
+  - year: "2026"
+    text: "I'm learning design and working on my product. I haven't been this consistent and passionate since 2020. I've built this website. I'm writing this."
+
+now:
+  updated: 2026-11-03
+  text: |
+    Right now I'm building an app for your first brain, the one in your head. I'm also reading
+    sociology after a long stretch of psychology (political theory is next), and learning
+    marketing, which is admittedly unrelated.
+then: []
+#  - updated: 2026-11-03
+#    text: |
+
+sections:
+
+# Each group's label is a belief too
+# Believe goes first when it's written:
+# - section: Believe
+#   labels: [{text, to}]   tape that peels off to the group whose id is `to` (or `life`)
+#   groups: [{label, id, principles: [{text}]}]
+- section: Watch
+  items:
+    - title: About Time
+      slug: about-time
+      mark: recommend
+    - title: Poor Things
+      slug: poor-things
+      mark: favourite
+    - title: Mard Ko Dard Nahi Hota
+      slug: mard-ko-dard-nahi-hota
+      note: |-
+        they made this one for me,
+        you prolly won't like it
+      note_above: true
+    - title: Past Lives
+      slug: past-lives
+    - title: La La Land
+      slug: la-la-land
+    - title: Fleabag
+      slug: fleabag
+    - title: Portrait of a Lady on Fire
+      slug: portrait-of-a-lady-on-fire
+    - title: Parasite
+      slug: parasite
+    - title: True Detective
+      slug: true-detective
+      sticker: s1 only!
+    - title: Everything Everywhere All at Once
+      slug: everything-everywhere-all-at-once
+    - title: Arrival
+      slug: arrival
+    - title: "Sore: A Wife from the Future"
+      slug: sore-a-wife-from-the-future
+    - title: Perfect Days
+      slug: perfect-days
+    - title: Super Deluxe
+      slug: super-deluxe
+  videos:
+    label: videos
+    items:
+      - title: Capitalist conditioning
+        slug: yt-capitalist-conditioning
+        meta: revolutionaryth0t
+        url: https://www.youtube.com/watch?v=20JNerTHh6w
+      - title: Adorno's critique of society
+        slug: yt-adorno
+        meta: Popular Philosophy
+        url: https://www.youtube.com/watch?v=lpo4DKrykaw
+      - title: What makes a happy life?
+        slug: yt-happy-life
+        meta: Veritasium
+        url: https://youtu.be/vSQjk9jKarg
+      - title: Journey to the West
+        slug: yt-journey-to-the-west
+        meta: Overly Sarcastic Productions
+        url: https://www.youtube.com/watch?v=61nuXrvqNgI&list=PLDb22nlVXGgdg_NR_-GtTrMnbMVmtSSXa
+  more:
+    text: Want more movies? Find me on Letterboxd.
+    url: https://letterboxd.com/s0md3v/
+
+- section: Read
+  items:
+    - title: Nicomachean Ethics
+      slug: nicomachean-ethics
+      meta: Aristotle
+      url: https://standardebooks.org/ebooks/aristotle/nicomachean-ethics/f-h-peters
+      note: |-
+        if you are going to read
+        one book in your life,
+        it should be this one.
+    - title: Famine, Affluence & Morality
+      slug: famine-affluence-morality
+      meta: Peter Singer
+      url: https://www.utilitarian.net/singer/by/1972----.htm
+      note: |-
+        *mocking voice*
+        'why me do good
+        when world bad.'
+        shut up
+    - title: Moral Saints
+      meta: Susan Wolf
+      url: https://www.philosophy.rutgers.edu/joomlatools-files/docman-files/MoralSaints.pdf
+      note: |-
+        read it after singer's,
+        should help with the gut punch
+      note_above: true
+    - title: The Tail End
+      meta: Tim Urban
+      url: https://waitbutwhy.com/2015/12/the-tail-end.html
+    - title: How Complex Systems Fail
+      meta: Richard Cook
+      url: https://how.complexsystems.fail/
+    - title: Why intelligence doesn't improve rationality
+      meta: Dianoia Protocol
+      url: https://dianoiaprotocol.substack.com/p/why-intelligence-doesnt-improve-rationality
+
+# His shers, the text checked on Rekhta; `translation` is what each means, in English
+- section: Poetry
+  items:
+    - text: maana ki is zameen ko na gulzaar kar sake<br>kuchh khaar kam to kar gaye guzre jidhar se hum
+      translation: "Granted, we couldn't turn this earth into a garden, but wherever we passed, we left a few thorns fewer."
+      sher: true
+      by: Sahir Ludhianvi
+    - text: le de ke apne paas faqat ek nazar to hai<br>kyun dekhen zindagi ko kisi ki nazar se hum
+      translation: "All said and done, all I have is my own pair of eyes, so why would I see life through someone else's?"
+      sher: true
+      by: Sahir Ludhianvi
+    - text: main lautne ke iraade se ja raha hoon magar<br>safar safar hai mera intezaar mat karna
+      translation: "I'm leaving meaning to come back, but a journey is a journey, so don't wait for me."
+      sher: true
+      by: Sahil Sahri
+    - text: na karen aap wafa hum ko kya<br>bewafa aap hi kahlaiyega
+      translation: "If you won't be faithful, what's it to me? You're the one who'll be called unfaithful."
+      sher: true
+      by: Hasrat Mohani # Rekhta lists him; not confirmed elsewhere
+    - text: be-dili kya yoonhi din guzar jayenge<br>sirf zinda rahe hum to mar jayenge
+      translation: "Will the days just pass like this, heartless? If all we do is stay alive, we'll die."
+      sher: true
+      by: Jaun Elia
+- section: Listen
+  items:
+    - title: Flying Towards the City
+      slug: flying-towards-the-city
+      meta: Panther
+    - title: Day Dreamer
+      slug: day-dreamers
+      meta: Umair, Talha Anjum
+    - title: Hona Hi Tha
+      slug: hona-hi-tha
+      meta: Yungsta
+
+- section: Play
+  items:
+    - title: Disco Elysium
+      slug: disco-elysium
+      mark: favourite
+    - title: Baldur's Gate 3
+      slug: baldurs-gate-3
+      note: made a mod for it
+      note_above: true
+    - title: Dishonored
+      slug: dishonored
+    - title: Yakuza
+      slug: yakuza
+      meta: series
+      note: |-
+        i would like to think that i'm majima
+        but i'm just kiryu
+      note_above: true
+    - title: Cyberpunk 2077
+      slug: cyberpunk-2077
+    - title: "Black Myth: Wukong"
+      slug: black-myth-wukong
+
+- section: Sneakers
+  # Arranged like a shop window: the loudest first, the Ghost Smashers in the middle of the top
+  # shelf, no two alike in colour or height side by side, and the plain cream Converse to close
+  aside: |-
+    haven't bought a sneaker in 2 years,
+    i would buy a cheaper pokemon one if i could
+  items:
+    - title: Nike Air Jordan 1 Spider-Verse
+      slug: jordan-1-spiderverse
+      foot: [0.04, 0.93]
+    - title: Puma RS-X Pikachu
+      slug: rsx-pikachu
+      foot: [0.08, 0.94]
+    - title: Reebok Ghost Smashers
+      slug: reebok-ghostbusters
+      foot: [0.15, 0.94]
+    - title: Puma RS-X Batman
+      slug: rsx-batman
+      foot: [0.09, 0.95]
+    - title: Nike Air Max Furyosa
+      slug: air-max-furyosa
+      foot: [0.06, 0.94]
+    - title: Nike Air Presto Mid Utility
+      slug: presto-orange
+      foot: [0.06, 0.93]
+    - title: New Balance Vision Racer
+      slug: vision-racer
+      foot: [0.12, 0.94]
+    - title: Adidas Samba Valentine's Day
+      slug: samba-2
+      foot: [0.03, 0.94]
+    - title: Nike SuperRep 3 AMP
+      slug: superrep-3-amp
+      foot: [0.1, 0.94]
+    - title: ASICS Gel-Lyte III
+      slug: gel-lyte-iii
+      foot: [0.03, 0.95]
+    - title: Converse Chuck Taylor All Star Throwback
+      slug: chuck-taylor-throwback
+      foot: [0.03, 0.9]
+
+- section: Browse
+  aside: from my bookmarks
+  items:
+    - title: Standard Ebooks
+      meta: Public-domain books, carefully typeset
+      url: https://standardebooks.org/
+    - title: Locustream Soundmap
+      meta: Live microphones left open around the world
+      url: https://locusonus.org/soundmap/
+    - title: Nokia Design Archive
+      meta: Decades of Nokia sketches, concepts and prototypes
+      url: https://nokiadesignarchive.aalto.fi/
+    - title: BBC Sound Effects
+      meta: The BBC's sound effects archive
+      url: https://sound-effects.bbcrewind.co.uk/
+    - title: The Grug Brained Developer
+      meta: On keeping software simple, by a caveman
+      url: https://grugbrain.dev/
+    - title: Bellingcat Challenges
+      meta: Geolocation and OSINT puzzles
+      url: https://challenge.bellingcat.com/
+    - title: News Minimalist
+      meta: Only the news that matters, ranked by significance
+      url: https://www.newsminimalist.com/
+    - title: GiveWell
+      meta: Where a donation does the most good
+      url: https://www.givewell.org/
+    - title: TabBoo
+      meta: Jump scares for the sites that distract you
+      url: https://tabboo.xyz/

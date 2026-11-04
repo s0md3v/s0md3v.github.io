@@ -29,7 +29,7 @@ OBJECTS = {
     'papers': '#papers',
     'philosophy': '#philosophy',
     'gallery': '#gallery',
-    'taste': '#uses',
+    'me': '#uses',
 }
 
 BOX = '''sel => {
