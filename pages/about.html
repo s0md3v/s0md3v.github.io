@@ -44,8 +44,9 @@ image:
   line-height: 1.6;
 }
 
-/* Side by side once there's room for both at their size */
-@media (min-width: 60em) {
+/* Side by side once there's room for both: from 900px, where the words still have about 50
+   characters a line, rather than a column under a Polaroid that fills a laptop's window */
+@media (min-width: 56.25em) {
   /* The words beside the photo, and under the photo, as on the back of it, how to reach him */
   .about {
     /* The photo gives way first, so the words keep their measure and the Polaroid keeps clear of the window's edge */
@@ -56,7 +57,9 @@ image:
     justify-items: stretch;
     align-items: start;
     column-gap: clamp(2.5em, 10vw - 3em, 4.5em);
-    padding-inline: 2em;
+    /* Clear of the window's edge by more than the Polaroid's tilt */
+    padding-inline: 2.5em;
+    max-width: 59em;
     row-gap: 3em;
     padding-top: 4.5em;
   }
@@ -98,7 +101,8 @@ image:
   rotate: -2deg;
 }
 
-@media (max-width: 768px) {
+/* On its own, over the words: a size that leaves the name in sight */
+@media (max-width: 56.24em) {
   .about-polaroid {
     width: min(72%, 17em);
     rotate: 2deg;
@@ -135,11 +139,15 @@ image:
   filter: brightness(0.82);
 }
 
-.about-caption {
-  display: grid;
+/* One caption over the other, both starting where the same hand would start writing: the pair is
+   centred on the strip, and each is written from its left */
+.about-caption-stack {
+  display: inline-grid;
+  justify-items: start;
+  text-align: left;
 }
 
-.about-caption > span {
+.about-caption-stack > span {
   grid-area: 1 / 1;
   transition: opacity 0.2s ease;
 }
@@ -153,7 +161,7 @@ image:
   opacity: 1;
 }
 
-.about-polaroid.is-cool .about-caption > span:first-child {
+.about-polaroid.is-cool .about-caption-usual {
   opacity: 0;
 }
 
@@ -163,7 +171,7 @@ image:
     opacity: 1;
   }
 
-  .about-polaroid:hover .about-caption > span:first-child {
+  .about-polaroid:hover .about-caption-usual {
     opacity: 0;
   }
 }
@@ -187,7 +195,7 @@ image:
 
 @media (prefers-reduced-motion: reduce) {
   .about-photo-cool,
-  .about-caption > span {
+  .about-caption-stack > span {
     transition: none;
   }
 }
@@ -207,18 +215,22 @@ image:
   filter: brightness(0.82);
 }
 
-/* In pen on the strip under the picture, where a Polaroid's written on, and always there */
+/* On the strip under the picture, where a Polaroid's written on, and always there. In the marker
+   the desk's Polaroid is written on with (homepage.css, --ink), not the pen of the notes on the
+   page: it's written on the photo, and as large as a hand writes across the strip. */
 .about-caption {
   position: absolute;
   left: 0;
   right: 0;
-  top: 84%;
+  top: 83%;
   font-family: "Reenie Beanie", cursive;
   /* As wide on the strip whatever the Polaroid's size */
-  font-size: 7cqi;
+  font-size: 10cqi;
   line-height: 1;
   text-align: center;
-  color: #2a2620;
+  color: #23201b;
+  -webkit-text-stroke: 0.025em currentColor;
+  mix-blend-mode: multiply;
   rotate: -1.5deg;
 }
 
@@ -242,13 +254,16 @@ image:
 }
 
 .about-aka {
-  margin: 0.35em 0 1.6em;
+  /* As far over the words as the words are over the record (.about-record), from the line's
+     foot to the next one's capitals */
+  margin: 0.35em 0 2.3em;
   font-size: 0.9em;
   color: var(--muted-color);
 }
 
 .about-text p {
   margin-bottom: 1.1em;
+  text-wrap: pretty;
 }
 
 /* Room under the last line for the note under its last word */
@@ -320,29 +335,12 @@ image:
   margin: 0;
 }
 
-/* What each part is, said quietly */
-.about-label {
-  margin: 0 0 0.35em;
-  font-size: 0.85em;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1.5;
-  color: var(--muted-color);
-}
-
 /* ---- The record: the blog's list of dated things, as it is there. No rules between them, so it's a
    short list of what he's done and not a table to fill in. The years it's still going on are in
    this page's ink, as where he is now. ---- */
 
 .about-record {
-  margin-top: 2.25em;
-}
-
-.about-record .about-label {
-  margin-bottom: 0.9em;
-  font-size: 1em;
-  font-weight: 500;
-  color: var(--heading-color);
+  margin-top: 2.1em;
 }
 
 /* One grid for the whole list, so the years are one column, as wide as the widest of them */
@@ -443,10 +441,13 @@ image:
 /* Elsewhere: each place by its own mark, drawn the way the site's marks are, quiet as they are in
    the bar, and lit as they are: in the colour that's that place's own */
 .about-reach .about-elsewhere {
+  /* The size of the bar's marks (.nav-item svg), so the two sets match */
+  --mark: 1.75rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.15em;
-  margin: 0 0 0 -0.6em;
+  /* The first mark's edge on the line of the address above it */
+  margin: 0 0 0 calc((var(--mark) - 2.6em) / 2);
   padding: 0;
   list-style: none;
 }
@@ -465,14 +466,22 @@ image:
 }
 
 .about-elsewhere svg {
-  width: 1.5em;
-  height: 1.5em;
+  width: var(--mark);
+  height: var(--mark);
+}
+
+@media screen and (max-width: 48em) {
+  .about-reach .about-elsewhere {
+    --mark: min(1.625rem, 7vw);
+  }
 }
 
 .about-elsewhere a[href*="instagram"] { --own: #c72a6e; }
 .about-elsewhere a[href*="linkedin"] { --own: #0a66c2; }
+.about-elsewhere a[href*="x.com"] { --own: #1a8cd8; }
 .dark-mode .about-elsewhere a[href*="instagram"] { --own: #ff7ab0; }
 .dark-mode .about-elsewhere a[href*="linkedin"] { --own: #5aa9f0; }
+.dark-mode .about-elsewhere a[href*="x.com"] { --own: #4cb3f5; }
 
 @media (hover: hover) {
   .about-elsewhere a:hover {
@@ -514,7 +523,7 @@ image:
       srcset="{{ '/assets/images/polaroid-cool-480.webp' | relative_url }} 480w, {{ '/assets/images/polaroid-cool-960.webp' | relative_url }} 960w"
       sizes="(max-width: 768px) 72vw, 380px" width="480" height="578" decoding="async" aria-hidden="true"
       alt="The same Polaroid, now of Somdev in sunglasses, arms crossed, against a pale sky">
-    <figcaption class="about-caption hand-note"><span class="about-caption-usual">me, usually</span><span class="about-caption-cool" aria-hidden="true">me, but cooler</span></figcaption>
+    <figcaption class="about-caption hand-note"><span class="about-caption-stack"><span class="about-caption-usual">me, usually</span><span class="about-caption-cool" aria-hidden="true">me, but cooler</span></span></figcaption>
     <button type="button" class="about-flip" aria-pressed="false" aria-label="Me, but cooler"></button>
   </figure>
 
@@ -524,25 +533,27 @@ image:
 
     <div class="about-text prose">
       <p>
-        I've been a security researcher and programmer since 2017, and these days I do product design too.
+        I’ve been a security researcher and programmer since 2017, and these days I do product design too.
       </p>
       <p>
         Outside of work, I take <a data-page="gallery" href="{{ '/gallery' | relative_url }}">photos</a>, read
         <a data-page="philosophy" href="{{ site.data.navigation.links.philosophy.url | relative_url }}">philosophy</a>, build things <a data-page="playground" href="{{ '/playground/' | relative_url }}">for fun</a>,
         and meow back at
-        <span class="about-cats">cats.<span class="hand-note about-meow"><span class="sr-only copy-gap"> </span><svg class="about-meow-arrow about-meow-arrow-under" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21C13 21 7 17 6.5 6M3 9.5L6.4 5.6L10 9"/></svg><svg class="about-meow-arrow about-meow-arrow-beside" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14C15 16 9 15 4 10M4.4 15L3.6 9.6L9 9.4"/></svg>they find it convincing</span></span>
+        <span class="about-cats">cats.<span class="hand-note about-meow"><span class="sr-only copy-gap"> </span><svg class="about-meow-arrow about-meow-arrow-under" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21C13 21 7 17 6.5 6M3 9.5L6.4 5.6L10 9"/></svg><svg class="about-meow-arrow about-meow-arrow-beside" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13C15 14.8 9.5 14.6 4.5 12.2M9.3 11L4.5 12.2L6.6 16.7"/></svg>they find it convincing</span></span>
       </p>
       <p>
-        If you're here for the work, start with my <a data-page="projects" href="{{ '/projects' | relative_url }}">projects</a>.
-        If you're curious how this site was made, there's a <a href="{{ '/colophon' | relative_url }}">colophon</a>.
-        And if you want to know me better, here's <a data-page="taste" href="{{ '/taste/' | relative_url }}">what I like</a>.
+        If you’re here for the work, start with my <a data-page="projects" href="{{ '/projects' | relative_url }}">projects</a>.
+        If you’re curious how this site was made, there’s a <a href="{{ '/colophon' | relative_url }}">colophon</a>.
+        And if you want to know me better, here’s <a data-page="taste" href="{{ '/taste/' | relative_url }}">what I like</a>.
       </p>
     </div>
 
     {% comment %} The record: dated, flat, every line linked to what shows it. Looks unlike the words
-       above, so a skimmer's eye finds it wherever it is, and asks nothing of anyone who's reading. {% endcomment %}
+       above, so a skimmer's eye finds it wherever it is, and asks nothing of anyone who's reading.
+       Untitled but for a screen reader: the years say what it is, and a title would be one more
+       line competing with the roles. {% endcomment %}
     <section class="about-record prose" aria-labelledby="about-record-title">
-      <h2 class="about-label" id="about-record-title">s0md3v, so far</h2>
+      <h2 class="sr-only" id="about-record-title">s0md3v, so far</h2>
       <dl>
         <div>
           <dt><span class="about-span" aria-hidden="true">{% assign chars = "2017–2020" | split: "" %}{% for c in chars %}<span>{{ c }}</span>{% endfor %}</span><span class="sr-only">2017 to 2020</span></dt>
@@ -576,10 +587,9 @@ image:
 
   <section class="about-reach" aria-label="Write to me">
     <p class="about-mail prose"><a href="mailto:hello[at]somdev.in">hello[at]somdev.in</a><span class="hand-note about-reply"><span class="sr-only copy-gap"> </span>I reply.</span></p>
-    <p class="about-work">I'm taking a break from new work for now. If you have genuinely interesting contract work or a full-time remote role, I would still love to take a look.</p>
     <ul class="about-elsewhere" aria-label="Elsewhere">
       <li><a href="https://instagram.com/s0md3v" aria-label="Instagram">{% include social/instagram.svg %}</a></li>
-      <li><a href="https://x.com/s0md3v" aria-label="X">{% include social/x.svg %}</a></li>
+      <li><a href="https://x.com/s0md3v" aria-label="Twitter (X)">{% include social/twitter.svg %}</a></li>
       <li><a href="https://github.com/s0md3v" aria-label="GitHub">{% include social/github.svg %}</a></li>
       <li><a href="https://www.linkedin.com/in/s0md3v" aria-label="LinkedIn">{% include social/linkedin.svg %}</a></li>
     </ul>
