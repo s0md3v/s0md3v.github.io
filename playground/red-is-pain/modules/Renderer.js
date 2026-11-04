@@ -13,28 +13,25 @@ export class Renderer {
             showTrust: false,
             showComm: false,
             showHeatmap: false,
-            showTargets: true // Default on for better UX
+            showTargets: true
         };
 
         this.selectedAgent = null;
-        this.barOffsetMap = new Map(); // Track vertical offsets for health bars to prevent overlap
-        this.gameMode = 'AI_VS_AI'; // Set by main.js
+        this.barOffsetMap = new Map();
+        this.gameMode = 'AI_VS_AI';
 
-        // FOG OF WAR
         this.fogCanvas = null;
         this.fogCtx = null;
-        this.exploredCanvas = null; // Permanent record of explored areas
+        this.exploredCanvas = null;
         this.exploredCtx = null;
-        this.playerVisionPoly = []; // Current frame's vision polygon
+        this.playerVisionPoly = [];
         this.playerPeripheralRadius = Config.SENSORY.PERIPHERAL_DIST;
         this.playerVisionRange = Config.AGENT.VISION_RADIUS;
         
-        // Performance Tracking
         this.fps = 0;
         this.frameTimes = [];
         this.lastFrameTime = performance.now();
         
-        // OPTIMIZATION: Off-screen buffers for "Baking"
         this.mapCanvas = document.createElement('canvas');
         this.mapCtx = this.mapCanvas.getContext('2d');
         this.mapBaked = false;
@@ -44,10 +41,8 @@ export class Renderer {
         this.lastBufferedAgentId = null;
         this.lastHeatBufferTime = 0;
 
-        // VISION CACHING
         this.visionCache = new Map(); // agentId -> { rayDistances, lastX, lastY, lastAngle, frameCounter }
 
-        // Load Sprites
         this.sprites = {
             blue: {
                 normal: new Image(),
@@ -67,13 +62,11 @@ export class Renderer {
             grenadeExplosion: []
         };
 
-        // Core Bodies
         this.sprites.blue.normal.src = './assets/sprites/body/blue_normal.png';
         this.sprites.blue.flash.src = './assets/sprites/body/blue_flash.png';
         this.sprites.yellow.normal.src = './assets/sprites/body/yellow_normal.png';
         this.sprites.yellow.flash.src = './assets/sprites/body/yellow_flash.png';
 
-        // Death Frames
         for (let i = 1; i <= 3; i++) {
             const bD = new Image(); bD.src = `./assets/sprites/body/blue_death_${i}.png`;
             this.sprites.blue.death.push(bD);
@@ -81,7 +74,6 @@ export class Renderer {
             this.sprites.yellow.death.push(yD);
         }
 
-        // Animated Legs
         for (let i = 1; i <= 7; i++) {
             const bL = new Image(); bL.src = `./assets/sprites/legs/blue/legs${i}.png`;
             this.sprites.blue.legs.push(bL);
@@ -100,7 +92,6 @@ export class Renderer {
             }
         });
 
-        // Load Grenade Explosion Frames (New 256px assets)
         this.sprites.grenadeExplosion = [];
         for (let i = 1; i <= 10; i++) {
             const img = new Image();
@@ -116,27 +107,23 @@ export class Renderer {
             this.bakeMap();
         }
 
-        // Clear background (Screen Space)
-        this.ctx.fillStyle = '#111'; // Darker background for "void"
+        this.ctx.fillStyle = '#111';
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         this.ctx.save();
         
-        // Apply Camera Transform
         this.ctx.translate(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
         this.ctx.scale(this.camera.zoom, this.camera.zoom);
         this.ctx.translate(-this.camera.x, -this.camera.y);
 
-        // Map (Baking Buffer - Super fast)
         this.ctx.imageSmoothingEnabled = false; 
         this.drawVisualLayers(); 
-        this.ctx.imageSmoothingEnabled = true; // Re-enable for smooth agents/particles
+        this.ctx.imageSmoothingEnabled = true;
 
         // Human visibility is calculated before dynamic objects are drawn so
         // enemies and supplies never flash through the fog for a frame.
         if (this.gameMode === 'HUMAN') this._computePlayerVisionPoly();
 
-        // Debug layers (Not baked)
         if (this.debugOptions.showVision) {
             this.drawObstacleMap();
             this.drawCovers();
@@ -155,7 +142,6 @@ export class Renderer {
         this.drawSelectionIndicator();
         this.drawDebug();
 
-        // --- FOG OF WAR (drawn last, on top of everything in world-space) ---
         if (this.gameMode === 'HUMAN' && this.fogCanvas) {
             this._updateFog();
             this.ctx.drawImage(this.fogCanvas, 0, 0);
@@ -163,7 +149,6 @@ export class Renderer {
         
         this.ctx.restore();
 
-        // 3. UI OVERLAYS (Screen Space)
         this.updateFPS();
         this.drawFPS();
     }
@@ -184,11 +169,9 @@ export class Renderer {
         this.ctx.save();
         this.ctx.font = 'bold 14px monospace';
         
-        // Background for readability
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         this.ctx.fillRect(10, 10, 70, 25);
         
-        // FPS Text (Color coded based on performance)
         this.ctx.fillStyle = this.fps >= 50 ? '#0f0' : (this.fps >= 30 ? '#ff0' : '#f00');
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'top';
@@ -209,11 +192,9 @@ export class Renderer {
         this.ctx.save();
         this.ctx.translate(agent.pos.x, agent.pos.y);
         
-        // Static Glow
         this.ctx.shadowBlur = 10;
         this.ctx.shadowColor = '#00f7ff';
         
-        // Solid thin ring
         this.ctx.lineWidth = 1.5;
         this.ctx.strokeStyle = 'rgba(0, 247, 255, 0.8)';
         this.ctx.beginPath();
@@ -227,27 +208,19 @@ export class Renderer {
         this.mapCanvas.width = this.world.width;
         this.mapCanvas.height = this.world.height;
         
-        // OPTIMIZATION: Disable smoothing for the map buffer to keep assets sharp
         this.mapCtx.imageSmoothingEnabled = false;
 
-        // 1. Draw Background
         this.mapCtx.fillStyle = '#252525';
         this.mapCtx.fillRect(0, 0, this.world.width, this.world.height);
 
-        // 2. Draw Static Walls (Geometry) as fallback/underlay
         const originalCtx = this.ctx;
         this.ctx = this.mapCtx;
         this.drawMap();
 
-        // 3. Draw Visual Layers (Tiles/Buildings) OVER the geometry
         const allTilesLoaded = this.drawVisualLayers(true); 
         
-        // 4. Bushes are now debug-only or handled by visual layers
-        // Removing this.drawBushes() from here to clean up the main view
-
         this.ctx = originalCtx;
 
-        // Only stop re-baking once every asset is available.
         if (allTilesLoaded && this.world.visualLayers.length > 0) {
             this.mapBaked = true;
         }
@@ -256,7 +229,6 @@ export class Renderer {
     drawVisualLayers(isBaking = false) {
         if (!this.world.visualLayers) return true;
         
-        // If we are not baking, and the map is already baked, just paint the buffer
         if (!isBaking && this.mapBaked) {
             this.ctx.drawImage(this.mapCanvas, 0, 0);
             return true;
@@ -264,7 +236,6 @@ export class Renderer {
 
         let allLoaded = true;
 
-        // Quick lookup for manifest data by path
         if (!this._manifestLookup) {
             this._manifestLookup = {};
             for (const category of Object.values(AssetManifest.categories)) {
@@ -288,7 +259,6 @@ export class Renderer {
                 let ty = data.ty;
                 let rot = data.rot || 0;
 
-                // Lookup missing metadata from manifest
                 if (tx === undefined || ty === undefined) {
                     const meta = this._manifestLookup[path];
                     if (meta) {
@@ -324,9 +294,7 @@ export class Renderer {
                         this.ctx.drawImage(img, x, y, w, h);
                     }
                 } else if (img.complete && img.naturalWidth === 0) {
-                    // Broken asset, don't wait for it
                 } else {
-                    // Still loading!
                     allLoaded = false;
                 }
             }
@@ -339,7 +307,6 @@ export class Renderer {
         this.ctx.fillStyle = '#444';
         for (const wall of this.world.walls) {
             if (wall.points) {
-                // Vector Wall (Polygon)
                 this.ctx.beginPath();
                 wall.points.forEach((p, i) => {
                     if (i === 0) this.ctx.moveTo(p.x, p.y);
@@ -348,7 +315,6 @@ export class Renderer {
                 if (wall.closed) this.ctx.closePath();
                 this.ctx.fill();
             } else {
-                // Legacy Rect Wall
                 this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
             }
         }
@@ -357,7 +323,6 @@ export class Renderer {
     drawCovers() {
         this.ctx.lineWidth = 1;
         for (const cover of this.world.covers) {
-            // Color based on Health
             const hpRatio = cover.hp / cover.maxHp;
             const r = Math.floor(255 * (1 - hpRatio));
             const g = Math.floor(255 * hpRatio);
@@ -366,7 +331,6 @@ export class Renderer {
             this.ctx.strokeStyle = `rgba(${r}, ${g}, 114, 0.8)`;
             
             if (cover.points) {
-                 // Vector Cover
                 this.ctx.beginPath();
                 cover.points.forEach((p, i) => {
                     if (i === 0) this.ctx.moveTo(p.x, p.y);
@@ -376,7 +340,6 @@ export class Renderer {
                 this.ctx.fill();
                 this.ctx.stroke();
             } else {
-                // Legacy Rect Cover
                 this.ctx.fillRect(cover.x, cover.y, cover.w, cover.h);
                 this.ctx.strokeRect(cover.x, cover.y, cover.w, cover.h);
             }
@@ -385,12 +348,11 @@ export class Renderer {
 
     drawBushes() {
         for (const b of this.world.bushes) {
-            this.ctx.fillStyle = 'rgba(34, 139, 34, 0.6)'; // Translucent Forest Green
+            this.ctx.fillStyle = 'rgba(34, 139, 34, 0.6)';
             this.ctx.strokeStyle = 'rgba(0, 100, 0, 0.6)';
             this.ctx.lineWidth = 1;
             
             if (b.points) {
-                // Vector Bush
                 this.ctx.beginPath();
                 b.points.forEach((p, i) => {
                     if (i === 0) this.ctx.moveTo(p.x, p.y);
@@ -400,13 +362,11 @@ export class Renderer {
                 this.ctx.fill();
                 this.ctx.stroke();
             } else {
-                // Legacy Circular Bush
                 this.ctx.beginPath();
                 this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
                 this.ctx.fill();
                 this.ctx.stroke();
 
-                // Draw leaves (noise details)
                 this.ctx.fillStyle = 'rgba(0, 80, 0, 0.3)';
                 if (b.details) {
                     for (const d of b.details) {
@@ -428,7 +388,6 @@ export class Renderer {
             const alpha = Math.min(0.6, lifeRatio * 1.5);
             
             this.ctx.save();
-            // Core cloud with radial gradient
             if (!isFinite(s.x) || !isFinite(s.y) || !isFinite(s.radius)) continue;
             const gradient = this.ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.radius);
             gradient.addColorStop(0, `rgba(220, 220, 220, ${alpha})`);
@@ -440,7 +399,6 @@ export class Renderer {
             this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
             this.ctx.fill();
 
-            // Bilowing "fluff" details
             const detailCount = 5;
             for (let i = 0; i < detailCount; i++) {
                 const angle = (i / detailCount) * Math.PI * 2 + (Date.now() / 3000);
@@ -488,11 +446,9 @@ export class Renderer {
 
         const isHumanMode = this.gameMode === 'HUMAN';
 
-        // Pass 1: Draw Bodies & Legs
         for (const agent of this.world.agents) {
-            // --- ENEMY VISIBILITY: Only draw enemies when in player's vision cone ---
             if (isHumanMode && agent.team !== 0 && !this._isInPlayerVision(agent.pos)) {
-                continue; // Enemy not visible
+                continue;
             }
 
             this.ctx.save();
@@ -501,11 +457,9 @@ export class Renderer {
             const team = agent.team === 0 ? 'blue' : 'yellow';
             const sprites = this.sprites[team];
 
-            // 1. Leg Layer (Movement Direction)
             const isMoving = agent.isMoving && agent.motor.calculateCurrentSpeed(this.world) > 10;
             let targetMoveAngle = agent.angle;
             
-            // Track leg animation
             if (!agent.legFrame) agent.legFrame = 0;
             if (isMoving) {
                 if (agent.motor.smoothedMoveAngle !== undefined) targetMoveAngle = agent.motor.smoothedMoveAngle;
@@ -530,17 +484,14 @@ export class Renderer {
             }
             this.ctx.restore();
 
-            // 2. Body Layer (Look/Aim Direction)
             this.ctx.save();
             
-            // Subtle Shadow for Depth
             this.ctx.shadowBlur = 4;
             this.ctx.shadowColor = 'rgba(0,0,0,0.6)';
             this.ctx.shadowOffsetY = 2;
             
             this.ctx.rotate(agent.angle - Math.PI / 2); 
             
-            // Muzzle Flash Logic
             const isFlashing = (now - (agent.state.lastFireTime || 0)) < 60;
             const bodySprite = isFlashing ? sprites.flash : sprites.normal;
 
@@ -552,26 +503,21 @@ export class Renderer {
             this.ctx.restore();
         }
 
-        // Pass 2: Draw UI Bars
         for (const agent of this.world.agents) {
-            // Skip hidden enemies
             if (isHumanMode && agent.team !== 0) {
-                continue; // Do not draw UI bars for enemies in human mode at all
+                continue;
             }
 
             const yOffset = 22;
 
-            // Background highlight for selection
             if (this.selectedAgent === agent) {
                 this.ctx.fillStyle = 'rgba(0, 247, 255, 0.15)';
                 this.ctx.fillRect(agent.pos.x - 9, agent.pos.y - yOffset - 2, 18, 10);
             }
 
-            // HP bar
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
             this.ctx.fillRect(agent.pos.x - 7, agent.pos.y - yOffset, 14, 3);
             
-            // Suble solid black border
             this.ctx.strokeStyle = '#000';
             this.ctx.lineWidth = 0.5;
             this.ctx.strokeRect(agent.pos.x - 7, agent.pos.y - yOffset, 14, 3);
@@ -581,7 +527,6 @@ export class Renderer {
             this.ctx.fillStyle = hpColor;
             this.ctx.fillRect(agent.pos.x - 7, agent.pos.y - yOffset, 14 * hpRatio, 3);
 
-            // Captain Label Only
             if (agent.rank === 1 && (this.camera.zoom > 1.1 || this.selectedAgent === agent)) {
                 this.ctx.font = `bold ${this.selectedAgent === agent ? 4.5 : 3.5}px monospace`;
                 this.ctx.fillStyle = agent.team === 0 ? '#5599ff' : '#ff5555';
@@ -589,7 +534,6 @@ export class Renderer {
                 this.ctx.fillText('CAPTAIN', agent.pos.x, agent.pos.y - yOffset - 3);
             }
 
-            // Reloading Indicator
             if (agent.state.reloadingUntil > Date.now()) {
                 this.ctx.font = 'bold 3.5px monospace';
                 this.ctx.fillStyle = '#ff69b4';
@@ -606,7 +550,6 @@ export class Renderer {
             this.ctx.save();
             this.ctx.translate(corpse.pos.x, corpse.pos.y);
 
-            // 1. Blood Splatter (Randomized and Stable)
             if (corpse.bloodSplatter) {
                 this.ctx.fillStyle = 'rgba(150, 0, 0, 0.6)';
                 for (const drop of corpse.bloodSplatter) {
@@ -621,7 +564,6 @@ export class Renderer {
             const team = corpse.team === 0 ? 'blue' : 'yellow';
             const sprites = this.sprites[team];
 
-            // 2. Body Layer (Death Animation)
             if (!corpse.deathStartTime) corpse.deathStartTime = now;
             const elapsed = now - corpse.deathStartTime;
             const frameIndex = Math.min(2, Math.floor(elapsed / 150)); 
@@ -644,7 +586,6 @@ export class Renderer {
             this.ctx.translate(p.pos.x, p.pos.y);
             
             if (p.type === 'GRENADE') {
-                // Frag Grenade: Dark Sphere with a fuse spark
                 this.ctx.fillStyle = '#2c3e50';
                 this.ctx.beginPath();
                 this.ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
@@ -652,46 +593,40 @@ export class Renderer {
                 this.ctx.strokeStyle = '#34495e';
                 this.ctx.stroke();
 
-                // Fuse Spark
                 const pulse = (Math.sin(Date.now() / 50) + 1) / 2;
                 this.ctx.fillStyle = `rgba(255, 100, 0, ${0.5 + pulse * 0.5})`;
                 this.ctx.beginPath();
                 this.ctx.arc(p.radius * 0.5, -p.radius * 0.5, 2, 0, Math.PI * 2);
                 this.ctx.fill();
             } else if (p.type === 'SMOKE') {
-                // Smoke Grenade: Gray canister
                 this.ctx.fillStyle = '#95a5a6';
                 if (p.angle !== undefined) this.ctx.rotate(p.angle);
                 this.ctx.fillRect(-p.radius, -p.radius * 1.5, p.radius * 2, p.radius * 3);
                 this.ctx.strokeStyle = '#7f8c8d';
                 this.ctx.strokeRect(-p.radius, -p.radius * 1.5, p.radius * 2, p.radius * 3);
             } else {
-                 // Bullet Logic (Frames)
-                 const visualType = p.visualType || 'pistol'; // Default fallback
+                 const visualType = p.visualType || 'pistol';
                  const frames = this.sprites.bullets[visualType];
 
                  if (frames && frames.length > 0) {
                      this.ctx.rotate(p.angle + Math.PI/2); 
                      
-                     let frameIndex = 1; // Bullet in motion (2.png)
-                     if (p.elapsed < 50) frameIndex = 0; // Muzzle Flash (1.png)
+                     let frameIndex = 1;
+                     if (p.elapsed < 50) frameIndex = 0;
                      
                      const img = frames[frameIndex];
                      if (img && img.complete && img.width > 0) {
-                         // Scale based on type? Rifles are longer?
                          const scale = 0.5;
                          const w = img.width * scale;
                          const h = img.height * scale;
                          this.ctx.drawImage(img, -w/2, -h/2, w, h);
                      } else {
-                         // Image not ready fallback
                          this.ctx.fillStyle = '#fff';
                          this.ctx.beginPath();
                          this.ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
                          this.ctx.fill();
                      }
                  } else {
-                     // No frames fallback
                      this.ctx.fillStyle = '#fff';
                      this.ctx.beginPath();
                      this.ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
@@ -710,8 +645,6 @@ export class Renderer {
         const agent = this.selectedAgent;
         const mem = agent.memory;
         
-        // --- BUFFERING LOGIC ---
-        // Only update the off-screen heatmap if the agent changed or enough time passed (matching diffusion rate)
         const now = Date.now();
         const needsUpdate = this.lastBufferedAgentId !== agent.id || (now - this.lastHeatBufferTime) > 200;
 
@@ -722,7 +655,6 @@ export class Renderer {
             const rows = mem.gridRows;
             const cols = mem.gridCols;
             
-            // Set canvas size to match the grid resolution (small)
             if (this.heatCanvas.width !== cols) {
                 this.heatCanvas.width = cols;
                 this.heatCanvas.height = rows;
@@ -736,14 +668,12 @@ export class Renderer {
                     const cy = (y + 0.5) * (this.world.height / rows);
                     if (this.world.isWallAt(cx, cy)) continue;
 
-                    // 1. Draw Enemy Heat (Red)
                     const heat = mem.heatmap[y][x];
                     if (heat > 0.05) {
                         this.heatCtx.fillStyle = `rgba(255, 0, 0, ${heat / 10})`; 
                         this.heatCtx.fillRect(x, y, 1, 1);
                     }
 
-                    // 2. Draw Friendly Control (Green)
                     const control = mem.controlMap[y][x];
                     if (control > 0.05) {
                         this.heatCtx.fillStyle = `rgba(0, 255, 100, ${control / 10})`; 
@@ -753,10 +683,9 @@ export class Renderer {
             }
         }
 
-        // Draw the low-res buffer stretched over the world (Super fast)
         this.ctx.save();
-        this.ctx.globalAlpha = 0.5; // Overall grid transparency
-        this.ctx.imageSmoothingEnabled = true; // Makes the grid look 'vague' and natural
+        this.ctx.globalAlpha = 0.5;
+        this.ctx.imageSmoothingEnabled = true;
         this.ctx.drawImage(this.heatCanvas, 0, 0, this.world.width, this.world.height);
         this.ctx.restore();
     }
@@ -795,26 +724,23 @@ export class Renderer {
                  const lifeRatio = e.life / totalLife; 
                  const t = 1 - lifeRatio; 
 
-                 // Frame Animation
                  const frames = this.sprites.grenadeExplosion;
                  if (frames && frames.length > 0) {
                      const frameIndex = Math.floor(t * frames.length);
                      const img = frames[Math.min(frameIndex, frames.length - 1)];
                      
                      if (img.complete && img.naturalWidth > 0) {
-                         const size = e.radius * 2; // Realism: 1:1 match with physics radius
+                         const size = e.radius * 2;
                          this.ctx.drawImage(img, e.x - size/2, e.y - size/2, size, size);
                          continue; 
                      }
                  }
-                 // Procedural fallback removed as per user request
             }
         }
     }
 
     drawTargets() {
         if (!this.debugOptions.showTargets) return;
-        // Hide all intent lines in HUMAN mode — no intel on enemy movement
         if (this.gameMode === 'HUMAN') return;
 
         this.ctx.save();
@@ -837,7 +763,6 @@ export class Renderer {
                 const angle = Math.atan2(dy, dx);
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 
-                // Raycast to find actual visible length
                 const visibleDist = this.world.getRayDistance(start, angle, dist);
                 
                 this.ctx.beginPath();
@@ -845,14 +770,12 @@ export class Renderer {
                 this.ctx.lineTo(currentX + Math.cos(angle) * visibleDist, currentY + Math.sin(angle) * visibleDist);
                 this.ctx.stroke();
                 
-                // If the line was clipped, we can't see the rest of the path
                 if (visibleDist < dist - 1) break; 
                 
                 currentX = p.x;
                 currentY = p.y;
             }
 
-            // Draw final target marker
             const target = agent.path[agent.path.length - 1];
             this.ctx.setLineDash([]);
             this.ctx.beginPath();
@@ -868,7 +791,6 @@ export class Renderer {
         
         for (const agent of this.world.agents) {
             if (!agent.barks) continue;
-            // In HUMAN mode, only show player's own barks (team 0)
             if (this.gameMode === 'HUMAN' && agent.team !== 0) continue;
             
             agent.barks.forEach((bark, i) => {
@@ -896,13 +818,11 @@ export class Renderer {
             agentMap.set(agent.id, agent);
         }
 
-        // 1. Vision Cones
         for (const agent of this.world.agents) {
             if (this.gameMode === 'HUMAN' && agent.team !== 0) continue;
             const baseAlpha = this.debugOptions.showVision ? 0.26 : 0.075;
             const teamColor = agent.team === 0 ? '74, 144, 226' : '226, 74, 74';
             
-            // BUSH VISION: Visual indicators of restricted FOV
             const baseFOV = Config.AGENT.FOV;
             const fov = (agent.state && agent.state.inBush) ? baseFOV * 0.7 : baseFOV;
             
@@ -910,7 +830,6 @@ export class Renderer {
             const fovea = Config.SENSORY.FOVEA_ANGLE * 2;
             const peripheralDist = Config.SENSORY.PERIPHERAL_DIST;
 
-            // --- A. Peripheral Awareness (Smooth Pulse) ---
             if (this.debugOptions.showVision) {
                 const pGrad = this.ctx.createRadialGradient(agent.pos.x, agent.pos.y, 0, agent.pos.x, agent.pos.y, peripheralDist);
                 pGrad.addColorStop(0, `rgba(${teamColor}, 0.075)`);
@@ -921,15 +840,12 @@ export class Renderer {
                 this.ctx.fill();
             }
 
-            // --- B. Main FOV Cone (Occluded by Walls) ---
             this.drawOccludedCone(agent.pos, agent.angle, fov, range, teamColor, baseAlpha, agent.id);
 
-            // --- C. Fovea (High Detail Zone) ---
             if (this.debugOptions.showVision) {
                 this.drawOccludedCone(agent.pos, agent.angle, fovea, range, teamColor, baseAlpha * 0.4, agent.id + '_fovea');
             }
 
-            // --- D. Visualize Detection Meters for Hostiles ---
             agent.memory.detectionMeters.forEach((val, targetId) => {
                 const target = agentMap.get(targetId);
                 if (target && target.team !== agent.team) {
@@ -950,7 +866,6 @@ export class Renderer {
                 }
             });
 
-            // Shout Pulse
             if (agent.showShoutUntil > now) {
                 const remaining = (agent.showShoutUntil - now) / 500;
                 this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.8 * remaining})`;
@@ -961,7 +876,6 @@ export class Renderer {
             }
         }
 
-        // 2. Trust Links
         if (this.debugOptions.showTrust) {
             this.ctx.lineWidth = 1;
             for (const agent of this.world.agents) {
@@ -987,7 +901,6 @@ export class Renderer {
             }
         }
 
-        // 3. Comm Lines
         if (this.debugOptions.showComm) {
             this.ctx.lineWidth = 1.5;
             for (const agent of this.world.agents) {
@@ -1025,14 +938,13 @@ export class Renderer {
         
         const hasAgentId = agentId !== null && agentId !== undefined;
         let cache = hasAgentId ? this.visionCache.get(agentId) : null;
-        const nowFrame = Math.floor(performance.now() / 16.6); // Crude frame counter
+        const nowFrame = Math.floor(performance.now() / 16.6);
 
-        // --- CACHE VALIDATION ---
         let needsRecalc = !cache;
         if (cache) {
             const moved = Math.hypot(pos.x - cache.lastX, pos.y - cache.lastY) > 2;
             const turned = Math.abs(Utils.angleDiff(angle, cache.lastAngle)) > 0.05;
-            const timedOut = (nowFrame - cache.frameCounter) >= 4; // Re-sync every 4 frames (~15Hz)
+            const timedOut = (nowFrame - cache.frameCounter) >= 4;
             
             if (moved || turned || timedOut) {
                 needsRecalc = true;
@@ -1057,12 +969,9 @@ export class Renderer {
             if (hasAgentId) this.visionCache.set(agentId, cache);
         }
 
-        // --- RENDERING (Every Frame) ---
-        // Even if we use cached distances, we calculate points relative to CURRENT pos/angle
-        // This ensures the cone doesn't 'lag' behind the head during fast rotation.
+        // Points are rebuilt from the current pos/angle so the cone doesn't lag during fast rotation.
         const points = [pos];
         for (let i = 0; i <= rayCount; i++) {
-            // We use the cached relative angle offset but current global angle
             const angleOffset = -fov / 2 + (fov * i) / rayCount;
             const currentRayAngle = angle + angleOffset;
             const dist = cache.rayDistances[i];
@@ -1087,37 +996,20 @@ export class Renderer {
         this.ctx.fill();
     }
 
-    // ==========================================
-    // FOG OF WAR SYSTEM
-    // ==========================================
-
-    /**
-     * Initialize fog of war canvases.
-     * Called from main.js when starting HUMAN mode.
-     */
     initFogOfWar(worldW, worldH) {
-        // Main fog canvas (composited each frame)
         this.fogCanvas = document.createElement('canvas');
         this.fogCanvas.width = worldW;
         this.fogCanvas.height = worldH;
         this.fogCtx = this.fogCanvas.getContext('2d');
 
-        // Explored canvas: permanently records areas the player has seen
         // White = explored, transparent = unexplored
         this.exploredCanvas = document.createElement('canvas');
         this.exploredCanvas.width = worldW;
         this.exploredCanvas.height = worldH;
         this.exploredCtx = this.exploredCanvas.getContext('2d');
-        // Start fully transparent (nothing explored)
         this.exploredCtx.clearRect(0, 0, worldW, worldH);
     }
 
-    /**
-     * Update fog of war each frame.
-     * Vision cone = fully clear.
-     * Previously explored = lightly dimmed.
-     * Never seen = strongly dimmed, while the physical map remains readable.
-     */
     _updateFog() {
         const player = this.world.playerAgent;
         if (!player || player.state.isDead) return;
@@ -1127,7 +1019,6 @@ export class Renderer {
         const fCtx = this.fogCtx;
         const eCtx = this.exploredCtx;
 
-        // 1. Mark current vision area as explored (permanent)
         const poly = this.playerVisionPoly;
         if (poly.length > 2) {
             eCtx.fillStyle = '#fff';
@@ -1144,22 +1035,16 @@ export class Renderer {
             eCtx.fill();
         }
 
-        // 2. Build the fog overlay
-        // Keep fixed terrain, walls, and buildings readable. Dynamic enemies
-        // and supplies are separately withheld until they are actually visible.
         fCtx.globalCompositeOperation = 'source-over';
         fCtx.clearRect(0, 0, w, h);
         fCtx.fillStyle = 'rgba(3, 6, 8, 0.58)';
         fCtx.fillRect(0, 0, w, h);
 
-        // 3. Cut out explored areas — make them semi-transparent (dimmed)
-        // Draw explored mask with destination-out to create holes
         fCtx.globalCompositeOperation = 'destination-out';
         fCtx.globalAlpha = 0.52;
         fCtx.drawImage(this.exploredCanvas, 0, 0);
         fCtx.globalAlpha = 1.0;
 
-        // 4. Cut out active vision cone — make it fully transparent
         if (poly.length > 2) {
             fCtx.globalCompositeOperation = 'destination-out';
             fCtx.fillStyle = '#fff';
@@ -1171,7 +1056,6 @@ export class Renderer {
             fCtx.closePath();
             fCtx.fill();
 
-            // Close-range peripheral awareness matches the actual sensory model.
             const peripheralGradient = fCtx.createRadialGradient(
                 player.pos.x, player.pos.y, this.playerPeripheralRadius * 0.72,
                 player.pos.x, player.pos.y, this.playerPeripheralRadius
@@ -1184,14 +1068,9 @@ export class Renderer {
             fCtx.fill();
         }
 
-        // Reset composite mode
         fCtx.globalCompositeOperation = 'source-over';
     }
 
-    /**
-     * Compute the player's occluded vision polygon (raycasted cone).
-     * Stored in this.playerVisionPoly for use by both fog and enemy visibility.
-     */
     _computePlayerVisionPoly() {
         const player = this.world.playerAgent;
         if (!player || player.state.isDead) {
@@ -1206,7 +1085,7 @@ export class Renderer {
         this.playerVisionRange = range;
         const rayCount = 90;
 
-        const points = [{ x: pos.x, y: pos.y }]; // Start from player
+        const points = [{ x: pos.x, y: pos.y }];
 
         for (let i = 0; i <= rayCount; i++) {
             const rayAngle = angle - fov / 2 + (fov * i) / rayCount;
@@ -1220,10 +1099,6 @@ export class Renderer {
         this.playerVisionPoly = points;
     }
 
-    /**
-     * Point-in-polygon test: is the given position inside the player's vision cone?
-     * Uses ray-casting algorithm.
-     */
     _isInPlayerVision(testPos) {
         const player = this.world.playerAgent;
         if (!player || player.state.isDead) return false;

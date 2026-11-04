@@ -26,21 +26,19 @@ function createBlankMap() {
     };
 }
 
-// State
 let mapData = createBlankMap();
 
 let currentTool = 'brush'; // brush, eraser, fill
 let currentLayer = 1;
-let currentAsset = null; // Path to selected image
-let currentMetaType = 1; // Unused for now
-// State
-let lastX = 0, lastY = 0; // Mouse grid pos for ghost rendering
+let currentAsset = null;
+let currentMetaType = 1;
+let lastX = 0, lastY = 0;
 let activeBoundary = null; // { points: [] } during drawing
 let currentVectorType = null;
 let isDrawing = false;
 let camera = { x: 0, y: 0, zoom: 2 }; 
 let selectedTile = null; // { x, y, layer, w, h } - Bounding box of selection
-let selectedObjectKey = null; // Key of the object in map data (top-left)
+let selectedObjectKey = null;
 let movingObject = null; // { data, originalKey, offsetX, offsetY }
 let layerVisibility = [true, true, true, true, true];
 let history = [];
@@ -50,10 +48,9 @@ let isPanning = false;
 let isSpacePressed = false;
 let lastMouseX = 0, lastMouseY = 0;
 let activeHandle = null; // 'nw', 'ne', 'sw', 'se', 'rot'
-let originalTransform = null; // Store state when starting a transform
+let originalTransform = null;
 let mapLoadVersion = 0;
 
-// Asset Cache
 const images = {};
 
 function resizeVector(delta) {
@@ -61,16 +58,14 @@ function resizeVector(delta) {
     saveHistory();
     const v = mapData.layers[3][selectedObjectKey];
     if (v.type === 'rect') {
-        // Resize from center
         v.w = Math.max(8, v.w + delta * 2);
         v.h = Math.max(8, v.h + delta * 2);
-        selectedTile.w = v.w; selectedTile.h = v.h; // Just for feedback
+        selectedTile.w = v.w; selectedTile.h = v.h;
     } else if (v.type === 'circle') {
         v.radius = Math.max(4, v.radius + delta * 2);
     }
 }
 
-// Colors for Meta Layer
 const META_COLORS = {
     0: 'rgba(0, 0, 0, 0)', // Walkable
     1: 'rgba(255, 0, 0, 0.5)', // Wall
@@ -81,11 +76,10 @@ const META_COLORS = {
     6: 'rgba(255, 0, 255, 0.5)'  // Spawn Point (Team 2)
 };
 
-const RES_FACTOR = TILE_SIZE / COLLISION_RESOLUTION; // e.g. 16/4 = 4
+const RES_FACTOR = TILE_SIZE / COLLISION_RESOLUTION;
 
 let fillStart = null; 
 
-// Initialization
 function init() {
     resizeCanvas();
     loadAssets();
@@ -119,7 +113,6 @@ function loadAssets() {
             img.title = `${asset.name} (${asset.tiles_x}x${asset.tiles_y} tiles)`;
             img.onclick = () => selectAsset(asset, img);
             
-            // Preload
             if (!images[asset.path]) {
                 const cacheImg = new Image();
                 cacheImg.src = asset.path;
@@ -146,9 +139,8 @@ function selectAsset(asset, el) {
     } else if (path.includes('/wall/') || path.includes('/bush/') || path.includes('/cover/')) {
         currentLayer = 1;
     } else if (path.includes('/deco/')) {
-        currentLayer = 2; // Decoration Layer
+        currentLayer = 2;
     } else {
-        // Fallbacks
         if (path.includes('grass') || path.includes('dirt')) {
             currentLayer = 0;
         } else {
@@ -164,7 +156,6 @@ function isFormControl(target) {
 }
 
 function setupEvents() {
-    // Canvas Mouse Events
     canvas.addEventListener('mousedown', (e) => {
         const wantsPan = e.button === 1 || (e.button === 0 && isSpacePressed);
         if (wantsPan) {
@@ -212,7 +203,6 @@ function setupEvents() {
         handleDraw(e);
     });
 
-    // Spacebar for panning
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && !isFormControl(e.target)) {
             isSpacePressed = true;
@@ -228,21 +218,18 @@ function setupEvents() {
         isDrawing = false;
     });
 
-    // Toolbar Events
     document.getElementById('btn-save').onclick = saveMap;
     document.getElementById('btn-load').onclick = () => document.getElementById('file-load').click();
     document.getElementById('file-load').onchange = loadMap;
     
-    // Spawn Brushes
     document.querySelectorAll('.spawn-brush').forEach(btn => {
         btn.onclick = () => {
             currentAsset = null;
-            currentLayer = 4; // Target Spawns Layer
+            currentLayer = 4;
             currentMetaType = parseInt(btn.dataset.type);
             document.querySelectorAll('.asset-item').forEach(e => e.classList.remove('selected'));
             btn.classList.add('selected');
             
-            // Auto-switch to brush tool
             currentTool = 'brush';
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             const brushBtn = document.querySelector('.tool-btn[data-tool="brush"]');
@@ -253,9 +240,8 @@ function setupEvents() {
         btn.onclick = () => {
             currentAsset = null;
             currentLayer = 3; 
-            currentVectorType = btn.dataset.type; // 'boundary_wall', 'boundary_cover', 'boundary_bush'
+            currentVectorType = btn.dataset.type;
             
-            // Auto-switch to brush tool
             currentTool = 'brush';
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             const brushBtn = document.querySelector('.tool-btn[data-tool="brush"]');
@@ -278,7 +264,6 @@ function setupEvents() {
 
     document.querySelectorAll('.tool-btn').forEach(btn => {
         btn.onclick = () => {
-            // Fix: Cancel move if active to prevent state corruption
             if (movingObject) {
                 if (movingObject.layer !== 3) {
                     mapData.layers[movingObject.layer][movingObject.originalKey] = movingObject.data;
@@ -292,7 +277,6 @@ function setupEvents() {
         };
     });
 
-    // Fix: Listen for tool switch events from keyboard shortcuts
     canvas.addEventListener('switchTool', (e) => {
         const tool = e.detail;
         const btn = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
@@ -307,15 +291,11 @@ function setupEvents() {
         };
     });
 
-    // document.getElementById('btn-rotate').onclick = rotateSelection; // Removed as requested
-    
-    // Keybinds
     window.addEventListener('keydown', (e) => {
         if (isFormControl(e.target)) return;
 
         const key = e.key.toLowerCase();
         
-        // Undo/Redo
         if (e.ctrlKey && key === 'z') { e.preventDefault(); undo(); }
         if (e.ctrlKey && key === 'y') { e.preventDefault(); redo(); }
 
@@ -327,7 +307,6 @@ function setupEvents() {
         if (key === 'e') canvas.dispatchEvent(new CustomEvent('switchTool', { detail: 'eraser' }));
         if (key === 's') canvas.dispatchEvent(new CustomEvent('switchTool', { detail: 'select' }));
         
-        // Layer quick switch
         if (key === '1') setLayer(0);
         if (key === '2') setLayer(1);
         if (key === '3') setLayer(2);
@@ -347,7 +326,7 @@ function setLayer(index) {
 function saveHistory() {
     history.push(JSON.stringify(mapData));
     if (history.length > MAX_HISTORY) history.shift();
-    redoStack = []; // Clear redo on new action
+    redoStack = [];
 }
 
 function undo() {
@@ -377,7 +356,6 @@ function handleZoom(e) {
     const oldZoom = camera.zoom;
     camera.zoom = Math.max(0.5, Math.min(10, camera.zoom + delta));
     
-    // Update display
     document.getElementById('zoom-display').innerText = Math.round(camera.zoom * 100) + '%';
     resizeCanvas();
 }
@@ -387,35 +365,30 @@ function handleDraw(e) {
     const worldX = (e.clientX - rect.left - camera.x) / camera.zoom;
     const worldY = (e.clientY - rect.top - camera.y) / camera.zoom;
     
-    // Grid alignment depends on layer
     let x, y;
     if (currentLayer === 3) {
-        // Snap to collision resolution (4px) by default, or 1px if Shift is held
         const snap = e.shiftKey ? 1 : COLLISION_RESOLUTION;
         x = Math.round(worldX / snap) * snap;
         y = Math.round(worldY / snap) * snap;
     } else {
-        // Layers 0, 1, 2 are all grid-based visual layers (16px tiles)
         x = Math.floor(worldX / TILE_SIZE);
         y = Math.floor(worldY / TILE_SIZE);
     }
     
     lastX = x; lastY = y;
     
-    // Bounds check
     let maxW, maxH;
     if (currentLayer === 3) {
         maxW = mapData.width * TILE_SIZE;
         maxH = mapData.height * TILE_SIZE;
     } else {
-        // Layers 0, 1, 2 are tile grid
         maxW = mapData.width;
         maxH = mapData.height;
     }
 
     if (x < 0 || y < 0 || x >= maxW || y >= maxH) return;
 
-    if (e.button === 2 && isDrawing) { // Right click erase
+    if (e.button === 2 && isDrawing) {
         removeFromLayer(x, y);
         return;
     }
@@ -426,7 +399,6 @@ function handleDraw(e) {
 
     if (currentTool === 'brush') {
         if (isDrawing) {
-            // Prevent multiple vector spawns while dragging - spawn only on mousedown
             if (currentLayer !== 3 || e.type === 'mousedown') {
                 addToLayer(x, y);
             }
@@ -441,7 +413,6 @@ function handleDraw(e) {
         if (isDrawing) removeFromLayer(x, y);
     } else if (currentTool === 'select') {
         if (e.type === 'mousedown') {
-            // First check handles if something is already selected
             if (!checkHandles(worldX, worldY)) {
                 handleSelect(x, y);
             }
@@ -450,11 +421,9 @@ function handleDraw(e) {
         handleMove(x, y, e.type);
     }
     
-    // Status Bar update
     updateStatusBar(x, y);
 }
 
-// Prevent context menu
 canvas.oncontextmenu = (e) => e.preventDefault();
 
 function updateStatusBar(x, y) {
@@ -465,27 +434,16 @@ function updateStatusBar(x, y) {
 
 function findObjectUnderCursor(x, y, layerIndex) {
     if (layerIndex === 3) {
-        // Vector Hit Test (Reverse iterate for top-most)
         const vectors = mapData.layers[3] || [];
         for (let i = vectors.length - 1; i >= 0; i--) {
             const v = vectors[i];
             if (!v) continue;
             let hit = false;
             
-            // Note: input x,y are in World Pixels for Layer 3 context, but this function tends to be called with Grid coords?
-            // Actually handleDraw calculates x/y based on TILE_SIZE for most layers.
-            // For Layer 3 we set x/y to be pixel coords in handleDraw.
-            // So x,y here are accurate world pixels.
-
             if (!v || !v.points || v.points.length < 2) continue;
             
-            // Transform cursor into local space of polygon if it has pos/rot
-            // For now, polygons are world-space points. Let's simplify.
             const pts = v.points;
             
-            // Hit test: either inside (if closed) OR near a segment (if open or closed)
-            
-            // 1. Point in Polygon (Ray casting for closed shapes)
             if (v.closed) {
                 let inside = false;
                 for (let j = 0, k = pts.length - 1; j < pts.length; k = j++) {
@@ -497,7 +455,6 @@ function findObjectUnderCursor(x, y, layerIndex) {
                 if (inside) hit = true;
             }
 
-            // 2. Proximity to segments (for open lines or edges)
             if (!hit) {
                 const threshold = 10 / camera.zoom;
                 for (let j = 0; j < pts.length - 1; j++) {
@@ -509,7 +466,6 @@ function findObjectUnderCursor(x, y, layerIndex) {
             }
             
             if (hit) {
-                // Return bounding box for selection UI
                 let minX = pts[0].x, maxX = pts[0].x, minY = pts[0].y, maxY = pts[0].y;
                 pts.forEach(p => {
                     minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
@@ -521,12 +477,10 @@ function findObjectUnderCursor(x, y, layerIndex) {
         return null;
     }
 
-    // Default Object Logic (Layers 0, 1, 2)
     const layer = mapData.layers[layerIndex];
-    if (!layer) return null; // Safety
+    if (!layer) return null;
 
     for (const [key, data] of Object.entries(layer)) {
-        // For Visual layers (Standard Hit Test)
         const [ox, oy] = key.split(',').map(Number);
         
         const path = typeof data === 'string' ? data : data.path;
@@ -534,10 +488,8 @@ function findObjectUnderCursor(x, y, layerIndex) {
         const baseTy = (typeof data === 'string') ? 1 : (data.ty || 1);
         const rot = (typeof data === 'string') ? 0 : (data.rot || 0);
 
-        // Selection aware of continuous rotation
         const cx = (ox + baseTx / 2) * TILE_SIZE;
         const cy = (oy + baseTy / 2) * TILE_SIZE;
-        // For grid-based layers, we check if the center of the clicked tile is inside the object's footprint
         const worldX = (x + 0.5) * TILE_SIZE; 
         const worldY = (y + 0.5) * TILE_SIZE;
         
@@ -549,7 +501,6 @@ function findObjectUnderCursor(x, y, layerIndex) {
         const rx = Math.abs(dx * c - dy * s);
         const ry = Math.abs(dx * s + dy * c);
 
-        // Selection with small 2px margin of error for resized/rotated objects
         const margin = 2;
         if (rx < (baseTx * TILE_SIZE) / 2 + margin && ry < (baseTy * TILE_SIZE) / 2 + margin) {
             return { key, data, x: ox, y: oy, w: baseTx, h: baseTy, rot: rot };
@@ -574,15 +525,15 @@ function handleMove(x, y, eventType) {
     if (eventType === 'mousedown') {
         const obj = findObjectUnderCursor(x, y, currentLayer);
         if (obj) {
-            saveHistory(); // Save history before starting move
+            saveHistory();
             movingObject = {
-                data: JSON.parse(JSON.stringify(mapData.layers[currentLayer][obj.key])), // Deep copy
+                data: JSON.parse(JSON.stringify(mapData.layers[currentLayer][obj.key])),
                 originalKey: obj.key,
                 offsetX: x - obj.x,
                 offsetY: y - obj.y,
                 initialX: obj.x,
                 initialY: obj.y,
-                layer: currentLayer // Store original layer
+                layer: currentLayer
             };
             // Object layers use sparse keys, so remove their original while the
             // ghost moves. Vector arrays retain their slot and are hidden while
@@ -593,21 +544,10 @@ function handleMove(x, y, eventType) {
             selectedTile = null; 
         }
     } else if (eventType === 'mousemove' && isDrawing && movingObject) {
-        // Just visual? The render loop handles visual.
-        // We could show ghost. For now simple.
-    } else if (eventType === 'mouseup' && movingObject) { // Actually mouseup is handled by window, but handleDraw is called?
-        // Wait, handleDraw is called on mousedown and mousemove.
-        // We need a specific 'mouseup' logic?
-        // editor.js structure calls handleDraw on mousedown/move. 
-        // window.mouseup sets isDrawing=false.
-        // Let's rely on 'isDrawing' check in the loop or similar?
-        // Actually, handleDraw isn't triggered on mouseup. 
-        // We check isDrawing in mousemove.
+    } else if (eventType === 'mouseup' && movingObject) {
     }
 }
 
-// Global mouse up handler needs to finish move
-// Global mouse up handler needs to finish move
 window.addEventListener('mouseup', (e) => {
     if (activeHandle || (currentTool === 'fill' && fillStart)) {
         handleDraw(e);
@@ -641,7 +581,6 @@ window.addEventListener('mouseup', (e) => {
                  const dx = finalX - movingObject.initialX;
                  const dy = finalY - movingObject.initialY;
                  
-                 // Shift all points of the polygon
                  movingObject.data.points.forEach(p => {
                      p.x += dx;
                      p.y += dy;
@@ -650,7 +589,6 @@ window.addEventListener('mouseup', (e) => {
                  mapData.layers[3][movingObject.originalKey] = movingObject.data;
                  selectedObjectKey = movingObject.originalKey;
                  
-                 // Recalculate bounds for selection tile
                  let minX = movingObject.data.points[0].x, maxX = minX, minY = movingObject.data.points[0].y, maxY = minY;
                  movingObject.data.points.forEach(p => {
                      minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
@@ -696,21 +634,18 @@ function rotateSelection() {
     if (data) {
         let obj = (typeof data === 'string') ? { path: data, tx: 1, ty: 1, rot: 0 } : data;
         
-        // Quick 90-degree step snapping for the R key
         obj.rot = ((obj.rot || 0) + Math.PI / 2) % (Math.PI * 2);
         layer[selectedObjectKey] = obj;
         
-        // Update selection box dimensions
         const temp = selectedTile.w;
         selectedTile.w = selectedTile.h;
         selectedTile.h = temp;
-        selectedTile.rot = obj.rot; // Update selectedTile's rotation
+        selectedTile.rot = obj.rot;
     } else if (selectedObjectKey !== null && selectedTile.layer === 3) {
-        // Rotate Vector
         const v = mapData.layers[3][selectedObjectKey];
         if (v.type === 'rect') {
              v.rot = ((v.rot || 0) + 1) % 4;
-             selectedTile.rot = v.rot; // Update selectedTile's rotation
+             selectedTile.rot = v.rot;
         }
     }
 }
@@ -733,11 +668,9 @@ function deleteSelection() {
 function addToLayer(x, y) {
     if (currentLayer === 3) {
         if (!activeBoundary) {
-            // Start new boundary with specific type
-            const type = currentVectorType || 'boundary_wall'; // Default fallback
+            const type = currentVectorType || 'boundary_wall';
             activeBoundary = { points: [{x, y}], type: type };
         } else {
-            // If clicking near first point, close it
             const start = activeBoundary.points[0];
             const dist = Math.hypot(x - start.x, y - start.y);
             if (dist < 10 && activeBoundary.points.length >= 2) {
@@ -746,7 +679,7 @@ function addToLayer(x, y) {
                 activeBoundary.points.push({x, y});
             }
         }
-    } else if (currentAsset) { // Layers 0, 1, 2 (Visual)
+    } else if (currentAsset) {
         const key = `${x},${y}`;
         mapData.layers[currentLayer][key] = {
             path: currentAsset.path,
@@ -754,7 +687,7 @@ function addToLayer(x, y) {
             ty: currentAsset.tiles_y,
             rot: 0
         };
-    } else if (currentLayer === 4) { // Spawns
+    } else if (currentLayer === 4) {
         const key = `${x},${y}`;
         mapData.layers[4][key] = {
             spawnType: currentMetaType
@@ -784,7 +717,6 @@ function removeFromLayer(x, y) {
             selectedObjectKey = null;
         }
     } else {
-        // Fallback: if no object found but it's a grid layer, try direct key deletion for sparse tiles
         const key = `${x},${y}`;
         if (mapData.layers[currentLayer][key]) {
             delete mapData.layers[currentLayer][key];
@@ -798,7 +730,6 @@ function loop() {
 }
 
 function render() {
-    // Clear
     ctx.fillStyle = '#1e1e1e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
@@ -806,7 +737,6 @@ function render() {
     ctx.translate(camera.x, camera.y);
     ctx.scale(camera.zoom, camera.zoom);
 
-    // Grid (only draw inside map bounds)
     ctx.strokeStyle = '#2a2a2a';
     ctx.lineWidth = 0.5;
     ctx.beginPath();
@@ -822,7 +752,6 @@ function render() {
     }
     ctx.stroke();
 
-    // Grid Overlay
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -836,32 +765,21 @@ function render() {
     }
     ctx.stroke();
 
-    // Map Background
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, gridW, gridH);
 
-    // Layers
-    // Layer 0: Ground
     if (layerVisibility[0]) renderVisualLayer(0);
-    // Layer 1: Objects (Main)
     if (layerVisibility[1]) renderVisualLayer(1);
-    // Layer 2: Decoration
     if (layerVisibility[2]) renderVisualLayer(2);
     
-    // Layer 3: Collisions (Vectors)
     if (layerVisibility[3] || currentLayer === 3) {
        renderVectorLayer();
     }
 
-    // Layer 4: Spawns
     if (layerVisibility[4] || currentLayer === 4) {
        renderSpawnLayer();
     }
 
-    // Brush Ghost
-
-    // Brush Ghost
-    // Brush Ghost
     if (currentTool === 'brush' && !movingObject) {
         ctx.globalAlpha = 0.4;
         if (currentAsset) {
@@ -872,7 +790,6 @@ function render() {
                 rot: 0
             });
         } else if (currentLayer === 4) {
-             // Spawn Ghost
              const type = currentMetaType;
              ctx.fillStyle = type === 5 ? '#ffff00' : '#ff00ff';
              ctx.fillRect(lastX * TILE_SIZE, lastY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -884,7 +801,6 @@ function render() {
         ctx.globalAlpha = 1.0;
     }
 
-    // Moving Ghost
     if (movingObject) {
         ctx.globalAlpha = 0.5;
         const gx = lastX - movingObject.offsetX;
@@ -904,7 +820,6 @@ function render() {
         ctx.globalAlpha = 1.0;
     }
 
-    // Boundary Preview
     if (activeBoundary) {
         ctx.strokeStyle = '#ff00ff';
         ctx.lineWidth = 2;
@@ -917,7 +832,6 @@ function render() {
         ctx.stroke();
     }
 
-    // Fill Rectangle Preview
     if (currentTool === 'fill' && fillStart && isDrawing) {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 1;
@@ -928,10 +842,6 @@ function render() {
         ctx.strokeRect(x1 * TILE_SIZE, y1 * TILE_SIZE, (x2 - x1 + 1) * TILE_SIZE, (y2 - y1 + 1) * TILE_SIZE);
     }
     
-    // Layer 2 (Deco) is now rendered via renderVisualLayer(2) above
-    // Removed old Meta (Overlay) rendering block
-
-    // Transform Handels (UI Layer - non-transformed coordinates)
     renderHandles();
 
     ctx.restore();
@@ -981,7 +891,6 @@ function renderHandles() {
         ctx.strokeRect(hx - handleSize/2, hy - handleSize/2, handleSize, handleSize);
     });
 
-    // Rotation Handle
     const rx = 0;
     const ry = -ch/2 - 20 / camera.zoom;
     ctx.beginPath();
@@ -1014,17 +923,16 @@ function renderVectorObject(v, isSelected) {
     ctx.strokeStyle = isSelected ? '#00ffff' : '#ff00ff';
     ctx.fillStyle = isSelected ? 'rgba(0, 255, 255, 0.2)' : 'rgba(255, 0, 255, 0.1)';
     
-    // Type-specific Visuals
-    const type = v.tag || v.type || 'boundary_wall'; // tag takes priority over generic type
+    const type = v.tag || v.type || 'boundary_wall';
     if (!isSelected) {
         if (type.includes('wall')) {
-            ctx.strokeStyle = '#FF0000'; // Red
+            ctx.strokeStyle = '#FF0000';
             ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
         } else if (type.includes('cover')) {
-            ctx.strokeStyle = '#800080'; // Purple
+            ctx.strokeStyle = '#800080';
             ctx.fillStyle = 'rgba(128, 0, 128, 0.3)';
         } else if (type.includes('bush')) {
-            ctx.strokeStyle = '#00FF00'; // Green
+            ctx.strokeStyle = '#00FF00';
             ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
         }
     }
@@ -1076,7 +984,6 @@ function renderVisualLayer(layerIndex) {
         renderObject(gx, gy, data);
     }
 
-    // Highlight Selection
     if (selectedTile && selectedTile.layer === layerIndex) {
         ctx.strokeStyle = '#00ffff';
         ctx.lineWidth = 2;
@@ -1088,16 +995,13 @@ function renderObject(x, y, data) {
     const path = typeof data === 'string' ? data : data.path;
     const tx = data.tx || 1;
     const ty = data.ty || 1;
-    const rot = data.rot || 0; // Now in radians
+    const rot = data.rot || 0;
 
-    // For arbitrary rotation, the "effective" grid footprint is less precise for rendering
-    // but we use the base dimensions for the draw call.
     const img = images[path];
     if (img && img.complete) {
         ctx.save();
-        // Translate to center of its grid footprint (tx, ty)
         ctx.translate(x * TILE_SIZE + (tx * TILE_SIZE) / 2, y * TILE_SIZE + (ty * TILE_SIZE) / 2);
-        ctx.rotate(rot); // Use radians directly
+        ctx.rotate(rot);
         ctx.drawImage(img, -(tx * TILE_SIZE) / 2, -(ty * TILE_SIZE) / 2, tx * TILE_SIZE, ty * TILE_SIZE);
         ctx.restore();
     }
@@ -1124,7 +1028,6 @@ function saveMap() {
 }
 
 function processAutoCollision() {
-    // 1. Clear existing Walls (1), Bushes (2), Cover (3, 4)
     for (const key in mapData.layers[2]) {
         const type = mapData.layers[2][key];
         if (type >= 1 && type <= 4) {
@@ -1132,7 +1035,6 @@ function processAutoCollision() {
         }
     }
 
-    // 2. Iterate all objects in Layer 1
     for (const [key, data] of Object.entries(mapData.layers[1])) {
         const path = typeof data === 'string' ? data : data.path;
         const tx = (typeof data === 'string') ? 1 : (data.tx || 1);
@@ -1142,8 +1044,7 @@ function processAutoCollision() {
         
         if (x < 0 || y < 0 || x >= mapData.width || y >= mapData.height) continue;
 
-        // Determine Meta-Type from path (same as brush logic)
-        let metaType = 1; // Wall
+        let metaType = 1;
         const lPath = path.toLowerCase();
         if (lPath.includes('/bush/')) metaType = 2;
         if (lPath.includes('/cover/')) metaType = 3;
@@ -1151,10 +1052,8 @@ function processAutoCollision() {
         const objectWalls = new Set();
         generateCollisionForObject(x, y, path, tx, ty, rot, objectWalls);
         
-        // Post-process this specific object's mesh
         postProcessCollision(objectWalls);
 
-        // Apply to Layer 2 at high resolution
         objectWalls.forEach(wKey => {
             if (!mapData.layers[2][wKey]) {
                 mapData.layers[2][wKey] = metaType;
@@ -1170,7 +1069,6 @@ function generateCollisionForObject(worldX, worldY, path, tx, ty, rot, walls) {
     const width = tx * TILE_SIZE;
     const height = ty * TILE_SIZE;
     
-    // Fix: Swap canvas dimensions if rotated 90 or 270 degrees
     let canvasW = width;
     let canvasH = height;
     if (rot % 2 !== 0) {
@@ -1183,7 +1081,6 @@ function generateCollisionForObject(worldX, worldY, path, tx, ty, rot, walls) {
     c.height = canvasH;
     const ctx = c.getContext('2d');
     
-    // Handle Rotation: Center in the possibly-swapped canvas
     ctx.save();
     ctx.translate(canvasW / 2, canvasH / 2);
     ctx.rotate(rot * Math.PI / 2);
@@ -1193,11 +1090,9 @@ function generateCollisionForObject(worldX, worldY, path, tx, ty, rot, walls) {
     const pixels = ctx.getImageData(0, 0, canvasW, canvasH).data;
     const opacityThreshold = 100;
 
-    // Scan the object area at COLLISION_RESOLUTION (4px)
     for (let py = 0; py < canvasH; py += COLLISION_RESOLUTION) {
         for (let px = 0; px < canvasW; px += COLLISION_RESOLUTION) {
             let hitCount = 0;
-            // Sample a few pixels in this 4x4 block for consistency
             for (let sy = 0; sy < COLLISION_RESOLUTION; sy += 2) {
                 for (let sx = 0; sx < COLLISION_RESOLUTION; sx += 2) {
                     const alphaIdx = ((py + sy) * canvasW + (px + sx)) * 4 + 3;
@@ -1219,14 +1114,9 @@ function postProcessCollision(walls) {
         [0, 1], [0, -1], [1, 0], [-1, 0]
     ];
     
-    // Pass 1: Fill Holes (1-tile gaps)
     const toAdd = new Set();
-    // Fix: Use high-res bounds
     const bounds = { minX:0, minY:0, maxX: mapData.width * RES_FACTOR, maxY: mapData.height * RES_FACTOR };
     
-    // We iterate the bounding box of the map? Or just known walls?
-    // Safe to iterate map for safety.
-    /* Optimization: iterating 256x256 is 65k checks. Fast enough. */
     for (let y = 1; y < bounds.maxY - 1; y++) {
         for (let x = 1; x < bounds.maxX - 1; x++) {
             const key = `${x},${y}`;
@@ -1235,13 +1125,12 @@ function postProcessCollision(walls) {
                 neighborOffsets.forEach(([dx, dy]) => {
                     if (walls.has(`${x+dx},${y+dy}`)) n++;
                 });
-                if (n >= 3) toAdd.add(key); // Fill if surrounded
+                if (n >= 3) toAdd.add(key);
             }
         }
     }
     toAdd.forEach(k => walls.add(k));
     
-    // Pass 2: Smooth Singletons (Remove isolate pixels)
     const toRemove = new Set();
     walls.forEach(key => {
         const [x, y] = key.split(',').map(Number);
@@ -1249,7 +1138,7 @@ function postProcessCollision(walls) {
         neighborOffsets.forEach(([dx, dy]) => {
             if (walls.has(`${x+dx},${y+dy}`)) n++;
         });
-        if (n <= 0) toRemove.add(key); // Remove orphans
+        if (n <= 0) toRemove.add(key);
     });
     toRemove.forEach(k => walls.delete(k));
 }
@@ -1398,13 +1287,11 @@ function checkHandles(worldX, worldY) {
     const unit = isVector ? 1 : TILE_SIZE;
     const rot = selectedTile.rot || 0;
 
-    // Center point logic: vectors are centered, tiles are top-left
     const cx = isVector ? selectedTile.x : (selectedTile.x + selectedTile.w / 2) * unit;
     const cy = isVector ? selectedTile.y : (selectedTile.y + selectedTile.h / 2) * unit;
     const cw = selectedTile.w * unit;
     const ch = selectedTile.h * unit;
     
-    // 8 handles (relative to center)
     const handles = {
         nw: [-cw/2, -ch/2], n: [0, -ch/2], ne: [cw/2, -ch/2],
         e:  [cw/2, 0],     se: [cw/2, ch/2], s: [0, ch/2],
@@ -1460,16 +1347,13 @@ function handleRectangleFill(x1, y1, x2, y2) {
 function finalizeBoundary(forceClosed = false) {
     if (!activeBoundary || activeBoundary.points.length < 2) return;
     
-    // Auto-detect closure if last point is near first point
     const pts = activeBoundary.points;
     const start = pts[0];
     const end = pts[pts.length - 1];
     const dist = Math.hypot(end.x - start.x, end.y - start.y);
     
-    // If it's already closed or we're forcing it (via click), or the last point is very close to start
     const isClosed = forceClosed || (dist < 10 && pts.length >= 3);
     
-    // If auto-closing via Enter, we might want to pop the last point if it's a duplicate of the start
     if (!forceClosed && dist < 10 && pts.length >= 3) {
         pts.pop();
     }
@@ -1505,7 +1389,7 @@ function handleTransform(e) {
         const cx = (selectedTile.x + selectedTile.w / 2) * unit;
         const cy = (selectedTile.y + selectedTile.h / 2) * unit;
         const rawAngle = Math.atan2(worldY - cy, worldX - cx) + Math.PI/2;
-        const snap = e.shiftKey ? (Math.PI / 180) : (Math.PI / 12); // 1 degree vs 15 degrees
+        const snap = e.shiftKey ? (Math.PI / 180) : (Math.PI / 12);
         const angle = Math.round(rawAngle / snap) * snap;
         
         if (isVector) {
@@ -1518,11 +1402,9 @@ function handleTransform(e) {
         return;
     }
 
-    // Aspect ratio locking for corners
     const isCorner = ['nw', 'ne', 'sw', 'se'].includes(activeHandle);
     const aspect = originalTransform.w / originalTransform.h;
 
-    // Transform logic with deformation support
     if (activeHandle === 'se') {
         selectedTile.w = Math.max(isVector ? 8 : 1, tx - selectedTile.x);
         selectedTile.h = isCorner ? (selectedTile.w / aspect) : Math.max(isVector ? 8 : 1, ty - selectedTile.y);
@@ -1555,7 +1437,6 @@ function handleTransform(e) {
             selectedTile.y = ty;
             selectedTile.h += dh;
             if (isCorner) {
-                // Lock to aspect ratio based on whichever changed most or just force it
                 selectedTile.h = selectedTile.w / aspect;
             }
         }
@@ -1577,9 +1458,6 @@ function handleTransform(e) {
         selectedTile.w = Math.max(isVector ? 8 : 1, tx - selectedTile.x);
     }
 
-    // Update map data... for polygons, we would need to scale points.
-    // Simplifying: we'll store a translation/scale in the object.
-    // For now, let's just update tiles. Polygons are world-space for now.
     if (!isVector) {
         const obj = mapData.layers[selectedTile.layer][selectedObjectKey];
         const newKey = `${selectedTile.x},${selectedTile.y}`;
@@ -1595,7 +1473,6 @@ function handleTransform(e) {
             mapData.layers[selectedTile.layer][newKey] = { path: obj, tx: selectedTile.w, ty: selectedTile.h, rot: 0 };
         }
     } else {
-        // Scaling polygons is a bit more complex, we shift points.
         const v = mapData.layers[3][selectedObjectKey];
         const oldW = originalTransform.w;
         const oldH = originalTransform.h;
@@ -1609,7 +1486,6 @@ function handleTransform(e) {
            p.y = oy + (p.y - oy) * scaleY;
         });
         
-        // Sync selectedTile to new bounds
         let minX = v.points[0].x, maxX = v.points[0].x, minY = v.points[0].y, maxY = v.points[0].y;
         v.points.forEach(p => {
             minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
@@ -1618,7 +1494,6 @@ function handleTransform(e) {
         selectedTile.x = minX; selectedTile.y = minY;
         selectedTile.w = maxX - minX; selectedTile.h = maxY - minY;
         
-        // Update original to prevent feedback loop
         originalTransform = JSON.parse(JSON.stringify(selectedTile));
     }
 }
@@ -1629,7 +1504,6 @@ window.addEventListener('mouseup', () => {
     isPanning = false;
 });
 
-// Utility for hit-testing lines
 function distToSegment(p, v, w) {
     const l2 = (v.x - w.x)**2 + (v.y - w.y)**2;
     if (l2 == 0) return (p.x - v.x)**2 + (p.y - v.y)**2;
@@ -1638,5 +1512,4 @@ function distToSegment(p, v, w) {
     return (p.x - (v.x + t * (w.x - v.x)))**2 + (p.y - (v.y + t * (w.y - v.y)))**2;
 }
 
-// Start
 init();

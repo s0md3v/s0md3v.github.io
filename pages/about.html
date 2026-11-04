@@ -16,11 +16,6 @@ image:
 ---
 
 <style>
-/* No sheet: the window's the surface, as on Projects, and on it the Polaroid off the desk, taped
-   down, with a few words beside it, as a photo's written about rather than an article. Every link
-   is underlined in the ink of where it goes, so what he does is told in the site's own sections.
-   The page's own ink is a yellow that can't be read as text, so its links are in a darker one, the
-   same ink pressed harder. What's written by hand is in his pen, as everywhere. */
 @media screen and (min-width: 769px) {
   html {
     background: var(--background-color) var(--paper-grain);
@@ -44,12 +39,9 @@ image:
   line-height: 1.6;
 }
 
-/* Side by side once there's room for both: from 900px, where the words still have about 50
-   characters a line, rather than a column under a Polaroid that fills a laptop's window */
+/* From 900px, where the words still have about 50 characters a line */
 @media (min-width: 56.25em) {
-  /* The words beside the photo, and under the photo, as on the back of it, how to reach him */
   .about {
-    /* The photo gives way first, so the words keep their measure and the Polaroid keeps clear of the window's edge */
     grid-template-columns: min(21em, 34vw) minmax(0, 29em);
     grid-template-rows: auto 1fr;
     grid-template-areas: "photo words" "reach words";
@@ -57,7 +49,6 @@ image:
     justify-items: stretch;
     align-items: start;
     column-gap: clamp(2.5em, 10vw - 3em, 4.5em);
-    /* Clear of the window's edge by more than the Polaroid's tilt */
     padding-inline: 2.5em;
     max-width: 59em;
     row-gap: 3em;
@@ -74,8 +65,6 @@ image:
   --about-ink: var(--c-about);
 }
 
-/* Links are the site's own (.prose a): underlined in the ink of where they go, and in it on hover.
-   Where that's nowhere with an ink of its own, this page's, as it can be read */
 .about {
   --accent-color: var(--about-ink);
   --link-color: var(--about-ink);
@@ -91,8 +80,6 @@ image:
   outline-offset: 2px;
 }
 
-/* ---- The Polaroid: taped down at its top edge, lit from the top left like everything else ---- */
-
 .about-polaroid {
   position: relative;
   container-type: inline-size;
@@ -101,7 +88,6 @@ image:
   rotate: -2deg;
 }
 
-/* On its own, over the words: a size that leaves the name in sight */
 @media (max-width: 56.24em) {
   .about-polaroid {
     width: min(72%, 17em);
@@ -119,14 +105,10 @@ image:
     drop-shadow(6px 11px 24px rgba(var(--sheet-shadow), 0.09));
 }
 
-/* Paper in the dark too, only less of a lamp on it */
 .dark-mode .about-photo {
   filter: brightness(0.82) drop-shadow(2px 4px 12px rgba(0, 0, 0, 0.55));
 }
 
-/* Pointed at, or tapped where there's nothing to point with, the same Polaroid, but cooler: only
-   the picture and what's written under it change. It lies exactly over the first, whose shadow
-   does for both. */
 .about-photo-cool {
   position: absolute;
   inset: 0;
@@ -139,8 +121,6 @@ image:
   filter: brightness(0.82);
 }
 
-/* One caption over the other, both starting where the same hand would start writing: the pair is
-   centred on the strip, and each is written from its left */
 .about-caption-stack {
   display: inline-grid;
   justify-items: start;
@@ -176,7 +156,6 @@ image:
   }
 }
 
-/* What's tapped, or pressed from the keyboard: the whole Polaroid */
 .about-flip {
   position: absolute;
   inset: 0;
@@ -215,16 +194,12 @@ image:
   filter: brightness(0.82);
 }
 
-/* On the strip under the picture, where a Polaroid's written on, and always there. In the marker
-   the desk's Polaroid is written on with (homepage.css, --ink), not the pen of the notes on the
-   page: it's written on the photo, and as large as a hand writes across the strip. */
 .about-caption {
   position: absolute;
   left: 0;
   right: 0;
   top: 83%;
   font-family: "Reenie Beanie", cursive;
-  /* As wide on the strip whatever the Polaroid's size */
   font-size: 10cqi;
   line-height: 1;
   text-align: center;
@@ -237,8 +212,6 @@ image:
 .dark-mode .about-caption {
   opacity: 0.85;
 }
-
-/* ---- The words ---- */
 
 .about-words {
   width: 100%;
@@ -254,8 +227,6 @@ image:
 }
 
 .about-aka {
-  /* As far over the words as the words are over the record (.about-record), from the line's
-     foot to the next one's capitals */
   margin: 0.35em 0 2.3em;
   font-size: 0.9em;
   color: var(--muted-color);
@@ -266,13 +237,10 @@ image:
   text-wrap: pretty;
 }
 
-/* Room under the last line for the note under its last word */
 .about-text p.noted-under {
   margin-bottom: 3.25em;
 }
 
-/* A remark about the word it's under, not the start of what's next: a little arrow from the
-   note up to "cats", the note kept inside the column (the script below) */
 .about-cats {
   position: relative;
 }
@@ -293,7 +261,6 @@ image:
   pointer-events: none;
 }
 
-/* Where "cats." leaves room on its line, the note's written there, after it, pointing back */
 .about-meow.beside {
   top: auto;
   bottom: 0.05em;
@@ -324,8 +291,6 @@ image:
   stroke-linejoin: round;
 }
 
-/* ---- How to reach him ---- */
-
 .about-reach {
   width: 100%;
   max-width: 30em;
@@ -335,15 +300,10 @@ image:
   margin: 0;
 }
 
-/* ---- The record: the blog's list of dated things, as it is there. No rules between them, so it's a
-   short list of what he's done and not a table to fill in. The years it's still going on are in
-   this page's ink, as where he is now. ---- */
-
 .about-record {
   margin-top: 2.1em;
 }
 
-/* One grid for the whole list, so the years are one column, as wide as the widest of them */
 .about-record dl {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -367,8 +327,6 @@ image:
   white-space: nowrap;
 }
 
-/* Each span of years spaced out to the column's width, as a typesetter would: a full pair of years
-   fills it as it is, and "2023–now", short of it, is tracked out, evenly, to the same */
 .about-span {
   display: flex;
   justify-content: space-between;
@@ -378,7 +336,6 @@ image:
   margin: 0;
 }
 
-/* As the blog's dates are, with no room beside: a small line over what's dated */
 @media (max-width: 600px) {
   .about-record dd {
     grid-column: 1 / -1;
@@ -389,7 +346,6 @@ image:
   }
 }
 
-/* What he was, to be found at a glance; what he did, under it, to be read if wanted */
 .about-role {
   display: block;
   font-weight: 500;
@@ -429,7 +385,6 @@ image:
   rotate: -2deg;
 }
 
-/* Whether he's taking work, said under where to write about it, as quietly as the record's details */
 .about-reach .about-work {
   margin: 0 0 1em;
   font-size: 0.9em;
@@ -438,15 +393,12 @@ image:
   text-wrap: pretty;
 }
 
-/* Elsewhere: each place by its own mark, drawn the way the site's marks are, quiet as they are in
-   the bar, and lit as they are: in the colour that's that place's own */
 .about-reach .about-elsewhere {
   /* The size of the bar's marks (.nav-item svg), so the two sets match */
   --mark: 1.75rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.15em;
-  /* The first mark's edge on the line of the address above it */
   margin: 0 0 0 calc((var(--mark) - 2.6em) / 2);
   padding: 0;
   list-style: none;
@@ -548,10 +500,6 @@ image:
       </p>
     </div>
 
-    {% comment %} The record: dated, flat, every line linked to what shows it. Looks unlike the words
-       above, so a skimmer's eye finds it wherever it is, and asks nothing of anyone who's reading.
-       Untitled but for a screen reader: the years say what it is, and a title would be one more
-       line competing with the roles. {% endcomment %}
     <section class="about-record prose" aria-labelledby="about-record-title">
       <h2 class="sr-only" id="about-record-title">s0md3v, so far</h2>
       <dl>
@@ -597,8 +545,6 @@ image:
 </div>
 
 <script>
-  // A tap swaps the Polaroid, and so does the keyboard. A mouse needn't: pointing at it already
-  // shows the other one, and a click would seem to do nothing.
   (function () {
     const flip = document.querySelector('.about-flip');
     if (!flip) return;
@@ -608,7 +554,6 @@ image:
       const polaroid = flip.closest('.about-polaroid');
       const cool = polaroid.classList.toggle('is-cool');
       flip.setAttribute('aria-pressed', cool);
-      // What a screen reader finds in the Polaroid is what's shown in it
       const hide = (selector, hidden) => {
         const el = polaroid.querySelector(selector);
         hidden ? el.setAttribute('aria-hidden', 'true') : el.removeAttribute('aria-hidden');
@@ -620,8 +565,6 @@ image:
     });
   })();
 
-  // The note's written after "cats." if there's room for it on that line, short of the window's
-  // edge; if not, under it, kept inside the column, with room made under the paragraph
   (function () {
     const note = document.querySelector('.about-meow');
     if (!note) return;

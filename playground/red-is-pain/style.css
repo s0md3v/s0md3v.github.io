@@ -120,8 +120,6 @@ kbd {
     line-height: 1;
 }
 
-/* Application shell */
-
 #simulation-container {
     position: relative;
     display: grid;
@@ -356,8 +354,6 @@ kbd {
     background: var(--bg-canvas);
     touch-action: none;
 }
-
-/* Canvas overlays */
 
 .coach-mark,
 .canvas-hint,
@@ -635,8 +631,6 @@ kbd {
     background: var(--accent-dim);
     color: var(--accent-strong);
 }
-
-/* Inspector */
 
 #inspector-sidebar {
     position: relative;
@@ -1214,8 +1208,6 @@ kbd {
     text-align: right;
 }
 
-/* Shared overlays */
-
 .screen-overlay {
     position: fixed;
     z-index: 1000;
@@ -1533,8 +1525,6 @@ kbd {
 .state-actions--horizontal {
     grid-template-columns: 1fr 1fr;
 }
-
-/* Responsive shell */
 
 @media (max-width: 1180px) {
     :root {

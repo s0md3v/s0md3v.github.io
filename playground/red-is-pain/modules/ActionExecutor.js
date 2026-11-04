@@ -26,18 +26,15 @@ export class ActionExecutor {
         let turnSpeed = Config.AGENT.TURN_SPEED;
         const now = Date.now();
 
-        // Pulling a pin is a committed action. Keep executing the captured throw
-        // instead of allowing the next 100 ms decision tick to orphan the grenade.
+        // A pulled pin commits the throw; the next 100 ms decision tick must not orphan the grenade
         if (this.agent.armingUntil > 0 && this.agent.armingAction) {
             action = this.agent.armingAction;
         }
 
-        // Pinned/Arming Effect: Cannot Move
         if (this.agent.state.isPinned || this.agent.armingUntil > now) {
             turnSpeed *= 0.5;
-            if (Math.random() < 0.05) this.agent.state.modifyStress(5); // Panic while pinned
+            if (Math.random() < 0.05) this.agent.state.modifyStress(5);
             
-            // If pinned, we might blind fire (SUPPRESS) instead of aimed fire
             if (this.agent.state.isPinned && action.type === 'ATTACK') {
                 const memoryContact = action.targetId !== undefined
                     ? this.agent.memory.knownHostiles.find(hostile => hostile.id === action.targetId)
@@ -62,7 +59,6 @@ export class ActionExecutor {
             }
         }
 
-        // Systematic Reflexive Behavior
         const isStressed = this.agent.state.stress > 60;
         const canSnap = isStressed && Math.random() < Config.AGENT.PANIC_SNAP_PROB;
 
@@ -84,18 +80,15 @@ export class ActionExecutor {
                 if (action.target && !this.agent.state.isPinned) {
                     let speedMod = 1.0;
                     if (this.agent.state.inSmoke) {
-                         speedMod = 0.6; // Disorientation
+                         speedMod = 0.6;
                     }
 
-                    // Apply the movement mode chosen with this action.
                     if (action.movementMode) {
                         this.agent.movementMode = action.movementMode;
                     }
 
                     let lookPos = null;
-                    // TACTICAL MOVEMENT: Look around while moving
                     if (this.agent.movementMode === 'TACTICAL' || this.agent.movementMode === 'COVERING') {
-                        // Optimization: Check infrequently
                         if (!this.agent.cachedLookPos || Math.random() < 0.1) {
                             const gazeAngle = this.agent.sensory.calculateTacticalGaze(world);
                             this.agent.cachedLookPos = {
@@ -147,10 +140,8 @@ export class ActionExecutor {
         if (this.agent.idleLookTimer <= 0) {
             this.agent.idleLookTimer = 800 + Math.random() * 700;
             
-            // SMART IDLE: Look at meaningful sectors
             const tacticalAngle = this.agent.sensory.calculateTacticalGaze(world);
             
-            // Add slight randomness so they don't look like robots
             this.agent.targetAngle = tacticalAngle + (Math.random() - 0.5) * 0.3;
         }
         this.agent.rotateTowards(this.agent.targetAngle, dt, Config.AGENT.TURN_SPEED * 0.5);
@@ -196,7 +187,6 @@ export class ActionExecutor {
         } else {
             const pathFound = this.agent.moveTo(action.target, dt, world, turnSpeed);
             
-            // If we are significantly far and pathfinding failed to even get us started
             if (!pathFound && dist > 100 && (!this.agent.path || this.agent.path.length === 0)) {
                 this.agent.memory.markUnreachable(action.target);
                 this.agent.currentAction = { type: 'IDLE', score: 0 };
@@ -237,22 +227,16 @@ export class ActionExecutor {
                 const pRadius = (pType === 'SMOKE') ? Config.PHYSICS.SMOKE_RADIUS : Config.PHYSICS.FRAG_RADIUS;
                 const startingCovers = this.agent.getCurrentCovers(world);
 
-                // --- CALCUALTE THROW INACCURACY ---
                 const dist = Utils.distance(this.agent.pos, action.target);
                 const hasLOS = world.hasVisualLine(this.agent.pos, action.target);
                 
-                // Base error: 10% of distance + fixed minimum
                 let errorRadius = (dist * 0.1) + 5;
                 
-                // Stress impact: Panic ruins aim (up to 3x error)
-                // Neuroticism makes stress worse
                 const stressFactor = 1.0 + (this.agent.state.stress / 100) * (1.0 + this.agent.traits.neuroticism) * 2.0;
                 errorRadius *= stressFactor;
                 
-                // Blind Throw: Doubling error if throwing over a wall/smoke
                 if (!hasLOS) errorRadius *= 2.0;
 
-                // Apply error to target
                 const errorAngle = Math.random() * Math.PI * 2;
                 const errorDist = Math.random() * errorRadius;
                 const randomizedTarget = {
@@ -278,7 +262,6 @@ export class ActionExecutor {
                 p.damage = (pType === 'SMOKE') ? 0 : Config.PHYSICS.FRAG_DAMAGE; 
                 world.projectiles.push(p);
 
-                // Chained action support
                 if (action.nextAction) {
                     this.agent.currentAction = action.nextAction;
                 }
@@ -401,36 +384,21 @@ export class ActionExecutor {
             const hasClearShot = world.hasClearShot(this.agent.pos, finalTargetPos);
             const inRange = dist <= this.agent.state.inventory.weapon.range;
 
-            // Target Tracking
             const targetAngle = Utils.angle(this.agent.pos, finalTargetPos);
             this.agent.rotateTowards(targetAngle, dt, turnSpeed, canSnap); 
 
-            // Engagement Logic
             if (hasClearShot && inRange) {
-                // We have a shot, take it!
-                // If we are moving, stop to improve accuracy (unless Bounding)
                 if (action.movementMode === 'TACTICAL' && this.agent.isMoving) {
-                     this.agent.isMoving = false; // Halt
+                     this.agent.isMoving = false;
                 }
                 this.agent.shootAt(finalTargetPos, world);
             }
             
-            // Movement Logic
-            // Priority:
-            // 1. If explicit moveTarget (e.g. Flank/Peek), go there.
-            // 2. If no shot but has LOS, peek/adjust slightly.
-            // 3. If no LOS, move to regain it tactilely.
-
             if (action.moveTarget) {
                 this.agent.moveTo(action.moveTarget, dt, world, turnSpeed, speedMultiplier, finalTargetPos);
             } else if (!hasLOS) {
-                 // Hunt: Move towards target but use cover if possible
-                 // We rely on Decision to give us a moveTarget if flanking is needed.
-                 // Otherwise, reckless advance
                  this.agent.moveTo(finalTargetPos, dt, world, turnSpeed, speedMultiplier);
             } else if (hasLOS && !hasClearShot) {
-                 // We see them but something is blocking our gun (e.g. low cover or corner)
-                 // Shift slightly perpendicular to target line
                  if (!this.agent.state.isPinned) {
                      const rightAngle = targetAngle + Math.PI/2;
                      const shiftX = this.agent.pos.x + Math.cos(rightAngle) * 20;
@@ -440,8 +408,6 @@ export class ActionExecutor {
                      }
                  }
             } else {
-                 // We have clear shot. Hold position to maintain accuracy? 
-                 // Unless we are too far
                  if (dist > 300 && action.movementMode === 'BOUNDING') {
                       this.agent.moveTo(finalTargetPos, dt, world, turnSpeed, speedMultiplier, finalTargetPos);
                  }
@@ -577,21 +543,17 @@ export class ActionExecutor {
             });
          }
 
-         // RETREAT MODES: Panic vs Tactical
          const isPanicking = this.agent.state.stress > 90;
          const hasAdrenaline = this.agent.state.adrenaline > 50;
          
          if (isPanicking) {
-             // Mode: PANIC - Head down, no fire, maximum sprint
              retreatLookTarget = null;
-             turnSpeed = 6.0; // Fast rotation for fleeing
+             turnSpeed = 6.0;
              if (Math.random() < 0.05) this.agent.addBark(["RUN!", "OUTTA HERE!", "AAAGH!"][Math.floor(Math.random()*3)]);
          } else if (visibleHostiles.length > 0) {
-             // Mode: TACTICAL - Providing cover fire while falling back
              visibleHostiles.sort((a, b) => Utils.distance(this.agent.pos, a.pos) - Utils.distance(this.agent.pos, b.pos));
              retreatLookTarget = visibleHostiles[0].pos;
              
-             // Providing cover fire
              this.agent.shootAt(retreatLookTarget, world, 3.0);
              turnSpeed = 4.0; 
              if (Math.random() < 0.01) this.agent.addBark("FALLING BACK!");
@@ -617,11 +579,9 @@ export class ActionExecutor {
          if (this.agent.retreatTarget) {
             const distToTarget = Utils.distance(this.agent.pos, this.agent.retreatTarget);
             
-            // ADRENALINE NUANCE: Boost speed when adrenaline is high
             const adrenalineMult = 1.0 + (this.agent.state.adrenaline / 100);
             const speedMultiplier = Config.AGENT.RUN_SPEED_MULTIPLIER * adrenalineMult;
 
-            // ZIG-ZAG NUANCE: Run diagonally/zig-zag when retreating in the open
             const inOpen = !this.agent.brain.isSafe(world);
             this.agent.moveTo(this.agent.retreatTarget, dt, world, turnSpeed, speedMultiplier, retreatLookTarget, inOpen);
             
@@ -631,7 +591,6 @@ export class ActionExecutor {
                 this.agent.retreatTarget = null;
                 this.agent.path = [];
 
-                // If we had a chained action (like after throwing smoke), check if we should continue
                 if (action.nextAction) {
                     this.agent.currentAction = action.nextAction;
                 }

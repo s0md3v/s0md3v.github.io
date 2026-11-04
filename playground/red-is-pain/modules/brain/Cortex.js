@@ -10,36 +10,30 @@ import { Config } from '../Config.js?v=field-console-14';
 export class Cortex {
     constructor(agent) {
         this.agent = agent;
-        this.lastAction = { type: 'IDLE', score: 0 }; // Compatibility
+        this.lastAction = { type: 'IDLE', score: 0 };
         
-        // Sub-modules
-        // We pass 'this' so they can access Cortex helpers and each other (via this.decision.tactical etc)
         this.combat = new CombatEvaluator(this); 
         this.tactical = new TacticalEvaluator(this);
         this.support = new SupportEvaluator(this);
         this.background = new BackgroundEvaluator(this);
         this.cover = new CoverEvaluator(this);
 
-        // Aliases for backward compatibility with evaluators expecting 'tacticalEval' etc.
         this.combatEval = this.combat;
         this.tacticalEval = this.tactical;
         this.supportEval = this.support;
         this.backgroundEval = this.background;
         this.coverEval = this.cover;
 
-        // Memory of plans
         this.currentPlan = null; 
         this.planTimestamp = 0;
     }
 
     evaluate(world, emotionalOverrideLevel = 0) {
-        // 0. GATHER INTEL
         const threat = this.identifyThreat(world);
         const squadOrder = this.agent.squad ? this.agent.squad.currentOrder : null;
         
         let candidates = [];
 
-        // --- HEROIC / BERSERK OVERRIDES (#6) ---
         const isBerserk = this.agent.state.stress > 95 && this.agent.state.morale < 20;
         const isHeroic = this.agent.state.isHeroic;
 
@@ -60,55 +54,45 @@ export class Cortex {
             }
         }
 
-        // --- MORALE MODIFIER (#3) ---
-        const moraleFactor = (this.agent.state.morale - 50) / 50; // -1.0 to 1.0
-        const moraleCombatBonus = moraleFactor * 15; // -15 to +15 priority
+        const moraleFactor = (this.agent.state.morale - 50) / 50;
+        const moraleCombatBonus = moraleFactor * 15;
 
-        // --- HYSTERESIS / PLAN PERSISTENCE ---
-        // If we have an active plan, check if we should stick to it.
         if (this.currentPlan) {
             const planAge = Date.now() - this.planTimestamp;
             let keepPlan = false;
 
-            if (this.currentPlan.type === 'TACTICAL' && planAge < 3000) { // Stick to flank/move for 3s minimum
+            if (this.currentPlan.type === 'TACTICAL' && planAge < 3000) {
                  const dist = Utils.distance(this.agent.pos, this.currentPlan.action.target);
-                 if (dist > 20) keepPlan = true; // Haven't arrived yet
+                 if (dist > 20) keepPlan = true;
             }
 
             if (keepPlan) {
-                // ADD THE CURRENT PLAN AS A STRONG CANDIDATE
-                // We give it a bonus score to resist jitter
                 const existingAction = { ...this.currentPlan.action };
                 candidates.push({ 
-                    priority: this.currentPlan.priority + 10, // Persistence Bonus
+                    priority: this.currentPlan.priority + 10,
                     persistenceBasePriority: this.currentPlan.priority,
                     action: existingAction, 
                     type: this.currentPlan.type 
                 });
             } else {
-                this.currentPlan = null; // Plan expired or completed
+                this.currentPlan = null;
             }
         }
 
 
-        // A. COMBAT (Highest Priority if threatened)
-        // includes suspected threats from radio/memory via identifyThreat(world, true)
         const suspectedThreat = this.identifyThreat(world, true);
         if (threat || suspectedThreat || this.agent.state.stress > 20) {
             const combatAction = this.combat.scoreCombat(world);
             if (combatAction.score > 0) {
-                // Map score 2.0 -> 80 priority
                 const priority = Math.min(85, combatAction.score * 40) + moraleCombatBonus; 
                 candidates.push({ priority, action: combatAction, type: 'COMBAT' });
             }
 
-            // Flanking
             const activeThreat = threat || suspectedThreat;
             if (activeThreat) {
-                // Only search for NEW flank spots if we aren't already committed to one
                 const alreadyFlanking = this.currentPlan && this.currentPlan.type === 'TACTICAL';
                 
-                if (!alreadyFlanking || Date.now() % 500 < 50) { // Check occasionally
+                if (!alreadyFlanking || Date.now() % 500 < 50) {
                     const flankSpot = this.tactical.findFlankSpot(world, activeThreat.pos);
                     if (flankSpot) {
                         candidates.push({ 
@@ -120,7 +104,6 @@ export class Cortex {
                 }
             }
 
-            // Frag Grenades
             const fragAction = this.combat.scoreFrag(world);
             if (fragAction.score > 0) {
                  candidates.push({
@@ -130,7 +113,6 @@ export class Cortex {
                  });
             }
 
-            // Smoke Grenades
             const smokeAction = this.combat.scoreSmoke(world);
             if (smokeAction.score > 0) {
                  candidates.push({
@@ -140,7 +122,6 @@ export class Cortex {
                  });
             }
 
-            // Smoke Tactics (Movement based)
             const smokeTacticsAction = this.tactical.scoreSmokeTactics(world);
             if (smokeTacticsAction.score > 0) {
                  candidates.push({
@@ -151,8 +132,6 @@ export class Cortex {
             }
         }
 
-        // Area fire can originate from a hostile sound, incoming-fire bearing, or
-        // shared sector report even before stress or a remembered person exists.
         const suppressAction = this.combat.scoreSuppress(world);
         if (suppressAction.score > 0) {
             candidates.push({
@@ -162,17 +141,14 @@ export class Cortex {
             });
         }
 
-        // G. INTERCEPT CONTACT (Radio intel response)
         if (!threat) {
             const intercept = this.background.scoreInterceptContact(world);
             if (intercept.score > 0) {
-                // Priority boost: 60 + (score * 8). Max ~110. 
-                // This ensures it overrides standard ORDER (70-90) during high-heat contacts.
+                // 60 + score*8 (max ~110) so it beats standard ORDER (70-90) during high-heat contacts
                 candidates.push({ priority: 60 + (intercept.score * 8), action: intercept, type: 'INTERCEPT' });
             }
         }
 
-        // B. ORDERS
         if (squadOrder) {
              const orderAction = this.tactical.scoreFollowOrder(world);
              if (orderAction.score > 0) {
@@ -181,19 +157,16 @@ export class Cortex {
              }
         }
 
-        // C. IDLE / PATROL
         const patrolAction = this.background.scorePatrol(world);
         if (patrolAction && patrolAction.type) {
             candidates.push({ priority: 30, action: patrolAction, type: 'PATROL' });
         }
 
-        // D. COVER (If exposed)
         const coverAction = this.cover.scoreHoldCover(world);
         if (coverAction && coverAction.type && coverAction.score > 1.0) {
             candidates.push({ priority: 40, action: coverAction, type: 'COVER' });
         }
 
-        // E. SCAVANGE / LOOT (Low Ammo)
         const weapon = this.agent.state.inventory.weapon;
         if (weapon.carriedAmmo < weapon.maxAmmo * 1.5) {
              const resupply = this.support.scoreResupply(world);
@@ -207,41 +180,33 @@ export class Cortex {
              }
         }
 
-        // F. SELF CARE (Heal)
         const selfHeal = this.support.scoreSelfHeal(world);
         if (selfHeal.score > 0) {
              candidates.push({ priority: 75, action: selfHeal, type: 'SELF_HEAL' });
         }
 
-        // H. SUPPORT (Provide Cover/Rescue)
         const provideCover = this.support.scoreProvideCover(world);
         if (provideCover.score > 0) {
              candidates.push({ priority: 65 + (provideCover.score * 5), action: provideCover, type: 'SUPPORT' });
         }
 
-        // 2. FILTER & SELECT
         if (emotionalOverrideLevel > 80) {
-            // Panic/Urgent Survival inhibits complex plans
             candidates = candidates.filter(c => c.type === 'COMBAT' || c.type === 'COVER' || c.type === 'SELF_HEAL' || c.type === 'THROW' || c.type === 'TACTICAL');
             
-            // If panic is high, finding cover and using smoke are top priorities
             candidates.forEach(c => {
                  if (c.type === 'COVER') c.priority += 50; 
                  if (c.type === 'THROW' && c.action.grenadeType === 'SmokeGrenade') c.priority += 40;
                  if (c.type === 'TACTICAL' && c.action.description === 'throwing smoke to retreat') c.priority += 40;
             });
-            this.currentPlan = null; // Panic clears the mind
+            this.currentPlan = null;
         }
 
         candidates.sort((a, b) => b.priority - a.priority);
         
         const best = candidates[0];
         
-        // Update lastAction for evaluators
         if (best) this.lastAction = best.action;
 
-        // --- EXPORT CURRENT THOUGHT ---
-        // For debugging/state display
         if (best) {
             this.agent.brain.currentFocus = best.type;
             const storedBest = {
@@ -250,13 +215,10 @@ export class Cortex {
             };
             delete storedBest.persistenceBasePriority;
             
-            // COMMIT TO PLAN
             if (!this.currentPlan || this.currentPlan.type !== best.type) {
-                 // New plan adopted
                  this.currentPlan = storedBest;
                  this.planTimestamp = Date.now();
             } else {
-                 // Update the current plan with new action/priority (e.g. updated target)
                  this.currentPlan = storedBest;
             }
         } else {
@@ -293,8 +255,6 @@ export class Cortex {
         }
         return null;
     }
-
-    // --- PROXIES FOR EVALUATORS ---
 
     get currentThought() {
         return this.agent.brain.currentFocus;
@@ -340,11 +300,9 @@ export class Cortex {
     }
 
     getForceBalance(world) {
-        // Local allies within 300px
         const allies = world.spatial.query(this.agent.pos.x, this.agent.pos.y, 300)
             .filter(a => !a.isCover && a.team === this.agent.team).length; 
         
-        // Visible enemies
         const enemies = this.agent.sensory.scan(world)
             .filter(a => a.team !== this.agent.team && this.agent.memory.isSpotted(a.id)).length;
         

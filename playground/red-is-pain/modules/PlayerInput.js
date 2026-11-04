@@ -1,10 +1,6 @@
 import { Config } from './Config.js?v=field-console-14';
 import { Utils } from './Utils.js?v=field-console-14';
 
-/**
- * PlayerInput handles Keyboard, Mouse, and Gamepad input
- * and translates it into agent movement + shooting.
- */
 export class PlayerInput {
     constructor(canvas) {
         this.canvas = canvas;
@@ -34,9 +30,7 @@ export class PlayerInput {
         this._onMouseDown = (e) => {
             if (e.button === 0) {
                 this.mouseDown = true;
-                // Keep a tap alive briefly while the operative turns toward the cursor.
-                // Without this buffer, a quick click can be consumed before the weapon
-                // is inside its firing arc.
+                // Keep a tap alive briefly so a quick click isn't consumed before the weapon is inside its firing arc.
                 this.queuedFireUntil = performance.now() + 750;
                 this._inputSource = 'kbm';
             }
@@ -61,10 +55,6 @@ export class PlayerInput {
         this.setupTouchControls();
     }
 
-    /**
-     * Update the mouse position in world coordinates.
-     * Called from main.js on mousemove using the camera transform.
-     */
     setMouseWorldPos(wx, wy) {
         this.mouseWorldX = wx;
         this.mouseWorldY = wy;
@@ -207,27 +197,18 @@ export class PlayerInput {
         this.virtualFire = false;
     }
 
-    /**
-     * Read gamepad state (must be polled each frame).
-     */
     _getGamepad() {
         if (this.gamepadIndex === null) return null;
         const gamepads = navigator.getGamepads();
         return gamepads[this.gamepadIndex] || null;
     }
 
-    /**
-     * Apply input to the player agent each frame.
-     * This replaces the AI brain entirely.
-     */
     applyToAgent(agent, dt, world, camera) {
         agent.weaponSystem.update(Date.now());
         this.updateMouseWorldPos(camera);
         const gp = this._getGamepad();
         const deadzone = 0.15;
 
-        // --- INPUT SOURCE DETECTION ---
-        // Detect if gamepad is actively being used this frame
         let gamepadActive = false;
         if (gp) {
             const lx = Math.abs(gp.axes[0] || 0);
@@ -241,7 +222,6 @@ export class PlayerInput {
             }
         }
 
-        // Detect keyboard/mouse activity
         const anyKey = this.keys['KeyW'] || this.keys['KeyS'] || this.keys['KeyA'] || this.keys['KeyD'] ||
                        this.keys['ArrowUp'] || this.keys['ArrowDown'] || this.keys['ArrowLeft'] || this.keys['ArrowRight'] ||
                        this.keys['ShiftLeft'] || this.keys['ShiftRight'] || this.keys['KeyR'];
@@ -253,13 +233,11 @@ export class PlayerInput {
             this._inputSource = 'touch';
         }
 
-        // Default to keyboard/mouse if nothing set
         if (!this._inputSource) this._inputSource = 'kbm';
 
         const useGamepad = this._inputSource === 'gamepad';
         const useTouch = this._inputSource === 'touch';
 
-        // --- 1. MOVEMENT ---
         let moveX = 0;
         let moveY = 0;
 
@@ -268,7 +246,7 @@ export class PlayerInput {
             moveY = this.virtualMove.y;
         } else if (useGamepad && gp) {
             moveX = gp.axes[0] || 0;
-            moveY = -(gp.axes[1] || 0); // User requested: Invert left stick Y
+            moveY = -(gp.axes[1] || 0);
         } else {
             if (this.keys['KeyW'] || this.keys['ArrowUp'])    moveY -= 1;
             if (this.keys['KeyS'] || this.keys['ArrowDown'])  moveY += 1;
@@ -276,14 +254,12 @@ export class PlayerInput {
             if (this.keys['KeyD'] || this.keys['ArrowRight']) moveX += 1;
         }
 
-        // Normalize
         const moveMag = Math.sqrt(moveX * moveX + moveY * moveY);
         if (moveMag > 1) {
             moveX /= moveMag;
             moveY /= moveMag;
         }
 
-        // Sprint
         const sprinting = useTouch
             ? this.virtualSprint
             : useGamepad
@@ -291,16 +267,11 @@ export class PlayerInput {
                 : (this.keys['ShiftLeft'] || this.keys['ShiftRight']);
         agent.movementMode = sprinting ? 'BOUNDING' : 'TACTICAL';
 
-        // Apply movement
         if (moveMag > deadzone) {
             const moveAngle = Math.atan2(moveY, moveX);
             const speed = agent.motor.calculateCurrentSpeed(world);
-            // The player can deliberately squeeze through narrow doorways and
-            // gaps. Keep the visual/combat radius unchanged; only direct-control
-            // movement uses this slightly smaller collision footprint.
             const collisionRadius = Config.AGENT.PLAYER_COLLISION_RADIUS;
 
-            // Physics sub-stepping
             const STEP_MS = 10;
             let remaining = Math.min(dt, 50);
             while (remaining > 0) {
@@ -325,14 +296,12 @@ export class PlayerInput {
             agent.isMoving = true;
             agent.motor.smoothedMoveAngle = moveAngle;
 
-            // Stamina drain
             const drainRate = Config.AGENT.MODES[agent.movementMode].DRAIN;
             agent.state.consumeStamina(drainRate * dt);
         } else {
             agent.isMoving = false;
         }
 
-        // --- 2. AIM ---
         let aimAngle = agent.angle;
 
         if (useTouch) {
@@ -342,25 +311,21 @@ export class PlayerInput {
             }
         } else if (useGamepad && gp) {
             const rx = gp.axes[2] || 0;
-            const ry = -(gp.axes[3] || 0); // Match inverted Y behavior from left-stick
+            const ry = -(gp.axes[3] || 0);
             const rMag = Math.sqrt(rx * rx + ry * ry);
             if (rMag > deadzone) {
                 aimAngle = Math.atan2(ry, rx);
             }
-            // If right stick is idle on gamepad, keep current angle (don't snap to mouse)
         } else if (this.hasMousePosition) {
-            // Mouse aim
             aimAngle = Math.atan2(
                 this.mouseWorldY - agent.pos.y,
                 this.mouseWorldX - agent.pos.x
             );
         }
 
-        // Smoothly rotate towards aim
         agent.motor.rotateTowards(aimAngle, dt, Config.AGENT.MAX_TURN_SPEED);
         agent.targetAngle = aimAngle;
 
-        // --- 3. SHOOT ---
         let wantsShoot = false;
         if (useTouch) {
             wantsShoot = Boolean(this.virtualFire);
@@ -383,7 +348,6 @@ export class PlayerInput {
         }
         if (fired || performance.now() >= this.queuedFireUntil) this.queuedFireUntil = 0;
 
-        // --- 4. RELOAD ---
         const wantsReload = useTouch
             ? this.virtualReload
             : useGamepad
@@ -395,13 +359,10 @@ export class PlayerInput {
         this.queuedReload = false;
         this.virtualReload = false;
 
-        // --- 5. AUTO-PICKUP ---
         this._autoPickup(agent, world);
 
-        // --- 6. Footstep sounds ---
         agent.handleFootsteps(dt, world);
 
-        // --- 7. CAMERA ZOOM (D-Pad Up/Down) ---
         if (useGamepad && gp && camera) {
             const zoomSpeed = 0.01 * dt; 
             if (gp.buttons[12] && (gp.buttons[12].pressed || gp.buttons[12].value > 0.5)) {
@@ -414,9 +375,6 @@ export class PlayerInput {
         }
     }
 
-    /**
-     * Auto-pickup nearby loot if the player walks over it.
-     */
     _autoPickup(agent, world) {
         const pickupRadius = 20;
         for (let i = world.loot.length - 1; i >= 0; i--) {
@@ -433,7 +391,6 @@ export class PlayerInput {
                     weapon.carriedAmmo += weapon.capacity * 2;
                     world.loot.splice(i, 1);
                 } else if (item.type === 'WeaponCrate') {
-                    // Pick up ammo from weapon crates too
                     const weapon = agent.state.inventory.weapon;
                     weapon.carriedAmmo += weapon.capacity * 3;
                     world.loot.splice(i, 1);

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# Minutes a post takes to read, from its rendered HTML: its words at 200 a minute, but not the
-# words in its code blocks, which are looked at, copied or skipped rather than read
+# Code blocks aren't counted: they're looked at, copied or skipped rather than read
 module ReadingTime
   WORDS_A_MINUTE = 200.0
 

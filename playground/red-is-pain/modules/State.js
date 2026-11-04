@@ -16,7 +16,6 @@ export class State {
         this.isPinned = false; 
         this.speedMod = loadout.speedMod || 1.0;
 
-        // Inventory System
         const primaryWeapon = Config.WEAPONS[loadout.primary];
         const secondaryWeapon = Config.WEAPONS[loadout.secondary];
 
@@ -37,7 +36,6 @@ export class State {
             utility: loadout.utility.map(u => ({ ...u }))
         };
         
-        // Helper getter for active weapon
         Object.defineProperty(this.inventory, 'weapon', {
             get: function() { return this[this.currentEntry]; }
         });
@@ -47,11 +45,10 @@ export class State {
         this.busyReason = null;
         this.isDead = false;
         this.isFrozenUntil = 0;
-        this.fatigue = 0; // Cumulative permanent stress impact
+        this.fatigue = 0;
         this.inSmoke = false;
         this.inBush = false;
         
-        // Dynamic States
         this.isBattleBuddyActive = false;
         this.isHeroic = false;
         this.isBroken = false;
@@ -60,7 +57,7 @@ export class State {
 
     onKill() {
         this.modifyMorale(Config.AGENT.MORALE_GAIN_KILL);
-        this.stress = Math.max(0, this.stress - 20); // Relief
+        this.stress = Math.max(0, this.stress - 20);
     }
 
     onWitnessKill() {
@@ -87,17 +84,14 @@ export class State {
     modifyStress(amount) {
         if (Number.isNaN(amount)) return; 
         if (amount > 0) {
-            // High morale provides resistance to stress gain
-            // High morale provides resistance to stress gain
             const moraleRatio = (this.morale || 0) / 100;
             let resistance = 1.0 - (moraleRatio * Config.AGENT.MORALE_STRESS_RESISTANCE);
             
-            // Battle Buddy Resistance
             if (this.isBattleBuddyActive) {
                 resistance -= Config.AGENT.BATTLE_BUDDY_STRESS_RESISTANCE;
             }
             
-            resistance = Math.max(0.1, resistance); // Minimum 10% stress gain
+            resistance = Math.max(0.1, resistance);
             amount *= (Number.isNaN(resistance) ? 1.0 : resistance);
         }
         
@@ -119,7 +113,6 @@ export class State {
     }
 
     consumeStamina(amount) {
-        // Fatigue makes stamina drain faster and recover slower
         const fatigueMult = 1.0 + (this.fatigue / 100);
         this.stamina = Math.max(0, this.stamina - amount * fatigueMult);
     }
@@ -127,38 +120,28 @@ export class State {
     update(dt, stressBaseline = 0, isMoving = false) {
         if (this.isDead || Number.isNaN(dt)) return;
 
-        // Ensure baseline is valid
         if (Number.isNaN(stressBaseline)) stressBaseline = 0;
 
-        // Frozen state management
         const now = Date.now();
         if (this.isFrozenUntil > now) {
             this.isPinned = true;
             return;
         }
 
-        // 1. STRESS & MORALE DRIFT (The 'flicker' fix)
-        // Instead of immediate snaps, we drift values toward their baselines over time
-        const driftSpeed = dt * 0.01; // Scale by time
+        const driftSpeed = dt * 0.01;
 
-        // Fatigue accumulation (Permanent scars)
         if (this.stress > 90) {
             this.fatigue = Math.min(100, (this.fatigue || 0) + (dt * 0.0002)); 
         }
 
-        // Stress cannot decay below the fatigue floor
         const effectiveBaseline = Math.max(stressBaseline, this.fatigue || 0);
 
-        // DRift Stress toward baseline
         if (this.stress > effectiveBaseline) {
-            // Passive decay is slow
             this.stress = Math.max(effectiveBaseline, this.stress - (dt * 0.005));
         } else if (this.stress < effectiveBaseline) {
-            // Environment stress gain
             this.stress = Math.min(effectiveBaseline, this.stress + (dt * 0.005));
         }
 
-        // Drift Morale toward baseline
         const moraleBase = Config.AGENT.BASELINE_MORALE;
         let moraleDriftRate = 0.001;
         if (this.morale > Config.AGENT.MORALE_HEROIC_THRESHOLD) moraleDriftRate = 0.0005;
@@ -169,33 +152,27 @@ export class State {
             this.morale = Math.max(moraleBase, this.morale - (dt * moraleDriftRate));
         }
 
-        // 2. HEROIC / BROKEN STATES
         this.isHeroic = this.morale > Config.AGENT.MORALE_HEROIC_THRESHOLD;
         this.isBroken = this.morale < Config.AGENT.MORALE_BROKEN_THRESHOLD;
 
-        // 3. Suppression Decay
         if (this.suppression > 0) {
             this.suppression = Math.max(0, this.suppression - (dt * 0.05));
         }
 
-        // 4. Adrenaline Decay
         if (this.adrenaline > 0) {
             this.adrenaline = Math.max(0, this.adrenaline - (dt * 0.015));
         }
         
         this.suppressionSources = this.suppressionSources.filter(s => (now - s.time) < 2000);
         
-        // 5. Stamina Recovery
         const recoveryMult = Math.max(0, 1.0 - ((this.fatigue || 0) / 200)) * (1.0 + (this.adrenaline / 100));
         let recoveryRate = isMoving ? Config.AGENT.STAMINA_RECOVERY_WALK : Config.AGENT.STAMINA_RECOVERY_IDLE;
         
         this.stamina = Utils.clamp((this.stamina || 0) + (dt * recoveryRate * recoveryMult), 0, Config.AGENT.MAX_STAMINA);
 
-        // 6. Pinning Logic
         this.isPinned = this.suppression > Config.PHYSICS.PINNED_THRESHOLD || this.stress > Config.PHYSICS.PINNED_THRESHOLD;
         
-        // Final Sweep
         if (Number.isNaN(this.hp)) this.hp = this.maxHp;
-        if (Number.isNaN(this.morale)) this.morale = 100; // Reset corrupted values
+        if (Number.isNaN(this.morale)) this.morale = 100;
     }
 }

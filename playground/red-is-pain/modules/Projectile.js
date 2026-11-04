@@ -15,13 +15,12 @@ export class Projectile {
         this.active = true;
         this.ignoredCovers = startingCovers || []; 
         
-        // GRENADE SPECIFICS
         this.fuse = (type === 'GRENADE' || type === 'SMOKE') ? Config.PHYSICS.GRENADE_FUSE : 0;
         this.targetPos = targetPos;
         this.elapsed = 0;
         this.distanceTraveled = 0;
         this.maxDistance = Infinity;
-        this.totalDuration = 1200; // 1.2s flight time
+        this.totalDuration = 1200;
         this.startPos = { x, y };
         this.isLanding = false;
     }
@@ -220,23 +219,20 @@ export class Projectile {
             }
 
             if (this.targetPos && !this.isLanding) {
-                // Aimed Throw: Move towards target using ease-out
                 const t = Math.min(1, this.elapsed / this.totalDuration);
-                const easeOut = 1 - Math.pow(1 - t, 3); // Cubic ease out
+                const easeOut = 1 - Math.pow(1 - t, 3);
                 
                 this.pos.x = this.startPos.x + (this.targetPos.x - this.startPos.x) * easeOut;
                 this.pos.y = this.startPos.y + (this.targetPos.y - this.startPos.y) * easeOut;
                 
                 if (t >= 1) {
                     this.isLanding = true;
-                    this.speed = 20; // Residual roll speed
+                    this.speed = 20;
                     this.angle = Utils.angle(this.startPos, this.targetPos);
                 }
                 
-                // Grenades in "flight" ignore walls/covers (lobbing)
                 if (t < 0.8) return; 
             } else {
-                // Residual Roll / Bounce
                 this.speed *= 0.92;
             }
         }
@@ -245,14 +241,11 @@ export class Projectile {
         const nextX = this.pos.x + Math.cos(this.angle) * dist;
         const nextY = this.pos.y + Math.sin(this.angle) * dist;
 
-        // Check for wall collision
         if (world.isWallAt(nextX, nextY)) {
             if (this.type === 'GRENADE' || this.type === 'SMOKE') {
-                // Vector-based bounce
                 const friction = 0.6;
                 const bounceStrength = 0.5;
                 
-                // Determine wall normal (heuristic)
                 const step = 4;
                 const hitLeft = world.isWallAt(nextX - step, nextY);
                 const hitRight = world.isWallAt(nextX + step, nextY);
@@ -260,15 +253,15 @@ export class Projectile {
                 const hitBottom = world.isWallAt(nextX, nextY + step);
 
                 if (hitLeft !== hitRight) {
-                    this.angle = Math.PI - this.angle; // Horizontal bounce
+                    this.angle = Math.PI - this.angle;
                 } else if (hitTop !== hitBottom) {
-                    this.angle = -this.angle; // Vertical bounce
+                    this.angle = -this.angle;
                 } else {
-                    this.angle += Math.PI; // Full redirect (corner)
+                    this.angle += Math.PI;
                 }
 
                 this.speed *= bounceStrength;
-                this.isLanding = true; // Stop precise flight after a hit
+                this.isLanding = true;
             } else {
                 this.active = false;
                 world.triggerImpactSuppression(this.pos.x, this.pos.y, 100, 15);
@@ -279,20 +272,16 @@ export class Projectile {
         this.pos.x = nextX;
         this.pos.y = nextY;
 
-        // Check for local collisions using SpatialGrid
-        const localEntities = world.spatial.query(this.pos.x, this.pos.y, 20); // Small radius for bullet
+        const localEntities = world.spatial.query(this.pos.x, this.pos.y, 20);
 
         for (const entity of localEntities) {
-            // 1. Cover Collision
             if (entity.isCover) {
                 const cover = entity.ref;
                 if (this.isInsideRect(this.pos, cover)) {
-                    // One-way cover logic: projectile ignores covers it started in or already penetrated
                     if (!this.ignoredCovers.includes(cover)) {
-                        // 70% chance to be blocked by cover
                         if (Math.random() < 0.7) {
                             this.active = false;
-                            world.damageCover(cover, 2); // Chip damage
+                            world.damageCover(cover, 2);
                             world.triggerImpactSuppression(this.pos.x, this.pos.y, 80, 10);
                             return;
                         }
@@ -302,19 +291,15 @@ export class Projectile {
                 continue;
             }
 
-            // 2. Agent Collision (FRIENDLY FIRE ENABLED)
-            // No team check: bullets hurt everyone
-            if (this.ownerId !== entity.id) { // Don't shoot yourself
+            if (this.ownerId !== entity.id) {
                 if (Utils.distance(this.pos, entity.pos) < entity.radius + this.radius) {
                     if (this.type === 'GRENADE' || this.type === 'SMOKE') {
-                        // Impact logic for grenades: minimal damage and bounce/roll
                         if (!this.impactedAgents) this.impactedAgents = new Set();
                         if (!this.impactedAgents.has(entity.id)) {
                             this.impactedAgents.add(entity.id);
-                            // Bounce slightly but do NOT push or damage the agent
                             this.speed *= 0.5;
                             this.angle += (Math.random() - 0.5) * 1.0;
-                            this.isLanding = true; // Stop precise flight
+                            this.isLanding = true;
                         }
                     } else {
                         entity.takeDamage(this.damage, world, this.ownerId);
@@ -325,7 +310,6 @@ export class Projectile {
             }
         }
 
-        // Out of bounds check
         if (this.pos.x < 0 || this.pos.x > world.width || this.pos.y < 0 || this.pos.y > world.height) {
             this.active = false;
         }

@@ -12,16 +12,14 @@ export class BackgroundEvaluator {
         let bestLoot = null;
         let bestScore = Infinity;
         
-        // 1. EVALUATE CURRENTLY VISIBLE LOOT
         world.loot.forEach(item => {
             const dist = Utils.distance(this.agent.pos, item);
             if (dist > this.agent.traits.visionRadius * 1.5) return;
 
             const hasLOS = world.hasVisualLine(this.agent.pos, item);
-            if (!hasLOS) return; // Cannot see it through walls
+            if (!hasLOS) return;
 
             let score = dist;
-            // Priority boost for Medkits when wounded
             if (item.type === 'Medkit' && this.agent.state.hp < this.agent.state.maxHp * 0.8) {
                 const healthImpact = (1.0 - (this.agent.state.hp / this.agent.state.maxHp)) * 600;
                 score -= healthImpact;
@@ -33,13 +31,12 @@ export class BackgroundEvaluator {
             }
         });
 
-        // 2. EVALUATE REMEMBERED LOOT (If no visible loot)
         if (!bestLoot && this.agent.memory.knownLoot.length > 0) {
              this.agent.memory.knownLoot.forEach(item => {
                 const dist = Utils.distance(this.agent.pos, item);
-                if (dist > 1000) return; // Out of mind
+                if (dist > 1000) return;
 
-                let score = dist + 200; // Penalty for having to travel to memory location
+                let score = dist + 200;
                 
                 if (item.type === 'Medkit' && this.agent.state.hp < this.agent.state.maxHp * 0.8) {
                     const healthImpact = (1.0 - (this.agent.state.hp / this.agent.state.maxHp)) * 600;
@@ -55,9 +52,6 @@ export class BackgroundEvaluator {
 
         if (!bestLoot) return { score: 0 };
         
-        // --- REACHABILITY CHECK ---
-        // If it's a known loot (not currently in LOS), we must check if we can even get there.
-        // We use a simple LOS check first, then a pathfinder check if LOS is blocked.
         const hasLOS = world.hasVisualLine(this.agent.pos, bestLoot);
         if (!hasLOS) {
              const path = world.pathfinder.findPath(this.agent.pos, bestLoot);
@@ -71,7 +65,6 @@ export class BackgroundEvaluator {
     }
 
     scoreSocialize(world) {
-        // Find nearby idle/social teammates to bond with
         let bestTarget = null;
         let maxScore = -1;
 
@@ -79,10 +72,9 @@ export class BackgroundEvaluator {
             if (a.team === this.agent.team && a !== this.agent) {
                 const dist = Utils.distance(this.agent.pos, a.pos);
                 if (dist < 100) {
-                    // Teammates must also be in a non-combat state
                     const otherThought = a.brain.currentThought;
                     if (otherThought === THOUGHT_IDLE || otherThought === THOUGHT_SOCIAL) {
-                        const score = (100 - dist) / 100 + (1.0 - this.agent.traits.agreeableness); // Grumpy people like distance, agreeable like proximity
+                        const score = (100 - dist) / 100 + (1.0 - this.agent.traits.agreeableness);
                         if (score > maxScore) {
                             maxScore = score;
                             bestTarget = a;
@@ -93,8 +85,7 @@ export class BackgroundEvaluator {
         });
 
         if (bestTarget) {
-            // Apply a small trust gain over time
-            this.agent.memory.modifyTrust(bestTarget.id, 0.0001); // Very slow bonding
+            this.agent.memory.modifyTrust(bestTarget.id, 0.0001);
             return { type: 'MOVE', target: bestTarget.pos, score: 1.5, movementMode: 'SNEAKING' };
         }
 
@@ -102,10 +93,6 @@ export class BackgroundEvaluator {
     }
 
     scoreMutiny(world) {
-        // Only trigger if:
-        // 1. Not currently the leader
-        // 2. Low Approval of current leader (< threshold)
-        // 3. I am more competent (higher potential) OR leader is incompetent (high stress/downed)
         if (this.agent.rank === 1) return { score: 0 };
         
         const leader = world.agents.find(a => a.team === this.agent.team && a.rank === 1);
@@ -114,18 +101,15 @@ export class BackgroundEvaluator {
         const approval = this.agent.memory.leaderApproval;
         if (approval > Config.AGENT.APPROVAL_MIN_MUTINY) return { score: 0 };
 
-        // Competence Gap
         const myPotential = this.agent.traits.leadershipPotential;
         const leaderPotential = leader.traits.leadershipPotential;
         
-        // Mutiny is more likely if the leader is panicking (High Stress) while I am cool
         const stressGap = (leader.state.stress - this.agent.state.stress) / 100;
         
         let mutinyScore = (myPotential - leaderPotential) * 2.0;
         mutinyScore += stressGap * 3.0;
         mutinyScore += (1.0 - (approval / 100)) * 2.0;
 
-        // Extraverts are more ambitious
         mutinyScore *= (0.5 + this.agent.traits.extraversion);
 
         if (mutinyScore > 2.0) {
@@ -136,34 +120,28 @@ export class BackgroundEvaluator {
     }
 
     scoreLurk(world) {
-        // Only lurk if we have NO direct visual contact but DO have heatmap intel
         const visibleEnemy = this.decision.getThreatSource(world, false);
         if (visibleEnemy) return { score: 0 };
         
         const suspected = this.decision.getThreatSource(world, true);
         if (!suspected || !suspected.isSuspected) return { score: 0 };
 
-        // If we are already in a bush, STAY PUT
         if (this.agent.state.inBush) {
-            return { type: 'IDLE', score: 2.0 }; // High score to override wandering
+            return { type: 'IDLE', score: 2.0 };
         }
 
-        // Find a nearby bush to hide in
-        // Optimization: Bushes are stored in world.bushes
         let bestBush = null;
         let bestScore = -1;
 
         world.bushes.forEach(b => {
             const dist = Utils.distance(this.agent.pos, b);
-            if (dist > 300) return; // Too far
+            if (dist > 300) return;
 
-            // Score based on distance (closer is better) and tactical position relative to heat
             const suspectedPos = suspected.pos || suspected.lastKnownPosition;
             if (!suspectedPos) return;
 
             const distToHeat = Utils.distance(b, suspectedPos);
             
-            // Range-based positioning
             let rangeScore = 0;
             const optRange = this.agent.state.inventory.weapon.optimalRange;
             if (optRange > 400) {
@@ -176,8 +154,7 @@ export class BackgroundEvaluator {
             
             let score = (300 - dist) / 300 + rangeScore;
             
-            // Trait modifiers
-            score += this.agent.traits.conscientiousness * 0.5; // Patient agents love bushes
+            score += this.agent.traits.conscientiousness * 0.5;
             
             if (score > bestScore) {
                 bestScore = score;
@@ -215,34 +192,27 @@ export class BackgroundEvaluator {
          }
 
          if (!this.agent.patrolTarget || this.agent.memory.isUnreachable(this.agent.patrolTarget)) {
-             this.agent.patrolTarget = null; // Reset if unreachable
+             this.agent.patrolTarget = null;
              return { score: 0 };
          }
-         // Patrol is low priority filler (0.5), overridden by almost anything tactical
          return { type: 'MOVE', target: this.agent.patrolTarget, score: 0.5, movementMode: 'SNEAKING' };
     }
 
     scoreExplore(world) {
-        // "FOG OF WAR" LOGIC: Find an area we haven't controlled/visited recently
         const mem = this.agent.memory;
         const now = Date.now();
 
-        // 1. STRATEGIC SQUAD OBJECTIVE (Priority)
         if (this.agent.squad && this.agent.squad.strategicObjective) {
             const goal = this.agent.squad.strategicObjective;
             const dist = Utils.distance(this.agent.pos, goal);
             
-            // If we are already close to the strategic objective, we can transition to local scouting
             if (dist < 150) {
-                 // High score to keep us here until it's "cleared" by seeing it
                  return { type: 'MOVE', target: goal, score: 3.5, description: 'checking the area', movementMode: 'TACTICAL' };
             }
             
-            // On the way to a strategic objective
             return { type: 'MOVE', target: goal, score: 3.0, description: 'searching for enemies', movementMode: 'TACTICAL' };
         }
 
-        // 2. COMMITMENT: If we already have a scouting target and are moving towards it, stick to it!
         if (this.agent.currentAction && 
             this.agent.currentAction.description === 'checking the area' &&
             this.agent.path && this.agent.path.length > 0) {
@@ -252,17 +222,14 @@ export class BackgroundEvaluator {
             const gy = Math.floor((lastT.y / world.height) * mem.gridRows);
             const lastObserved = (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) ? mem.observedMap[gy][gx] : now;
             
-            // If we haven't looked at it recently (in the last 2 seconds)
             if (now - lastObserved > 2000) {
-                return { ...this.agent.currentAction, score: 2.5 }; // High score to ensure it wins hysteresis
+                return { ...this.agent.currentAction, score: 2.5 };
             }
         }
         
-        // 3. Sample candidate points to explore (Fog of War)
         let bestTarget = null;
         let maxUtility = -Infinity;
         
-        // Increase sampling for better results
         for (let i = 0; i < 8; i++) {
              const tx = 100 + Math.random() * (world.width - 200);
              const ty = 100 + Math.random() * (world.height - 200);
@@ -278,18 +245,14 @@ export class BackgroundEvaluator {
                  const dist = Utils.distance(this.agent.pos, {x: tx, y: ty});
                  if (dist < 150) continue; 
                  
-                 // Utility based on Time Since Observed (The real Fog of War)
-                 // Max score for never observed (lastObserved = 0)
-                 let score = (now - lastObserved) / 10000; // 1 point per 10s of amnesia
+                 let score = (now - lastObserved) / 10000; // 1 point per 10s unobserved
                  
-                 // Avoid heat (danger)
                  if (heat > 0) score -= heat * 5; 
                  
-                 // Slight preference for areas where we don't already have strong control
                  score += (5.0 - control) * 0.5;
 
                  const distScore = (1200 - dist) / 1200; 
-                 score += distScore * 2.0; // Prefer closer targets for efficiency
+                 score += distScore * 2.0;
                  
                  if (world.isWallAt(tx, ty)) score = -100;
 
@@ -328,12 +291,10 @@ export class BackgroundEvaluator {
     }
 
     scoreInterceptContact(world) {
-        // MARCH TO THE SOUND OF THE GUNS
         const mem = this.agent.memory;
         let bestHeatCell = null;
         let maxHeat = 0;
         
-        // Scan for heat signals globally
         for (let y = 0; y < mem.gridRows; y++) {
             for (let x = 0; x < mem.gridCols; x++) {
                 if (mem.heatmap[y][x] > maxHeat) {
@@ -348,12 +309,10 @@ export class BackgroundEvaluator {
             const heatY = (bestHeatCell.y + 0.5) * (world.height / mem.gridRows);
             const target = { x: heatX, y: heatY };
             
-            // DYNAMIC SCORE: The hotter the intel, the more urgent the move.
             const score = 1.0 + (maxHeat * 0.5);
             
             if (this.agent.memory.isUnreachable(target)) return { score: 0 };
 
-            // Real-world: If we hear an active firefight (High Heat), we SPRINT (Bounding)
             const movementMode = maxHeat > 5 ? 'BOUNDING' : 'TACTICAL';
 
             return { 

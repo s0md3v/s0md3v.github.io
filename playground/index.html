@@ -8,7 +8,6 @@ handwritten_font: true
 ---
 {% assign lab = '/assets/images/lab/' | relative_url %}
 <style>
-/* All paper, as Projects is. Each experiment's a thing of its own beside what it is. */
 @media screen and (min-width: 769px) {
   html {
     background: var(--background-color) var(--paper-grain);
@@ -46,7 +45,6 @@ handwritten_font: true
   outline: none;
 }
 
-/* Looked at, it's its title that answers, not a tint behind the whole row */
 .experiment:hover {
   background: none;
 }
@@ -66,10 +64,6 @@ handwritten_font: true
   transition: color 0.2s;
 }
 
-/* Looked at: come to from the keyboard, or under a pointer that can hover. (A finger's touch
-   counts as hovering, and stays so after it's lifted, so a row a thumb scrolled from would stay
-   looked at; on touch screens it's the keyboard's only.) Its title in the experiments' colour,
-   and its line nearer the text's own: darker by day, lighter by night. */
 .experiment:focus-visible h2 {
   color: var(--c);
 }
@@ -78,6 +72,7 @@ handwritten_font: true
   color: color-mix(in srgb, var(--midground-color) 35%, var(--foreground-color));
 }
 
+/* Touch counts as hovering and sticks after the finger lifts, so only hover on real pointers. */
 @media (hover: hover) {
   .experiment:hover h2 {
     color: var(--c);
@@ -88,7 +83,6 @@ handwritten_font: true
   }
 }
 
-/* Where it is: all the same height, so the list reads as a list */
 .stage {
   position: relative;
   height: 17rem;
@@ -111,8 +105,6 @@ handwritten_font: true
   height: 100%;
 }
 
-/* Feel Better, Fast: an apple, which rolls away from what comes at it. Its canvas reaches
-   past it, so its shadow isn't cut off at the edge of where it can roll. */
 #apple { --sw: 24rem; --a: 1.6; }
 
 #apple canvas {
@@ -121,20 +113,14 @@ handwritten_font: true
   height: calc(100% + 4rem);
 }
 
-/* That reach mustn't widen the page */
 .experiments-page {
   overflow-x: clip;
 }
 
-/* Red is pain: a toy soldier, lying down, aiming at whatever moves */
 #soldier { --sw: 17rem; --a: 1; }
 
-/* Sumi: a little open water, inks dropped on it */
 #water { --sw: 17rem; --a: 1; }
 
-/* Bhagavad Gītā: a wheel of the Sun's chariot at Konark, carved in stone, lying on the page.
-   Swept round by the pointer, it turns, heavily, and slows and stops. Its shadow's a copy of it,
-   darkened and softened, a little way off from the window; turned with it, and not moved. */
 #gita { --sw: 14rem; --a: 1; }
 
 #gita img {
@@ -157,8 +143,6 @@ handwritten_font: true
   filter: brightness(0) blur(0.15rem) opacity(0.6);
 }
 
-/* ---- Phones: still beside what it is, smaller, so it reads as a list ---- */
-
 @media (max-width: 768px) {
   .experiments-page {
     padding: 1rem 1rem 3rem;
@@ -178,10 +162,8 @@ handwritten_font: true
     width: min(100%, var(--sw), 9.5rem * var(--a));
   }
 
-  /* It doesn't roll away from a finger, so it needn't be given room to */
   #apple { --a: 1.15; }
 
-  /* The water and the wheel a little smaller, to weigh as the others do */
   #water { --sw: 8.5rem; }
   #gita { --sw: 8.75rem; }
 

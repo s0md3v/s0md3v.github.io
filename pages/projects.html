@@ -18,7 +18,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
 ---
 
 <style>
-/* All paper: the window's the sheet */
 @media screen and (min-width: 769px) {
   html {
     background: var(--background-color) var(--paper-grain);
@@ -29,11 +28,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   }
 }
 
-/* One list: the few that are his best, in his order, each with what it's for and how it does it,
-   then everything else people know him by, a line each, in the order up top. Opposite each name,
-   as a date is opposite a job, how many like it, and its star, which is what he eats
-   (assets/js/trail.js): he goes down the stars, and each he's been past is left an outline, with
-   bits of the bait between them. */
 .field {
   font-size: var(--reading-size);
   line-height: 1.6;
@@ -41,7 +35,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   width: 100%;
   margin: 0 auto;
   padding: 3em 1.25em 3em;
-  /* The stars' column, his, and the counts', each right after its star */
   --gutter: 2.2em;
   --count: 2.7em;
   --line-x: calc(100% - var(--count) - var(--gutter) / 2);
@@ -73,7 +66,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
 .project + .project {
   margin-top: 0.5em;
 }
-/* The proud ones well apart, and the rest a little further from them still */
 .shown + .shown {
   margin-top: 2.4em;
 }
@@ -89,7 +81,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   font-weight: 400;
   color: var(--heading-color);
 }
-/* A featured one's name, a size up and heavier, and what it is as bright as it */
 .shown .name {
   font-size: 1.2em;
   font-weight: 600;
@@ -111,20 +102,16 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
     text-underline-offset: 0.2em;
   }
 }
-/* Every one's first line the same: its name, and what it is after it */
 .label {
   margin-left: 0.4em;
   color: var(--midground-color);
 }
-/* Under a featured one's, why there's call for it and how it goes about it: the only thing that
-   sets it apart, besides its name's weight */
 .about {
   margin: 0.35em 0 0;
   max-width: 34em;
   color: var(--midground-color);
   text-wrap: pretty;
 }
-/* Its star in his column, on the middle of the name's small letters, and its count after it */
 .project .stars {
   display: contents;
 }
@@ -146,7 +133,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   margin-top: calc((1.55em - 0.95em) / 2 + 0.03em);
   color: var(--c);
 }
-/* Where there's less room, the count's under its star, so the words have the room */
 @media (max-width: 768px) {
   .field {
     --count: 0em;
@@ -159,7 +145,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
     grid-column: 2;
     justify-self: center;
     align-self: start;
-    /* Below the star, in its own ems */
     margin-top: calc(((1.55em - 0.95em) / 2 + 0.03em + 0.95em + 0.12em) / 0.7);
     font-size: 0.7em;
     line-height: 1.2;
@@ -170,18 +155,15 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   .shown .stars > span[aria-hidden="true"] {
     margin-top: calc(((1.55em - 0.95em) / 2 + 0.03em + 0.13em + 0.95em + 0.12em) / 0.7);
   }
-  /* A featured one's what-it-is gets a line of its own under its name, rather than breaking across two */
   .shown .label {
     display: block;
     margin: 0.1em 0 0;
     line-height: 1.35;
   }
 }
-/* A featured one's line's taller, its name being bigger, so its star's a little lower */
 .shown .stars svg {
   margin-top: calc((1.55em - 0.95em) / 2 + 0.03em + 0.24em);
 }
-/* Eaten, it's only the shape of one: been there, not empty */
 .project .stars svg.eaten {
   color: color-mix(in srgb, var(--muted-color) 70%, transparent);
 }
@@ -198,8 +180,7 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   }
 }
 
-/* Between the stars, the bait: bits of what's under the page, drawn as it's drawn (_raw/bits.py),
-   no two quite alike. Eaten, they're gone. */
+/* Drawn as the bits are in _raw/bits.py */
 .trail {
   position: absolute;
   z-index: 1;
@@ -224,7 +205,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   height: 0.29em;
   background-image: var(--bit-3);
 }
-/* At night, lit up enough to be seen at a glance */
 .dark-mode .bit {
   filter: var(--bit-lift) brightness(2.4) saturate(0.8);
 }
@@ -232,9 +212,7 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   visibility: hidden;
 }
 
-/* What he's after at the end: a star of the stuff the bait is, the homepage's dish's (_raw/bits.py).
-   By day a dark gel, wet, with the window in it and a bottle's green where it's thin; by night the
-   same, lit from inside by a speck or two. Lit from the top left, so it doesn't turn. */
+/* The stuff the bait is, as in the homepage's dish (_raw/bits.py) */
 :root {
   --bit-1: url("{{ '/assets/images/bits/' | relative_url }}bit1-day.svg");
   --bit-2: url("{{ '/assets/images/bits/' | relative_url }}bit2-day.svg");
@@ -249,15 +227,12 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   --chunk-star: url("{{ '/assets/images/bits/' | relative_url }}chunk-star-night.svg");
   --bit-lift: drop-shadow(0 0 0.25em rgb(128 196 136 / 0.5));
 }
-/* How alive they are */
 @keyframes alive {
   0%, 80%, 100% { scale: 1; }
   88% { scale: 1.14 0.92; }
   94% { scale: 0.96 1.06; }
 }
 
-/* All of that was to get him here: the big one, at the end of the trail, in his column, the last
-   line in line with the rest */
 .today {
   position: relative;
   margin: calc(var(--between) + 0.5em) 0 0;
@@ -269,7 +244,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
 .today::before {
   content: "";
   position: absolute;
-  /* On the middle of the small letters beside it, as each star is by its project */
   top: calc(50% + 0.1em);
   left: var(--line-x);
   width: 1.9em;
@@ -288,8 +262,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   animation: none;
 }
 
-/* The line it's on, which has been there all along, lying however it fell. It's on the page like
-   anything else that's on the page. */
 @media (min-width: 1160px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .today::after {
     content: "";
@@ -312,7 +284,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
 }
 
 
-/* He follows the trail at his own pace, eating what's on it: 13 pixels across */
 .pac {
   position: absolute;
   z-index: 3;
@@ -322,7 +293,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   height: calc(13 * var(--pixel));
   margin: calc(-6.5 * var(--pixel)) 0 0 calc(-6.5 * var(--pixel));
   pointer-events: none;
-  /* Lit from the top left, whichever way he's facing, and his shadow's pixels too */
   filter: drop-shadow(var(--pixel) var(--pixel) 0 rgba(var(--sheet-shadow), 0.3));
 }
 .pac[hidden] {
@@ -337,7 +307,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
 .pac path {
   fill: #f7b000;
 }
-/* Standing, his mouth's open. Walking, it's open, half shut, shut, half open, and again. */
 .pac .half,
 .pac .shut {
   opacity: 0;
@@ -364,7 +333,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
   50% { opacity: 1; }
 }
 
-/* It's the one from the dish on the homepage. Nothing's keeping it there. */
 .fizz {
   position: fixed;
   z-index: 4;
@@ -399,7 +367,6 @@ rest: [uro, Corsy, roop, Striker, ReconDog, Silver, Hash-Buster, AwesomeXSS, Be-
         {%- include stars.html count=project.stars %}
       </li>
       {%- endfor %}
-      {%- comment -%} Then the rest of what most people know him by, in the order up top {%- endcomment -%}
       {%- assign picks = site.data.projects | where_exp: "p", "p.featured != true" %}
       {%- assign known = picks | concat: site.data.repos | where_exp: "p", "p.stars >= 1000" %}
       {%- assign rest = "" | split: "" %}

@@ -1,30 +1,16 @@
-/* The Projects page. He goes down the page as you read it, eating what's on the way, and at the
-   bottom there's something waiting for him: Fizz, from the dish on the homepage. Nothing's keeping
-   it there. It's the same animal (assets/js/fizz.js): what's here is only what it's after, and
-   where it's living. */
 (function () {
   const { clamp, ease, rand, turn, bell, NP, SUB } = Fizz;
 
-  // ---- What's under the page ----
-
   function underThePage(host) {
     const BODY = 90, MAX_STRANDS = 26;
-    // Its tentacles are as thick here as you'd expect of it, close to
     const REACH_VOL = Math.PI * 3 * 3 * 170;
-    // What each arm's worth, against what he's worth. All his thrashing comes down to these.
     const PULL = 15, THRUST = 1500, DRAG = 5;
-    // The scene. It's fishing. A hair of it has lain from the big one off the bottom of the page
-    // all along, with nothing else to see. He bites, it clamps onto his face, the line goes taut
-    // and two arms have him at once. He breaks the line, and what was on his face goes with it,
-    // and two more come. But he has his mouth back now: he bites through two, two more come, and
-    // he bites through those, and he's all but free. So it stops sending them two at a time.
     const BOLTS = [{ at: 1.6, cut: 0, line: true }, { at: 2.45, cut: 2 }, { at: 3.15, cut: 2 }];
     const MORE = [{ at: 2.8, arms: 2 }, { at: 3.5, arms: 6 }];
     const LEAN = [0.5, -0.5, 0.95, -0.95, 0.2, -0.2, 0.7, -0.7, 1.2, -1.2, 0.35, -0.35];
     const REEL_AT = 4.5;
     const YANK = 0.22;
-    // Bits are what they are in the dish, which is drawn at about 0.7 of this. How high one goes
-    // stays in the dish's units, because that's what swells it and lifts its shadow.
+    // Bits are drawn at 0.7 of the dish's size; HOP stays in the dish's units because that's what swells a bit and lifts its shadow.
     const BIT = 0.7, HOP = 34;
     const CANVAS = 560;
 
@@ -42,9 +28,7 @@
     let prey = null, sated = 0;
     let canvas = null, dpr = 1, top = 0;
     let last = 0, acc = 0;
-    // Ready to be drawn on the graphics card well before it's wanted, and not as it comes up.
-    // Then it's drawn once, by day and by night, where it can't be seen, as the first time
-    // anything's drawn costs the most, and that shouldn't be as he bites.
+    // Pre-draw once by day and by night while unseen: the first draw costs the most and shouldn't land on the bite.
     fizz.prepare().then(on => {
       if (!on) return;
       if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 2000 });
@@ -68,36 +52,28 @@
 
     const rest = () => innerHeight + BODY * 1.2;
 
-    // Each takes hold in its own place, close round him, and works at it. The first two were on
-    // their way before he bit: they set off from the edge of the window.
     function spawnReach(ready) {
       if (strands.length >= MAX_STRANDS - 1) return;
       const s = fizz.reach(prey, { toward: edge(prey.x, prey.y).a, lean: LEAN[prey.sent++ % LEAN.length], vol: REACH_VOL, hold: [8, 13] }), R = at(s.a, 5);
       if (ready) s.u = clamp((R[1] - innerHeight) / Math.hypot(prey.x - R[0], prey.y - R[1]), 0, 0.6);
     }
-    // He's strong enough to part one, at the neck. What's thrown off, thrown clear of him, finds
-    // its own way back.
     function parted(s) {
       const o = (NP - 1) * 2;
       fling(s.pos[o], s.pos[o + 1], 30, 80);
       fling(s.pos[o], s.pos[o + 1], 30, 80);
       if (s === line) loose();
     }
-    // The line's taken up at the start, and at the end it's hand over hand
     function haul(s, Lr, dt) {
       if (s.kind === 'line') Lr = Math.max(40, Lr - (prey.t < YANK ? 260 : 0) * dt);
       if (prey.reeling && s.kind === 'reach') Lr = Math.max(24, Lr - (50 + 300 * ease(0, 1.3, prey.reeling)) * dt);
       return Lr;
     }
 
-    // ---- The line ----
-
     function layLine(to) {
       const s = fizz.sprout('line', UP), [x0, y0] = at(UP, 5);
       s.state = 'attached';
       s.wave = 140;
       s.vol = Math.PI * 0.7 * 0.7 * 200;
-      // The lie of it on the page, the same as the one drawn there until now
       const from = to.y + 12;
       for (let i = 0; i < NP; i++) {
         const f = i / (NP - 1), y = y0 + (to.y - y0) * f, v = clamp((y - from) / (innerHeight - from), 0, 1);
@@ -113,7 +89,6 @@
       drops.push({ x, y, r: rand(2.6, 4.2) * BIT, t: rand(0, 3), phase: rand(0, 6.28), dx: x1 - x, dy: y1 - y, sq: 1, up: 0, land: 0, step: 0,
         state: 'air', flight: 0, time: 0.36, x0: x, y0: y, x1, y1 });
     }
-    // The line goes, and what's in his mouth, and two more are on their way
     function loose() {
       line = null;
       for (let i = 0; i < 16; i++) fling(gag.x, gag.y, 24, 120);
@@ -124,8 +99,6 @@
       spawnReach();
       spawnReach();
     }
-    // What he bit. It's gone into his mouth and round his face, thickest over the mouth, with a
-    // couple of knuckles in it, and it's drawn out toward whatever's pulling on it.
     const FACE = 15, ROUND = 1.9, GRIP = 40;
     function grip(c) {
       const d = gag, m = prey.face - Math.PI / 2, f = ease(0, 0.1, d.t), pull = line ? clamp(line.stretch - 1, 0, 0.6) : 0;
@@ -146,11 +119,8 @@
       }
       c.closePath();
     }
-    // A bit goes home the way it gets home in its dish: it inches along, and gathers itself and
-    // jumps, and lands, and inches along, and goes back into the body where it gets to it
     function stepDrop(d, dt) {
       d.t += dt;
-      // What's in his mouth is going wherever he goes
       if (d.state === 'gag') {
         const mx = Math.sin(prey.face), my = -Math.cos(prey.face);
         d.x = prey.x + mx * (FACE + 11);
@@ -158,7 +128,6 @@
         d.r = 8;
         return;
       }
-      // Past the bottom of the window it's as good as home
       if (d.y > innerHeight + 6) { d.dead = true; return; }
       fizz.trace(d, dt);
       if (d.state === 'crouch') {
@@ -166,7 +135,6 @@
         d.sq = 1 + 0.75 * (1 - Math.max(d.wait, 0) / d.crouch) + d.land;
         if (d.wait > 0) return;
         const e = edge(d.x, d.y);
-        // It's come up over it while it was getting ready
         if (e.d < 4) { d.dead = true; ripple(e.a, 1); return; }
         const far = Math.min(e.d + 8, rand(33, 41) * BIT);
         Object.assign(d, { state: 'air', flight: 0, x0: d.x, y0: d.y, x1: d.x - e.nx * far, y1: d.y - e.ny * far, time: 0.42, dx: -e.nx, dy: -e.ny });
@@ -174,7 +142,7 @@
       if (d.state === 'air') {
         const f = fizz.flight(d, dt);
         d.up = HOP * 4 * f * (1 - f);
-        d.sq = 1 + 0.5 * Math.abs(1 - 2 * f);     // Drawn out as it goes, round at the top
+        d.sq = 1 + 0.5 * Math.abs(1 - 2 * f);
         if (f < 1) return;
         d.up = 0;
         d.state = 'crawl';
@@ -182,8 +150,6 @@
         d.crawl = rand(0.5, 1.1);
       }
       const e = edge(d.x, d.y), pulse = Math.sin(d.t * 9) ** 2, speed = (34 + 96 * pulse) * BIT, wob = Math.sin(d.t * 11 + d.phase) * 22 * BIT;
-      // It lands going the way it was going, and stretched that way, and comes round to home from
-      // there. In the dish that's always the same way, so it never has to.
       const heading = Math.atan2(d.dy, d.dx), home = heading + turn(Math.atan2(-e.ny, -e.nx) - heading) * (1 - Math.exp(-dt * 5));
       d.dx = Math.cos(home); d.dy = Math.sin(home);
       d.x += (d.dx * speed - d.dy * wob) * dt;
@@ -196,9 +162,6 @@
       }
     }
 
-    // ---- The fight ----
-    // He's a body like any other: what he's doing, against what the arms that have got him are
-    // doing, and he tires. It takes hold, he pulls away, it takes hold again.
     function fight(dt) {
       const t = prey.t += dt;
       const arms = strands.filter(s => s.kind === 'reach');
@@ -231,7 +194,6 @@
         for (const s of prey.breaks.arms) {
           if (s.state !== 'attached' || s.pinch) continue;
           s.pinch = 1e-4;
-          // Where he's got it, right up by his mouth
           if (s !== line) s.neckS = 0.9;
         }
         prey.breaks = null;
@@ -244,16 +206,12 @@
         prey.nextDash = prey.dashUntil + rand(0.08, 0.2);
       }
       let ax = 0, ay = 0;
-      // With nothing on him he's only got what he was already doing
       if (stuck && t < prey.dashUntil) {
-        // There's only so far he can get, with all that on him
         const tired = (1 - 0.5 * ease(0, 5, t)) * (prey.reeling ? 0.4 : 1) * (t < prey.boltUntil ? 2.6 : 1) * ease(620, 480, Math.hypot(prey.x - blob.x, prey.y - blob.y));
         ax += prey.dx * THRUST * tired;
         ay += prey.dy * THRUST * tired;
         if (!line && !biting) prey.face += turn(Math.atan2(prey.dx, -prey.dy) - prey.face) * (1 - Math.exp(-dt * 26));
       }
-      // On the line, his mouth goes where the line goes, whichever way he's trying to get away, and
-      // when he's going to bite something it goes to that
       const pulled = line || biting;
       if (pulled) {
         const o = (NP - 2) * 2;
@@ -273,8 +231,6 @@
 
       if (edge(prey.x, prey.y).d < -10 || prey.y > innerHeight + 40) swallow();
     }
-    // There's nothing to it but it's closing over him, and he goes on down inside it, which by
-    // night you can see, till there's nothing of him to see
     function swallow() {
       const a = edge(prey.x, prey.y).a;
       meal = { x: prey.x, y: prey.y, face: prey.face, t: 0, move: prey.move, gone: prey.gone };
@@ -282,7 +238,6 @@
       prey = null;
       fizz.focus = null;
       sated = fizz.time;
-      // A window that shrinks can have him under before he's broken the line
       if (line) { line.kind = 'piece'; line.state = 'recoil'; line = null; }
       if (gag) { drops.splice(drops.indexOf(gag), 1); gag = null; }
       ripple(a, 2);
@@ -299,7 +254,6 @@
       else blob.take *= Math.exp(-dt * 2.5);
       if (meal) {
         meal.t += dt;
-        // Faster than the surface comes down after him, so it never lets go of him
         const k = 1 - Math.exp(-dt * 6);
         meal.x += (blob.x - meal.x) * k;
         meal.y += (blob.y - BODY * 0.25 - meal.y) * k;
@@ -312,7 +266,6 @@
       fizz.move(dt);
     }
 
-    // Across the page, which is narrower than the window by a scrollbar where there is one
     function fit() {
       const height = Math.min(innerHeight, CANVAS);
       dpr = Math.min(devicePixelRatio || 1, 2);
@@ -346,9 +299,7 @@
       if (meal) meal.move(meal.x, meal.y, meal.face, 1 - ease(0.1, 0.8, meal.t));
       glow.night = host.night();
       fizz.draw();
-      // It's the canvas's now, from the frame it's drawn on
       if (bait) { bait.take(); bait = null; }
-      // Nothing to wait for, and nothing still out
       if (!prey && !meal && !strands.length && !drops.length && (!tracks.length || !glow.night) && blob.y > rest() - 2) return close();
       requestAnimationFrame(frame);
     }
@@ -375,8 +326,6 @@
     };
   }
 
-  // ---- Him ----
-
   const chart = document.querySelector('.chart');
   if (!chart || !chart.trail) return;
   const pac = chart.querySelector('.pac');
@@ -384,7 +333,6 @@
   const header = document.querySelector('header');
   const wide = matchMedia('(min-width: 1160px)');
   const mouse = matchMedia('(hover: hover) and (pointer: fine)');
-  // Where he is is how far along the trail he's got (assets/js/trail.js)
   let trail = chart.trail;
   let s = 0;
   let angle = 180;
@@ -401,8 +349,7 @@
     return;
   }
 
-  // Level one of the arcade game: 60.6 pixels a second, and he's 13 across. Off-screen is the
-  // only time he goes any faster.
+  // Arcade level one: 60.6 px/s for a sprite 13 px across.
   const SPEED = (60.6 / 13) * pac.offsetWidth;
 
   let food = [];
@@ -424,23 +371,18 @@
     }
   };
 
-  // Everything he can eat, by how far along it is. When the page reflows he stays where he is on
-  // it: past the end is the end, and whatever's now behind him has been eaten.
   function survey() {
     const y = trail.at(s).y;
     trail = chart.trail;
     const { end } = trail;
     stop = trail.sAtY(end.y - end.height / 2 - 13);
     food = [...trail.bits];
-    // With nothing under the page to stop him, he gets the big one too
     if (!wide.matches || !mouse.matches) food.push({ el: end.el, s: trail.sAtY(end.y - end.height), y: end.y - end.height });
     s = Math.min(trail.sAtY(y), stop);
     eat();
     place();
   }
 
-  // On to the last thing there is to eat on the screen, and there he waits for more. With nothing
-  // left in sight he stays where he is, if that's somewhere he can be seen.
   function wanted() {
     const bar = header.getBoundingClientRect();
     const t = top();
@@ -455,7 +397,6 @@
     return trail.sAtY(clamp(trail.at(s).y, Math.min(innerHeight * 0.25 - t, floor), floor));
   }
 
-  // He faces the way the trail goes, or back up it
   const swing = (facing, dt) => {
     angle += (((facing - angle + 540) % 360) - 180) * Math.min(1, dt * 18);
   };
@@ -463,7 +404,6 @@
   function walk(time) {
     const dt = Math.min(0.05, (time - last) / 1000 || 0.016);
     last = time;
-    // Nobody's watching him off-screen, so he's only ever just out of sight
     const t = top();
     const seenAt = trail.at(s).y + t;
     if (seenAt < -40 || seenAt > innerHeight + 40) {
@@ -513,7 +453,6 @@
   function snatch() {
     taken = true;
     const box = pac.getBoundingClientRect();
-    // Out of the cut, into the hand that's got him
     chart.append(pac);
     const where = chart.getBoundingClientRect();
     const { end } = trail;
@@ -522,7 +461,6 @@
     pac.style.left = '0';
     pac.style.top = '0';
     pac.style.transform = `translate(${box.left + box.width / 2}px, ${box.top + box.height / 2}px)`;
-    // Open, with that in it
     pac.classList.remove('walking');
     under.strike(box.left + box.width / 2, box.top + box.height / 2, bait, (x, y, facing, seen) => {
       pac.style.transform = `translate(${x}px, ${y}px)`;
@@ -533,8 +471,6 @@
     });
   }
 
-  // He comes out from under the navigation, which is over him, and well under it, since the page
-  // can still settle a little. On a phone that's at the bottom, so he comes in from the top.
   const bar = header.getBoundingClientRect().bottom;
   s = trail.sAtY((bar < innerHeight / 2 ? bar : 0) - pac.offsetHeight - 2 - top());
   survey();

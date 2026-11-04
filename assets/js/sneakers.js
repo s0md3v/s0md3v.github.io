@@ -1,21 +1,11 @@
-/* The sneakers on /taste can be picked up, a little. Lift one and Fizz comes in from the edge of
-   the page, taps the sign on the shelf (twice, in case you hadn't read it), and they're all stuck
-   down with what it's made of, squeezed out from under each. They stay that way till you come back:
-   pulled at, one comes up a little, and the glue under it stretches, and lets it back down.
-
-   Fizz isn't on the page till then: it's fetched when one's first taken hold of. Only where
-   there's a mouse, a shelf (on phones it's a row you swipe) and nothing against things moving. */
 (function () {
   const shelf = document.querySelector('.shelf-sneakers');
   if (!shelf || !matchMedia('(hover: hover) and (pointer: fine) and (min-width: 601px) and (prefers-reduced-motion: no-preference)').matches) return;
   const sign = shelf.querySelector('.shop-sign .sign-card');
   const shoes = [...shelf.querySelectorAll('.thing:not(.shop-sign) .thing-picture img')];
   const FIZZ = document.currentScript.dataset.fizz;
-  // How far it'll come up before it's noticed, as how far the mouse has gone up
   const NOTICED = 6, GIVE = 0.35, MOST = 14;
-  // and once it's stuck, as far as it'll come, and how hard it is to get it there
   const STUCK = 9, PULL = 40;
-  // free, then caught (while Fizz is seeing to it), then glued
   let loading = null, state = 'free';
   const stuckDown = new Map();
 
@@ -55,7 +45,6 @@
         img.removeEventListener('pointercancel', up);
         if (img.hasPointerCapture(e.pointerId)) img.releasePointerCapture(e.pointerId);
       };
-      // Let go before it was noticed, and it's put back
       const up = () => { end(); drop(img); };
       img.addEventListener('pointermove', move);
       img.addEventListener('pointerup', up);
@@ -68,9 +57,6 @@
     img.style.translate = img.style.rotate = '';
   }
 
-  // ---- Stuck ----
-
-  // Held on to, as it would be, and let go when it's let go
   function hold(img, e, move, up) {
     img.setPointerCapture(e.pointerId);
     img.classList.add('held');
@@ -86,7 +72,6 @@
     img.addEventListener('pointercancel', end);
   }
 
-  // Pulled at, it gives less the further it's come, and it's never more than a little
   function pull(img, e) {
     const g = stuckDown.get(img);
     if (!g) return;
@@ -95,15 +80,12 @@
     hold(img, e, ev => pose(img, g, STUCK * (1 - Math.exp(-Math.max(from - ev.clientY, 0) / PULL))), () => settle(img, g));
   }
 
-  // Where it is, and the strings of glue between its sole and the shelf, thinner as they stretch.
-  // It tips back on its toe, so they're longest at the heel.
   function pose(img, g, lift) {
     g.lift = lift;
     const rot = lift * 0.15, s = Math.sin((rot * Math.PI) / 180);
     img.style.translate = `0 ${(-lift).toFixed(2)}px`;
     img.style.rotate = `${rot.toFixed(2)}deg`;
     for (const t of g.strings) {
-      // (up's less: its top goes a little into the sole)
       const yt = -lift + (t.x - g.toe) * s - t.under - 1.5, yb = -2.5, len = yb - yt;
       if (len < 1.5) { t.el.setAttribute('d', ''); continue; }
       const w = Math.max(0.45, Math.min(t.wb, t.wt) * 0.55 * Math.min(1, 4 / len)), ym = (yt + yb) / 2;
@@ -112,7 +94,6 @@
     }
   }
 
-  // Let go, it's pulled back down, a little past where it was, and settles
   function settle(img, g) {
     const from = g.lift, t0 = performance.now();
     const tick = now => {
@@ -131,25 +112,18 @@
     g.settling = requestAnimationFrame(tick);
   }
 
-  // A double tap, as a finger does it: there, then drawn back a bit and struck, then drawn back
-  // less and struck again, quicker. How far back it is, t seconds in, as a share of the most, and
-  // when it strikes. (The same in assets/js/lost.js, where it taps the bar.)
-  // Each strike aims a little past where it lands, as the tip's always a moment behind where
-  // it's going, and stays there a beat, so it's seen to land.
+  // Same curve as assets/js/lost.js.
   const TAP = [[0, 0], [0.22, 1], [0.31, -0.15], [0.38, 0], [0.47, 0.55], [0.53, -0.15], [0.6, 0]], HITS = [0.31, 0.53];
   function tap(t) {
     for (let i = 1; i < TAP.length; i++) {
       const [t0, v0] = TAP[i - 1], [t1, v1] = TAP[i];
       if (t >= t0 && t < t1) {
         const f = (t - t0) / (t1 - t0);
-        // Drawn back easing off, and struck gathering speed
         return v0 + (v1 - v0) * (v1 > v0 ? 1 - (1 - f) * (1 - f) : f * f);
       }
     }
     return 0;
   }
-
-  // ---- The glue ----
 
   const NS = 'http://www.w3.org/2000/svg', rand = (a, b) => a + Math.random() * (b - a);
   const el = (name, attrs, parent) => {
@@ -161,8 +135,6 @@
   const f1 = n => n.toFixed(1);
   let glues = 0;
 
-  // How far up from the bottom of its picture a shoe's sole is, at x across it (in pixels on the
-  // page): the lowest of it that's solid, read off the picture
   function sole(img) {
     const w = img.naturalWidth, h = img.naturalHeight, k = img.offsetHeight / h, c = document.createElement('canvas');
     c.width = w;
@@ -180,21 +152,16 @@
     return px => low[Math.max(0, Math.min(w - 1, Math.round((px / img.offsetWidth) * w)))];
   }
 
-  // Under one shoe, squeezed out from under its sole and along it, then run over the front of the
-  // shelf in a drip or a few. No two the same. Drawn in pixels, with the top of the shelf at 0.
   function glue(img, delay) {
     const pic = img.parentElement, thing = pic.closest('.thing'), id = `glue-${glues++}`;
-    // Measured from where it is on the shelf, not where it's been lifted to
     const W = pic.clientWidth, left = img.offsetLeft, width = img.offsetWidth;
     const style = getComputedStyle(thing);
     const heel = parseFloat(style.getPropertyValue('--heel')) || 0, toe = parseFloat(style.getPropertyValue('--toe')) || 1;
-    // Along the sole, from its heel to its toe, and a little past them
     const x0 = left + width * heel - rand(2, 7), x1 = left + width * toe + rand(2, 7);
     const svg = el('svg', { class: 'glue', viewBox: `0 -8 ${W} 40`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
     const grad = el('linearGradient', { id, gradientUnits: 'userSpaceOnUse', x1: 0, y1: -5, x2: 0, y2: 22 }, el('defs', {}, svg));
     [[0, '--g-top'], [0.22, '--g-mid'], [0.7, '--g-mid'], [1, '--g-edge']].forEach(([o, v]) => el('stop', { offset: o, style: `stop-color: var(${v})` }, grad));
 
-    // The bead: lumpy along the top, where it's come up the sole, and flat where it's on the shelf
     const n = Math.max(3, Math.round((x1 - x0) / rand(10, 18))), top = [];
     for (let i = 0; i <= n; i++) top.push([x0 + ((x1 - x0) * i) / n, i === 0 || i === n ? -1.2 : -rand(2, 4.8)]);
     const mid = (a, b) => `${f1((a[0] + b[0]) / 2)} ${f1((a[1] + b[1]) / 2)}`;
@@ -203,12 +170,9 @@
     d += ` Q${f1(x1 + 2)} ${f1(top[n][1])} ${f1(x1)} 1.8 Q${f1(x1)} 3.2 ${f1(x1 - 3)} 3.2 L${f1(x0 + 3)} 3.2 Q${f1(x0)} 3.2 ${f1(x0)} 1.8Z`;
     const bead = el('g', {}, svg);
     el('path', { d, fill: `url(#${id})` }, bead);
-    // and the light on it, somewhere along its top
     const sx = rand(x0 + 8, x1 - 20);
     el('ellipse', { cx: f1(sx), cy: -1.6, rx: f1(rand(4, 11)), ry: 0.8, fill: 'var(--g-shine)' }, bead);
 
-    // The strings it makes when the shoe's pulled at, nothing till it is. Each goes up to the
-    // underside of the sole, which isn't flat, and only where that's down on the shelf.
     const under = sole(img), strings = [];
     for (let tries = 0; strings.length < 3 + Math.floor(Math.random() * 3) && tries < 60; tries++) {
       const x = rand(x0 + 6, x1 - 6), u = under(x - left);
@@ -217,8 +181,6 @@
     for (const t of strings) t.el = el('path', { fill: `url(#${id})` }, svg);
     stuckDown.set(img, { strings, toe: left + width * 0.8, lift: 0, settling: 0 });
 
-    // The drips: none to three, not too close together, some only over the shelf's edge and some
-    // hanging under it, each a neck and a drop
     const drips = [], want = [0, 1, 1, 2, 2, 2, 3][Math.floor(Math.random() * 7)];
     for (let tries = 0; drips.length < want && tries < 30; tries++) {
       const x = rand(x0 + 10, x1 - 10);
@@ -238,7 +200,6 @@
     });
     pic.append(svg);
 
-    // It comes out from under the sole and spreads along it, thick, then settles
     bead.style.transformBox = 'fill-box';
     bead.style.transformOrigin = '50% 100%';
     bead.animate([
@@ -247,7 +208,6 @@
       { transform: 'scale(0.92, 1.08)', offset: 0.7 },
       { transform: 'scale(1, 1)' },
     ], { duration: rand(550, 800), delay, easing: 'cubic-bezier(0.25, 0.6, 0.3, 1)', fill: 'both' });
-    // and once there's enough of it at the edge, it runs: quick at first, then slow, as it thins
     for (const g of falls) {
       g.style.transformBox = 'fill-box';
       g.style.transformOrigin = '50% 0';
@@ -258,9 +218,6 @@
       ], { duration: rand(900, 2000), delay: delay + rand(250, 700), easing: 'cubic-bezier(0.5, 0, 0.3, 1)', fill: 'both' });
     }
   }
-
-  // ---- Fizz ----
-
 
   async function comes(img) {
     const { SUB, NP } = Fizz;
@@ -284,7 +241,6 @@
     addEventListener('resize', fit);
     glow.night = !!document.querySelector('.dark-mode');
     glow.n = glow.night ? 1 : 0;
-    // The shoe's held where it got to while it's drawn on the graphics card, if that's quick
     await Promise.race([fizz.prepare(), new Promise(r => setTimeout(r, 800))]);
 
     function step(dt) {
@@ -292,20 +248,15 @@
       age += dt;
       fizz.stir(dt);
       const card = sign.getBoundingClientRect();
-      // From the right-hand edge of the page, level with the sign, half of it in sight
       peek += ((leaving < 0 ? 1 : 0) - peek) * (1 - Math.exp(-dt * (leaving < 0 ? 5 : 3)));
       blob.x = innerWidth + R * (1.4 - 1.9 * peek);
       blob.y = card.top + card.height * 0.45;
       if (age > 0.3 && img.classList.contains('held')) drop(img);
-      // An arm that goes straight there and holds its shape, more finger than rope: no swing on the
-      // way, and none of the ripple along it
       if (age > 0.45 && !arm) {
         arm = fizz.reach(target, { hold: [0, 0] });
         arm.wig = 0.1;
         arm.wave = 0;
       }
-      // A double tap on the top of the sign, on Fizz's side of it, short of the middle, drawn back
-      // along itself towards Fizz and up between; it rocks with each
       if (arm && arm.state === 'attached' && tapped < 0) tapped = age + 0.25;
       const since = tapped < 0 ? -1 : age - tapped, back = 24 * tap(since);
       target.x = card.left + card.width * 0.72 + back * 0.75;
@@ -314,14 +265,10 @@
       for (const h of HITS) if (since > h) rock -= 5 * Math.exp(-(since - h) * 6) * Math.sin((since - h) * 24);
       sign.style.rotate = since >= 0 && since < 2 ? `${(-2 + rock).toFixed(2)}deg` : '';
       if (arm) arm.vol = glow.night ? 4200 : 1500;
-      // and kept taut once it's there, never longer than the way from Fizz to the sign, so it
-      // doesn't sag and swing as it taps
       if (arm && arm.state === 'attached') {
         const [rx, ry] = fizz.at(arm.a, 5);
         arm.rest = Math.min(arm.rest, (Math.hypot(target.x - rx, target.y - ry) * 1.04) / (NP - 1));
       }
-      // Then they're stuck down, and it goes
-      // from Fizz's end of the shelf outwards
       if (tapped >= 0 && since > 0.75 && !glued) {
         glued = true;
         shelf.classList.add('glued');
@@ -329,7 +276,6 @@
           const a = s.getBoundingClientRect();
           glue(s, Math.hypot(a.left + a.width / 2 - card.left, a.bottom - card.bottom) * 0.45 + rand(0, 80));
         }
-        // and once it's set, they can be pulled at again, for all the good it does
         setTimeout(() => { state = 'glued'; shelf.classList.add('can-lift'); }, 1800);
       }
       if (tapped >= 0 && since > 2.1 && leaving < 0) {
@@ -351,7 +297,6 @@
         canvas.remove();
         return;
       }
-      // Looking out, at the sign
       if (peek > 0.02) fizz.peer(eyes, blob.x - R * 0.55, blob.y, R, -1, 0, R * 0.05, peek);
       fizz.draw();
       requestAnimationFrame(frame);

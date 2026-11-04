@@ -3,10 +3,8 @@
 require "cgi"
 require "json"
 
-# jekyll-seo-tag HTML-escapes every string it writes, then puts those same strings in its
-# JSON-LD, so a search engine reads "Magika &amp; Bullying AI". JSON isn't HTML: here the
-# strings in each JSON-LD block are unescaped and the block written out again. A block that
-# isn't JSON is left as it was. "</" stays escaped, so a string can't close the script.
+# jekyll-seo-tag HTML-escapes the strings it puts in its JSON-LD, so a search engine reads
+# "Magika &amp; Bullying AI". They're unescaped here; "</" stays escaped so a string can't close the script.
 module JsonLd
   BLOCK = %r{(<script type="application/ld\+json">)(.*?)(</script>)}m.freeze
 

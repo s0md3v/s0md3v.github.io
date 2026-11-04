@@ -5,14 +5,12 @@ import yaml
 import time
 from email.utils import parsedate_to_datetime
 
-# Use GitHub Token from environment
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 USERNAME = "s0md3v"
 REQUEST_TIMEOUT = 20
 REQUEST_RETRIES = 4
 PYPI_REQUEST_DELAY = 2
 
-# Projects published by/associated with the s0md3v PyPI profile.
 PYPI_PROJECTS = [
     "antar",
     "arjun",
@@ -52,7 +50,6 @@ ARCHIVE_KEEP = {
     "awesomexss": "Payloads, tricks and references for finding XSS",
     "striker": "Offensive information gathering and vulnerability scanner",
 }
-# Written up on the blog
 ARCHIVE_POSTS = {"dishtance": "dishtance"}
 # When a repository's life really began, where that isn't when it was created
 ARCHIVE_YEARS = {"esprima2": 2025}
@@ -181,11 +178,10 @@ def main():
     
     total_github_clones = 0
     for repo in repos:
-        # Skip forks to get accurate personal impact
         if not repo['fork']:
             clones = get_repo_clones(repo['full_name'])
             total_github_clones += clones
-            time.sleep(0.1) # Be nice to the API
+            time.sleep(0.1)
             
     print(f"GitHub Clones (14 days): {total_github_clones}")
     
@@ -201,7 +197,6 @@ def main():
     # Estimate Monthly Impact: GitHub Clones (14d * 2.1 to approximate 30d) + PyPI (Monthly)
     monthly_impact = int(total_github_clones * 2.1) + total_pypi_downloads
     
-    # Formatting for the website (e.g., 102k+, 120k+, 2M+)
     def format_number(n):
         if n >= 1000000:
             return f"{n / 1000000:.1f}M+".replace(".0", "")
@@ -215,7 +210,6 @@ def main():
 
     stats = {
         "total_stars": format_number(total_stars),
-        # Exact, for the Pi on the homepage to show
         "github_stars": total_stars,
         "monthly_downloads": format_downloads(monthly_impact),
         "total_projects": len([r for r in repos if not r['fork'] and r['stargazers_count'] > 100]),
@@ -224,13 +218,11 @@ def main():
     
     print(f"Calculated Stats: {stats}")
     
-    # Ensure _data directory exists
     os.makedirs("_data", exist_ok=True)
     
     with open("_data/stats.json", "w") as f:
         json.dump(stats, f, indent=2)
         
-    # Update projects.yaml with fresh star counts
     if os.path.exists("_data/projects.yaml"):
         with open("_data/projects.yaml", "r") as f:
             projects = yaml.safe_load(f)

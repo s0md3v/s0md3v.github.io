@@ -1,23 +1,19 @@
-# Everything on /taste. `opening` is any writing at the top and `closing` at the bottom (markdown);
-# `sections` are the rest, in order. Most things in a section need only a title and a slug (its picture is
-# assets/images/taste/<slug>-<width>.webp, made by _raw/taste_images.py). Everything else is optional:
+# Everything on /taste. `opening` and `closing` are markdown at the top and bottom; `sections` are the rest, in order.
+# A thing needs only a title and a slug (picture: assets/images/taste/<slug>-<width>.webp, made by _raw/taste_images.py).
 #   meta: a little more, under the title (an author, "s1 only!")
-#   note: what he'd say about it, written beside it in his pen. Each line of it is a line as he'd
-#         write it (a note is never wrapped for him), so break it where he'd pause. Two things
-#         side by side shouldn't both have notes, or they read as one line
+#   note: what he'd say about it, in his pen beside it. Each line is as he'd write it (never wrapped), so break
+#         where he'd pause. Two things side by side shouldn't both have notes, or they read as one line
 #   mark: favourite | recommend, a sticker on it saying "fav" or "start here"
 #   sticker: a sticker of his own, for what's worth knowing before you start ("s1 only!")
 #   note_above: written above its picture, outside it, not beside it
 #   url:  where it can be had, if it's something to read, watch or visit online
 #   mm:   for a thing he uses or wears, how wide it is as it's pictured, so they're at their own sizes
-#   foot: for a sneaker, where in its picture (0 to 1 across) a foot would sit in it, heel to toes:
-#         inside the heel counter and the toe box, not the midsole bulging past them. They're all
-#         his size, so it's the feet that are made the same length, and a chunky shoe looks it.
-#         Judged by eye from the pictures
+#   foot: for a sneaker, where in its picture (0 to 1 across) a foot would sit, heel to toes: inside the heel
+#         counter and the toe box, not the midsole bulging past them. Judged by eye; they're all his size,
+#         so the feet are made the same length
 
 updated: 2026-11-03
 
-# What he's up to lately, said at the end of the page
 closing: |
   Right now I'm building an app for your first brain, the one in your head. I'm also reading
   sociology after a long stretch of psychology (political theory is next), and learning
@@ -200,42 +196,6 @@ sections:
     - title: Converse Chuck Taylor All Star Throwback
       slug: chuck-taylor-throwback
       foot: [0.03, 0.9]
-
-# Use, put away for now
-# - section: Use
-#   items:
-#     - title: MX Keys
-#       slug: mx-keys
-#       mm: 430
-#     - title: MX Master 3S
-#       slug: mx-master-3s
-#       mm: 84
-#     - title: Vivo X100 Pro
-#       slug: vivo-x100-pro
-#       mm: 120
-#     - title: Sony WH-1000XM5
-#       slug: sony-wh-1000xm5
-#       mm: 175
-#     - title: Tangzu Wan'er S.G
-#       slug: tangzu-waner
-#       mm: 70
-#     - title: Machenike G5 Pro
-#       slug: machenike-g5-pro
-#       mm: 155
-#   machine:
-#     - name: CPU
-#       value: Intel i7-12700K
-#       note: best in class, circa 2020
-#     - name: GPU
-#       value: AMD Radeon RX 6900 XT
-#       note: this thing can render anything
-#     - name: Desk
-#       value: 6 ft, custom-built
-#     - name: OS
-#       value: Arch Linux, and Windows for games
-#     - name: Browser
-#       value: Firefox
-#       note: no google + ublock origin = bliss
 
 - section: Browse
   items:

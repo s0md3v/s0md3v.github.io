@@ -1,9 +1,4 @@
-/* Fizz. Nearly black by day, shy of the light, and curious. By night it glows, and it's lit as a
-   light would be: what shines through it adds up along the line of sight, and it sparks where
-   it's stirred, like the sea does.
-
-   This is the animal and none of where it lives. A page makes one and gives it a canvas, runs its
-   own clock, and says what it's after:
+/* Fizz.
 
      const fizz = Fizz({ body: 50 });
      fizz.mount(canvas);
@@ -13,13 +8,10 @@
 
    An arm that goes to something and stays there is fizz.reach({ x, y, present: true }). A pair of
    eyes is fizz.eyes(), drawn with fizz.drawEyes(), on any canvas, or on it with fizz.peer().
-   Where something's in front of it, fizz.hole = [[x, y], ...]. Nothing else is drawn on its
-   canvas: with WebGL, what's seen is another one. It's the same animal on every page: what's
-   different goes in as options, at the top of Fizz().
+   Where something's in front of it, fizz.hole = [[x, y], ...].
 
    The way its tentacles move is adapted from Venom Button by exteestudio, which draws them in
-   3D with WebGL; here they're flat, drawn with WebGL where there's WebGL, and on a canvas
-   where there isn't.
+   3D with WebGL; here they're flat.
 
    MIT License. Copyright (c) 2026 exteestudio
 
@@ -44,7 +36,6 @@
   const rand = (a, b) => a + Math.random() * (b - a);
   const turn = a => Math.atan2(Math.sin(a), Math.cos(a));
   const bell = (x, w) => Math.exp(-((x / w) ** 2));
-  // A canvas, at the size a browser gives one till it's told otherwise
   const layer = (w = 300, h = 150) => { const el = document.createElement('canvas'); el.width = w; el.height = h; return el; };
 
   const NP = 14, SUB = 1 / 120, ITER = 3;
@@ -53,13 +44,9 @@
   const rgb = c => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
   const DARK = [17, 46, 34], THIN = [46, 132, 92];
   const shine = alpha => `rgba(232, 240, 255, ${alpha})`;
-  // What it's full of. Each has its own place in the body, as a share of the way to the edge
-  // and an angle, so that they stay in it however it changes shape. They're soft dots, added
-  // to what's under them: a little light by day, and all the light there is by night.
   const sprite = colour => {
     const c = layer(32, 32);
-    // Kept in memory, not on the graphics card: they never change, so it's handed a copy once,
-    // and not a canvas of its own to go and look at, hundreds of times a frame
+    // willReadFrequently: sprites never change and are read hundreds of times a frame, so keep them in memory.
     const x = c.getContext('2d', { willReadFrequently: true }), g = x.createRadialGradient(16, 16, 0, 16, 16, 16);
     g.addColorStop(0, `rgba(${colour}, 1)`);
     g.addColorStop(0.3, `rgba(${colour}, 0.55)`);
@@ -69,18 +56,9 @@
     return c;
   };
   const SOFT = sprite('190, 236, 165');
-  // By night: its own light, a firefly's green, softened by the gel it comes through; the gel,
-  // all but black; and the lamp in the room
   const GLOW = sprite('128, 196, 136');
   const LIT = '128, 196, 136', DEEP = [12, 20, 16], LAMP = '255, 232, 206';
 
-  // ---- On the graphics card ----
-
-  // A canvas draws one thing at a time, and handing each to the graphics card is a lot of work
-  // for the browser: the many hundred a frame there are of them here is more than some machines
-  // keep up with. Where there's WebGL it's all worked out here instead, in a couple of dozen
-  // goes, and only the finished picture is put on the page's canvas. The same shapes, worked
-  // out by what each pixel is from them, and not by tracing their outlines.
   const GLSL = `#version 300 es
 precision highp float;
 precision highp int;
@@ -101,7 +79,6 @@ float stops(float t, float a0, float m, float am, float a1) {
   return t < m ? mix(a0, am, t / m) : mix(am, a1, (t - m) / (1. - m));
 }
 `;
-  // The body's outline, as how far out it is at each angle: with and without what it's taking in
   const BODY_FN = `
 uniform highp sampler2D u_rad;
 uniform vec3 u_body;
@@ -132,7 +109,6 @@ in vec2 v_e;
 out vec4 o;
 void main() { o = v_c * clamp(v_e.y + .5 - abs(v_e.x), 0., 1.); }
 `;
-  // Dots, strokes, ellipses (sharp, or as soft as a shadow) and rings, as many as there are at once
   const INST_VS = `
 in vec4 i_a;
 in vec4 i_b;
@@ -211,7 +187,6 @@ void main() {
   gl_Position = place(v_w);
 }
 `;
-  // The body, and what's in it and on it
   const BODY_FS = `
 in vec2 v_w;
 out vec4 o;
@@ -259,7 +234,6 @@ void main() {
   o = vec4(u_col.rgb * a, a);
 }
 `;
-  // A shape a page draws for itself, given as its corners: filled, or lit inside its edge
   const POLY_FS = `
 in vec2 v_w;
 out vec4 o;
@@ -300,14 +274,12 @@ void main() {
   const FULL_VS = `
 void main() { vec2 q = vec2(gl_VertexID & 1, gl_VertexID >> 1); gl_Position = vec4(q * 2. - 1., 0., 1.); }
 `;
-  // From one picture to another: where a pixel of this one is, on the page and in another
   const PASS = `
 uniform vec4 u_tgt;
 out vec4 o;
 vec2 full() { return (vec2(gl_FragCoord.x, u_tgt.x - gl_FragCoord.y) - u_tgt.z) * u_tgt.y; }
 vec2 uvAt(vec2 p, vec4 m) { vec2 q = p / m.x + m.w; return vec2(q.x / m.y, 1. - q.y / m.z); }
 `;
-  // A blur, one way at a time, as wide as it likes in each channel. Past the edge there's nothing.
   const BLUR_FS = `
 uniform sampler2D u_src;
 uniform vec2 u_dir;
@@ -384,8 +356,6 @@ void main() {
 }
 `;
 
-  // Everything that's drawn with, on a canvas of its own. Null where there's no WebGL, or only
-  // one that's done without a graphics card, which is slower than a canvas.
   function kit(el) {
     let gl = null;
     try {
@@ -408,9 +378,7 @@ void main() {
       const at = new Map();
       return { p, parts, u(n) { if (!at.has(n)) at.set(n, gl.getUniformLocation(p, n)); return at.get(n); } };
     }
-    // Asking whether a program's built waits for it to be, which can be seconds the first time
-    // a page is seen. Where it's allowed, they're built while the page goes on, and it's drawn
-    // on the canvas till they are.
+    // Querying program status blocks (seconds on first visit): build in parallel, draw on the canvas until ready.
     const quick = gl.getExtension('KHR_parallel_shader_compile');
     let P, done = false;
     K.ready = () => {
@@ -469,7 +437,7 @@ void main() {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     };
-    // How far out the body is, all the way round: it's on unit 0, for good
+    // Bound to texture unit 0 permanently.
     const N = 384, radData = new Float32Array(N * 2), rad = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, rad);
@@ -481,8 +449,6 @@ void main() {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
     sampling(gl.NEAREST);
 
-    // Pictures to draw on, by name: `f` times smaller than the canvas, with `m` of their pixels
-    // to spare all round
     const T = new Map();
     let frame = 0, cur = null, S = 1, top = 0, bx = 0, by = 0;
     const screen = { fb: null, w: 0, h: 0, f: 1, m: 0 };
@@ -516,7 +482,6 @@ void main() {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
     }
-    // Only so much of it, given in the canvas's pixels as [x0, y0, x1, y1]
     function only(R) {
       if (!R) { gl.disable(gl.SCISSOR_TEST); return; }
       const t = cur, c = (v, n) => (v < 0 ? 0 : v > n ? n : v);
@@ -525,7 +490,6 @@ void main() {
       gl.enable(gl.SCISSOR_TEST);
       gl.scissor(x0, t.h - y1, Math.max(x1 - x0, 0), Math.max(y1 - y0, 0));
     }
-    // Over what's there, added to it, the more of the two, in place of it, or taken out of it
     function blend(mode) {
       if (mode === 'none') { gl.disable(gl.BLEND); return; }
       gl.enable(gl.BLEND);
@@ -556,7 +520,6 @@ void main() {
 
     Object.assign(K, {
       N, radData, screen, target, to, wipe, only, blend,
-      // A frame: the canvas's size, `s` pixels to a unit, `y` its top, and where the body is
       begin(W, H, s, y, x0, y0) {
         frame++;
         K.W = W; K.H = H; S = s; top = y; bx = x0; by = y0;
@@ -611,8 +574,6 @@ void main() {
         gl.uniform3f(p.u('u_soft'), 190 / 255, 236 / 255, 165 / 255);
         quad();
       },
-      // A blur of `src` over R, `sig` wide in each channel in the canvas's pixels, done on a
-      // smaller picture where it's wide enough that that's all the same
       gauss(name, src, sig, R, cap = 6) {
         const most = Math.max(...sig);
         if (most < 0.3) return src;
@@ -635,7 +596,6 @@ void main() {
         }
         return out;
       },
-      // Half the size, once a frame
       down(src, R) {
         const t = target(src.name + '/', src.f * 2, src.fmt);
         if (t.frame !== frame) {
@@ -704,11 +664,9 @@ void main() {
     const area = opts.area || (() => [canvas.width / (dpr * scale), canvas.height / (dpr * scale)]);
     const aside = opts.aside || (() => 1000), under = opts.under || 0;
     const MOUND = opts.mound || 1;
-    // Where along an arm it's all arm and no longer body
     const rooted = s => (opts.root ? Math.min(1, opts.root / Math.max(s.len, 1)) : 1);
     let canvas = null, ctx = null, shape = null, sil = null, low = null, lo = null, spill = null, pool = null, cut = null, cutter = null;
     let scale = 1, dpr = 1, top = 0, sinceNight = 0, lastNight = 0;
-    // For a page: eyes to draw on top of it once, and where it's hidden, as corners
     let peering = null, hole = null;
 
     let time = opts.time ?? rand(0, 100), flow = opts.flow ?? rand(0, 50), aware = 0, focus = null, probeAt = opts.probeAt || 0;
@@ -716,26 +674,20 @@ void main() {
     const blob = { x: 0, y: 0, tx: 0, ty: 0, next: 0, lean: 0, la: 0, grow: 1, size: 1, sizeV: 0, over: 0, smear: 0, take: 0, takeAt: 0, ...opts.blob };
     const glow = { x: -0.53, y: -0.85, cast: [8, 12, 4], touch: [1, 1, 1], shadow: '28, 34, 44', night: null, n: 0, stirred: 0.25 };
 
-    // ---- The body: a wandering outline, drawn out towards whatever's got its attention ----
-
     function radius(a) {
       const t = time * 1.5, R = BODY * blob.grow * blob.size;
       let r = R * (1 + 0.085 * Math.sin(2 * a + t * 0.31 + 1) + 0.06 * Math.sin(3 * a - t * 0.23 + 2) +
         0.034 * Math.sin(5 * a + t * 0.41) + 0.016 * Math.sin(8 * a - t * 0.7 + 4));
-      // Flung, it spreads along the way it's going, and more of it drags behind than goes ahead.
-      // It's only as much of it as there was, so it's thinner for being longer.
       if (blob.smear > 0.01) {
         const c = Math.cos(a - blob.la), s = Math.sin(a - blob.la), along = 1 + blob.smear * (c > 0 ? 0.8 : 1.5), across = 1 / (1 + blob.smear * 0.75);
         r /= Math.sqrt((c * c) / (along * along) + (s * s) / (across * across));
       }
       if (blob.lean > 0.001) r += blob.lean * R * 0.3 * bell(turn(a - blob.la), 0.62);
       for (const s of strands) if (s.mound > 0.05 && s.pin === 'anchor') r += s.mound * bell(turn(a - s.a), 0.13 + 0.09 * s.elong);
-      // Taking something in: the surface comes up round it and closes over
       if (blob.take > 0.5) r += blob.take * bell(turn(a - blob.takeAt), 0.58);
       for (const w of ripples) r += w.amp * 7 * Math.exp(-w.age * 4) * bell(turn(a - w.a), 0.3 + w.age);
       return opts.bound ? opts.bound(r, a) : r;
     }
-    // Where a point is, from the body: nearest point on its edge, which way's out, how far off
     function edge(x, y) {
       const dx = x - blob.x, dy = y - blob.y, L = Math.hypot(dx, dy) || 1e-3, a = Math.atan2(dy, dx), r = radius(a);
       return { a, nx: dx / L, ny: dy / L, d: L - r };
@@ -744,7 +696,6 @@ void main() {
       const r = radius(a) - inset;
       return [blob.x + Math.cos(a) * r, blob.y + Math.sin(a) * r];
     };
-    // Stirred, it lights up, and the light spreads through it from there as a wave
     function flash(x, y, amp) {
       flashes.push({ x, y, amp, age: 0 });
       if (flashes.length > 4) flashes.shift();
@@ -754,8 +705,6 @@ void main() {
       ripples.push({ a, age: 0, amp });
       if (ripples.length > 6) ripples.shift();
     }
-
-    // ---- Strands ----
 
     function sprout(kind, a) {
       const s = {
@@ -773,10 +722,6 @@ void main() {
       }
       return s;
     }
-    // An arm, after something, which is anything with an x and a y and `present`, and it goes on
-    // following it for as long as it moves. Each takes hold in its own place, close round it, and
-    // works at it, `hold` being how close. Left alone it stays there, as it only lets go if it's
-    // told to, or if it's been given `snap` and pulled too far.
     function reach(target, { toward = edge(target.x, target.y).a, lean = 0, vol = Math.PI * 2.5 * 2.5 * 170, hold = [2, 6] } = {}) {
       const lat = lean + rand(-0.1, 0.1), s = sprout('reach', toward + lat);
       s.lat = lat;
@@ -786,7 +731,6 @@ void main() {
       strands.push(s);
       return s;
     }
-    // Short hairs that stand up all over the side facing what it's after, and never catch it
     function hair(target, toward) {
       if (strands.length >= MAX_STRANDS - 4) return;
       const lat = rand(-1, 1) * 1.1, s = sprout('micro', toward + lat);
@@ -797,7 +741,6 @@ void main() {
       s.vol = Math.PI * 0.7 * 0.7 * 40;
       strands.push(s);
     }
-    // Left alone: two or three thin strands curl out, glide along, and sink back
     function probe() {
       const dir = Math.random() < 0.5 ? -1 : 1, n = Math.random() < 0.5 ? 2 : 3;
       probeAt += rand(1.6, 4.7);
@@ -836,7 +779,6 @@ void main() {
       }
       return out;
     }
-    // It parts at the neck: the base whips home, the tip unwinds, and falls, and crawls back
     function split(s) {
       const k = s.neckS * (NP - 1), o = (NP - 1) * 2;
       const base = { ...s, kind: 'piece', state: 'recoil', pin: 'anchor', pinch: 0,
@@ -850,7 +792,6 @@ void main() {
       ripple(s.a, 0.8);
       flash(...at(s.a, 4), 1);
       if (opts.parted) opts.parted(s, base, tip);
-      // The tip gets a turn this substep and the base doesn't. Drawn as it is, it isn't there.
       taper(base, base.len);
     }
     function release(absorb) {
@@ -861,21 +802,17 @@ void main() {
       }
     }
 
-    // A swelling, on its way along a tentacle that's got hold of something, from it to the body
     const pulse = (s, sp) => {
       const beat = (time * (0.7 + 0.5 * clamp(s.stretch - 1, 0, 1)) + s.phase) % 1.5;
       return bell(sp - (1.2 - beat), 0.1);
     };
 
-    // Where the tip of each kind wants to be, and a page can add its own. Null, and it's let go.
     const aims = {
       reach(s, R, dt) {
         const h = s.hold, to = s.target, k = 1 - Math.exp(-dt * 24);
         h.a += h.spin * dt;
-        // It's dragged along by what it's got hold of, a moment behind it
         h.x += (to.x + Math.cos(h.a) * h.r - h.x) * k;
         h.y += (to.y + Math.sin(h.a) * h.r - h.y) * k;
-        // Sticky feet: its root peels along the surface towards it
         if (s.state === 'attached') s.a += turn(edge(to.x, to.y).a + s.lat - s.a) * (1 - Math.exp(-dt * 1.4));
         return [h.x, h.y];
       },
@@ -911,7 +848,6 @@ void main() {
       if (T) {
         const L0 = Math.hypot(T[0] - R[0], T[1] - R[1]);
         if (s.state === 'grow') {
-          // A little wind-up, then a lunge that overshoots and latches
           const f = 3.8 * 0.95, z = 0.5, r = -0.2;
           const k1 = z / (Math.PI * f), k2 = 1 / ((2 * Math.PI * f) ** 2), k3 = (r * z) / (2 * Math.PI * f);
           const xd = s.uKick ? 1 / dt : 0;
@@ -939,7 +875,6 @@ void main() {
           if (SNAP && s.kind === 'reach' && !s.pinch && (s.stretch > SNAP.stretch * s.snapMul || L0 > SNAP.len * s.lenMul)) s.pinch = 1e-4;
         }
       } else if (s.state === 'recoil') {
-        // Back along its own path, fast at first, easing in, like a rubber band
         s.retract += dt;
         const Ln = Math.max(0, s.len * Math.exp(-dt * 9) - (s.pin === 'free' ? 160 : 110) * dt);
         truncate(s, Ln);
@@ -982,7 +917,6 @@ void main() {
           if (wa) { pos[a] += dx * wa / ws; pos[a + 1] += dy * wa / ws; }
           if (wb) { pos[b] -= dx * wb / ws; pos[b + 1] -= dy * wb / ws; }
         }
-        // Muscular: it won't kink
         for (let i = 0; i < NP - 2; i++) {
           const a = i * 2, b = a + 4;
           let dx = pos[b] - pos[a], dy = pos[b + 1] - pos[a + 1];
@@ -1001,7 +935,6 @@ void main() {
       s.len = L;
       taper(s, L);
 
-      // The surface is drawn out in a cone along the pull
       let moundT = 0, elongT = 0;
       if (s.pin === 'anchor') {
         if (s.state === 'grow') { moundT = 7; elongT = 0.9; }
@@ -1017,7 +950,6 @@ void main() {
         if (s.pin === 'anchor' && s.kind !== 'micro') ripple(s.a, 0.5);
       }
     }
-    // Thin as it's stretched, necking where it'll part, and beading once it's nearly gone
     function taper(s, L) {
       const rMean = clamp(Math.sqrt(s.vol / (Math.PI * Math.max(L, 2))), 0.6, s.state === 'recoil' ? 5 : 7);
       const held = s.state === 'attached';
@@ -1036,9 +968,6 @@ void main() {
       }
     }
 
-    // Bits are a page's business, as how they get home depends on what's in the way. These are
-    // the parts that don't: a bit leaves a track behind it and gets over landing, whatever it's
-    // doing, and it goes through the air in a straight line, seen from above.
     function trace(d, dt) {
       if (d.up < 0.5 && (d.step += dt) > 0.05) {
         d.step = 0;
@@ -1054,10 +983,6 @@ void main() {
       return f;
     }
 
-    // ---- Keeping it going, in this order or a page's own ----
-
-    // What's going on inside it, which goes faster the more it's got to mind. `calm`'s what its
-    // light settles to.
     function stir(dt, calm = 0.25 + 0.6 * blob.over) {
       flow += dt * (1 + 2 * aware + 2.5 * blob.over);
       glow.n = glow.night ? glow.n + (1 - glow.n) * (1 - Math.exp(-dt * 2.5)) : 0;
@@ -1077,12 +1002,7 @@ void main() {
       while (ripples.length && ripples[0].age > 1.6) ripples.shift();
     }
 
-    // ---- Drawing ----
-
     const world = (c, k, x = 0) => c.setTransform(k, 0, 0, k, x, -top * k);
-    // How far what's drawn goes, in its own units, as [left, top, right, bottom]. The canvas is
-    // a lot bigger than it is, and a blur costs as much as what it's over, so the shadows and
-    // the glow are only worked out over as much of it as there's something in.
     const ext = [0, 0, 0, 0], hull = [0, 0, 0, 0];
     const reset = () => { ext[0] = ext[1] = Infinity; ext[2] = ext[3] = -Infinity; };
     const cover = (x0, y0, x1, y1) => {
@@ -1091,7 +1011,6 @@ void main() {
       if (x1 > ext[2]) ext[2] = x1;
       if (y1 > ext[3]) ext[3] = y1;
     };
-    // A shape a page draws for itself, traced and not drawn, for how far it goes
     const tracer = {
       beginPath() {}, closePath() {},
       moveTo(x, y) { cover(x, y, x, y); }, lineTo(x, y) { cover(x, y, x, y); },
@@ -1101,8 +1020,6 @@ void main() {
       ellipse(x, y, rx, ry) { const r = Math.max(rx, ry); cover(x - r, y - r, x + r, y + r); },
       rect(x, y, w, h) { cover(Math.min(x, x + w), Math.min(y, y + h), Math.max(x, x + w), Math.max(y, y + h)); },
     };
-    // Those bounds, in a canvas's pixels at k of them to a unit, with a pixel or two to spare,
-    // as [x, y, w, h]. Null if there's nothing in it.
     function rect(e, k, pad, c) {
       const x0 = Math.max(Math.floor(e[0] * k) - pad, 0), y0 = Math.max(Math.floor((e[1] - top) * k) - pad, 0);
       const x1 = Math.min(Math.ceil(e[2] * k) + pad, c.width), y1 = Math.min(Math.ceil((e[3] - top) * k) + pad, c.height);
@@ -1113,12 +1030,10 @@ void main() {
       const x0 = Math.max(r[0] - by, 0), y0 = Math.max(r[1] - by, 0);
       return [x0, y0, Math.min(r[0] + r[2] + by, c.width) - x0, Math.min(r[1] + r[3] + by, c.height) - y0];
     };
-    // A part of a smaller canvas, drawn over the same part of a bigger one
     const blowUp = (c, from, r) => {
       const kx = canvas.width / from.width, ky = canvas.height / from.height;
       c.drawImage(from, r[0], r[1], r[2], r[3], r[0] * kx, r[1] * ky, r[2] * kx, r[3] * ky);
     };
-    // What's been drawn on each layer, so that's all that's cleared off it
     let silAt = null, loAt = null, spillAt = null;
     const OUTLINE = 84, ox = new Float32Array(OUTLINE), oy = new Float32Array(OUTLINE);
     function outline() {
@@ -1134,7 +1049,6 @@ void main() {
       }
       hull[0] = x0; hull[1] = y0; hull[2] = x1; hull[3] = y1;
     }
-    // Through the middles of the sides, so it's smooth
     function closed(c, inset = 0, fresh = true) {
       const n = OUTLINE;
       const x = i => { i = (i + n) % n; return ox[i] + (blob.x - ox[i]) * inset; };
@@ -1144,8 +1058,6 @@ void main() {
       for (let i = 0; i < n; i++) c.quadraticCurveTo(x(i), y(i), (x(i) + x(i + 1)) / 2, (y(i) + y(i + 1)) / 2);
       c.closePath();
     }
-    // A tentacle as it's seen: smoothed, as its joints only have to behave as a whole, and with
-    // more points through it, so that it's a tube, however it bends
     const VP = (NP - 1) * 3 + 1, vx = new Float32Array(VP), vy = new Float32Array(VP), vr = new Float32Array(VP);
     const sx = new Float32Array(NP), sy = new Float32Array(NP);
     function view(s) {
@@ -1167,7 +1079,6 @@ void main() {
         vr[i] = s.rad[j] + (s.rad[j + 1] - s.rad[j]) * t;
       }
     }
-    // Down one side of it and back up the other, `width` times as far out as it's thick
     const edgeX = new Float32Array(VP * 2), edgeY = new Float32Array(VP * 2);
     function edges(width) {
       for (let i = 0; i < VP; i++) {
@@ -1179,7 +1090,6 @@ void main() {
         const j = VP * 2 - 1 - i;
         edgeX[j] = vx[i] + ty * r; edgeY[j] = vy[i] - tx * r;
       }
-      // Its curves keep inside the points they're drawn through
       const tr = vr[VP - 1] * width;
       let x0 = vx[VP - 1] - tr, y0 = vy[VP - 1] - tr, x1 = vx[VP - 1] + tr, y1 = vy[VP - 1] + tr;
       for (let i = 0; i < VP * 2; i++) {
@@ -1203,8 +1113,6 @@ void main() {
       c.arc(vx[VP - 1], vy[VP - 1], vr[VP - 1] * width, 0, 6.29);
       c.fill();
     }
-    // What's worked out once a frame is handed to whichever way it's being drawn: a soft dot, as
-    // (which, x, y, radius, alpha), or a line, as (x0, y0, x1, y1, width, colour, alpha)
     const puts = c => (img, x, y, h, a) => { c.globalAlpha = a; c.drawImage(img, x - h, y - h, h * 2, h * 2); };
     const lines = c => (x0, y0, x1, y1, w, colour, a) => {
       c.strokeStyle = `rgba(${colour}, ${a.toFixed(3)})`;
@@ -1215,8 +1123,6 @@ void main() {
       c.stroke();
     };
     const SHINE = '232, 240, 255';
-    // Scattered through a dome: seen from above, most of them are where it's deepest, and
-    // `depth` is how far under its surface each one is
     const MOTES = Array.from({ length: 260 }, () => {
       let x, y, z;
       do { x = rand(-1, 1); y = rand(-1, 1); z = rand(0, 1); } while (x * x + y * y + z * z > 1);
@@ -1224,11 +1130,6 @@ void main() {
       return { rho: rho * 0.96, depth: Math.sqrt(1 - rho * rho) - z, th: Math.atan2(y, x), spin: rand(0.05, 0.2) * (Math.random() < 0.8 ? 1 : -1),
         size: Math.random() < 0.1 ? rand(2.6, 4.4) : rand(1, 2.4), ph: rand(0, 6.28), rate: rand(0.5, 1.6), bright: rand(0.3, 1), spark: 0, ready: 0, store: 1 };
     });
-    // By night, what sets a speck off is being pushed about, as it is in the sea: by the body
-    // moving, by an arm at work near it, by a touch, or by the wave from where it was touched
-    // going through it. Left alone, one hardly ever does. A flash is over in a tenth of a second
-    // and uses up some of what it has to give, so it can't go again for a second or two, and
-    // set off over and over it gives less and less, till it's had a rest.
     let lastX = null, lastY = 0, touchX = null, touchY = 0;
     function shaken() {
       const dt = Math.max(sinceNight, 1e-3), on = focus && focus.present;
@@ -1244,13 +1145,11 @@ void main() {
       }
       return { sway, rub, work };
     }
-    // Once a frame, as they spark
     function motes(put) {
       const near = aware + blob.over, dx = Math.cos(blob.la), dy = Math.sin(blob.la), on = focus && focus.present;
       const push = glow.night ? shaken() : null;
       for (const m of MOTES) {
         const th = m.th + flow * m.spin * (1.4 - m.rho), rho = m.rho + 0.05 * Math.sin(flow * 0.4 * m.rate + m.ph), r = radius(th) * rho;
-        // They crowd towards whatever it wants
         const x = blob.x + Math.cos(th) * r + dx * near * 16 * (1 - m.rho * 0.6), y = blob.y + Math.sin(th) * r + dy * near * 16 * (1 - m.rho * 0.6);
         const twinkle = 0.55 + 0.45 * Math.sin(flow * m.rate + m.ph * 3);
         if (glow.night) {
@@ -1270,9 +1169,7 @@ void main() {
             m.ready = time + rand(1.2, 2.4);
           }
           light += m.spark;
-          // Deep down it's dimmer, and spread out by what the light's come through
           const size = m.size * (0.8 + 2.4 * m.depth), a = Math.min(light * Math.exp(-1.5 * m.depth), 1) * glow.n;
-          // It's what gives off the light, so the gel round it is lit, and more of it the deeper it is
           put(GLOW, x, y, size * (3 + 2 * m.depth), Math.min(a * 0.4, 1));
           put(SOFT, x, y, size, a);
           continue;
@@ -1282,7 +1179,6 @@ void main() {
         put(SOFT, x, y, m.size, Math.min(a, 1));
       }
     }
-    // And down a tentacle that's got hold of something, on their way home
     function streaming(s, put) {
       if (s.state !== 'attached') return;
       const strength = glow.night ? 0.5 * glow.n : 0.4;
@@ -1298,8 +1194,6 @@ void main() {
       ctx.globalAlpha = 1;
     }
 
-    // Light gets through where it's thin: by day, a bottle's green; by night, its own.
-    // Inside its skin, as it's the middle that's lit.
     const fleshAt = (s, i) => mix(DARK, THIN, ease(3.4, 0.8, s.rad[i]));
     function flesh(c, s) {
       const fill = c.createLinearGradient(vx[0], vy[0], vx[VP - 1] + 0.01, vy[VP - 1]);
@@ -1307,7 +1201,6 @@ void main() {
       c.fillStyle = fill;
       ribbon(c, 0.74);
     }
-    // Gloss down the side that faces the light, brightest where it's square on to it
     function gloss(line) {
       for (let i = 0; i + 2 < VP; i += 2) {
         const r = (vr[i] + vr[i + 2]) / 2;
@@ -1317,7 +1210,6 @@ void main() {
         line(vx[i] + nx * off, vy[i] + ny * off, vx[i + 2] + nx * off, vy[i + 2] + ny * off, Math.max(0.35, r * 0.28), SHINE, 0.1 + 0.62 * Math.abs(f) ** 1.6);
       }
     }
-    // A window, curved round the body as it'd be in a bead of oil, stretching as it stretches
     function pane(c, th0, th1, r0, r1) {
       const point = (th, rho) => {
         const r = radius(th) * rho;
@@ -1329,10 +1221,7 @@ void main() {
       c.closePath();
       c.fill();
     }
-    // What's inside the body and only adds to the light that's there is drawn on a layer of its
-    // own, cut to the body's shape once, and added in one go. Through a clip that shape, each of
-    // the hundreds of little things in it is a lot more work for a graphics card than it looks.
-    // The silhouette's done with by now, so it's the layer.
+    // Hundreds of small shapes are much slower through a clip: draw on a layer cut to the body once, then add it.
     function within(paint) {
       const at = rect(hull, dpr * scale, 2, shape);
       sil.setTransform(1, 0, 0, 1, 0, 0);
@@ -1359,7 +1248,6 @@ void main() {
       ctx.drawImage(shape, ...at, ...at);
       ctx.restore();
     }
-    // Where its light's coming from, and the little hard kick of it off the far side
     const lightAt = () => Math.atan2(glow.y, glow.x);
     function kickAt() {
       const a = lightAt() + Math.PI + 0.7 + 0.2 * Math.sin(time * 0.6), k = radius(a) * (0.66 + 0.05 * Math.sin(time * 0.8));
@@ -1376,7 +1264,6 @@ void main() {
       ctx.save();
       closed(ctx);
       ctx.clip();
-      // Faint and broad, so it's round: nothing else lifts a black thing off a black thing
       const sheen = ctx.createRadialGradient(blob.x + glow.x * r * 0.42, blob.y + glow.y * r * 0.42, 0, blob.x, blob.y, r * 1.15);
       sheen.addColorStop(0, shine(0.2));
       sheen.addColorStop(0.45, shine(0.05));
@@ -1384,13 +1271,11 @@ void main() {
       ctx.fillStyle = sheen;
       const [w, h] = area();
       ctx.fillRect(0, 0, w, h + under);
-      // The window: sky at the top of it, going dark towards the trees
       const pan = ctx.createRadialGradient(blob.x, blob.y, r * 0.5, blob.x, blob.y, r * 0.86);
       pan.addColorStop(0, shine(0.1));
       pan.addColorStop(0.45, shine(0.34));
       pan.addColorStop(1, shine(0.92));
       ctx.fillStyle = pan;
-      // What it's closing over isn't in the reflection
       const take = blob.take;
       blob.take = 0;
       ctx.shadowColor = shine(0.5);
@@ -1399,7 +1284,6 @@ void main() {
       pane(ctx, light + 0.05, light + 0.56, 0.56, 0.84);
       ctx.shadowBlur = 0;
       blob.take = take;
-      // And a small, sharp kick off the far side, moving with the surface
       const [kx, ky, ka] = kickAt();
       ctx.fillStyle = shine(0.55);
       ctx.beginPath();
@@ -1410,7 +1294,6 @@ void main() {
 
     function byDay() {
       const S = dpr * scale, body = rgb(DARK);
-      // The whole shape, once, so that its shadow's of the whole, however its parts overlap
       sil.setTransform(1, 0, 0, 1, 0, 0);
       if (silAt) sil.clearRect(...silAt);
       world(sil, S);
@@ -1449,7 +1332,6 @@ void main() {
       world(ctx, S);
       for (const s of strands) { view(s); flesh(ctx, s); }
       shaded();
-      // Going back into the body, they're under its surface, and catch no light
       for (const s of strands) {
         if (s.state === 'recoil') continue;
         view(s);
@@ -1457,8 +1339,6 @@ void main() {
         gloss(lines(ctx));
         stream2d(s);
       }
-      // Off the ground a bit's shadow comes away from it, fainter and softer the higher it is,
-      // and it's a little nearer the eye. Seen from above, that's all there is to show height.
       for (const d of drops) {
         const lift = 1 + d.up * 0.028, r = d.r * lift, a = Math.atan2(d.dy, d.dx);
         if (d.up > 0.5) {
@@ -1485,13 +1365,9 @@ void main() {
       }
     }
 
-    // How bright a stretch of tentacle is, as a share of what's deepest in the body: there's
-    // only as much light as there's stuff to give it off, so a thin one's all but dark, till
-    // the strain on it sets it off
     function glowAt(s, i, amount) {
       const strain = s.state === 'attached' ? clamp(s.stretch - 1, 0, 1) : 0, sp = i / (NP - 1);
       const a = (0.08 + 0.55 * ease(0.7, 3.6, s.rad[i]) + 0.45 * strain) * amount;
-      // It comes up out of the body, so its root's lost in the glow
       return Math.min(a, 1) * ease(0, 0.2 * rooted(s), sp);
     }
     function emission(c, s, width = 1, amount = 1) {
@@ -1501,8 +1377,6 @@ void main() {
       ribbon(c, width);
     }
 
-    // It's not even all through: there's more of what shines in some places than others, and
-    // it's slowly carried round. Soft all over, or it'd look like the parts of a cell.
     const CLOUDS = Array.from({ length: 13 }, () => ({ rho: Math.sqrt(Math.random()) * 0.72, th: rand(0, 6.28), spin: rand(0.03, 0.09), size: rand(0.3, 0.62), a: rand(0.05, 0.12), ph: rand(0, 6.28) }));
     function clouds(put, level) {
       for (const k of CLOUDS) {
@@ -1511,10 +1385,6 @@ void main() {
       }
     }
 
-    // Its surface, at night, drawn inside its outline. The light that's turned back and gets
-    // out round the rim gathers where the surface curves, and thins where it doesn't, so it
-    // comes and goes around it. And it's wet: it shows the lamp, a soft sheen along the side
-    // that faces it, with a small sharp image of the bulb in it.
     function rim(line, level) {
       for (const [width, amount] of [[7, 0.14], [2.6, 0.5]]) {
         for (let i = 0; i < OUTLINE; i++) {
@@ -1530,7 +1400,6 @@ void main() {
       c.lineCap = 'round';
       rim(lines(c), level);
       const light = lightAt(), r = radius(light), lamp = glow.n;
-      // Nothing here's got a corner: a soft patch, laid along the curve
       c.save();
       c.translate(blob.x + glow.x * r * 0.66, blob.y + glow.y * r * 0.66);
       c.rotate(light);
@@ -1543,8 +1412,6 @@ void main() {
       c.arc(0, 0, r, 0, 6.29);
       c.fill();
       c.restore();
-      // The bulb, in a gel this dark: soft-edged, laid along the curve, and no brighter than a
-      // dim lamp's image is, or it's the brightest thing there and looks like a fault
       const k = r * 0.62;
       c.save();
       c.translate(blob.x + glow.x * k, blob.y + glow.y * k);
@@ -1561,9 +1428,6 @@ void main() {
       c.restore();
     }
 
-    // A tentacle's the same stuff, with the same surface: a sharp edge down each side, where
-    // the light it's carrying gets out, coming and going along it, gone where it's thinned to
-    // a thread, and where it rises out of the body it's the body's own
     function skin(s, level, stroke) {
       const line = (at, phase) => {
         for (let i = 0; i < VP - 1; i++) {
@@ -1576,7 +1440,6 @@ void main() {
       line(i => i, 0);
       line(i => VP * 2 - 1 - i, 2.1);
     }
-    // Where it's been, by night: a fading streak behind each bit, for as long as it's going on
     function trail(line) {
       for (let i = 1; i < tracks.length; i++) {
         const t = tracks[i];
@@ -1588,9 +1451,7 @@ void main() {
     }
 
     const AWAY = 4000;
-    // A glow is a long, slow fade across very few of a screen's shades, and only some browsers
-    // dither it, so in the others it shows as bands. A grain of a shade or two either way, over
-    // all of it, breaks them up. It fades out with the glow, and it's only made once it's needed.
+    // Glow gradients band where the browser does not dither: a grain of a shade or two breaks them up.
     let grain = null;
     function makeGrain() {
       const D = Math.ceil(620 * scale * dpr);
@@ -1607,11 +1468,6 @@ void main() {
       c.putImageData(image, 0, 0);
     }
     const grainAt = D => (opts.grainAt ? opts.grainAt(D, dpr * scale) : [Math.round((canvas.width - D) / 2), Math.round((canvas.height - D) / 2)]);
-    // By night it's as it is by day, a dark gel, wet, that you can see into, and the light's in
-    // it, as an animal's is: made in specks all through it, which spark when it's stirred, like
-    // the sea does, and light the gel round them. Between them it's dark. The light that's turned
-    // back at its surface gets out round its rim, and the room's lamp is in its surface, dim.
-    // What it lights is lit from close to, which falls off fast, and keeps to its shape.
     function nightLevel() {
       sinceNight = clamp(time - lastNight, 0, 0.1);
       lastNight = time;
@@ -1622,7 +1478,6 @@ void main() {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // What it lights, under it: the body and its arms, spread three ways
       lo.setTransform(1, 0, 0, 1, 0, 0);
       if (loAt) lo.clearRect(...loAt);
       world(lo, L);
@@ -1637,7 +1492,6 @@ void main() {
       if (spillAt) pool.clearRect(...spillAt);
       pool.globalCompositeOperation = 'lighter';
       pool.shadowOffsetX = AWAY;
-      // A blur goes three times as far as it's wide, and no further
       spillAt = widen(loAt, Math.ceil(3 * 48 * L) + 2, spill);
       if (loAt) {
         [[5, 0.45], [16, 0.32], [48, 0.2]].forEach(([spread, amount]) => {
@@ -1651,7 +1505,6 @@ void main() {
       }
 
       world(ctx, S);
-      // Whatever else is there to be lit, nearest it: a ring of glass round it, lit on the near side
       const g = opts.glass && opts.glass();
       if (g) {
         const near = ctx.createRadialGradient(blob.x, blob.y, r * 0.6, blob.x, blob.y, g.far);
@@ -1663,14 +1516,12 @@ void main() {
         ctx.arc(g.x, g.y, g.r, 0, 6.29);
         ctx.stroke();
       }
-      // The gel: nearly black where it's deep, and you can see a little through it at its edge
       const deep = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, r * 1.1);
       deep.addColorStop(0, `rgba(${DEEP}, 0.96)`);
       deep.addColorStop(1, `rgba(${DEEP}, 0.8)`);
       ctx.fillStyle = deep;
       closed(ctx);
       ctx.fill();
-      // A thread of it's hardly there to see
       for (const s of strands) {
         view(s);
         const fill = ctx.createLinearGradient(vx[0], vy[0], vx[VP - 1] + 0.01, vy[VP - 1]);
@@ -1679,7 +1530,6 @@ void main() {
         ribbon(ctx);
       }
 
-      // Inside: the depth of it, lit by what's in it, then what's in it
       const inside = rect(hull, L, 2, low);
       within(c => {
         c.globalCompositeOperation = 'lighter';
@@ -1693,11 +1543,7 @@ void main() {
           lo.fillStyle = `rgb(${LIT})`;
           closed(lo);
           lo.fill();
-          // All but the middle of it, blurred, taken away. It's drawn first and blurred as a
-          // picture: a graphics card blurs a picture itself, and a shape it hands back to be
-          // drawn and blurred by the processor, which takes longer than all the rest of it.
-          // Far enough round the body that its blur's all gone by the time it gets to it, and
-          // drawn with as much again to spare round the canvas, for a body partly off it.
+          // Draw first, then blur as a picture: a shape blurred on the CPU is slower than all the rest.
           const m = 4 * r * soft + 4, P = Math.ceil(m * L) + 4;
           if (cut.width < low.width + 2 * P || cut.height < low.height + 2 * P) {
             cut.width = low.width + 2 * P;
@@ -1730,7 +1576,6 @@ void main() {
         clouds(puts(c), level);
         motes(puts(c));
         c.globalAlpha = 1;
-        // Its surface: the light turned back at its edge, and the lamp in it, as by day but dim
         surface(c, level * 0.7);
       });
       ctx.save();
@@ -1750,7 +1595,6 @@ void main() {
       blob.take = take;
       ctx.restore();
 
-      // The arms: the same gel, with the light down their middles, and the lamp down one side
       world(ctx, S);
       for (const s of strands) {
         view(s);
@@ -1773,7 +1617,6 @@ void main() {
       ctx.globalCompositeOperation = 'lighter';
       ctx.lineCap = 'round';
       trail(lines(ctx));
-      // A bit's a drop of the same: dark, with a light in it
       for (const d of drops) {
         const dr = d.r * (1 + d.up * 0.028), a = Math.atan2(d.dy, d.dx);
         if (d.up < 0.5) { ctx.globalAlpha = n * 0.14; ctx.drawImage(GLOW, d.x - dr * 3, d.y - dr * 3, dr * 6, dr * 6); }
@@ -1786,8 +1629,6 @@ void main() {
         ctx.fill();
         ctx.globalCompositeOperation = 'lighter';
         if (d.path) {
-          // A piece with a shape of its own is lit as the body is: the light turned back at its
-          // edge, inside it, and a few specks in it, wherever they've ended up
           ctx.save();
           ctx.beginPath();
           d.path(ctx);
@@ -1829,10 +1670,6 @@ void main() {
     }
     const specksOf = d => (d.specks = d.specks || Array.from({ length: 9 }, () => [rand(-22, 22), rand(-16, 16), rand(0.4, 1)]));
 
-    // ---- The same, with WebGL ----
-
-    // What's to be drawn, gathered up first: dots, strokes and ellipses in lists, the arms as
-    // triangles. Each list's one go on the graphics card.
     const batch = () => ({ f: new Float32Array(16 * 128), n: 0 });
     const shapes = () => ({ v: new Float32Array(8 * 2048), n: 0, ix: new Uint32Array(3 * 2048), k: 0 });
     const B = { sil: batch(), clip: batch(), over: batch(), add: batch(), drops: batch(), ring: batch(), skin: batch(), gloss: batch(), a: batch(), b: batch(), c: batch(), eyes: batch() };
@@ -1844,7 +1681,6 @@ void main() {
       return t;
     };
     const cSOFT = tint('190, 236, 165'), cGLOW = tint(LIT), cSHINE = tint(SHINE), cLAMP = tint(LAMP), cDARK = tint(DARK), cDEEP = tint(DEEP), cWHITE = [1, 1, 1];
-    // kind: 0 a soft dot, 1 a stroke, 2 an ellipse, 3 a ring. `clip`, to inside the body.
     function put(l, kind, clip, a0, a1, a2, a3, b0, b1, b2, b3, c, alpha) {
       if (l.f.length < (l.n + 1) * 16) { const f = new Float32Array(l.f.length * 2); f.set(l.f); l.f = f; }
       const f = l.f, i = l.n++ * 16;
@@ -1857,8 +1693,6 @@ void main() {
     const strokes = (l, clip = 0, k = 1) => (x0, y0, x1, y1, w, colour, a) => put(l, 1, clip, x0, y0, x1, y1, w / 2, 0, 0, 0, tint(colour), a * k);
     const ellipse = (l, x, y, rx, ry, rot, soft, c, a, clip = 0) => put(l, 2, clip, x, y, rx, ry, rot, soft, 0, 0, c, a);
 
-    // An arm, as triangles: the curves its sides are drawn with, across it at each point, with
-    // how far each corner is from its edge, so its edge is soft by a pixel, as a canvas's is
     const NS = VP * 2, gx = new Float32Array(NS), gy = new Float32Array(NS), hx = new Float32Array(NS), hy = new Float32Array(NS);
     const stop = new Float32Array(NP * 4), hue = [0, 0, 0];
     let fx = 0, fy = 0, fdx = 0, fdy = 0, finv = 0;
@@ -1877,7 +1711,6 @@ void main() {
       two(vx[VP - 1], vy[VP - 1], vx[VP - 1], vy[VP - 1]);
       fx = vx[0]; fy = vy[0]; fdx = vx[VP - 1] + 0.01 - fx; fdy = vy[VP - 1] - fy; finv = 1 / (fdx * fdx + fdy * fdy);
     }
-    // Its colour at a point, from the stops along it, as a canvas's gradient across it would be
     function along(x, y) {
       const t = clamp(((x - fx) * fdx + (y - fy) * fdy) * finv, 0, 1), f = t * (NP - 1), j = Math.min(Math.floor(f), NP - 2), u = f - j, a = j * 4, b = a + 4;
       hue[0] = stop[a] + (stop[b] - stop[a]) * u;
@@ -1901,7 +1734,6 @@ void main() {
       if (m.ix.length < m.k + 3) { const ix = new Uint32Array(m.ix.length * 2); ix.set(m.ix); m.ix = ix; }
       m.ix[m.k++] = a; m.ix[m.k++] = b; m.ix[m.k++] = c;
     }
-    // `width` of it, at `k` pixels to a unit
     function band(m, width, k) {
       let nx = 1, ny = 0;
       for (let i = 0; i < NS; i++) {
@@ -1913,7 +1745,6 @@ void main() {
         vert(m, x1, y1, along(x1, y1) * thin, -half - 0.5, half);
         if (i) { tri(m, v - 2, v - 1, v); tri(m, v - 1, v + 1, v); }
       }
-      // And its round end
       const x = vx[VP - 1], y = vy[VP - 1], h = vr[VP - 1] * width * k, half = Math.max(h, 0.5), thin = Math.min(2 * h, 1), out = (half + 0.5) / k;
       const c = vert(m, x, y, along(x, y) * thin, 0, half);
       for (let i = 0; i < 24; i++) {
@@ -1922,7 +1753,6 @@ void main() {
         tri(m, c, c + 1 + i, c + 1 + ((i + 1) % 24));
       }
     }
-    // A shape a page draws for itself, as its corners
     const pen = {
       buf: new Float32Array(1024), n: 0, x: 0, y: 0,
       add(x, y) { if (this.n < 512) { this.buf[this.n * 2] = x; this.buf[this.n * 2 + 1] = y; this.n++; } this.x = x; this.y = y; },
@@ -1967,14 +1797,12 @@ void main() {
       for (const k in M) M[k].n = M[k].k = 0;
       reset();
       cover(...hull);
-      // How far out the body is, all the way round, as the graphics card's to work it out from
       const N = G.N, d = G.radData, take = blob.take;
       for (let i = 0; i < N; i++) d[i * 2] = radius((i / N) * Math.PI * 2);
       blob.take = 0;
       for (let i = 0; i < N; i++) d[i * 2 + 1] = take > 0.5 ? radius((i / N) * Math.PI * 2) : d[i * 2];
       blob.take = take;
     }
-    // In the canvas's pixels, as [x0, y0, x1, y1]: kept to the canvas, unless it's `free`
     function pixels(e, pad, free) {
       const S = dpr * scale;
       let x0 = Math.floor(e[0] * S) - pad, y0 = Math.floor((e[1] - top) * S) - pad, x1 = Math.ceil(e[2] * S) + pad, y1 = Math.ceil((e[3] - top) * S) + pad;
@@ -2021,7 +1849,6 @@ void main() {
       G.begin(canvas.width, canvas.height, S, top, blob.x, blob.y);
       const R = pixels(ext, 2);
       if (R) {
-        // The whole shape, once, so that its shadow's of the whole, however its parts overlap
         const sil = G.target('sil', 1, 'r');
         G.to(sil);
         G.wipe();
@@ -2068,7 +1895,6 @@ void main() {
           paint(cGLOW, i => glowAt(s, i, amount) * level);
           band(M.em, width, S);
         }
-        // Its sides, as they are at the outermost of those
         edges(0.85);
         skin(s, level * 0.35, strokes(B.skin));
         if (s.state !== 'recoil') gloss(strokes(B.gloss, 0, 0.3 * n));
@@ -2078,7 +1904,6 @@ void main() {
       clouds(dots(B.clip, 1), level);
       motes(dots(B.clip, 1));
       rim(strokes(B.clip, 1), level * 0.7);
-      // The lamp, in its surface: a soft patch along the curve, and the bulb in it
       const k = lr * 0.62;
       put(B.clip, 0, 1, blob.x + glow.x * lr * 0.66, blob.y + glow.y * lr * 0.66, lr * 0.28, lr * 0.8, light, 0.5, 1, 0.5, tint('255, 228, 196'), 0.13 * n);
       put(B.clip, 0, 1, blob.x + glow.x * k, blob.y + glow.y * k, 3.4, 1.7, light + Math.PI / 2, 0.5, 1, 0.375, cLAMP, 0.32 * n);
@@ -2101,7 +1926,6 @@ void main() {
       }
 
       G.begin(canvas.width, canvas.height, S, top, blob.x, blob.y);
-      // What it lights, under it: the body and its arms, spread three ways
       const R = pixels(ext, 2);
       if (R) {
         const src = G.target('pool', PF, 'r');
@@ -2121,11 +1945,8 @@ void main() {
       G.only(null);
       G.blend('over');
       G.inst(B.ring);
-      // The gel, and a thread of it's hardly there to see
       G.body(1, box(), { col: [...cDEEP, 1], p: [r * 1.1, 0, 0, 0] });
       G.mesh(M.gel);
-      // Inside: the depth of it, lit by what's in it, as how far in from its edge each part is.
-      // It's done on a picture with room round it, for a body partly off the canvas.
       const Ri = pixels(hull, 2, true);
       if (Ri) {
         const sig = [0.26, 0.18, 0.08, 0.26].map(soft => r * soft * S);
@@ -2148,7 +1969,6 @@ void main() {
       G.inst(B.clip);
       G.blend('over');
       G.body(4, box(), { col: [...cLAMP, 1], q: [light, lr, 0, n] });
-      // The arms: the same gel, with the light down their middles, and the lamp down one side
       G.blend('add');
       G.mesh(M.em);
       G.inst(B.skin);
@@ -2156,7 +1976,6 @@ void main() {
       G.inst(B.gloss);
       G.blend('add');
       G.inst(B.add);
-      // A bit's a drop of the same: dark, with a light in it
       G.inst(B.a);
       G.blend('over');
       G.inst(B.b);
@@ -2170,7 +1989,6 @@ void main() {
       G.grain(x, y, D, n);
       glOver();
     }
-    // What a page has asked for on top: eyes, and a hole where something's in front of it
     function glOver() {
       G.only(null);
       if (peering) {
@@ -2191,7 +2009,6 @@ void main() {
         G.poly({ pts, n, rect: [x0 - 2, y0 - 2, x1 + 2, y1 + 2] }, 0, [1, 1, 1, 1]);
       }
     }
-    // And on the canvas
     function over() {
       if (peering) {
         world(ctx, dpr * scale);
@@ -2209,12 +2026,7 @@ void main() {
       }
     }
 
-    // On the graphics card if there's one to be had, and on the canvas if not, or if it's gone
-    // Even making a WebGL context waits on the graphics card, which is busiest as the page
-    // first comes up: so it's made once the page has loaded and frames have been coming steadily
-    // for a while, which they don't while the card's behind, or after a few seconds if they never
-    // do. Then its programs are built while the page goes on. Till all that's done it's drawn on
-    // the canvas, if it's drawn at all: prepare() says when it's done, true if it's on the card.
+    // Making a WebGL context waits on a busy GPU at page load: wait for steady frames (or ~4s). Until then, draw on the canvas. prepare() resolves true if on the GPU.
     let G = null, tried = false, waiting = null;
     function prepare() {
       if (waiting) return waiting;
@@ -2227,15 +2039,10 @@ void main() {
               since = since || now;
               calm = last && now - last < 20 ? calm + 1 : 0;
               last = now;
-              // Asked long after the page came up, as it is when it's only let out later, it's
-              // already had its time
               const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0], loaded = (nav && nav.loadEventEnd) || 0;
               if (calm >= 20 || now - since > 4000 || (loaded && now - loaded > 3000)) {
                 tried = true;
-                // A canvas of its own, which goes on the page in place of the one it was given.
-                // What's drawn is never copied from one to the other: in Firefox, whose canvases
-                // aren't on the graphics card, that's a trip back from it of the whole picture,
-                // every frame, and costs as much as a frame.
+                // Never copy between the two canvases: in Firefox that reads the whole picture back from the GPU every frame.
                 G = kit(layer(canvas ? canvas.width : 1, canvas ? canvas.height : 1));
               }
             }
@@ -2270,8 +2077,6 @@ void main() {
       }
       peering = null;
     }
-    // Its own canvas goes in just after the page's, and is whatever the page makes that one:
-    // the same class, the same style, and only there while it is. The page's is left empty.
     let shown = null;
     function show() {
       if (!shown) {
@@ -2294,14 +2099,12 @@ void main() {
       G.el.style.cssText = canvas.style.cssText;
     }
 
-    // A canvas of its own, and what goes with it
     function mount(el) {
       if (shown) { shown.disconnect(); shown = null; }
       if (G) G.el.remove();
       canvas = el;
       ctx = canvas.getContext('2d');
     }
-    // The canvases it's drawn with on a canvas, made the first time they're wanted
     function flat() {
       if (shape) return;
       shape = layer();
@@ -2315,7 +2118,7 @@ void main() {
       fit();
     }
     function fit() {
-      // Sizing a canvas clears it
+      // Sizing a canvas clears it.
       silAt = loAt = spillAt = null;
       if (!shape) return;
       shape.width = canvas.width;
@@ -2323,8 +2126,6 @@ void main() {
       low.width = spill.width = Math.ceil(canvas.width / 3);
       low.height = spill.height = Math.ceil(canvas.height / 3);
     }
-    // `w` and `h` in pixels, `zoom` being how big what it draws is, and `from` where the canvas
-    // starts, for one that's only part of the way down what it's living in
     function size(w, h, ratio = 1, zoom = 1, from = 0) {
       dpr = ratio; scale = zoom; top = from;
       canvas.width = w;
@@ -2332,18 +2133,12 @@ void main() {
       fit();
     }
 
-    // ---- Eyes ----
-
-    // Two lights, for looking out from under something. They're on whatever canvas they're given,
-    // as there's nothing to them but a place on the page.
     function eyes() {
       return { blink: 3, pair: [-1, 1].map(side => Array.from({ length: 16 }, () => {
         const a = rand(0, 6.28), d = Math.sqrt(Math.random());
         return { side, u: Math.cos(a) * d, v: Math.sin(a) * d, size: rand(0.05, 0.1), ph: rand(0, 6.28) };
       })) };
     }
-    // At x, y, for a body of radius R, facing out along nx, ny. `look`'s how far along the edge
-    // they've slid, and `open` how much of them there is.
     function drawEyes(c, e, x, y, R, nx, ny, look, open) {
       c.globalCompositeOperation = 'lighter';
       eyesOf(e, x, y, R, nx, ny, look, open, (ex, ey, size, a) => {
@@ -2361,7 +2156,6 @@ void main() {
         put(ex, ey, m.size * R * 1.1, open * (0.68 + 0.3 * Math.sin(time * 2 + m.ph)));
       }
     }
-    // The same, on top of it, the next time it's drawn, wherever it's drawn
     function peer(...at) { peering = at; }
 
     return {

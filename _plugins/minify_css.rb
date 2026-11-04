@@ -2,10 +2,6 @@
 
 require "sass-embedded"
 
-# Minifies the CSS in <style> tags in production builds. jekyll-minifier's own CSS
-# compressor is turned off (see _config.yml) because it mangles var() inside calc(), so
-# this uses Dart Sass instead, which reads it as plain CSS and leaves it meaning the same.
-# A block it can't parse is left as it was.
 module MinifyCss
   STYLE = %r{(<style\b[^>]*>)(.*?)(</style>)}m.freeze
 

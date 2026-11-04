@@ -1,7 +1,6 @@
 /* Shadows are cast by the script in index.html. --h0 is an object's thickness, in u. */
 
 :root {
-  /* A white table throws back the sky's light into its shadows, so they're cool */
   --shadow: 28, 34, 44;
   --contact-alpha: 0.5;
   --cast-alpha: 0.5;
@@ -9,11 +8,8 @@
   --ballpoint: rgb(30 45 115);
 }
 
-/* The site keeps a scrollbar on every page, so they don't shift going from a short one to a
-   long one. The table fits the window, so here, only when there's something to scroll. */
 html:has(.table) {
   overflow-y: auto;
-  /* Pulled past its ends, it's more table, not white */
   background: var(--surround-color);
 }
 
@@ -23,20 +19,13 @@ html:has(.table) {
   --cast-alpha: 0.55;
 }
 
-/* The table has its own night, whatever colour the inner pages' text is */
 .dark-mode .table {
   color: #e6e2da;
 }
 
 .table {
-  /* 1u is 1/100th of a 16:10 frame that fits the viewport; where it's the window's
-     width that limits it, a little less, so there's table to spare at the sides. On a
-     window nearly square, half a screen, it grows back towards 1vw as the window gets
-     taller, so things aren't small on a mostly empty table just before the phone's desk. */
+  /* 1u is 1/100th of a 16:10 frame that fits the viewport */
   --u: min(clamp(0.85vw, 0.44svh + 0.45vw, 1vw), 1.6svh);
-  /* Where things are: across, as on a 2:1 window, which leaves margins at the sides, or
-     a little wider with the things themselves; down, still the whole height, if not too
-     sparse */
   --uy: min(1.6svh, 1.55 * var(--u));
   --ux: min(max(0.76vw, 0.86 * var(--u)), var(--uy));
   position: relative;
@@ -53,8 +42,6 @@ html:has(.table) {
   background: #e7e7e4 url('{{ "/assets/images/table/desk.avif" | relative_url }}') 0 0 / calc(48.5 * var(--u)) calc(31.4 * var(--u));
 }
 
-/* Things on a table can't be selected, so a stray drag or Ctrl+A doesn't paint them over.
-   Only what's written on the card can, to copy. */
 .table {
   -webkit-user-select: none;
   user-select: none;
@@ -65,7 +52,6 @@ html:has(.table) {
   user-select: text;
 }
 
-/* Tapped, a thing on the table doesn't flash a box over itself */
 .table {
   -webkit-tap-highlight-color: transparent;
 }
@@ -80,18 +66,13 @@ html:has(.table) {
   color: inherit;
 }
 
-/* Undo the site-wide link hover background. Only its colour: the gallery's tape is a link. */
 .table a:hover {
   background-color: transparent;
 }
 
-/* Each thing appears, with its tape, all at once when its pictures are ready, rather than
-   its tape and shadow first. Not the card, which is drawn first, nor the switch. */
 .spawning .obj:not(#intro, #switch, .spawned) {
   visibility: hidden;
 }
-
-/* ---- Light ---- */
 
 .light,
 .dusk,
@@ -102,13 +83,10 @@ html:has(.table) {
   pointer-events: none;
 }
 
-/* Set by the script */
 .light {
   mix-blend-mode: multiply;
 }
 
-/* At night, till the script draws the lamp's light, a rough pool of it under the bulb
-   (see light() in index.html), rather than the table as it is by day */
 .dark-mode .light:empty {
   --bulb-y: calc(50% - 9 * var(--u));
   --pool: calc(25 * var(--u));
@@ -116,8 +94,6 @@ html:has(.table) {
     rgb(255 232 205), rgb(150 128 106) calc(0.8 * var(--pool)), rgb(34 34 37) calc(1.2 * var(--pool)));
 }
 
-/* The light and where colour is lost are drawn by the script, coarsely, and smoothed as
-   they're scaled up */
 .light canvas,
 .dusk canvas,
 .fizz-face canvas {
@@ -127,26 +103,20 @@ html:has(.table) {
   height: 100%;
 }
 
-/* Glow-in-the-dark ink, laid over the labels by the script. Its light adds to the room's,
-   so it shows most where the table is darkest. Above the camera and phone, below the switch. */
 .glow {
   position: absolute;
   inset: 0;
   z-index: 42;
   pointer-events: none;
   mix-blend-mode: screen;
-  /* No brighter than it needs to be to read. Dimmed as a whole: the writing's outline
-     overlaps its letters, which would show through each other if they were see-through. */
+    /* Dimmed as a whole: the writing's outline overlaps its letters, which would show through each other if see-through */
   opacity: 0.7;
 }
 
-/* Its writing underneath, which the copy can't cover exactly */
 .table .glowing {
   color: transparent;
 }
 
-/* Drawn in ink that can't be seen by day: only its glow is, at night. Laid over the whole
-   object, in pixels of its photo. Its size sets how big the paint's unevenness is. */
 .glow-ink {
   position: absolute;
   inset: 0;
@@ -179,9 +149,6 @@ html:has(.table) {
   transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-/* In dim light the eye sees less colour, so where the room is dark, what's under the
-   room's light loses some of it: grey, blended in by its saturation only. Screens and
-   glowing ink, above, give off their own. */
 .dusk {
   display: none;
   mix-blend-mode: saturation;
@@ -189,8 +156,6 @@ html:has(.table) {
 }
 
 
-/* The lamp's glare, set by the script: it brightens what's already bright most, so the
-   satin laminate and glossy things flare up while dark ink stays dark */
 .glint {
   display: none;
   background: var(--glint, none);
@@ -200,8 +165,6 @@ html:has(.table) {
 .dark-mode :is(.dusk, .glint) {
   display: block;
 }
-
-/* ---- Objects ---- */
 
 .obj {
   position: absolute;
@@ -220,7 +183,6 @@ html:has(.table) {
   transition: filter 0.3s cubic-bezier(0.2, 0.7, 0.3, 1), translate 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-/* A taller part of an object, with its own shadow */
 .part {
   position: absolute;
   inset: 0;
@@ -238,8 +200,7 @@ a.obj:not(.grounded):is(:hover, :focus-visible) .part {
   filter: drop-shadow(var(--hx, 0) var(--hy, 0) var(--hb, 0) rgba(var(--shadow), var(--cast-alpha)));
 }
 
-/* Lifted by moving, not scaling: scaled text and images shimmer against each other.
-   Not what's .grounded, which answers a hover its own way. */
+/* Lifted by moving, not scaling: scaled text and images shimmer against each other */
 a.obj:not(.grounded):hover,
 a.obj:not(.grounded):focus-visible {
   z-index: 30;
@@ -257,7 +218,6 @@ a.obj:not(.grounded):focus-visible {
   outline-offset: 4px;
 }
 
-/* At night, light dashes on a band of dark, to show on the dark table and in the lamp's pool */
 .dark-mode .table :focus-visible {
   outline-color: #e6e2da;
   box-shadow: 0 0 0 7px rgb(16 15 15 / 0.75);
@@ -266,7 +226,6 @@ a.obj:not(.grounded):focus-visible {
 .item {
   display: block;
   position: relative;
-  /* --j is a small random tilt */
   rotate: calc(var(--r, 0deg) + var(--j, 0deg));
   container-type: inline-size;
 }
@@ -277,14 +236,11 @@ a.obj:not(.grounded):focus-visible {
   height: auto;
 }
 
-/* The link of an object that also has controls on it */
 .cover {
   position: absolute;
   inset: 0;
   z-index: 5;
 }
-
-/* ---- Writing ---- */
 
 .ink,
 .tag > span {
@@ -324,7 +280,6 @@ a.obj:not(.grounded):focus-visible {
   filter: drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), 0.3));
 }
 
-/* Tape on the table, turned with its object */
 .obj > .under {
   position: absolute;
   inset: 0;
@@ -336,9 +291,6 @@ a.obj:not(.grounded):focus-visible {
 .t3 { background-image: url('{{ "/assets/images/table/tape-3.avif" | relative_url }}'); }
 .t4 { background-image: url('{{ "/assets/images/table/tape-4.avif" | relative_url }}'); }
 
-/* ---- Intro: a business card ---- */
-
-/* About twice its real size, so it can be read */
 #intro {
   --x: 0; --y: -4; --w: 25; --r: -1.2deg; --h0: 0.12;
   z-index: 2;
@@ -348,7 +300,6 @@ a.obj:not(.grounded):focus-visible {
   z-index: 30;
 }
 
-/* In the air, it passes over what's written on the table */
 #intro.turning .lift {
   position: relative;
   z-index: 1;
@@ -359,7 +310,6 @@ a.obj:not(.grounded):focus-visible {
   cursor: pointer;
 }
 
-/* For a keyboard: the mouse needs only bare stock */
 .intro-turn {
   position: absolute;
   z-index: 7;
@@ -372,14 +322,11 @@ a.obj:not(.grounded):focus-visible {
   cursor: pointer;
 }
 
-/* Only one side's up */
 #intro:not(.flipped) :is(.intro-back, .intro-note),
 #intro.flipped :is(.intro-text:not(.intro-back), .intro-pen) {
   visibility: hidden;
 }
 
-/* The pen's first line, on the card, so it goes where the card goes. Its lines on the table
-   stay. This is it, in the place kept for it in .pen-sum. */
 .intro-pen {
   position: absolute;
   z-index: 5;
@@ -397,8 +344,6 @@ a.obj:not(.grounded):focus-visible {
   visibility: hidden;
 }
 
-/* Each line's as wide as its words, and spaced by padding, not margin, so it reaches the line
-   above: crossing them, the pointer doesn't flicker */
 .intro-lines {
   display: flex;
   flex-direction: column;
@@ -416,7 +361,6 @@ a.obj:not(.grounded):focus-visible {
   padding-bottom: 9%;
 }
 
-/* The address goes whole, in one click */
 .intro-back [data-email] {
   -webkit-user-select: all;
   user-select: all;
@@ -426,17 +370,14 @@ a.obj:not(.grounded):focus-visible {
   margin-top: 0;
 }
 
-/* A line this long stays readable under a pen that's only gone over it lightly */
 .intro-role .strike {
   stroke-width: 0.07em;
 }
 
-/* Written over it, with the same pen, by someone who's since changed their mind */
 #intro .intro-note {
   position: absolute;
   z-index: 5;
   left: 50%;
-  /* It reaches the line above, tilted as it is, as the printed lines do */
   top: calc(60% - 1.4cqi);
   padding-top: 1.4cqi;
   cursor: text;
@@ -474,8 +415,6 @@ a.obj:not(.grounded):focus-visible {
       rgb(99.429% 99.429% 99.429%) 70.71%, rgb(99.714% 99.714% 99.714%) 86.6%, #fff),
     url('{{ "/assets/images/table/card.webp" | relative_url }}') center / 100% 100% no-repeat;
   background-blend-mode: multiply, multiply, multiply, normal;
-  /* Clear of the card's edges, which the photo darkens as if they were a dip, and where
-     nothing's printed */
   clip-path: inset(4%);
   pointer-events: none;
 }
@@ -553,7 +492,6 @@ a.obj:not(.grounded):focus-visible {
   filter: blur(0.2288cqi) url(#ink-spread);
 }
 
-/* Each line's own ink, a little thinner where it's squeezed out: 80% of it, on the paper */
 :is(.intro-rim, .intro-spread) .intro-text,
 :is(.intro-rim, .intro-spread) .intro-text * {
   -webkit-text-fill-color: color-mix(in srgb, currentColor 80%, #e7e0d6);
@@ -588,9 +526,6 @@ a.obj:not(.grounded):focus-visible {
   font-size: 4cqi;
   line-height: 1.2;
   color: #3a3530;
-  /* The rollers never ink the type quite evenly: the film's a little thinner in broad
-     patches, a few across the card. Fractal noise, 0.2 to 0.8, made 0.3 × noise + 0.82,
-     0.88 to 1, drawn once. */
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 613' preserveAspectRatio='none'%3E%3Cfilter id='i' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004' numOctaves='3' seed='8'/%3E%3CfeColorMatrix values='0.3 0 0 0 0.82 0.3 0 0 0 0.82 0.3 0 0 0 0.82 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='1000' height='613' filter='url(%23i)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat luminance;
 }
 
@@ -600,10 +535,6 @@ a.obj:not(.grounded):focus-visible {
   font-weight: 500;
   letter-spacing: -0.01em;
   color: #2e2a26;
-  /* Pressed into the card: the light's from the top left, as the table's shadows show, so
-     each letter's top left wall is in shade and its bottom right one catches the light.
-     Close to the letters, or the shade reads as a shadow cast by them. Only the name's big
-     enough to show it: on the smaller text it'd be under a pixel, and only softens it. */
   text-shadow:
     -0.012em -0.02em 0.012em rgb(35 17 0 / 0.28),
     0.01em 0.018em 0.01em rgb(255 255 255 / 0.55);
@@ -680,8 +611,6 @@ a.obj:not(.grounded):focus-visible {
     url('{{ "/assets/images/table/desk-ink.jpg" | relative_url }}'),
     linear-gradient(#000 0 0);
   mask-mode: alpha, luminance, alpha;
-  /* The laminate's skids are the writing's size whatever the card's, and placed so that
-     no word loses a letter it needs */
   mask-size: 100% 100%, calc(0.16 * var(--w) * var(--u)), 100% 100%;
   mask-position: 0 0, calc(0.028 * var(--w) * var(--u)) calc(0.132 * var(--w) * var(--u)), 0 0;
   mask-repeat: no-repeat, repeat, no-repeat;
@@ -719,20 +648,15 @@ a.obj:not(.grounded):focus-visible {
   margin-top: 0.3em;
 }
 
-/* Where the pen skidded on the laminate, gone over again */
 .retraced {
   text-shadow: 0.03em -0.02em 0 currentColor;
 }
 
-/* The lines under the card, written a little further right than the one on it */
 .pen-sum > :nth-child(4) { rotate: 1deg; translate: 0.65em 0; }
 .pen-sum > :nth-child(6) { rotate: -6deg; translate: 0.95em -0.05em; transform-origin: 0 50%; }
 .pen-sum > :nth-child(3) { rotate: 2deg; translate: 0.6em 0; }
 .pen-sum > :nth-child(5) { rotate: -8deg; translate: 1em 0.02em; }
 
-/* ---- About: a polaroid ---- */
-
-/* Hovered, it doesn't lift like the rest, being .grounded: its picture answers instead */
 #about {
   --x: -27; --y: -18; --w: 14; --r: -7deg; --h0: 0.2;
 }
@@ -746,15 +670,8 @@ a.obj:not(.grounded):focus-visible {
   rotate: -2deg;
 }
 
-/* Instant film comes out under a pale, opaque layer, greenish grey, that clears as the dyes
-   climb through it: the darks come up first, the highlights last, and the colour starts cold
-   and warms last of all, red arriving after the rest. Here each of those moments is a copy
-   of the photo, and each clears in turn to the one under it, down to the photo itself.
-   Nothing is blended, so the room's light falls on it as on anything else, day or night.
-   Laid over the picture's window, in hundredths of the photo: its edges aren't quite
-   straight, bowing by a pixel or so. Beside .item, turned with it, rather than in it: the
-   browser would draw all that's in it upright, to turn afterwards, for as long as this
-   lasts, and the writing and the edges of the paper would go soft. */
+/* Beside .item, turned with it, rather than in it: the browser would draw all that's in it
+   upright, to turn afterwards, and the writing and the edges of the paper would go soft. */
 .polaroid-film {
   position: absolute;
   inset: 0;
@@ -782,31 +699,24 @@ a.obj:not(.grounded):focus-visible {
   background: var(--photo) 0 0 / 100% 100%;
 }
 
-/* Nearly there, the reds still to come */
 .polaroid-film i:nth-child(1) {
   filter: saturate(0.5) hue-rotate(18deg) contrast(0.88) brightness(1.05);
 }
 
-/* The middle tones up, the highlights still under the milk */
 .polaroid-film i:nth-child(2) {
   filter: saturate(0.12) brightness(1.04) contrast(0.62) sepia(0.14) hue-rotate(42deg) brightness(1.12);
 }
 
-/* Only the darks, and not far */
 .polaroid-film i:nth-child(3) {
   filter: grayscale(1) brightness(2.6) contrast(0.3) sepia(0.2) hue-rotate(45deg) brightness(1.2);
 }
 
-/* The opaque layer, before anything's come through it. Never quite even: fractal noise,
-   0.2 to 0.8, made a few levels either side of the colour under it, drawn once. */
 .polaroid-film::after {
   content: "";
   z-index: 2;
   background: rgb(204 209 197) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 481' preserveAspectRatio='none'%3E%3Cfilter id='m' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='5' seed='5'/%3E%3CfeColorMatrix values='0.07 0 0 0 0.765 0.07 0 0 0 0.785 0.07 0 0 0 0.737 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='400' height='481' filter='url(%23m)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
 }
 
-/* It clears unevenly too, lingering in broad patches over what's already come up. Noise
-   again: none of it where that's 0.32, and half of it where it's 0.7. */
 .polaroid-film::before {
   content: "";
   z-index: 1;
@@ -844,22 +754,16 @@ a.obj:not(.grounded):focus-visible {
   }
 }
 
-/* ---- Philosophy: a sticker ---- */
-
-/* Stuck down, so, hovered, it doesn't lift like the rest: it's .grounded */
 #philosophy {
   --x: 22; --y: -23; --w: 11; --r: 8deg; --h0: 0.08;
   --tx: 52%; --ty: 112%; --tw: 12; --tr: -4deg;
 }
 
-/* Glitter in its laminate, over all of it, its white edge too, where a glint hardly shows */
 .glitter {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  /* By the sticker's outline: its image, whichever file it took, set by the script; till
-     then, none of it */
   mask: linear-gradient(#0000 0 0) 0 0 / 100% 100%;
   mix-blend-mode: screen;
   opacity: 0;
@@ -875,8 +779,6 @@ a.obj:not(.grounded):focus-visible {
   display: none;
 }
 
-/* At night, hovered, its halo turns gold: no longer ink, but light, so in a layer of its
-   own, .aura, which isn't dimmed as the ink's is. At rest it dims itself to match. */
 .glow.aura {
   opacity: 1;
 }
@@ -902,7 +804,6 @@ a.obj:not(.grounded):focus-visible {
     drop-shadow(0 0 0.9em rgb(255 150 40 / 0.35));
 }
 
-/* And sparkles: a few glints round it, each in its own time */
 .sparkles path {
   fill: rgb(255 248 225);
   stroke: none;
@@ -927,7 +828,6 @@ a.obj:not(.grounded):focus-visible {
   55% { scale: 0; }
 }
 
-/* Held still, but there */
 @media (prefers-reduced-motion: reduce) {
   .sparkles path {
     animation: none;
@@ -935,11 +835,7 @@ a.obj:not(.grounded):focus-visible {
   }
 }
 
-/* ---- Gallery: a digital camera ---- */
-
-/* Above .light so the screen can glow; lit by #room-light-gallery instead */
 #gallery {
-  /* A little bigger than to scale, for its buttons */
   --x: 37.5; --y: -7.5; --w: 17.5; --r: 7deg; --h0: 2.5;
   --tx: 42%; --ty: 112%; --tw: 9; --tr: -3deg;
   z-index: 41;
@@ -993,8 +889,6 @@ html:not(.dark-mode) .cam-screen {
   z-index: 2;
   overflow: hidden;
   container-type: inline-size;
-  /* An LCD: even its black pixels pass some of the backlight, which comes in along the
-     bottom edge and leaks most at its corners. Round them is a black frame, unlit. */
   background:
     radial-gradient(26% 34% at 0 100%, rgb(46 52 66 / 0.6), transparent),
     radial-gradient(26% 34% at 100% 100%, rgb(46 52 66 / 0.6), transparent),
@@ -1002,13 +896,11 @@ html:not(.dark-mode) .cam-screen {
   box-shadow: inset 0 0 0 0.9cqi #060707, inset 0 0 0.6cqi 1.2cqi rgba(0, 0, 0, 0.6);
 }
 
-/* And the photo's darks, too, aren't darker than the backlight lets them be */
 .cam-photo,
 .cam-index img {
   filter: contrast(0.93) brightness(1.03);
 }
 
-/* Off, the backlight's out, and the glass is as dark as it gets */
 #gallery[data-mode="off"] .cam-screen {
   background: #050505;
 }
@@ -1037,12 +929,10 @@ html:not(.dark-mode) .cam-screen {
   box-shadow: inset 0 0 0.6cqi 0.3cqi rgba(0, 0, 0, 0.5);
 }
 
-/* With the room dark, there's nothing bright for the screen to reflect */
 .dark-mode .cam-screen::after {
   display: none;
 }
 
-/* What's on the screen. White, outlined in black to read over any photo, as cameras do */
 .cam-info,
 .cam-panel,
 .cam-index {
@@ -1078,7 +968,6 @@ html:not(.dark-mode) .cam-screen {
   fill: currentColor;
 }
 
-/* The detailed display: a histogram of the photo's brightness, and its size */
 .cam-hist {
   position: absolute;
   left: 5cqi;
@@ -1100,7 +989,6 @@ html:not(.dark-mode) .cam-screen {
   bottom: 4cqi;
 }
 
-/* Zoomed in, where on the photo the screen is */
 .cam-where {
   position: absolute;
   right: 4cqi;
@@ -1115,7 +1003,6 @@ html:not(.dark-mode) .cam-screen {
   outline: 0.4cqi solid #f5a623;
 }
 
-/* Nine at a time, the one picked framed */
 .cam-index {
   display: none;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
@@ -1140,7 +1027,6 @@ html:not(.dark-mode) .cam-screen {
   outline-offset: 0.5cqi;
 }
 
-/* The menu, and what the camera asks and says */
 .cam-panel {
   display: none;
   text-shadow: none;
@@ -1222,7 +1108,6 @@ html:not(.dark-mode) .cam-screen {
   visibility: hidden;
 }
 
-/* Off, its screen's just dark glass */
 #gallery[data-mode="off"] .cam-glow {
   opacity: 0;
 }
@@ -1257,7 +1142,6 @@ html:not(.dark-mode) .cam-screen {
   }
 }
 
-/* What the button under the pointer would do */
 .cam-guide {
   position: absolute;
   inset: auto 0 0;
@@ -1312,7 +1196,6 @@ html:not(.dark-mode) .cam-screen {
     radial-gradient(7.8cqi 7.8cqi at 82% 66.1%, #000 90%, transparent),
     radial-gradient(2.6cqi 2.6cqi at 76.1% 82.6%, #000 85%, transparent),
     radial-gradient(2.6cqi 2.6cqi at 87.7% 82.6%, #000 85%, transparent),
-    /* The zoom lever's above the screen, so it gets less */
     radial-gradient(8.2cqi 2.6cqi at 83.1% 14.8%, rgb(0 0 0 / 0.4) 85%, transparent);
 }
 
@@ -1324,7 +1207,6 @@ html:not(.dark-mode) .cam-screen {
   opacity: 0;
 }
 
-/* Its buttons, where they are in the photo */
 .cam-btn {
   position: absolute;
   z-index: 6;
@@ -1336,7 +1218,6 @@ html:not(.dark-mode) .cam-screen {
   border: 0;
   border-radius: 50%;
   background: none;
-  /* The pointer's the link's, which knows which button it's near */
   pointer-events: none;
 }
 
@@ -1348,7 +1229,6 @@ html:not(.dark-mode) .cam-screen {
 .cam-btn[data-key="menu"] { --bx: 75.8%; --by: 49%; }
 .cam-btn[data-key="disp"] { --bx: 76.1%; --by: 82.6%; }
 .cam-btn[data-key="play"] { --bx: 87.7%; --by: 82.6%; }
-/* The zoom lever, a rocker: W, toward the index, and T */
 .cam-btn:is([data-key="wide"], [data-key="tele"]) { --by: 14.8%; --bw: 7.9%; --ba: 1.73; border-radius: 40%; }
 .cam-btn[data-key="wide"] { --bx: 78.4%; }
 .cam-btn[data-key="tele"] { --bx: 87.9%; }
@@ -1358,20 +1238,14 @@ html:not(.dark-mode) .cam-screen {
   background: radial-gradient(closest-side, rgba(60, 20, 30, 0.22), transparent);
 }
 
-/* Too small to tap; on touch screens the camera just links to the gallery */
 @media not (hover: hover) {
   .cam-btn {
     display: none;
   }
 }
 
-/* ---- Socials: a phone ---- */
-
-/* Above .light, like #gallery */
 #phone {
-  /* Its cable is round too (see #uses) */
   --w: 12; --r: 5deg; --h0: 0.25; --round: 2.5;
-  /* Clear of the papers on a narrower table */
   left: min(calc(50% + 33 * var(--ux)), calc(100% - 25 * var(--u)));
   top: calc(100% + 0.7 * var(--u));
   z-index: 41;
@@ -1384,7 +1258,6 @@ html:not(.dark-mode) .cam-screen {
   display: block;
 }
 
-/* The screen shows through a hole in the photo */
 #phone .base {
   position: relative;
   z-index: 1;
@@ -1493,8 +1366,6 @@ html:not(.dark-mode) .phone-screen {
   scale: 1.2;
 }
 
-/* On touch, each app's tap area is its tile of the home screen, as tall as a fingertip
-   and out to the screen's edges, and no two overlap. The icons stay as they are. */
 @media (pointer: coarse) {
   .table .app { position: relative; }
   .table .app::after { content: ""; position: absolute; inset: -6.8cqi 0 -3cqi; }
@@ -1511,10 +1382,6 @@ html:not(.dark-mode) .phone-screen {
 .app-linkedin svg { width: 60%; }
 .app-mail { --tile: #fff; --glyph: #ea4335; }
 
-/* The scanner app's widget, two by two in the grid, beside the last app, as a home
-   screen's are: a solid surface, tinted from the wallpaper, with a level across it that
-   moves only while someone's on the air. Only to be read, so nothing about it answers
-   the pointer, and there's no text to select. */
 .radio-widget {
   grid-column: 3 / span 2;
   grid-row: 2 / span 2;
@@ -1610,13 +1477,10 @@ html:not(.dark-mode) .phone-screen {
   color: rgb(244 242 247 / 0.65);
 }
 
-/* Live, as players mark it */
 #phone.live .radio-status {
   color: #ff8a80;
 }
 
-/* It can't reach the Pi: down from the top, under the status bar, and back up after a
-   few seconds, as a heads-up notification does. Under the glass's reflection. */
 .radio-note {
   position: absolute;
   left: 3cqi;
@@ -1716,8 +1580,6 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(2.5px * var(--cable-scale, 1));
 }
 
-/* The braid, drawn by the script: its edge all round, its strands over that, and over
-   them, the cable's far side, turned from the light, and its shine */
 .cable .braid-edge {
   fill: #7a8696;
 }
@@ -1747,10 +1609,6 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: calc(0.6px * var(--cable-scale, 1));
 }
 
-/* A wire is round. Its edge is dark only where it turns from the light, so it's moved
-   towards the far side, all the way when the light is low (--shade, set by the script
-   with --lx, --ly, which way the light is). Its shine moves towards the light (--glint).
-   Each by how wide it is: the edge's rim, or the wire's radius. */
 :is(.ear-left, .ear-right, .usb-run) > .cable-edge {
   --off: calc(-0.45px * var(--cable-scale, 1) * min(1, 0.45 + var(--shade, 0)));
 }
@@ -1778,8 +1636,6 @@ html:not(.dark-mode) .phone-screen {
   translate: calc(var(--lx, -0.53) * var(--off)) calc(var(--ly, -0.85) * var(--off));
 }
 
-/* The far side of the wire, turned from the light: three bands along its far edge, so it
-   darkens gradually towards it */
 .cable-shade {
   --off: calc((var(--band) / 2 - 1.25) * 1px * var(--cable-scale, 1));
   stroke: rgb(120 128 140);
@@ -1808,7 +1664,6 @@ html:not(.dark-mode) .phone-screen {
   stroke-width: 0.3;
 }
 
-/* Its grain, along it */
 #phone .grain {
   stroke-width: 0.18;
 }
@@ -1831,10 +1686,6 @@ html:not(.dark-mode) .phone-screen {
   fill: rgb(28 28 30);
 }
 
-/* ---- Socials: the earphones, plugged in or not ---- */
-
-/* The plug, as far from the jack as --dx, --dy, its tip, and turned --turn degrees round
-   it: in, nowhere, and out, where it was left, past the phone's corner, pointing across */
 #phone {
   --dx: 0; --dy: 0; --turn: 0;
   --loose-dx: -22; --loose-dy: -24.5; --loose-turn: -70;
@@ -1871,7 +1722,6 @@ html:not(.dark-mode) .phone-screen {
   d: var(--loose);
 }
 
-/* Without the script, the cable as it's drawn, to where the plug lies */
 #phone.unplugged .run-down:not(.braided) path {
   d: path("M-19.84 -33.41C-32.06 -37.86 -44 -42 -52 -34C-57 -29 -58 -20 -58 -8S-60 30 -52 60S-42 130 -40 200");
 }
@@ -1880,10 +1730,7 @@ html:not(.dark-mode) .phone-screen {
   d: path("M75.84 -33.41C83.4 -36.15 96 -44 112 -42S136 -40 160 -45");
 }
 
-/* Picking up the earphones tugs the cable a moment after they lift; it settles back
-   more slowly than it was pulled. Out of the phone, it's the plug that's dragged. Where
-   it's grabbed goes straight there: it can't be seen, and in Safari, while it moved,
-   the cable under it wasn't drawn. */
+/* Where it's grabbed goes straight there: in Safari, the cable under it wasn't drawn while it moved */
 #phone :is(.jack, .cable-run path) {
   transition: transform 0.6s cubic-bezier(0.3, 0.6, 0.3, 1), d 0.6s cubic-bezier(0.3, 0.6, 0.3, 1);
 }
@@ -1908,7 +1755,6 @@ html:not(.dark-mode) .phone-screen {
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s, d 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s;
 }
 
-/* In the hand, or on its way in or out, it's where the script puts it */
 #phone.moving :is(.jack, .cable-run path) {
   transition: none;
 }
@@ -1919,7 +1765,6 @@ html:not(.dark-mode) .phone-screen {
   }
 }
 
-/* While one's in hand, wherever the pointer goes */
 html.grabbing,
 html.grabbing * {
   cursor: grabbing !important;
@@ -1933,15 +1778,11 @@ html.grabbing * {
   width: 3.6cqi;
 }
 
-/* Only once it's all the way in */
 #phone:not(.connected) .headset {
   visibility: hidden;
 }
 
-/* ---- Projects: a Raspberry Pi Zero with a screen ---- */
-
-/* A quarter bigger than a real one, so its screen reads. Above .light, like #gallery, as
-   the screen glows; lit by #room-light-projects instead. Its cable is round (see #uses). */
+/* A quarter bigger than a real one, so its screen reads */
 #projects {
   --x: -26; --y: 8; --w: 16.5; --r: -4deg; --h0: 0.5; --round: 2.5;
   z-index: 41;
@@ -1960,7 +1801,6 @@ html:not(.dark-mode) .pi-screen {
   filter: url(#room-light-projects);
 }
 
-/* Over the glass in the photo */
 .pi-screen,
 .pi-glow {
   position: absolute;
@@ -1970,9 +1810,6 @@ html:not(.dark-mode) .pi-screen {
   height: 70.26%;
 }
 
-/* Round the pixels is a black frame, which isn't lit; the pixels, even black ones, are a
-   little, by the backlight, which comes in from the left edge, where the screen's ribbon
-   is, and leaks most at its corners. */
 .pi-screen {
   z-index: 2;
   overflow: hidden;
@@ -1990,13 +1827,10 @@ html:not(.dark-mode) .pi-screen {
   background: linear-gradient(112deg, rgba(255, 255, 255, 0.12) 0 34%, rgba(255, 255, 255, 0.035) 34% 58%, transparent 58%);
 }
 
-/* By day, the lip of the screen's metal frame shades the glass along its top and left */
 html:not(.dark-mode) .pi-screen {
   box-shadow: inset 0 0 0 1.4cqi #060707, inset 1.2cqi 1.4cqi 1.6cqi rgb(0 0 0 / 0.55);
 }
 
-/* With the room dark, there's nothing bright for the glass to reflect, and the light of
-   its letters spreads a little, as bright things in the dark do */
 .dark-mode .pi-screen::after {
   display: none;
 }
@@ -2020,7 +1854,6 @@ html:not(.dark-mode) .pi-screen {
   opacity: 1;
 }
 
-/* The way to the projects, so as big as the writing on the other things */
 .pi-title {
   position: absolute;
   left: 6cqi;
@@ -2035,13 +1868,10 @@ html:not(.dark-mode) .pi-screen {
   color: #729fcf;
 }
 
-/* As Raspberry Pi OS colours a path in its prompt */
 .pi-title > span {
   color: #4e6f96;
 }
 
-/* At the end of its title, while it's streaming to the phone: the receiver, its waves
-   lighting up, nearest first, while someone's on the air */
 .pi-air {
   position: absolute;
   right: 0;
@@ -2101,7 +1931,6 @@ html:not(.dark-mode) .pi-screen {
   visibility: hidden;
 }
 
-/* Inherited, so it's not there before the Pi is */
 .pi-page.pi-shown {
   visibility: inherit;
 }
@@ -2128,7 +1957,6 @@ html:not(.dark-mode) .pi-screen {
   color: #9aa3ae;
 }
 
-/* The green activity light, which flickers when the Pi reads or writes its card */
 .pi-act {
   position: absolute;
   z-index: 3;
@@ -2161,15 +1989,11 @@ html:not(.dark-mode) .pi-screen {
   background: radial-gradient(3.2cqi 50% at calc(100% - 2.1cqi) 50%, rgb(140 255 165 / 0.8), transparent);
 }
 
-/* Its light on the board round it: only on the board, by its own outline, and under the
-   screen, which stands taller and hides it, though its frame catches it. Faint by day. */
 .pi-act-glow {
   position: absolute;
   z-index: 1;
   inset: 0;
   background: radial-gradient(22% 50% at 67.5% 78.4%, rgb(80 255 120 / 0.38), rgb(80 255 120 / 0.12) 45%, transparent);
-  /* By the board's outline: its image, whichever file it took, set by the script; till
-     then, none of it */
   mask: linear-gradient(#0000 0 0) 0 0 / 100% 100%;
   mix-blend-mode: screen;
   opacity: 0;
@@ -2184,9 +2008,6 @@ html:not(.dark-mode) .pi-screen {
   opacity: 1;
 }
 
-/* On the table at night: the light that leaks from the edges of the screen, where its
-   backlight comes in, faint and cool, and that from the activity light, green, which
-   reaches past the board's edge by the power socket. The board hides the rest. */
 .pi-spill {
   position: absolute;
   inset: 0;
@@ -2226,7 +2047,6 @@ html:not(.dark-mode) .pi-screen {
   stroke: rgb(238 239 241);
 }
 
-/* Clickable, all of it: it pulls the plug too */
 .usb-run > .cable-edge {
   pointer-events: stroke;
 }
@@ -2255,15 +2075,11 @@ html:not(.dark-mode) .pi-screen {
   fill: rgb(52 56 62);
 }
 
-/* ---- Projects: unplugged, and booting ---- */
-
-/* Pushed in, it speeds up till it stops dead in the socket */
 .usb-pull,
 .pi-plug {
   transition: translate 0.18s cubic-bezier(0.55, 0, 0.8, 0.4);
 }
 
-/* Pulled, it comes free all at once, then the cable drags it to a stop, 11 mm out */
 .out .usb-pull {
   translate: 0 13px;
   transition: translate 0.26s cubic-bezier(0.15, 0.85, 0.35, 1);
@@ -2274,7 +2090,6 @@ html:not(.dark-mode) .pi-screen {
   transition: translate 0.26s cubic-bezier(0.15, 0.85, 0.35, 1);
 }
 
-/* In the hand, it's where the hand is, --pull of the way out */
 #projects.dragging .usb-pull {
   translate: 0 calc(var(--pull) * 13px);
   transition: none;
@@ -2292,8 +2107,6 @@ html:not(.dark-mode) .pi-screen {
   }
 }
 
-/* Over its plug, and only that, so the board's still the way to the projects. Nothing
-   gives it away, not even a pointer. */
 .pi-plug {
   position: absolute;
   z-index: 6;
@@ -2308,8 +2121,6 @@ html:not(.dark-mode) .pi-screen {
 }
 
 
-/* With no power, the backlight's out: the glass is as dark as it gets, though by day it
-   still shows the window, and the pixels show nothing. Nothing glows. */
 .off .pi-screen {
   background: rgb(9 10 11);
   text-shadow: none;
@@ -2375,7 +2186,6 @@ html:not(.dark-mode) .pi-screen {
   color: #729fcf;
 }
 
-/* The console's cursor: an underline, flashing five times a second */
 .pi-shell i {
   display: inline-block;
   width: 0.6em;
@@ -2389,13 +2199,11 @@ html:not(.dark-mode) .pi-screen {
   50% { opacity: 0; }
 }
 
-/* Scrolled up by the script, a row at a time */
 .pi-boot > span {
   display: block;
   translate: 0 calc(var(--rows, 0) * -4.4cqi);
 }
 
-/* As systemd marks what's started, and the name of it */
 .pi-boot i {
   font-style: normal;
   color: #55ff55;
@@ -2406,15 +2214,12 @@ html:not(.dark-mode) .pi-screen {
   color: #fff;
 }
 
-/* ---- Blog: a notebook ---- */
-
 #blog {
   --w: 20; --r: -4deg; --h0: 1.4;
   left: calc(50% + 1 * var(--u));
   top: calc(100% - 1.5 * var(--u));
 }
 
-/* Cloth weave over the cover, except the label */
 #blog .item::before {
   content: "";
   position: absolute;
@@ -2443,8 +2248,6 @@ html:not(.dark-mode) .pi-screen {
   rotate: -2deg;
 }
 
-/* Loose sheets between its pages, under the cover, turned with it. About halfway up it,
-   so their shadow's as long as about half of its. In hundredths of its width. */
 .loose {
   position: absolute;
   inset: 0;
@@ -2460,10 +2263,6 @@ html:not(.dark-mode) .pi-screen {
   container-type: inline-size;
 }
 
-/* Its pages' size: the cover, less what it overhangs them by, and its hinge. Hidden under
-   it, till they're pulled a little way out, up and to the fore-edge, each a different way,
-   one dragging the next. The paper's its own, cream, some a little more yellowed than
-   others; each sheet's edge just shades the one under it. */
 .sheet {
   position: absolute;
   left: 7%;
@@ -2488,20 +2287,13 @@ html:not(.dark-mode) .pi-screen {
 .sheet:nth-child(4) { --out: 2.5cqi -3cqi; --turn: 2.5deg; --after: 0.09s; }
 .sheet:nth-child(5) { --out: 5.5cqi -1.5cqi; --turn: -0.5deg; --after: 0.12s; background: #f5f2ea; }
 
-/* ---- Taste (still #uses): earphones ---- */
-
 #uses {
-  /* As high as its cable is thick */
   --w: 15; --r: -10deg; --h0: 0.4;
-  /* A round wire hides where it meets the table under itself, so from above that shadow
-     is only a faint, soft darkening beside it */
   --round: 2.5;
-  /* Never off the edge of a narrower table */
   left: max(calc(50% - 47 * var(--ux)), calc(6.5 * var(--u)));
   top: calc(100% - 7 * var(--u));
 }
 
-/* The buds stand well off the table; the cable is hardly anything */
 .earbuds {
   --h0: 1.6;
 }
@@ -2519,8 +2311,6 @@ html:not(.dark-mode) .pi-screen {
   height: 100%;
 }
 
-/* The ear hook is a clear moulded sleeve: its rims, its body, then the wire inside,
-   whose own edge only shows below the sleeve. It ends square. */
 .ear-hook-edge,
 .ear-hook,
 .ear-left > .cable-edge,
@@ -2546,7 +2336,6 @@ html:not(.dark-mode) .pi-screen {
   stroke-width: calc(0.4px * var(--cable-scale, 1));
 }
 
-/* Each earbud is half of one image. The script moves them; this is the fallback. */
 .bud {
   position: absolute;
   overflow: hidden;
@@ -2577,7 +2366,6 @@ html:not(.dark-mode) .pi-screen {
   margin-left: -100.61%;
 }
 
-/* Which is which, on each faceplate, in the same marker and size as the label */
 .bud .glow-ink {
   inset: auto;
   top: 38%;
@@ -2594,8 +2382,6 @@ html:not(.dark-mode) .pi-screen {
   --tx: 81%; --ty: 75.2%; --tw: 9; --tr: 4deg;
 }
 
-/* ---- Playground: a Petri dish, and what's in it (assets/js/petri.js) ---- */
-
 #playground {
   --x: -50; --y: -6; --w: 12; --h0: 1.2;
   --tx: 50%; --ty: 114%; --tw: 11.5; --tr: 4deg;
@@ -2606,7 +2392,6 @@ html:not(.dark-mode) .pi-screen {
   border-radius: 50%;
 }
 
-/* A reflection, so it casts no shadow: it's out of .lift */
 .dish-sheen {
   position: absolute;
   inset: 0;
@@ -2623,8 +2408,6 @@ html:not(.dark-mode) .pi-screen {
   height: 0;
 }
 
-/* What takes over the man in the Polaroid, over .light, in the window of the photo, turned
-   with it. And on its way there, over the table. Only here while they're needed. */
 .fizz-face,
 .fizz-leap {
   position: absolute;
@@ -2633,7 +2416,6 @@ html:not(.dark-mode) .pi-screen {
   pointer-events: none;
 }
 
-/* Where it's been, in the labels' ink: nothing by day, and it comes up as the room goes dark */
 .fizz-prints {
   position: absolute;
   inset: 0;
@@ -2653,13 +2435,9 @@ html:not(.dark-mode) .pi-screen {
   opacity: 0.5;
 }
 
-/* ---- Papers: the first page of a paper ---- */
-
 #papers {
   --w: 20; --r: -9deg; --h0: 0.12;
-  /* Sheets lie flat, with no edge thick enough to darken the table where they meet it */
   --contact-alpha: 0;
-  /* In the table's corner, a little off it */
   left: calc(100% - 6 * var(--u));
   top: calc(100% - 10 * var(--u));
 }
@@ -2668,10 +2446,8 @@ html:not(.dark-mode) .pi-screen {
   --tx: 52%; --ty: -8%; --tw: 10; --tr: 0deg;
 }
 
-/* The sheets, and what's printed on them, as on Papers */
 {% include leaf.css %}
 
-/* ---- Theme switch: a rocker light switch ---- */
 /* Adapted from a light switch on Uiverse.io by IbrahimIF */
 
 #switch {
@@ -2766,7 +2542,6 @@ html:not(.dark-mode) .sw-sun {
   width: 100%;
   height: 100%;
   border-radius: 3em;
-  /* Its rim catches the light on the top and left, and is in its own shade on the far sides */
   border: 1em solid;
   border-color: #e8e8e8 #c4c4c4 #b8b8b8 #e2e2e2;
   background: #fff;
@@ -2827,8 +2602,6 @@ html:not(.dark-mode) .sw-sun {
 .dark-mode .sw-bottom { background: #fff; }
 .dark-mode .sw-bottom i { height: 0; }
 
-/* ---- Phones, and upright tablets, which the table's too wide for ---- */
-
 @media (max-width: 700px), (max-aspect-ratio: 4/5) {
   /* An upright tablet gets a phone's desk at most 540px across, centred: past that it's a
      close-up. Wider than 900px it grows again, so the earphones' cable still leaves the table. */
@@ -2841,20 +2614,17 @@ html:not(.dark-mode) .sw-sun {
     background-image: url('{{ "/assets/images/table/desk-small.webp" | relative_url }}');
   }
 
-  /* --y is from the top of the table here */
   .obj {
     top: calc(var(--y) * var(--u));
   }
 
   #intro { --y: 60; --w: 80; translate: -50% 0; }
-  /* Under the card, which is the width of the pool */
   .dark-mode .light:empty {
     --bulb-y: calc(79.5 * var(--u));
     --pool: calc(80 * var(--u));
   }
   #switch { --w: 10; left: calc(100% - 9 * var(--u)); top: calc(11 * var(--u)); }
   #about { --x: -22; --y: 31; --w: 32; }
-  /* Its plug in a laptop just off the side of the table, so no cable */
   #projects { --y: 40; --w: 46; --r: 0deg; left: calc(100% - 19 * var(--u)); }
   #projects .cable,
   .pi-plug { display: none; }
@@ -2862,7 +2632,6 @@ html:not(.dark-mode) .sw-sun {
   #phone { --w: 38; --r: -4deg; left: calc(50% + 23 * var(--u)); top: calc(178 * var(--u)); }
   #phone .run-down { display: none; }
   #phone .run-side { display: inline; }
-  /* Out, its cable off to the side: it fell the other way */
   #phone { --loose-dx: 22; --loose-dy: -24.5; --loose-turn: 70; }
   .table:has(#uses:is(:hover, :focus-visible)) #phone.unplugged { --dx: var(--loose-dx); --dy: var(--loose-dy); --turn: var(--loose-turn); }
   #papers { --w: 38; --r: 5deg; left: calc(50% + 29 * var(--u)); top: calc(268 * var(--u)); }

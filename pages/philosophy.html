@@ -15,8 +15,6 @@ image:
 
 <div class="wrapper">
   <h1 class="page-title phone-only">Philosophy</h1>
-  {% comment %} The front of a book: its preface, if it's written (_includes/essays-preface.md),
-     then its contents, in the order they're meant to be read {% endcomment %}
   {% capture essays_preface %}{% include essays-preface.md %}{% endcapture %}
   {% assign essays_preface = essays_preface | strip %}
   {% if essays_preface != "" %}

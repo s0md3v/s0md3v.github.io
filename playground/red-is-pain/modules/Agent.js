@@ -52,27 +52,24 @@ export class Agent {
         this.armingAction = null;
         this.lastAdvanceTime = 0;
         this.lastDistressTime = 0;
-        this.distanceMoved = 0; // Track distance for footstep sounds
+        this.distanceMoved = 0;
         this.isReacting = false;
         this.lastReactionTime = 0;
         this.isMoving = false;
         this.lastSuppressionReaction = 0;
-        this.movementMode = 'TACTICAL'; // BOUNDING, TACTICAL, SNEAKING, COVERING
+        this.movementMode = 'TACTICAL';
         
-        // Optimizations (Staggered to prevent frame-spikes)
         const now = Date.now();
-        this.nextScanTime = now + Math.random() * 200; // Staggered start (5Hz)
-        this.nextStateUpdateTime = now + Math.random() * 100; // Staggered (10Hz)
+        this.nextScanTime = now + Math.random() * 200;
+        this.nextStateUpdateTime = now + Math.random() * 100;
         this.lastStateUpdateTime = now;
         this.nextCohesionTime = now + Math.random() * 500;
 
-        // Visual Barks System
         this.barks = []; // { text, life, id }
         this.barkIdCounter = 0;
     }
 
     addBark(text) {
-        // Prevent spamming same bark
         if (this.barks.some(b => b.text === text && b.life > 500)) return;
         this.barks.push({ text, life: 2000, id: this.barkIdCounter++ });
     }
@@ -81,10 +78,8 @@ export class Agent {
         this.memory.socialCredit = new Map();
         world.agents.forEach(a => {
             if (a.team === this.team) {
-                // Initialize Social Trust
                 if (a !== this) this.memory.socialCredit.set(a.id, 0.7); 
                 
-                // Initialize Control Map with teammate locations (Green Grid)
                 this.memory.updateControl(a.pos.x, a.pos.y, world, 10);
             }
         });
@@ -111,10 +106,7 @@ export class Agent {
         const now = Date.now();
         this.weaponSystem.update(now);
 
-        // --- PLAYER AGENT: Skip AI brain entirely ---
         if (this.isPlayer) {
-            // The player keeps the same body and stress model as every simulated
-            // unit; only strategic decision-making is replaced by direct input.
             if (now >= this.nextStateUpdateTime) {
                 const stateDt = now - (this.lastStateUpdateTime || (now - 100));
                 this.lastStateUpdateTime = now;
@@ -129,54 +121,45 @@ export class Agent {
             this.barks.forEach(bark => bark.life -= dt);
             this.barks = this.barks.filter(bark => bark.life > 0);
 
-            // Sensory scan (so FOW knows what player sees)
             if (now >= this.nextScanTime) {
                 this.sensory.scan(world, now - (this.lastScanTime || (now - 200)));
                 this.lastScanTime = now;
                 this.nextScanTime = now + 200;
             }
             this.memory.cleanup(world, dt);
-            // PlayerInput.applyToAgent handles movement, shooting, pickup
             return;
         }
 
-        // --- AI AGENT: Original logic ---
-        // 1. Update Brain (State, Emotions, Social)
         this.brain.update(dt, world);
 
-        // 2. Physics & State Update (Throttled for performance and realism)
         if (now >= this.nextStateUpdateTime) {
             const stateDt = now - (this.lastStateUpdateTime || (now - 100));
             this.lastStateUpdateTime = now;
             
             let stressBaseline = this.traits.neuroticism * 10 + this.memory.traumaLevel;
             this.state.update(stateDt, stressBaseline, this._isMovingLastCycle);
-            this.nextStateUpdateTime = now + 100; // 10Hz passive recovery
-            this._isMovingLastCycle = false; // Reset after processing
+            this.nextStateUpdateTime = now + 100;
+            this._isMovingLastCycle = false;
         }
 
-        // Accumulate movement for the next throttled cycle
         if (this.isMoving) this._isMovingLastCycle = true;
-        this.isMoving = false; // Reset per-frame flag
+        this.isMoving = false;
         
         if (this.state.isDead) return;
 
         this.memory.traumaLevel = Math.max(0, this.memory.traumaLevel - (dt * 0.0005)); 
         
-        // 3. Update Barks (Visuals)
         this.barks.forEach(b => b.life -= dt);
         this.barks = this.barks.filter(b => b.life > 0);
         
-        // 4. Sense (Throttled 5Hz for vision)
         if (now >= this.nextScanTime) {
             this.sensory.scan(world, now - (this.lastScanTime || (now - 200)));
             this.lastScanTime = now;
-            this.nextScanTime = now + 200; // 5Hz is plenty for vision updates
+            this.nextScanTime = now + 200;
         }
         
         this.memory.cleanup(world, dt);
 
-        // 5. Think
         const action = this.brain.decide(world);
         if (this.currentAction && this.currentAction.type !== action.type) {
             this.retreatTarget = null;
@@ -184,16 +167,12 @@ export class Agent {
         }
         this.currentAction = action;
 
-        // 6. Communicate
         this.communicate(world);
 
-        // 7. Act
         this.executeAction(action, dt, world);
 
-        // 8. Post-Action: Apply systematic jitter
         this.applyJitter(dt);
         
-        // 9. Acoustic Stealth: Footstep Sounds
         this.handleFootsteps(dt, world);
     }
 
@@ -203,24 +182,22 @@ export class Agent {
             const dist = currentSpeed * (dt / 1000);
             this.distanceMoved += dist;
 
-            const stepInterval = 60; // Sound every 60px (~3 steps)
+            const stepInterval = 60;
             if (this.distanceMoved > stepInterval) {
                 this.distanceMoved = 0;
                 
                 let soundRadius = 0;
                 let soundType = 'STEP';
 
-                // Bush movement is always noisy (rustling)
                 if (this.state.inBush) {
-                    soundRadius = 300; // Loud rustle
+                    soundRadius = 300;
                     soundType = 'RUSTLE';
                 } else {
-                    // Open ground movement
                     switch (this.movementMode) {
-                        case 'BOUNDING': soundRadius = 500; break; // Sprinting is loud
-                        case 'TACTICAL': soundRadius = 250; break;  // Jogging is audible
-                        case 'SNEAKING': soundRadius = 0; break;   // Silent
-                        case 'COVERING': soundRadius = 0; break;   // Silent
+                        case 'BOUNDING': soundRadius = 500; break;
+                        case 'TACTICAL': soundRadius = 250; break;
+                        case 'SNEAKING': soundRadius = 0; break;
+                        case 'COVERING': soundRadius = 0; break;
                     }
                 }
 
@@ -235,8 +212,6 @@ export class Agent {
         this.state.takeDamage(amount);
         if (world && world.audio) world.audio.playHit();
         
-        // CHANCE TO FREEZE (Shock)
-        // High Neuroticism = Higher chance to freeze on hit
         const freezeChance = Config.AGENT.FROZEN_PROB_PER_HIT + (this.traits.neuroticism * 0.25);
         if (amount > 1 && Math.random() < freezeChance) {
             this.state.isFrozenUntil = Date.now() + 1000 + (Math.random() * 2000 * (1 + this.traits.neuroticism));
@@ -247,9 +222,7 @@ export class Agent {
              this.state.isDead = true;
              this.state.modifyMorale(-30);
 
-             // DEATH EVENTS
              if (world) {
-                 // 0. RADIO BROADCAST: "MAN DOWN!"
                  world.radioNet[this.team].push({
                      type: 'DISTRESS',
                      distressType: 'MAN_DOWN',
@@ -260,7 +233,6 @@ export class Agent {
                      broadcasted: false
                  });
 
-                 // 1. Reward Killer
                  if (sourceId !== null && sourceId !== undefined) {
                      const killer = world.agents.find(a => a.id === sourceId);
                      if (killer && killer.team !== this.team) {
@@ -269,7 +241,6 @@ export class Agent {
                      }
                  }
 
-                  // 2. Notify Witnesses (Friend/Foe)
                   const witnesses = world.spatial.query(this.pos.x, this.pos.y, Config.AGENT.VISION_RADIUS);
                   
                   witnesses.forEach(w => {
@@ -279,17 +250,15 @@ export class Agent {
                       
                       if (canSee) {
                         if (w.team === this.team) {
-                            // Ally Died
                             const isFriend = (w.memory.socialCredit.get(this.id) || 0) > 0.6;
                             w.state.onAllyDeath(isFriend);
-                            w.memory.updateHazard(this.pos.x, this.pos.y, world, 80); // Mark fatal funnel
+                            w.memory.updateHazard(this.pos.x, this.pos.y, world, 80);
                             
                             if (isFriend) w.addBark("NOOO!");
                             else if (Math.random() < 0.3) w.addBark("MAN DOWN!");
                             
-                            w.react(world); // Immediate re-evaluation
+                            w.react(world);
                         } else {
-                            // Enemy Died
                             w.state.onWitnessKill();
                             if (Math.random() < 0.2) w.addBark("NICE SHOT!");
                             w.react(world);
@@ -301,9 +270,8 @@ export class Agent {
         if (world) {
             this.react(world);
             
-            // If we are IDLE, force a rotation reset to try and spot the shooter
             if (this.currentAction && this.currentAction.type === 'IDLE') {
-                this.idleLookTimer = 0; // Trigger immediate turn
+                this.idleLookTimer = 0;
                 this.targetAngle += Math.PI + (Math.random() - 0.5) * 2; 
             }
         }
@@ -312,12 +280,10 @@ export class Agent {
     suppress(amount, world = null, sourcePos = null) {
 
         
-        // CROSSFIRE LOGIC
         if (sourcePos) {
             const angle = Utils.angle(this.pos, sourcePos);
             const now = Date.now();
             
-            // Check if we are already suppressed from a significantly different angle
             const crossfire = this.state.suppressionSources.some(s => {
                 const diff = Math.abs(Utils.angleDiff(angle, s.angle));
                 return diff > Config.AGENT.CROSSFIRE_ANGLE_THRESHOLD;
@@ -331,21 +297,17 @@ export class Agent {
             this.state.suppressionSources.push({ angle, time: now });
         }
 
-        // High neuroticism = easier to suppress
-        // Reduced penalty for high N from 3.0 to 1.5
         const mult = 1.0 + (this.traits.neuroticism * 1.5);
         const oldSuppression = this.state.suppression;
         this.state.suppression = Math.min(100, this.state.suppression + amount * mult);
-        this.state.modifyStress(amount * 0.15 * mult); // Reduced from 0.2 to 0.15
+        this.state.modifyStress(amount * 0.15 * mult);
 
-        // CHANCE TO FREEZE (Panic)
         const panicFreezeChance = 0.01 + (this.traits.neuroticism * 0.08); 
         if (this.state.stress > Config.AGENT.FROZEN_STRESS_THRESHOLD && Math.random() < panicFreezeChance) {
              this.state.isFrozenUntil = Date.now() + 1500 + (this.traits.neuroticism * 2000);
              this.addBark("...!");
         }
         
-        // Only trigger reaction if we crossed a significant threshold or suppression jumped significantly
         const crossedThreshold = oldSuppression < 50 && this.state.suppression >= 50;
         const significantJump = (this.state.suppression - this.lastSuppressionReaction) > 20;
 
@@ -371,15 +333,12 @@ export class Agent {
     react(world, force = false) {
         if (this.isReacting) return;
         
-        // Throttling: Only react at most once every 200ms to prevent decision-storm lag
-        // UNLESS forced (e.g. immediate gunshot reaction)
         const now = Date.now();
         if (!force && (now - this.lastReactionTime < 200)) return;
         
         this.isReacting = true;
         this.lastReactionTime = now;
 
-        // Force re-think bypassing inertia
         const action = this.brain.decide(world, true);
         if (this.currentAction && this.currentAction.type !== action.type) {
             this.retreatTarget = null;
@@ -392,8 +351,6 @@ export class Agent {
 
     communicate(world) {
         const now = Date.now();
-        // EXTRAVERSION: Vocal Frequency
-        // High E (1.0) = ~2s cooldown. Low E (0.0) = ~8s cooldown.
         const cooldown = 8000 - (this.traits.extraversion * 6000);
         
         if (now - this.lastShoutTime < cooldown) return;
@@ -407,7 +364,6 @@ export class Agent {
             this.lastShoutTime = now;
             const voiceRadius = Config.PHYSICS.SOUND_RADIUS_SHOUT;
             
-            // Determine distress type
             let distressType = null;
             if (isWounded) {
                 const hasMedkit = this.state.inventory.utility.some(u => u.type === 'Medkit' && u.count > 0);
@@ -420,9 +376,8 @@ export class Agent {
                      this.addBark("I'M HIT! PATCHING!");
                 }
             } else if (isPinned) {
-                // If I am already in cover, communicate support need, not cover need
                 if (this.brain.isSafe(world)) {
-                    distressType = 'PINNED'; // Different signal? Or reuse? Let's keep signal simple for now or change bark.
+                    distressType = 'PINNED';
                     this.addBark("UNDER FIRE!");
                 } else {
                     distressType = 'NEED_COVER';
@@ -430,7 +385,6 @@ export class Agent {
                 }
             }
 
-            // Use SpatialGrid to find allies to shout at
             const potentialAllies = world.spatial.query(this.pos.x, this.pos.y, voiceRadius);
             const allies = potentialAllies.filter(a => 
                 !a.isCover &&
@@ -442,16 +396,12 @@ export class Agent {
             const self = this;
             this.showShoutUntil = Date.now() + 500;
 
-            // GENERATE SENSORY CALLOUT (Fuzzy Coordinates)
-            // We no longer sync data directly. We broadcast a sound event with "rough" info.
-            
             let calloutPos = null;
-            const enemy = this.brain.cortex.getThreatSource(world, false); // Only report what we SEE
+            const enemy = this.brain.cortex.getThreatSource(world, false);
             
             if (enemy && enemy.pos) {
-                 // Add inaccuracy based on stress (Higher stress = more shouting error)
                  const stressFactor = this.state.stress / 100;
-                 const noise = 50 + (stressFactor * 150); // 50px - 200px error variance
+                 const noise = 50 + (stressFactor * 150);
                  
                  calloutPos = {
                      x: enemy.pos.x + (Math.random() - 0.5) * noise,
@@ -459,24 +409,19 @@ export class Agent {
                  };
             }
 
-            // Global sound event (Sensory.js handles who hears it)
-            // If we have a specific distress type (MEDIC!), that takes priority in the shout type
             const soundType = distressType === 'MEDIC' ? 'MEDIC_CALL' : 'SHOUT';
             
             world.addSoundEvent(this.pos.x, this.pos.y, voiceRadius, soundType, this.id, this.team, calloutPos, distressType);
 
-            // --- RADIO NET: SQUAD LEADER BROADCAST ---
-            // Leaders/Radiomen broadcast to the whole team net
             const radioCooldown = Config.SENSORY.RADIO.COOLDOWN;
             const canRadio = now - (this.lastRadioTime || 0) > radioCooldown;
 
             if (canRadio) {
                 if (this.rank === 1 && enemy && enemy.pos) {
                     this.lastRadioTime = now;
-                    // Add noise to the radio report
                     const rNoise = Config.SENSORY.RADIO.NOISE;
                     const reportX = enemy.pos.x + (Math.random() - 0.5) * rNoise;
-                    const reportY = enemy.pos.y + (Math.sin(now) * rNoise); // Different noise spread
+                    const reportY = enemy.pos.y + (Math.sin(now) * rNoise);
                     
                     world.radioNet[this.team].push({
                         type: 'HEAT',
@@ -488,7 +433,6 @@ export class Agent {
                     });
                 }
                 
-                // Anyone can broadcast a distress signal over radio (Mayday!)
                 if (distressType) {
                     this.lastRadioTime = now;
                     world.radioNet[this.team].push({
@@ -507,7 +451,7 @@ export class Agent {
 
     getCurrentCovers(world) {
         const covers = [];
-        const buffer = 30; // Allow shooting from near-cover
+        const buffer = 30;
         for (const c of world.covers) {
             if (this.pos.x >= c.x - buffer && this.pos.x <= c.x + c.w + buffer && 
                 this.pos.y >= c.y - buffer && this.pos.y <= c.y + c.h + buffer) {

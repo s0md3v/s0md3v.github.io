@@ -13,11 +13,7 @@
   <meta name="robots" content="noindex">
   {% endif %}
 
-  {% comment %}
-    Pages that render Reenie Beanie (corner annotations, sketch notes, hover notes, ...).
-    Only these preload it and hide the handwritten elements until it has loaded.
-    Any other page can opt in with `handwritten_font: true` in its front matter.
-  {% endcomment %}
+  {% comment %} Other pages opt in to Reenie Beanie with `handwritten_font: true` in their front matter {% endcomment %}
   {% assign handwritten_urls = "/,/about/,/projects/,/taste/" | split: "," %}
   {% assign page_url_key = page.url | remove: "index.html" | append: "/" | replace: "//", "/" %}
   {% if page.handwritten_font or handwritten_urls contains page_url_key %}
@@ -29,8 +25,6 @@
   {% include theme_init.html %}
   {% if page.layout_style == "homepage" %}
   <script>
-    // Each thing on the table is hidden until its pictures are ready (see index.html), but
-    // never for long if the page's script doesn't get to it
     document.documentElement.classList.add('spawning');
     window.spawning = setTimeout(() => document.documentElement.classList.remove('spawning'), 8000);
   </script>
@@ -52,7 +46,6 @@
     crossorigin>
   <link rel="preload" href="{{ '/assets/fonts/SourceSerif4-card-italic.woff2' | relative_url }}" as="font"
     type="font/woff2" crossorigin>
-  <!-- The business card is the largest thing on the table -->
   <link rel="preload" href="{{ '/assets/images/table/card.webp' | relative_url }}" as="image" fetchpriority="high">
   {% endif %}
   {% if uses_handwritten_font %}
@@ -65,7 +58,6 @@
   {% endunless %}
 
   <style>
-    /* The Links experiment's font. Nearly always plain ASCII, which comes in a file of its own. */
     @font-face {
       font-family: 'Comfortaa';
       font-style: normal;
@@ -84,8 +76,6 @@
       unicode-range: U+0000-001F, U+007F-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
 
-    /* Handwriting is nearly always plain ASCII, which comes in a file of its own. The
-       rest of the font only loads if a page writes something else. */
     @font-face {
       font-family: 'Reenie Beanie';
       src: url('{{ "/assets/fonts/reenie-beanie-ascii.woff2" | relative_url }}') format('woff2');
@@ -105,9 +95,7 @@
     }
 
     {% if page.layout_style == "homepage" %}
-    /* The business card on the homepage is printed in Source Serif 4, cut down to the
-       letters on the card (by _raw/cardfont.py, which has to be run again when they
-       change), at the weights and optical sizes they're set in */
+    /* Subset by _raw/cardfont.py; run it again when the card's letters change */
     @font-face {
       font-family: 'Source Serif Display';
       font-style: normal;
@@ -135,8 +123,6 @@
     {% endif %}
 
     {% unless page.layout_style == "homepage" %}
-    /* What inner pages are set in; the homepage doesn't render it. Optional: if it isn't here by
-       the first paint, this visit stays in the fallback rather than reflowing what's being read. */
     @font-face {
       font-family: 'Lexend';
       font-style: normal;
@@ -146,7 +132,6 @@
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
 
-    /* Arial at Lexend's size, so a visit that stays in the fallback reads nearly the same */
     @font-face {
       font-family: 'Lexend Fallback';
       src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Roboto'), local('Liberation Sans');
@@ -168,7 +153,6 @@
       }
     }
     {% endif %}
-    /* Ensure transition applies when opacity changes back */
     .corner-annotation,
     .hand-note,
     .menuheader,
@@ -183,15 +167,13 @@
     (function () {
       var root = document.documentElement;
       function reveal() { root.classList.remove('handwritten-font-hidden'); }
-      if (!("fonts" in document)) return; // Older browsers: never hide
+      if (!("fonts" in document)) return;
       root.classList.add('handwritten-font-hidden');
-      // Never keep the handwritten elements hidden for long, even if the font is slow or fails
       setTimeout(reveal, 1500);
       document.fonts.load("1em 'Reenie Beanie'").catch(function () { }).finally(reveal);
     })();
   </script>
   {% endif %}
-  {% comment %} The desk makes no clicks, so it doesn't need the click {% endcomment %}
   {% unless page.layout_style == 'homepage' %}<script src="{{ '/assets/js/sound.js' | relative_url }}" defer></script>{% endunless %}
   <script src="{{ '/assets/js/common.js' | relative_url }}" defer></script>
 

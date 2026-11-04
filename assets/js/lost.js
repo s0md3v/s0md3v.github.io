@@ -1,17 +1,12 @@
-/* The page that isn't there. The card says so, and says where you were probably going. What's
-   under the card only points. */
 (function () {
   const { pages, sections } = JSON.parse(document.getElementById('known').textContent);
   const way = document.querySelector('.way');
 
-  // ---- Where you were going ----
-
   const tidy = url => {
     let path = url;
-    try { path = decodeURIComponent(url); } catch (e) { /* Not a real address, but it's still one to compare */ }
+    try { path = decodeURIComponent(url); } catch (e) { }
     return path.toLowerCase().replace(/\.html?$/, '').replace(/^\/+|\/+$/g, '');
   };
-  // How many letters out, a pair the wrong way round being one
   function apart(a, b) {
     let before = null, last = Array.from({ length: b.length + 1 }, (_, i) => i);
     for (let i = 1; i <= a.length; i++) {
@@ -25,11 +20,8 @@
     }
     return last[b.length];
   }
-  // By its whole address or its last part, so that /dishtance finds it on the blog. The address
-  // that's been cut short in pasting is the other way to get here.
   function nearest(path) {
     const want = tidy(path), end = want.split('/').pop();
-    // A whole word of only one address, so that /blog/xsstrike finds it
     const named = end.length >= 4 ? pages.filter(known => ('-' + tidy(known.url).split('/').pop() + '-').includes('-' + end + '-')) : [];
     if (named.length === 1) return named[0];
     let best = null, least = Infinity;
@@ -40,8 +32,7 @@
     }
     return best;
   }
-  // Its tab in the bar, if it's one of the bar's places (/blog/x is the blog's). The same rule as
-  // _includes/page_section.html.
+  // Mirrors _includes/page_section.html
   function section(url) {
     let id = null;
     for (const s of sections) if (url === s.url || (s.url.endsWith('/') && url.startsWith(s.url))) id = s.id;
@@ -49,7 +40,6 @@
   }
 
   const page = nearest(location.pathname);
-  // Out by only a slash, a capital or a .html, it's the same address, so it goes straight there
   if (page && tidy(page.url) && tidy(page.url) === tidy(location.pathname) && page.url !== location.pathname) {
     location.replace(page.url + location.search + location.hash);
     return;
@@ -58,13 +48,10 @@
     const link = document.createElement('a');
     link.href = page.url;
     link.textContent = page.title;
-    // Its own stop, if its title has one
     way.replaceChildren('You probably want ', link, /[?!.]$/.test(page.title) ? '' : '.');
     const id = section(page.url);
     if (id) way.dataset.page = id;
   }
-
-  // ---- What's under the card ----
 
   const item = document.querySelector(`.nav-item[data-page="${(page && section(page.url)) || 'home'}"]`);
   if (!matchMedia('(min-width: 769px) and (prefers-reduced-motion: no-preference)').matches) return;
@@ -72,7 +59,6 @@
   const { clamp, rand, SUB } = Fizz;
   const R = 42, CHEEK = 0.2, UNDER = 1.3, WAKE = 0.5, REACH = 1.5, SHY = 120, SETTLE = 1.2;
   const card = document.querySelector('.wrapper');
-  // Whatever's showing of it: home is a name at this width, and the rest are icons
   const mark = [...item.children].find(el => el.getBoundingClientRect().width) || item;
   const canvas = document.createElement('canvas');
   const fizz = Fizz({ body: R, most: 4, root: 60, mound: 2.2 });
@@ -90,8 +76,6 @@
   document.body.append(canvas);
   fizz.mount(canvas);
 
-  // The canvas is on the page, only as big as what's on it, and everything here is measured from
-  // its corner
   function fit() {
     const box = card.getBoundingClientRect(), to = item.getBoundingClientRect();
     dpr = Math.min(devicePixelRatio || 1, 2);
@@ -104,7 +88,6 @@
     canvas.style.height = `${h}px`;
     fizz.size(Math.round(w * dpr), Math.round(h * dpr), dpr);
   }
-  // Across the top of the card, as far towards where it's pointing as it can get
   function perch() {
     const box = card.getBoundingClientRect(), to = item.getBoundingClientRect(), icon = mark.getBoundingClientRect();
     const mid = box.left + box.width / 2;
@@ -128,7 +111,6 @@
     blob.x = at.x - ox + scrollX;
     blob.y = at.top - oy + scrollY + R * (UNDER + (CHEEK - UNDER) * peek);
 
-    // Twice, every so often, in case you hadn't noticed
     if (arm && arm.state === 'attached') {
       if (!item.classList.contains('pointed')) { item.classList.add('pointed'); nextTap = age + 3; }
       if (age > nextTap) { tapped = age; nextTap = age + rand(4, 8); }
@@ -137,24 +119,18 @@
     target.x = at.tx - ox + scrollX;
     target.y = at.ty - oy + scrollY + 16 * tap(since);
     if (age > REACH && !arm) arm = fizz.reach(target, { hold: [0, 0] });
-    // What's thin hardly shines, so it's more of an arm by night
     if (arm) arm.vol = glow.night ? 4200 : 1500;
     fizz.move(dt);
     fizz.ebb(dt);
   }
 
-  // A double tap, as a finger does it: drawn back a bit and struck, then drawn back less and
-  // struck again, quicker. How far back it is, t seconds in, as a share of the most. (The same in
-  // assets/js/sneakers.js, where it taps a sign.)
-  // Each strike aims a little past where it lands, as the tip's always a moment behind where
-  // it's going, and stays there a beat, so it's seen to land.
+  // Same curve as assets/js/sneakers.js
   const TAP = [[0, 0], [0.22, 1], [0.31, -0.15], [0.38, 0], [0.47, 0.55], [0.53, -0.15], [0.6, 0]];
   function tap(t) {
     for (let i = 1; i < TAP.length; i++) {
       const [t0, v0] = TAP[i - 1], [t1, v1] = TAP[i];
       if (t >= t0 && t < t1) {
         const f = (t - t0) / (t1 - t0);
-        // Drawn back easing off, and struck gathering speed
         return v0 + (v1 - v0) * (v1 > v0 ? 1 - (1 - f) * (1 - f) : f * f);
       }
     }
@@ -187,7 +163,6 @@
   fit();
   glow.night = !!document.querySelector('.dark-mode');
   glow.n = glow.night ? 1 : 0;
-  // It stays under the card till it can be drawn on the graphics card, or it's been a while
   let woke = false;
   const wake = () => { if (!woke) { woke = true; requestAnimationFrame(frame); } };
   fizz.prepare().then(wake);

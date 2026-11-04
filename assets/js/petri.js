@@ -1,9 +1,3 @@
-/* What's in the Petri dish: Fizz (assets/js/fizz.js), and here's how it lives. It wanders,
-   feels the glass, and when a pointer comes close it leans over, climbs out, takes hold of it
-   and feeds. Pull hard enough and a tentacle necks and snaps, and what's left crawls home.
-   At night it glows, the colour of the ink on the table's labels, which is no coincidence:
-   it's been out. And it knows who's in the Polaroid: point at him and see. Its prints, and the
-   trail to the nearest of them, only show in the dark. */
 (function () {
   const obj = document.getElementById('playground');
   const canvas = document.querySelector('.fizz');
@@ -12,21 +6,16 @@
   const dish = obj.querySelector('.item');
   const table = obj.closest('.table');
   const root = document.documentElement;
-  // It's a lot to ask of a phone, so there it just lies in its dish
   const still = matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches;
 
-  // Everything's worked out in units of a dish 216 across, in the middle of a square VIEW
-  // across, which is as far as it can reach
+  // Units of a dish 216 across, centred in a square VIEW.
   const VIEW = 780, MID = VIEW / 2, WALL = 98, BODY = 50;
-  // The outside of the dish's rim; how far off it a bit gathers itself; and how high it's
-  // got to get to clear it, about as high as the dish is
   const RIM = 108, TAKEOFF = 13, CLEAR = 26;
   const MAX_STRANDS = 14;
   const P = { reach: 200, awareness: 290, maxStrands: 7 };
   const LIMIT = VIEW / 2 - 52;
 
   const { clamp, ease, rand, turn, bell, layer, rgb, shine, DARK, SOFT, NP, SUB, LIT } = Fizz;
-  // Where a box's middle is, from the corner of another
   const middle = (r, box) => [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
 
   let scale = 1, dpr = 1, frames = 0;
@@ -42,14 +31,6 @@
   fizz.focus = cur;
   fizz.mount(canvas);
 
-  // ---- What it hears ----
-  // It lives in that dish; nothing's keeping it there. And it can't stand noise. Earphones in,
-  // it starts, tears round the wall to get up speed, lets go at the point where its path runs
-  // to the Polaroid, and squeezes in under it. There it stays till they're out: a lump in the
-  // photo and a bit of it showing, and by night a glow from under the edge. Then it looks out,
-  // thinks about it, and creeps home.
-  // Out of the dish it's the same thing, drawn the same way: its canvas just goes with it, and
-  // has the Polaroid cut out of it. `den.c` is only for what's on the photo, and the eyes.
   const phone = document.getElementById('phone');
   const WAIT = 1.4, SWIRL = 1.35, LAPS = 2, CREEP = 3.2;
   const den = { state: null, out: false, t: 0, press: 0, lean: 0, quiet: 0, heard: false, bulge: 0, p: 0 };
@@ -62,8 +43,6 @@
     flash(blob.x, blob.y, 1);
     den.state = 'startle'; den.t = 0;
   }
-  // Where everything is, across the table. It goes under by the edge nearest the dish, and not
-  // near a corner.
   function plot() {
     const box = table.getBoundingClientRect(), r = polaroid.getBoundingClientRect(), d = dish.getBoundingClientRect();
     const w = polaroid.offsetWidth, h = polaroid.offsetHeight, a = (parseFloat(getComputedStyle(polaroid).rotate) || 0) * Math.PI / 180, co = Math.cos(a), si = Math.sin(a);
@@ -76,8 +55,6 @@
     Object.assign(den, { R, dx, dy, ex, ey, nx, ny, quad: [world(-hw, -hh), world(hw, -hh), world(hw, hh), world(-hw, hh)],
       hx: ex - nx * R * 0.86, hy: ey - ny * R * 0.86, px: ex - nx * R * 0.3, py: ey - ny * R * 0.3 });
   }
-  // What it draws of itself in and by the Polaroid, the rise and its eyes, is only ever over
-  // the Polaroid or just off its edge, so that's all its canvas covers
   function sizeDen() {
     const box = table.getBoundingClientRect(), s = Math.min(dpr, 1.5);
     plot();
@@ -105,8 +82,6 @@
     makeDen();
     den.canvas.style.display = 'block';
   }
-  // Round the wall, faster and faster, on the glass: it's what's holding it to the curve. The
-  // laps come out so that it's going straight for the Polaroid when it's done.
   function beginSwirl() {
     openDen();
     const from = canvas.getBoundingClientRect(), box = table.getBoundingClientRect();
@@ -119,7 +94,6 @@
     den.t += dt;
     if (den.state === 'startle') { if (den.t > 0.16) beginSwirl(); return; }
     const u = clamp(den.t / SWIRL, 0, 1), th = den.th0 + den.dir * den.sweep * u * u;
-    // It goes as the square of how fast it's going, and the thinner it is the nearer the wall
     blob.smear = 1.35 * u * u;
     const hug = WALL - (BODY * blob.size * 0.72) / (1 + blob.smear * 0.75), rho = den.rho0 + (hug - den.rho0) * ease(0, 0.22, u);
     blob.x = blob.tx = MID + Math.cos(th) * rho; blob.y = blob.ty = MID + Math.sin(th) * rho;
@@ -149,10 +123,6 @@
     flash(blob.x, blob.y, 0.5);
     if (hovered) setHovered(true);
   }
-  // Where it comes from in the first place: as if it had been under the Polaroid all along.
-  // Not till everything it'll want is ready: drawing it on the graphics card, its skin for when
-  // it's on him, and the first time anything's drawn of it, since the first time costs the most.
-  // All that's done while there's nothing to see, and nothing to drop a frame of.
   let arrived = false;
   function getReady() {
     if (arrived) return;
@@ -161,8 +131,6 @@
     fizz.draw();
     warmDen().then(() => requestAnimationFrame(arrive));
   }
-  // What it shows on and by the Polaroid, drawn once unseen, and wiped again, or what was drawn
-  // to get it ready is the first thing that's seen
   function warmDen() {
     if (!polaroid || !polaroid.offsetWidth || !window.createImageBitmap) return Promise.resolve();
     makeDen();
@@ -176,12 +144,10 @@
     arrived = true;
     canvas.style.transition = 'opacity 0.8s';
     canvas.style.opacity = '';
-    // Already on him, before there was anything here to notice
     if (about && about.matches(':hover')) hovered = true;
     if (polaroid && polaroid.offsetWidth) {
       blob.grow = 1;
       strands.length = drops.length = 0;
-      // What shows of it on and by the Polaroid comes up with the rest of it, and not first
       makeDen();
       den.canvas.style.opacity = 0;
       openDen();
@@ -203,7 +169,6 @@
       const f = Math.min(den.t, 1);
       go(den.ex, den.ey, f);
       den.tilt = Math.atan2(den.ey - den.y0, den.ex - den.x0);
-      // Let go, nothing's holding it to the curve, and it pulls itself in as it flies
       up = 0.55 * Math.sin(Math.PI * f); smear = 1.35 - 1.05 * f;
       if (f >= 1) { from(den.ex, den.ey); den.state = 'squeeze'; }
     } else if (den.state === 'squeeze') {
@@ -229,7 +194,6 @@
         den.state = 'creep'; den.done = 0; den.trip = Math.hypot(den.rx - den.x, den.ry - den.y);
       }
     } else if (den.state === 'creep') {
-      // In heaves, drawing itself up and letting itself go, and it's in no hurry
       den.t += dt;
       const heave = Math.sin(den.t * 5) ** 2;
       den.done += (den.trip / CREEP) * (0.3 + 1.4 * heave) * dt;
@@ -238,7 +202,6 @@
       den.tilt = Math.atan2(den.ry - den.y0, den.rx - den.x0);
       smear = 0.24 * heave;
       if (den.heard) {
-        // That's it, back it goes
         from(den.x, den.y);
         den.trip = Math.max(Math.hypot(den.ex - den.x, den.ey - den.y) / (1100 * scale), 0.1);
         den.state = 'dash';
@@ -250,7 +213,6 @@
       up = 0.6 * Math.sin(Math.PI * f); smear = 0.12;
       if (f >= 1) return home();
     }
-    // Height's a matter of being a little nearer the eye
     den.lift = 1 + 0.24 * up;
     blob.smear = smear;
     blob.x = blob.tx = blob.y = blob.ty = MID;
@@ -260,7 +222,6 @@
     canvas.style.scale = den.lift.toFixed(3);
     paintDen();
   }
-  // It's under the Polaroid, so where the Polaroid is there's none of it
   function underneath() {
     const f = 1 / (scale * den.lift);
     return den.quad.map(([x, y]) => [(x - den.x) * f + MID, (y - den.y) * f + MID]);
@@ -270,7 +231,6 @@
     const quad = () => { c.moveTo(...den.quad[0]); for (let i = 1; i < 4; i++) c.lineTo(...den.quad[i]); c.closePath(); };
     c.setTransform(s, 0, 0, s, -den.bx * s, -den.by * s);
     c.clearRect(den.bx, den.by, den.W, den.H);
-    // Under the photo, it shows as a rise in it, lit on one side
     if (den.bulge > 0.01) {
       c.save();
       c.beginPath(); quad(); c.clip();
@@ -294,7 +254,6 @@
       c.restore();
     }
   }
-  // At whoever's there
   function paintEyes(c, x, y, R) {
     const tx = -den.ny, ty = den.nx, box = table.getBoundingClientRect();
     const look = hovered && cur.at ? clamp(((cur.at[0] - box.left - x) * tx + (cur.at[1] - box.top - y) * ty) / (R * 3), -1, 1) * R * 0.1 : Math.sin(den.t * 2.6) * R * 0.1;
@@ -307,9 +266,6 @@
     if (den.out) roam(dt);
   }
 
-  // ---- What's different in a dish ----
-
-  // Driven against the glass, it's the glass that stops it
   function glass(r, a) {
     if (den.press > 0.01) {
       const dx = blob.x - MID, dy = blob.y - MID, b = dx * Math.cos(a) + dy * Math.sin(a), wall = Math.sqrt(Math.max(b * b - dx * dx - dy * dy + (WALL - 1) ** 2, 0)) - b;
@@ -317,7 +273,6 @@
     }
     return r;
   }
-  // The glass, inside the rim, for its near side to be lit
   function litGlass() {
     return den.out ? null : { x: MID, y: MID, r: WALL + 4.5, width: 2.2, far: WALL * 1.5 };
   }
@@ -327,7 +282,6 @@
     fizz.reach(cur, { toward, lean: [0, 0.5, -0.5, 0.95, -0.95, 1.35, -1.35][k % 7] });
   }
 
-  // And now and then one goes all the way to the glass, and feels along it for a way out
   function spawnFeeler() {
     const a = fizz.probeAt += rand(1.6, 4.7), s = fizz.sprout('probe', a);
     const [x, y] = at(a);
@@ -337,13 +291,11 @@
     s.vol = Math.PI * 1.1 * 1.1 * 80;
     strands.push(s);
   }
-  // However it came to part, what's left starts over. One's thrown off, as a bit.
   function parted(s, base, tip) {
     const o = (NP - 1) * 2;
     base.retract = tip.retract = 0;
     lastSnap = fizz.time;
     if (drops.length < 6) {
-      // However far away it was flung, it lands where it can be seen getting back
       const L = Math.hypot(s.pos[o] - MID, s.pos[o + 1] - MID) || 1, far = Math.min(L, rand(190, 235)) / L;
       const a = Math.atan2(s.pos[o + 1] - MID, s.pos[o] - MID) + rand(-0.3, 0.3);
       const x = MID + Math.cos(a) * L * far, y = MID + Math.sin(a) * L * far;
@@ -352,9 +304,6 @@
     }
   }
 
-  // The dish stands on the table, so a bit that's crawled home has to get back into it: it
-  // stops at the foot of the wall, gathers itself, and jumps. Some don't make it the first
-  // time, hit the glass, and drop back for another go.
   function stepDrop(d, dt) {
     d.t += dt;
     fizz.trace(d, dt);
@@ -371,10 +320,9 @@
     if (d.state === 'air') {
       const f = fizz.flight(d, dt);
       d.up = (d.short ? CLEAR * 0.72 * Math.sin(f * Math.PI / 2) : (CLEAR + 8) * 4 * f * (1 - f));
-      d.sq = 1 + 0.5 * Math.abs(1 - 2 * f);     // Drawn out as it goes, round at the top
+      d.sq = 1 + 0.5 * Math.abs(1 - 2 * f);
       if (f < 1) return;
       if (d.short) {
-        // Off the glass, back down where it came from
         Object.assign(d, { state: 'fall', flight: 0, time: 0.24, top: d.up, land: 0.5, x1: d.x0, y1: d.y0, x0: d.x, y0: d.y });
         return;
       }
@@ -387,7 +335,7 @@
       const f = fizz.flight(d, dt);
       d.up = d.top * (1 - f * f);
       if (f < 1) return;
-      Object.assign(d, { state: 'crouch', up: 0, land: 0.9, crouch: 0.42, wait: 0.42 });   // A moment to recover
+      Object.assign(d, { state: 'crouch', up: 0, land: 0.9, crouch: 0.42, wait: 0.42 });
       return;
     }
     const e = edge(d.x, d.y), pulse = Math.sin(d.t * 9) ** 2, speed = 34 + 96 * pulse, wob = Math.sin(d.t * 11 + d.phase) * 22;
@@ -410,17 +358,14 @@
     blob.over += ((inside ? 1 : 0) - blob.over) * (1 - Math.exp(-dt * 6));
     fizz.stir(dt, 0.25 + 0.45 * ready + 0.6 * blob.over);
     gone +=((leap && leap.off ? 1 : 0) - gone) * (1 - Math.exp(-dt * 8));
-    // Point near him and it's seen where you're going: it gets ready, by as much as you're near
     ready += (nearing - ready) * (1 - Math.exp(-dt * (nearing > ready ? 5 : 3)));
     const winding = leap && !leap.off, coil = winding ? 1 : leap || den.state ? 0 : ready, tense = coil > 0.02;
-    // It doesn't care for daylight. By night it spreads out, and it's braver.
     const size = (glow.night ? 1.08 : 0.94) * (1 - 0.24 * coil) * (1 - 0.5 * gone), w = leap || den.state ? 18 : tense ? 10 : 3;
     blob.sizeV += (w * w * (size - blob.size) - w * blob.sizeV) * dt;
     blob.size += blob.sizeV * dt;
     const reach = P.reach * (glow.night ? 1.15 : 1);
     fizz.aware = present && !inside ? ease(P.awareness * (glow.night ? 1.15 : 1), 18, e.d) : 0;
 
-    // Leans, and shifts its weight, towards the pointer. Left alone it sets off somewhere else.
     if (fizz.aware > 0.02 || inside) {
       const dx = cur.x - MID, dy = cur.y - MID, L = Math.hypot(dx, dy) || 1, far = Math.min(L, 36);
       blob.tx = MID + (dx / L) * far; blob.ty = MID + (dy / L) * far;
@@ -432,7 +377,6 @@
       blob.next = fizz.time + rand(4, 8);
     }
     if (den.state === 'startle' || den.state === 'swirl') swirl(dt);
-    // Winding up: it draws back from where it's going, and holds there, quite still
     if (tense) {
       const dir = winding ? leap.dir : aim;
       blob.tx = MID - Math.cos(dir) * 30 * coil; blob.ty = MID - Math.sin(dir) * 30 * coil;
@@ -468,24 +412,11 @@
     fizz.ebb(dt);
   }
 
-  // ---- The leap ----
-  // Point at the Polaroid and it's across the table and onto the man in it: it lands on his
-  // face, runs out over the photo, then pulls itself back into a lump where his head was. And
-  // the specks that shine in it drift together, into something like two eyes and a grin. No
-  // more than something like. Move away and it lets go: it peels off him, strings stretching
-  // till they give, balls up and hops home, leaving a wet mark that dries. Spilt liquid can't
-  // run back up its own path, so that's a move of its own and not the leap played backwards.
-  // Until it's left the dish, or left him, the pointer can change its mind; in the air, it can't.
   const LEAP = { crouch: 0.3, fly: 0.34, peel: 0.55 };
-  // From when it lands: run over him; pulled together; and the specks, from each to the end
   const FACE = { spread: 0.16, gather: 0.9, eyes: 0.75, mouth: 1.05, end: 2.1 };
   const BACK = 1.7;
-  // How long the last of what was thrown off takes to get back
   const DROPS = 1.75;
-  // His head in the photo, in shares of the Polaroid, turned as it is: tilted, and looking off
-  // to the left of the frame, so what's on his face wraps round a skull turned that way
   const HEAD = { x: 0.492, y: 0.35, size: 0.165, tilt: 8 * Math.PI / 180, yaw: -0.25 };
-  // How near the Polaroid the pointer's got, in Polaroid widths, before it starts to get ready
   const SENSE = 0.9;
   let hovered = false, leap = null, gone = 0, kit = null, drying = 0, nearing = 0, ready = 0, aim = 0;
   const gaze = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -506,7 +437,6 @@
       c.closePath();
     }
   }
-  // A grin: the corners up, deep in the middle, and gone at the ends
   const grinTop = u => 0.16 + 0.17 * (1 - (u / 0.58) ** 2);
   const grinDeep = u => 0.32 * Math.max(1 - (u / 0.58) ** 2, 0) ** 0.6;
   function lumpPath(c) {
@@ -519,8 +449,6 @@
     c.closePath();
   }
 
-  // What it does on landing: its shape's a sum of soft balls, cut off at a level, so where two
-  // come close they run together with a neck between them, as a liquid does
   function buildRun(W, H, cx, cy, R) {
     const N = W * H, G = new Float32Array(N), A = new Float32Array(N).fill(9), drops = [];
     const arrive = r => 0.12 * clamp((r - R * 0.5) / (R * 1.4), 0, 1) ** 1.3;
@@ -552,19 +480,14 @@
         x += Math.cos(a) * hop; y += Math.sin(a) * hop; go += hop;
       }
       ball(x, y, width * 0.95);
-      // Spat from the end of it
       for (let k = 0; k < 3; k++) {
         const far = rand(0.08, 0.5) * R, b = a + rand(-0.2, 0.2);
-        // Most find their way back to the rest, each when it does, and the others never will
         drops.push({ x: x + Math.cos(b) * far, y: y + Math.sin(b) * far, r: rand(0.015, 0.05) * R, at: arrive(reach + far), go: rand(0.3, DROPS - 0.75), left: Math.random() < 0.3 });
       }
     }
     return { G, A, drops };
   }
 
-  // The lump it pulls itself into, about the size of the head it's taken: drawn on a mask and
-  // read back, so it's lit like everything else here. A soft edge makes a round one, and a few
-  // bulges on it and what's run down onto the hoodie keep it from being a shape anyone drew.
   function buildLump(W, H, cx, cy, k) {
     const mask = layer(W, H);
     const c = mask.getContext('2d', { willReadFrequently: true }), N = W * H, FAR = W + 60;
@@ -605,8 +528,6 @@
     }
     return C;
   }
-  // The most of the stage the lump can ever reach, swells and all, which is all that's painted
-  // once it's pulled together
   function extent(C, W, H) {
     let x0 = W, x1 = 0, y0 = H, y1 = 0;
     for (let i = 0, y = 0; y < H; y++) for (let x = 0; x < W; x++, i++) {
@@ -615,11 +536,6 @@
     return { x0: Math.max(x0 - 12, 0), x1: Math.min(x1 + 12, W - 1), y0: Math.max(y0 - 12, 0), y1: Math.min(y1 + 12, H - 1) };
   }
 
-  // What it leaves where it's been: a film, thin in the middle and thick at the edge, because
-  // that's where a drying liquid leaves what was in it. It's only a picture, so it costs
-  // nothing to hold or to fade.
-  // How much of it there is at each level of what was there, looked up and not worked out:
-  // below the level it fades out within a little, and above it it's thicker towards the edge
   const FILM = (() => {
     const lo = -0.15, step = 1 / 2048, n = Math.ceil((1.2 - lo) / step) + 1, a = new Float32Array(n);
     for (let k = 0; k < n; k++) { const v = lo + k * step; a[k] = v > 0 ? 0.5 + 0.5 * bell(v, 0.22) : bell(v, 0.06); }
@@ -628,8 +544,6 @@
   function paintFilm(el, F) {
     const W = el.width, H = el.height, c = el.getContext('2d'), image = c.createImageData(W, H), px = image.data;
     const [r, g, b] = glow.night ? [130, 200, 140] : [74, 62, 38], most = 255 * (glow.night ? 0.16 : 0.22);
-    // Patchy, as it dries: three waves across it, each split into a part along and a part down
-    // so that nothing's worked out a pixel at a time
     const waves = [[0.043, 0.021, 1], [0.017, -0.051, 1], [0.11, 0.083, 0.6]];
     const along = waves.map(([kx, , w]) => [Float32Array.from({ length: W }, (_, x) => w * Math.sin(x * kx)), Float32Array.from({ length: W }, (_, x) => w * Math.cos(x * kx))]);
     const down = waves.map(([, ky]) => [Float32Array.from({ length: H }, (_, y) => Math.cos(y * ky)), Float32Array.from({ length: H }, (_, y) => Math.sin(y * ky))]);
@@ -674,8 +588,6 @@
     return top + (under - top) * v;
   };
 
-  // What the wet of it reflects: the sky that's in the photo, broad and soft, from over his
-  // shoulder by day, and at night just the lamp
   function buildRoom(night) {
     const w = 96, h = 96, room = new Float32Array(w * h);
     for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
@@ -685,10 +597,6 @@
     return { room, w, h, night };
   }
 
-  // The specks. Each starts anywhere in the lump and has a place it's making for, in an eye or
-  // the grin, and sets off when it sets off: what they make's a matter of where most of them
-  // have got to, so it comes up slowly and it's never quite anything. They go on drifting, so
-  // it's alive.
   function buildSpecks() {
     const test = layer().getContext('2d'), specks = [];
     eyesPath(test);
@@ -720,12 +628,10 @@
     c.setTransform(co * K.px, si * K.px, -si * K.px, co * K.px, K.fx * K.px, K.fy * K.px);
     c.globalCompositeOperation = 'lighter';
     const draw = (x, y, size, a) => { c.globalAlpha = Math.min(a, 1); c.drawImage(SOFT, x - size, y - size, size * 2, size * 2); };
-    // It looks where you're pointing, it shuts its eyes now and then, and it breathes
     const follow = 1 - Math.exp(-dt * 7);
     gaze.x += (gaze.tx - gaze.x) * follow; gaze.y += (gaze.ty - gaze.y) * follow;
     if (fizz.time > K.blink + 0.3) K.blink = fizz.time + rand(3, 7);
     const shut = bell(fizz.time - K.blink, 0.075), breath = 0.88 + 0.12 * Math.sin(fizz.time * 1.25), lookX = gaze.x * 0.1, lookY = gaze.y * 0.08;
-    // A breath of light round what's forming, as there's more of it there than anywhere
     const eyes = ease(FACE.eyes + 0.15, FACE.end, t), mouth = ease(FACE.mouth + 0.2, FACE.end, t), bloom = night ? 0.5 : 0.28, [left] = wrap(-0.36, 0), [right] = wrap(0.36, 0), [middle] = wrap(0, 0);
     if (eyes > 0) { const a = eyes * bloom * present * (1 - 0.8 * shut); draw(left + lookX, -0.27 + lookY, 0.46, a); draw(right + lookX, -0.27 + lookY, 0.46, a); }
     if (mouth > 0) draw(middle + lookX * 0.4, 0.38 + lookY * 0.4, 0.72, mouth * bloom * present);
@@ -740,11 +646,8 @@
     c.globalCompositeOperation = 'source-over';
   }
 
-  // Everything's made the first time it's needed, then kept for as long as the window's size is
   function build() {
     const box = table.getBoundingClientRect(), r = polaroid.getBoundingClientRect(), w = polaroid.offsetWidth, h = polaroid.offsetHeight;
-    // It doesn't know where the photo stops: the stage is as much bigger than the Polaroid, all
-    // round, as the longest run off his face needs, so that nothing ever ends at an edge
     const U = w * HEAD.size, R = U * 1.5, far = R * 2.75, pad = Math.ceil(Math.max(far - w * HEAD.x, far - h * HEAD.y, 0)), sw = w + pad * 2, sh = h + pad * 2;
     const g = 0.5, W = Math.round(sw / g), H = Math.round(sh / g), px = Math.min(devicePixelRatio || 1, 2) * 1.5;
     const stage = document.createElement('div');
@@ -752,7 +655,6 @@
     stage.setAttribute('aria-hidden', 'true');
     const [midX, midY] = middle(r, box), turned = getComputedStyle(polaroid).rotate;
     Object.assign(stage.style, { left: `${midX - sw / 2}px`, top: `${midY - sh / 2}px`, width: `${sw}px`, height: `${sh}px`, rotate: turned });
-    // Its skin's on a canvas to begin with, and moves to the graphics card when there's time
     const skin = layer(W, H);
     const top = layer(Math.round(sw * px), Math.round(sh * px)), film = layer(W, H), mark = layer(W, H);
     const halo = document.createElement('div');
@@ -762,8 +664,6 @@
     fly.className = 'fizz-leap';
     table.append(fly, stage);
     const fx = pad + w * HEAD.x, fy = pad + h * HEAD.y, a = (parseFloat(turned) || 0) * Math.PI / 180;
-    // At night it lights what's round it. Over a wide area and held for as long as he's pointed
-    // at, so it's left to the browser and not drawn every frame.
     Object.assign(halo.style, { position: 'absolute', left: `${fx - U * 3.4}px`, top: `${fy - U * 3.4}px`, width: `${U * 6.8}px`, height: `${U * 6.8}px`, background: 'radial-gradient(closest-side, rgba(190, 236, 165, 0.3), rgba(190, 236, 165, 0.1) 45%, rgba(190, 236, 165, 0))' });
     const ox = fx - sw / 2, oy = fy - sh / 2;
     const cx = fx / g, cy = fy / g, lump = buildLump(W, H, cx, cy, U / g), K = { stage, top, fly, skin, gpu: null, fc: fly.getContext('2d'), tc: top.getContext('2d'),
@@ -771,8 +671,6 @@
       landX: midX + ox * Math.cos(a) - oy * Math.sin(a), landY: midY + ox * Math.sin(a) + oy * Math.cos(a),
       run: buildRun(W, H, cx, cy, R / g), lump, specks: buildSpecks(), env: buildRoom(glow.night), tails: Array.from({ length: 5 }, () => rand(0, 6.28)),
       strings: Array.from({ length: 8 }, (_, i) => ({ a: ((i + rand(0.2, 0.8)) / 8) * 6.28, snap: rand(0.4, 0.8), width: rand(0.05, 0.1) * U / g })) };
-    // The way it flies is only as big as from anywhere in the dish to where it lands, with room
-    // for the shadow it throws, and it's that and not the whole table that's drawn over
     const from = canvas.getBoundingClientRect(), dx = from.left - box.left + MID * scale, dy = from.top - box.top + MID * scale, reach = WALL * scale * 1.3, M = BODY * scale * 4;
     const x0 = Math.floor(Math.max(Math.min(dx - reach, K.landX) - M, 0)), y0 = Math.floor(Math.max(Math.min(dy - reach, K.landY) - M, 0));
     const x1 = Math.ceil(Math.min(Math.max(dx + reach, K.landX) + M, box.width)), y1 = Math.ceil(Math.min(Math.max(dy + reach, K.landY) + M, box.height)), s = Math.min(dpr, 1.5);
@@ -784,23 +682,15 @@
     return K;
   }
 
-  // Lit a pixel at a time, as nothing else will do it. Where it's flat it shows the sky behind
-  // whoever took the photo, and where it curves away it catches it from the side, strongly,
-  // the way the edge of any water does. At night it still stands in front of what's behind
-  // it: it's what it gives off that shows.
   function paintSkin(t, peel) {
     const K = kit, { W, H, cx, cy } = K, { drops } = K.run;
     if (K.gpu && K.gpu.lost) flatSkin(K);
     if (K.env.night !== glow.night) { K.env = buildRoom(glow.night); if (K.gpu) K.gpu.room(K.env); }
     const { w: EW, h: EH, night } = K.env, cells = K.U / K.g;
-    // It hits, flattens further than it can hold, and draws back a little. Pulled off him it
-    // draws in on itself, and the thin of it goes first.
     const m = ease(FACE.spread, FACE.gather, t), pull = ease(0, 1, peel), iso = 0.42 + 0.55 * Math.exp(-t * 20) - 0.09 * Math.exp(-t * 6) * Math.cos(t * 17) - 0.025 * m * Math.sin(fizz.time * 1.25) + 0.6 * peel * peel;
     const spreading = t < 0.22, shrink = 1 + 2.4 * pull, zoom = (1 + 2.2 * m) * shrink, solid = m >= 1 && t >= DROPS && !peel;
-    // Never still: slow swells going through it, and it's what makes it a liquid
     const scaleX = K.g / K.U, heave = 0.09 * ease(0.4, 1, m);
     const { x0, x1, y0, y1 } = solid ? K.near : { x0: 0, x1: W - 1, y0: 0, y1: H - 1 };
-    // Stamped on after: domes that stand up off whatever's there, as [x, y, radius, height]
     const domes = K.domes;
     domes.length = 0;
     const dome = (x, y, r, tall) => {
@@ -818,8 +708,6 @@
         if (r > 0.7) dome(d.x + dx * back * near, d.y + dy * back * near, r, 0.75 * here);
       }
     }
-    // Strings of it, held fast to the photo while the rest pulls away, getting thinner till
-    // they give: then each end runs back to where it belongs
     if (peel) {
       const rim = cells * (0.85 + 1.1 * (1 - m)), ball = (cells * 0.85) / shrink, side = K.g / K.U;
       for (const S of K.strings) {
@@ -833,11 +721,8 @@
         }
       }
     }
-    // Struck, it lights up, as sea sparkle does when a wave breaks: a ring going out from the
-    // hit, and all of it for a moment after. It's torn just the same pulling away.
     const struck = 0.42 * Math.exp(-t * 2.4), hurt = 0.3 * Math.sin(Math.PI * Math.min(peel * 1.1, 1));
     K.stress = night ? Math.max(struck, hurt) : 0;
-    // Its shadow, cast a little way from each of three heights
     const a0 = K.angle, sx = glow.x * Math.cos(a0) + glow.y * Math.sin(a0), sy = -glow.x * Math.sin(a0) + glow.y * Math.cos(a0), d1 = cells * 0.035;
     const off = [1, 2.2, 3.6].map(k => [Math.round(sx * d1 * k), Math.round(sy * d1 * k)]);
     const shade = night ? [3, 5, 6] : [28, 34, 44], cast = night ? 0.4 : 0.42;
@@ -886,7 +771,6 @@
       for (let x = Math.max(x0, 1); x <= Math.min(x1, W - 2); x++) {
         const i = line + x, h = height[i];
         if (h < 0.006) {
-          // Its shadow: what's taller throws it further
           const dark = Math.min(height[i + at1] || 0, 1) * 0.5 + clamp((height[i + at2] || 0) - 0.5, 0, 1) * 0.35 + clamp((height[i + at3] || 0) - 0.95, 0, 0.5) * 0.3;
           if (dark > 0.004) { const o = i * 4; px[o] = sr; px[o + 1] = sg; px[o + 2] = sb; px[o + 3] = 255 * cast * dark; }
           continue;
@@ -899,8 +783,6 @@
         let r, g, b, a;
         if (night) {
           const ring = t < 0.9 ? 0.5 * bell(Math.hypot(x - cx, y - cy) / cells - 11 * t, 0.8) * Math.exp(-t * 3) : 0;
-          // Thick, it's lit from inside, palest at the edge where the light's come through the
-          // most of it: what's in the dish, on him
           const deep = Math.min(h, 1.6) / 1.6, cloud = 0.14 + 0.1 * deep, em = body * (cloud + 0.55 * steep + 0.08 * (wx[x] + wy[y]) * m + struck + hurt + ring), lamp = reflect * 0.7 + spec * 0.3;
           r = 10 + 182 * em + 255 * lamp; g = 26 + 226 * em + 228 * lamp; b = 20 + 150 * em + 196 * lamp;
           a = (1 - Math.exp(-h * h * 3.2)) * (0.86 + 0.14 * steep);
@@ -917,11 +799,6 @@
     K.c.putImageData(K.image, 0, 0, x0, y0, x1 - x0 + 1, y1 - y0 + 1);
   }
 
-  // ---- Its skin, on the graphics card ----
-
-  // The same sums as paintSkin's, a pixel at a time, which is what a graphics card is for: how
-  // high it stands at each point, kept as two bytes of a picture, and then how that's lit.
-  // Where there's no WebGL, or it's lost, it's done in the page's own time, as before.
   const SKIN_VS = `#version 300 es
 void main() { vec2 q = vec2(gl_VertexID & 1, gl_VertexID >> 1); gl_Position = vec4(q * 2. - 1., 0., 1.); }
 `;
@@ -1046,8 +923,6 @@ void main() {
       const at = new Map();
       return { p, parts, u: n => { if (!at.has(n)) at.set(n, gl.getUniformLocation(p, n)); return at.get(n); } };
     };
-    // Built while the page goes on, where that's allowed: it's done in idle time, well before
-    // it's needed, and if it isn't ready when it is, the skin's done on a canvas instead
     const rise = build(SKIN_HEIGHT), light = build(SKIN_LIGHT), quick = gl.getExtension('KHR_parallel_shader_compile');
     let done = false;
     const field = (w, h, data, format = gl.R32F, layout = gl.RED) => {
@@ -1089,7 +964,6 @@ void main() {
         }
         return (done = true);
       },
-      // What it's made from, once
       load(K) { G = field(W, H, K.run.G); A = field(W, H, K.run.A); C = field(W, H, K.lump); S.room(K.env); },
       room(e) { if (R) gl.deleteTexture(R); R = field(e.w, e.h, e.room); env = [e.w, e.h]; },
       clear() { gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, W, H); wipe(); },
@@ -1107,7 +981,6 @@ void main() {
         gl.bindVertexArray(vao);
         gl.disable(gl.BLEND);
         gl.viewport(0, 0, W, H);
-        // How high it stands
         gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
         wipe();
         only(p.x0, p.y0, p.x1, p.y1);
@@ -1119,7 +992,6 @@ void main() {
         gl.uniform4f(rise.u('u_j'), p.iso, p.t, p.scaleX, p.time);
         gl.uniform4i(rise.u('u_f'), p.solid ? 1 : 0, p.peel ? 1 : 0, p.spreading ? 1 : 0, n);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        // And how it's lit
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         wipe();
         only(Math.max(p.x0, 1), Math.max(p.y0, 1), Math.min(p.x1, W - 2), Math.min(p.y1, H - 2));
@@ -1140,15 +1012,11 @@ void main() {
       },
     });
   }
-  // On a canvas: to begin with, and when the graphics card's gone
   function flatSkin(K, kept) {
     const skin = kept ? K.skin : layer(K.W, K.H), c = skin.getContext('2d'), image = c.createImageData(K.W, K.H);
     if (!kept) K.skin.replaceWith(skin);
     Object.assign(K, { skin, gpu: null, c, image, data: new Uint32Array(image.data.buffer), rgba: image.data, height: new Float32Array(K.W * K.H), wx: new Float32Array(K.W), wy: new Float32Array(K.H) });
   }
-  // And onto the graphics card, once the page has settled and Fizz is on it, so nothing waits on
-  // it: its programs are built while the page goes on, and it changes over only when they're
-  // ready and it isn't on him. False once it's known it can't.
   function cardSkin(K) {
     if (K.gpu || K.pending === false) return;
     if (!K.pending) {
@@ -1160,15 +1028,12 @@ void main() {
     const { el, gpu } = K.pending;
     if (!gpu.ready()) { if (gpu.lost) K.pending = false; return; }
     if (leap) return;
-    // The lights may have changed while it waited
     gpu.room(K.env);
     el.style.cssText = K.skin.style.cssText;
     K.skin.replaceWith(el);
     Object.assign(K, { skin: el, gpu, pending: null, c: null, image: null, data: null, rgba: null, height: null });
   }
 
-  // Over the table, in a high arc. From above all that shows of height is a shadow left
-  // behind, and that it's a little nearer the eye.
   function paintFlight(z) {
     const K = kit, c = K.fc, night = glow.night, box = table.getBoundingClientRect(), from = canvas.getBoundingClientRect(), [bx, by, bw, bh] = K.flyBox;
     c.setTransform(K.flyScale, 0, 0, K.flyScale, -bx * K.flyScale, -by * K.flyScale);
@@ -1190,7 +1055,6 @@ void main() {
       c.fillStyle = pool;
       c.fillRect(sx - sr * 2.4, sy - sr * 2.4, sr * 4.8, sr * 4.8);
     }
-    // Strings of it, pulling out behind, till they give
     const tail = ease(0.5, 0.1, z), L = Math.hypot(x - x0, y - y0) || 1, nx = -(y - y0) / L, ny = (x - x0) / L;
     if (tail > 0.01) {
       for (const a of K.tails) {
@@ -1206,7 +1070,6 @@ void main() {
     }
     paintLump(c, x, y, r, Math.atan2(y - y0, x - x0), 1 + 0.4 * up, z * 14, night);
   }
-  // All of it, or most, off the dish: drawn out along the way it's going
   function paintLump(c, x, y, r, heading, stretch, phase, night) {
     c.save();
     c.translate(x, y);
@@ -1241,13 +1104,11 @@ void main() {
     }
   }
 
-  // Made ahead, when nothing's going on, so that it can go the moment it's asked to
   const whenIdle = window.requestIdleCallback || (f => setTimeout(f, 200));
   function prepare() {
     if (polaroid && !still && matchMedia('(hover: hover)').matches) whenIdle(() => { if (!kit && polaroid.offsetWidth) { kit = build(); dry(); fizz.prepare().then(upgrade); whenIdle(warm); } });
   }
-  // The first time the browser's asked to draw anything like the leap, it works out how to on
-  // the graphics card, and that takes a frame or two: so it's asked once, unseen, beforehand
+  // The first leap-like draw compiles on the GPU and takes a frame or two, so draw it once unseen beforehand.
   function warm() {
     const K = kit;
     if (!K || leap || !window.createImageBitmap) { if (K) K.warm = true; return; }
@@ -1255,14 +1116,12 @@ void main() {
     const done = () => { K.warm = true; if (kit === K && !leap) paintFlight(null); };
     createImageBitmap(K.fly).then(b => { b.close(); done(); }, done);
   }
-  // Its skin moved to the graphics card when there's time: after Fizz is, and in idle time
   function upgrade() {
     const K = kit;
     if (!K || K.gpu || K.pending === false) return;
     if (!leap) cardSkin(K);
     if (kit === K && !K.gpu && K.pending !== false) setTimeout(() => whenIdle(upgrade), 250);
   }
-  // What it'll leave, made in time to spare and not as it lands
   function dry() {
     whenIdle(() => { if (kit && kit.filmNight !== glow.night) paintFilms(); });
   }
@@ -1279,7 +1138,6 @@ void main() {
     clearTimeout(drying);
     kit.stage.style.rotate = getComputedStyle(polaroid).rotate;
     kit.stage.style.display = kit.fly.style.display = 'block';
-    // However ready it was already is that much less to do
     leap = { t: LEAP.crouch * 0.7 * ready, off: false, peel: 0, home: null, dir: bearing(), last: performance.now() };
     requestAnimationFrame(leapFrame);
     wake();
@@ -1289,8 +1147,6 @@ void main() {
     const L = leap, K = kit, dt = Math.min((now - L.last) / 1000, 0.05), landed = LEAP.crouch + LEAP.fly, end = landed + FACE.end;
     L.last = now;
     if (L.home !== null) {
-      // In the air, and nothing's turning it round. It lands with its weight still coming, away
-      // from the photo, and if it's wanted again it's already half crouched.
       L.home -= dt / LEAP.fly;
       if (L.home <= 0) {
         L.home = null; L.peel = 0; L.off = false; L.t = LEAP.crouch * 0.5;
@@ -1307,7 +1163,6 @@ void main() {
     const fly = L.t - LEAP.crouch, hit = L.t - landed, flying = L.home !== null;
     if (L.t < LEAP.crouch) glow.stirred = Math.max(glow.stirred, 0.5 + L.t);
     else if (!L.off) {
-      // Off it goes: it lets go of everything and the dish rings with it
       L.off = true;
       fizz.release(true);
       for (let i = 0; i < 6; i++) ripple(i * 1.05, 1.2);
@@ -1333,14 +1188,11 @@ void main() {
     if (L.t <= 0 && !hovered && !flying) {
       K.fly.style.display = 'none';
       leap = null;
-      // What it left's still drying
       drying = setTimeout(() => { if (!leap && kit === K) K.stage.style.display = 'none'; }, 8000);
       return;
     }
     requestAnimationFrame(leapFrame);
   }
-
-  // ---- The table ----
 
   function layout() {
     const box = table.getBoundingClientRect(), item = dish.getBoundingClientRect();
@@ -1355,10 +1207,6 @@ void main() {
     trail(box, item);
   }
 
-  // Where it's been. In the same ink as the labels, so no one can see it till the lights go
-  // out: spatter round the dish, a smear over the rim, and a broken trail, thinning as it
-  // gets further from home, to the nearest thing written on the table, and a dab or two by
-  // the next. Seeded, so they're where they were after a resize.
   const SEED = 1 + Math.floor(Math.random() * 1e6);
   function trail(box, item) {
     let seed = SEED;
@@ -1373,12 +1221,10 @@ void main() {
     const dot = (x, y, r, stretch = 1, a = 0, o = 1) => shapes.push(
       `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(r * stretch).toFixed(2)}" ry="${r.toFixed(2)}" transform="rotate(${(a * 57.3).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" opacity="${o.toFixed(2)}"/>`);
     const home = labels[0], heading = Math.atan2(home.y - cy, home.x - cx);
-    // Spatter, thrown out from the rim, most of it on the way it went
     for (let i = 0; i < 26; i++) {
       const a = heading + (rnd() < 0.6 ? rnd(-0.8, 0.8) : rnd(-3.1, 3.1)), r = (RIM + 4 + rnd() ** 2 * 44) * k;
       dot(cx + Math.cos(a) * r, cy + Math.sin(a) * r, rnd(0.5, 2.1) * k, rnd(1, 2.4), a, rnd(0.5, 1));
     }
-    // The trail: along a lazy curve, each stretch thinner, shorter and further from the last
     const sx = cx + Math.cos(heading) * (RIM - 6) * k, sy = cy + Math.sin(heading) * (RIM - 6) * k;
     const ex = home.x - Math.cos(heading) * home.w * 0.32, ey = home.y - Math.sin(heading) * home.w * 0.12;
     const L = Math.hypot(ex - sx, ey - sy), nx = -(ey - sy) / L, ny = (ex - sx) / L, bow = rnd(0.1, 0.2) * L * (rnd() < 0.5 ? -1 : 1);
@@ -1399,7 +1245,6 @@ void main() {
       if (rnd() < 0.7) dot(px + nx * rnd(-5, 5) * k, py + ny * rnd(-5, 5) * k, rnd(0.5, 1.5) * k, rnd(1, 2), heading, 0.8);
       t += len + (0.02 + 0.05 * t) * rnd(0.7, 1.4);
     }
-    // A dab beside each of the next two
     labels.slice(1, 3).forEach(l => {
       const a = rnd(0, 6.28), x = l.x + Math.cos(a) * l.w * 0.62, y = l.y + Math.sin(a) * l.w * 0.3 + 10 * k;
       dot(x, y, 3 * k, 1.5, a, 0.6);
@@ -1408,13 +1253,11 @@ void main() {
     prints.innerHTML = `<svg width="${box.width}" height="${box.height}" viewBox="0 0 ${box.width} ${box.height}">${shapes.join('')}</svg>`;
   }
 
-  // Which way the table's light falls here: what its script told the dish for its own shadow
   function read() {
     const style = getComputedStyle(obj), get = key => parseFloat(style.getPropertyValue(key)) || 0;
     const sx = get('--sx'), sy = get('--sy'), L = Math.hypot(sx, sy);
     if (L) { glow.x = -sx / L; glow.y = -sy / L; }
     const night = root.classList.contains('dark-mode');
-    // The switch is its whole sky: light makes it flinch, and let go of what it's holding
     if (glow.night !== null && night !== glow.night && !still) {
       if (night) { blob.sizeV += 1.2; fizz.probe(); nextProbe = fizz.time + 0.7; flash(blob.x, blob.y, 0.9); } else {
         blob.sizeV -= 2.4;
@@ -1423,7 +1266,6 @@ void main() {
       }
     }
     glow.night = night;
-    // What it's left is still there when the lights change, and looks as it should in the new light
     if (kit && kit.filmNight !== night) {
       if (kit.stage.style.display === 'block') paintFilms();
       else dry();
@@ -1474,7 +1316,6 @@ void main() {
   }
   addEventListener('blur', () => { cur.present = false; nearing = 0; });
 
-  // Runs while it can be seen, and at half speed when it's only itself to mind
   let running = false, seen = true, last = 0, acc = 0;
   function frame(now) {
     if (!arrived || (!seen && !den.out) || document.hidden) { running = false; return; }
@@ -1499,9 +1340,6 @@ void main() {
   new IntersectionObserver(([entry]) => { seen = entry.isIntersecting; if (seen) wake(); }).observe(canvas);
   document.addEventListener('visibilitychange', wake);
   layout();
-  // It isn't there when the page comes up. Once it can be drawn on the graphics card it comes
-  // out from under the Polaroid, where it goes when it's frightened, and creeps home. If it
-  // can't be, it comes anyway, a little later, and is drawn on the canvas.
   if (still) arrived = true;
   else {
     canvas.style.opacity = 0;

@@ -24,7 +24,6 @@ export class EventBus {
         this.listeners.get(event).forEach(cb => cb(data));
     }
     
-    // Clear all listeners (useful for resets)
     clear() {
         this.listeners.clear();
     }

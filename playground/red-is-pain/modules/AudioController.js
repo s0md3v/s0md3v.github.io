@@ -43,10 +43,9 @@ export class AudioController {
             return;
         }
 
-        // Resume context if suspended (browser policy) - Fallback
         if (this.context.state === 'suspended') {
             this.context.resume().catch(e => console.warn("Auto-resume failed:", e));
-            return; // Can't play yet
+            return;
         }
 
         const source = this.context.createBufferSource();
@@ -63,9 +62,8 @@ export class AudioController {
     }
 
     playGunshot() {
-        const id = Math.floor(Math.random() * 9) + 1; // 1-9
+        const id = Math.floor(Math.random() * 9) + 1;
         const filename = `${id}.mp3`;
-        // Randomize volume and pitch slightly
         const vol = 0.2 + Math.random() * 0.1;
         const rate = 0.9 + Math.random() * 0.2;
         this.playBuffer(filename, vol, rate);

@@ -22,7 +22,6 @@ OUT = os.path.join('assets', 'share')
 W, H = 1200, 630
 QUALITY = 84
 
-# Section -> the desk object that leads to it
 OBJECTS = {
     'about': '#about',
     'projects': '#projects',
@@ -33,7 +32,6 @@ OBJECTS = {
     'taste': '#uses',
 }
 
-# Box around an element and its tape, in page pixels, cut to the window
 BOX = '''sel => {
   const el = document.querySelector(sel);
   const rects = [el, ...el.querySelectorAll('.tag, .item, .lift')].map(e => e.getBoundingClientRect())
@@ -56,7 +54,6 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        # The desk at a wide window, by day, still
         page = browser.new_page(viewport={'width': 1600, 'height': 840}, device_scale_factor=2,
                                 color_scheme='light', reduced_motion='reduce')
         page.goto(BASE + '/', wait_until='networkidle')
@@ -67,7 +64,6 @@ def main():
 
         for name, sel in OBJECTS.items():
             b = page.evaluate(BOX, sel)
-            # The object with room around it, at the card's shape, kept on the table
             cx, cy = (b['l'] + b['r']) / 2, (b['t'] + b['b']) / 2
             # Closer in on one at the table's edge, which can't be centred
             room = 1.45 if b['r'] < b['vw'] - 1 else 1.05

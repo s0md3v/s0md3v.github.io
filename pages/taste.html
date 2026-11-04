@@ -14,14 +14,6 @@ image:
   height: 630
   alt: "A pair of earphones on a desk, labelled taste"
 ---
-{% comment %}
-  The rest of him. Each kind of thing is shown the way that kind is: films as posters, books as books,
-  records in their sleeves, games in their cases, shers as couplets, sneakers on a shelf, the things
-  he uses at their own sizes. What's better said than shown is a line of text, and every line looks
-  alike. Shelves of pictures are wide; what's read is kept to a reading width. What he'd say about
-  a thing is in his pen, and a thing with a lot to say gets room beside it. On a phone, a shelf of
-  pictures is a row you swipe. Everything on it is in _data/taste.yml.
-{% endcomment %}
 {% assign taste = site.data.taste %}
 <style>
 @media screen and (min-width: 769px) {
@@ -40,16 +32,13 @@ image:
   max-width: 72em;
   margin: 0 auto;
   padding: 2.5em var(--gutter) 6em;
-  /* Clear of a phone's notch, held sideways */
   padding-left: max(var(--gutter), env(safe-area-inset-left));
   padding-right: max(var(--gutter), env(safe-area-inset-right));
   font-size: var(--reading-size);
   line-height: 1.5;
-  /* Nothing written in a margin widens the page */
   overflow-x: clip;
 }
 
-/* ---- The opening ---- */
 .taste-opening {
   max-width: 34em;
   font-size: 1.12em;
@@ -88,7 +77,6 @@ image:
   color: var(--muted-color);
 }
 
-/* ---- Shelves ---- */
 .shelf {
   margin-top: 5em;
   scroll-margin-top: 5em;
@@ -98,7 +86,6 @@ image:
   margin-top: 3.5em;
 }
 
-/* With nothing said first, the page starts with its first shelf */
 .page-title + .shelf {
   margin-top: 0;
 }
@@ -119,8 +106,6 @@ image:
   color: var(--heading-color);
 }
 
-/* A shelf can be linked to: its heading shows the link as a pointer comes to it. Drawn, not
-   written, so it isn't copied with the heading. */
 .shelf-link {
   margin-left: 0.3em;
   color: var(--muted-color);
@@ -148,7 +133,6 @@ image:
   }
 }
 
-/* Only on phones, where a shelf is a row and most of it is out of sight */
 .shelf-count {
   display: none;
   font-size: 0.9em;
@@ -163,10 +147,7 @@ image:
   rotate: -1.5deg;
 }
 
-/* What he'd say about a thing, in his pen, written in the margin by it: it starts a little in
-   from the thing's edge, and each line is as long as he wrote it (_data/taste.yml), never
-   wrapped to the width of whatever it's beside. Its lines are <br>s, as the minifier takes
-   newlines out of the page */
+/* Its lines are <br>s, as the minifier takes newlines out of the page */
 .thing-note {
   width: max-content;
   margin: 0.2em 0 0 0.6em;
@@ -177,7 +158,6 @@ image:
   text-wrap: pretty;
 }
 
-/* ---- Shelves of pictures ---- */
 .things {
   --w: 7.5em;
   display: grid;
@@ -189,7 +169,6 @@ image:
   list-style: none;
 }
 
-/* A row that scrolls can be reached from the keyboard (the script at the end) */
 .things:focus-visible {
   outline: 2px solid var(--foreground-color);
   outline-offset: 2px;
@@ -217,9 +196,6 @@ image:
   rotate: 0.8deg;
 }
 
-/* A note written above its picture, in the space over it, so the picture keeps its place */
-/* Written over whatever's there (the gap under a heading, mostly), the way a note in a margin
-   is: nothing's moved to make room for it */
 .has-note-above {
   position: relative;
 }
@@ -238,13 +214,11 @@ image:
   bottom: calc(100% - 0.35em);
 }
 
-/* Where it would run off its shelf, it's written from the picture's right edge instead */
 .has-note-above > .thing-note.from-right {
   left: auto;
   right: 0.6em;
 }
 
-/* The same light as everything else on the site, from the top left */
 .thing-picture {
   position: relative;
   display: block;
@@ -264,7 +238,6 @@ image:
   height: auto;
 }
 
-/* Not found yet: a space the right shape */
 .thing-missing {
   display: block;
   aspect-ratio: var(--ratio, 2 / 3);
@@ -293,7 +266,6 @@ image:
   color: var(--muted-color);
 }
 
-/* His marks, in the same pen, on the thing itself: where to start, and his favourites */
 .thing-mark {
   position: absolute;
   z-index: 1;
@@ -309,7 +281,6 @@ image:
   box-shadow: 0 1px 3px rgba(var(--sheet-shadow), 0.18);
 }
 
-/* And what he can't stand: faded, and struck through in the same pen */
 .dark-mode .thing-mark {
   background: #3a3631;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
@@ -336,14 +307,12 @@ image:
   text-decoration: line-through 2px var(--pen);
 }
 
-/* Films and shows: posters */
 .poster img {
   aspect-ratio: 2 / 3;
   object-fit: cover;
   border-radius: 2px;
 }
 
-/* The videos are tucked away until they're wanted */
 .shelf-extra {
   margin: 2em 0 0;
 }
@@ -406,8 +375,6 @@ image:
   color: var(--accent-color);
 }
 
-/* Read: the books, and close beside them the essays, one under another. The books take only the
-   room they need, however few there are. */
 .read-layout {
   display: grid;
   /* as wide as the books in a row (four at most, then they wrap), counted rather than measured,
@@ -419,7 +386,6 @@ image:
   align-items: start;
 }
 
-/* in a row, far enough apart that each one's note reads as its own */
 @media (min-width: 601px) {
   .read-layout .things {
     display: flex;
@@ -441,14 +407,12 @@ image:
 }
 
 @media (max-width: 860px) {
-  /* the essays under the books, far enough down that a note over one clears the books' notes */
   .read-layout {
     grid-template-columns: minmax(0, 1fr);
     row-gap: 6em;
   }
 }
 
-/* Books: bound, the spine's fold down the left */
 .book img {
   aspect-ratio: 2 / 3;
   object-fit: cover;
@@ -464,7 +428,6 @@ image:
   pointer-events: none;
 }
 
-/* Records: in their sleeves, the disc half out */
 .shelf-listen .things {
   --w: 9em;
   column-gap: 3.5em;
@@ -518,7 +481,6 @@ image:
   translate: 10% 0;
 }
 
-/* Games: in their cases */
 .case {
   padding: 0.5em 0.35em 0.35em;
   border-radius: 0.45em;
@@ -532,8 +494,6 @@ image:
   border-radius: 0.15em;
 }
 
-/* Sneakers: standing on a shelf */
-/* six to a shelf at most */
 .shelf-sneakers .things {
   --w: 9.25em;
   grid-template-columns: repeat(auto-fill, minmax(max(var(--w), 100% / 6), 1fr));
@@ -544,7 +504,6 @@ image:
   padding: 0 0.9em;
 }
 
-/* as tall as the tallest of them is, a high-top */
 .shelf-sneakers .thing-picture {
   display: flex;
   align-items: flex-end;
@@ -553,9 +512,7 @@ image:
   --ratio: 2.4;
 }
 
-/* They're all his size, so the foot in each is the same length (_data/taste.yml says where it
-   sits), and what's around it is as big as it is: a chunky sole looks chunky, a Samba slim, and
-   the Ghost Smashers' hose hangs off the end of its shelf */
+/* All his size, so the foot in each is the same length (_data/taste.yml says where it sits) */
 .shelf-sneakers .thing-picture img {
   width: calc(82% / (var(--toe, 1) - var(--heel, 0)));
   max-width: none;
@@ -577,8 +534,6 @@ image:
   background: linear-gradient(#5d5040, #43392d);
 }
 
-/* They can be picked up, a little (assets/js/sneakers.js), and settle back when they're let go */
-/* and they're things, so they're not selected, or dragged off as pictures */
 .shelf-sneakers .thing {
   -webkit-user-select: none;
   user-select: none;
@@ -599,9 +554,6 @@ image:
   transition: none;
 }
 
-/* What Fizz sticks them down with (made in assets/js/sneakers.js, different under each), in
-   its own colours (assets/js/fizz.js): by day all but black, and green where it's thin; by night
-   lit through with its firefly green. Its top is the top of the shelf. */
 .glue {
   --g-top: rgb(46 132 92);
   --g-mid: rgb(17 46 34);
@@ -626,7 +578,6 @@ image:
   filter: drop-shadow(0 0 3px rgb(128 196 136 / 0.55));
 }
 
-/* And a card at the end of the shelf, in his pen, saying what it's there to say */
 .shop-sign .thing-picture {
   justify-content: center;
 }
@@ -642,7 +593,6 @@ image:
   color: var(--pen);
   rotate: -2deg;
   transform-origin: 50% 100%;
-  /* lit from the top left, so it's only shadowed below it and to its right */
   box-shadow: 2px 2px 3px -1px rgba(var(--sheet-shadow), 0.22);
 }
 
@@ -651,7 +601,6 @@ image:
   box-shadow: 2px 2px 3px -1px rgba(0, 0, 0, 0.55);
 }
 
-/* Fizz, when it comes, over everything but the bar */
 .fizz-shelf {
   position: fixed;
   z-index: 50;
@@ -661,14 +610,12 @@ image:
   pointer-events: none;
 }
 
-/* Named in one quiet line: what the shoe is, and who made it */
 .shelf-sneakers .thing-name {
   margin-top: 1.2em;
   font-size: 0.82em;
   font-weight: 400;
 }
 
-/* The things he uses: each at its own size, standing on the same line */
 .shelf-use .things {
   display: flex;
   flex-wrap: wrap;
@@ -676,7 +623,6 @@ image:
   gap: 2.5em 2em;
 }
 
-/* Wider as the thing is wider, though not so much that the small ones can't be seen */
 .shelf-use .thing {
   width: calc(3.5em + var(--mm, 150) * 0.03em);
   min-width: 6.5em;
@@ -692,7 +638,6 @@ image:
   object-position: 50% 100%;
 }
 
-/* ---- What's better said than shown: lines, all alike ---- */
 .lines {
   max-width: 40em;
   margin: 0;
@@ -700,7 +645,6 @@ image:
   list-style: none;
 }
 
-/* What's scanned rather than read sits in columns */
 .lines.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 16em), 1fr));
@@ -712,8 +656,6 @@ image:
   padding: 0.75em 0;
 }
 
-/* Ruled only where each line is a statement to be read on its own: what he believes, and
-   what he's changed his mind about. What's scanned (links, specs, essays) goes without */
 .beliefs > li,
 .changed .lines > li {
   border-bottom: 1px solid var(--rule);
@@ -753,7 +695,6 @@ image:
   color: var(--muted-color);
 }
 
-/* Browse: a long list to skim, each site and what it is on one line, in as many columns as fit */
 .lines.links {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20em), 1fr));
@@ -776,7 +717,6 @@ image:
   content: " — ";
 }
 
-/* A few lists side by side, each named in his pen */
 .line-groups {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 16em), 1fr));
@@ -798,13 +738,11 @@ image:
 }
 
 
-/* Beliefs: one to a line, read rather than scanned */
 .beliefs .line-name {
   font-size: 1.08em;
   font-weight: 400;
 }
 
-/* What he used to think, struck through, and what he thinks now */
 .changed {
   margin-top: 2.75em;
 }
@@ -822,8 +760,6 @@ image:
   color: var(--pen);
 }
 
-/* ---- Poetry: shers set as couplets are, each misra on its own line and centred, the meaning
-   and the poet under it. As many as he keeps, in as many columns as fit ---- */
 @font-face {
   font-family: "Taste Serif";
   font-style: italic;
@@ -842,7 +778,6 @@ image:
   text-align: center;
 }
 
-/* An odd one out at the end is centred under both, not left under one */
 .sher:last-child:nth-child(odd) {
   grid-column: 1 / -1;
 }
@@ -890,7 +825,6 @@ image:
   content: "— ";
 }
 
-/* ---- Phones: each shelf of pictures is a row, swiped through ---- */
 @media (max-width: 600px) {
   .shelf {
     margin-top: 4em;
@@ -922,7 +856,6 @@ image:
     }
   }
 
-  /* Where there's a mouse, and the page is zoomed to a phone's width, a thin one to drag */
   @media (hover: hover) {
     .things {
       scrollbar-width: thin;
@@ -937,20 +870,16 @@ image:
   .shelf-watch .things { --rw: 40vw; }
   .shelf-read .things,
   .shelf-play .things { --rw: 34vw; }
-  /* each book's note is wider than it is here, so they're set far enough apart for both */
   .shelf-read .things { column-gap: 4.25em; }
   .shelf-read .thing-note { font-size: min(1.35em, 5.5vw); }
   .shelf-listen .things { --rw: 46vw; }
   .shelf-watch .screens { --rw: 70vw; }
   .shelf-sneakers .things { --rw: 48vw; gap: 0; }
 
-  /* A row that's swiped clips what's outside it, so its notes are written inside it, in room
-     that reaches up under the heading rather than pushing the row down */
   .read-layout {
     row-gap: 2.5em;
   }
 
-  /* A line's note goes beside it here rather than over it, where the books' notes are */
   .lines .has-note-above {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -965,7 +894,6 @@ image:
     position: static;
     grid-area: 1 / 2 / 3 / 3;
     margin: 0;
-    /* written a touch smaller on the narrowest phones, so its lines stay his */
     font-size: min(1.35em, 5.5vw);
   }
 
@@ -990,7 +918,6 @@ image:
     row-gap: 2.75em;
   }
 
-  /* a misra is kept whole on its line */
   .sher blockquote {
     font-size: min(1.25em, 3.7vw);
   }
@@ -1084,7 +1011,6 @@ image:
       {%- endif %}
     </ul>
 
-    {%- comment %} What has no picture is said under the shelf, quietly {% endcomment %}
     {% assign quiet = shelf.items | where_exp: "item", "item.slug == nil" %}
     {% if quiet.size > 0 %}
     <ul class="lines {% if kind == "read" %}plain{% else %}grid{% endif %} shelf-quiet">
@@ -1145,8 +1071,6 @@ image:
 <script src="{{ '/assets/js/sneakers.js' | relative_url }}" data-fizz="{{ '/assets/js/fizz.js' | relative_url }}" defer></script>
 
 <script>
-  // A note over a picture near the end of its shelf is written from the picture's right edge, so
-  // it doesn't run off the shelf. A row that's swiped has room for it already.
   (function () {
     const notes = document.querySelectorAll('.has-note-above > .thing-note');
     const fit = () => notes.forEach(note => {
@@ -1160,7 +1084,6 @@ image:
     document.fonts?.ready.then(fit);
   })();
 
-  // A row that scrolls sideways can be reached with Tab, and says which shelf it is
   (function () {
     const rows = document.querySelectorAll('.things');
     const reach = () => rows.forEach(row => {
@@ -1180,7 +1103,6 @@ image:
     new ResizeObserver(reach).observe(document.body);
   })();
 
-  // What's opened is brought into view
   (function () {
     const still = matchMedia('(prefers-reduced-motion: reduce)');
     document.querySelectorAll('.shelf-extra').forEach(extra => extra.addEventListener('toggle', () => {

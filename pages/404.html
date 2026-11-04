@@ -5,7 +5,6 @@ permalink: /404.html
 ---
 
 <style>
-/* Nothing here but a card on the table. It's over what's under it, and that's over the navigation */
 @media (min-width: 769px) {
   .wrapper {
     position: relative;
@@ -19,7 +18,6 @@ permalink: /404.html
     overflow: hidden;
   }
 }
-/* On a phone it's the same card, with nothing under it */
 @media (max-width: 768px) {
   .wrapper {
     width: calc(100% - 2.5rem);
@@ -31,7 +29,6 @@ permalink: /404.html
       2px 3px 7px rgba(var(--sheet-shadow), 0.14),
       5px 9px 26px rgba(var(--sheet-shadow), 0.08);
   }
-  /* By night a card's the page's own colour, so it's on the table, as it is on a wider screen */
   html.dark-mode {
     background: var(--surround-color);
   }
@@ -50,14 +47,12 @@ permalink: /404.html
   margin: 0.5em 0 0;
   color: var(--midground-color);
 }
-/* Underlined in the ink of where it goes */
 .way a {
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 0.18em;
   text-decoration-color: color-mix(in srgb, var(--c, currentColor) 60%, transparent);
 }
-/* It's under the card, and the card comes up over it, lit from the top left */
 .rise {
   --light: 0.5;
   --dark: 0.1;
@@ -77,7 +72,6 @@ permalink: /404.html
   --light: 0.05;
   --dark: 0.3;
 }
-/* And by night what's under it lights the card, from just under its edge */
 .dark-mode .rise::before {
   content: "";
   position: absolute;

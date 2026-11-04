@@ -30,10 +30,9 @@ export class World {
         this.corpses = [];
         this.commandChaos = { 0: 0, 1: 0 }; 
         this.visualLayers = []; 
-        this.playerAgent = null; // Reference to the human-controlled agent
+        this.playerAgent = null;
 
-        // RADIO NET: Stores fuzzy intel shared between squads
-        // Each entry: { type: 'HEAT', x, y, timestamp, intensity, team }
+        // radioNet entries: { type: 'HEAT', x, y, timestamp, intensity, team }
         this.radioNet = { 0: [], 1: [] };
 
         if (mapData) {
@@ -69,7 +68,6 @@ export class World {
         const cols = Math.ceil(this.width / this.sdfCellSize);
         this.sdfGrid = Array(rows).fill(0).map(() => new Float32Array(cols));
 
-        // 1. Identify all obstacle points (walls/buildings/bushes)
         const obstacles = [];
         for (let gy = 0; gy < this.grid.length; gy++) {
             for (let gx = 0; gx < this.grid[0].length; gx++) {
@@ -84,13 +82,11 @@ export class World {
             }
         }
 
-        // 2. Compute distances (Brute force is fine for one-time startup)
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
                 const wx = (x + 0.5) * this.sdfCellSize;
                 const wy = (y + 0.5) * this.sdfCellSize;
                 
-                // Start with distance to nearest map edge (treating edges as walls)
                 let minDist = Math.min(wx, this.width - wx, wy, this.height - wy);
                 let minDistSq = minDist * minDist;
 
@@ -223,13 +219,12 @@ export class World {
         }
 
         if (this.gameMode === 'HUMAN') {
-            // --- HUMAN MODE: 1 player (team 0) vs 6 AI (team 1) ---
             const spawn = team1Spawns[0];
             const px = spawn.x + (Math.random() - 0.5) * 20;
             const py = spawn.y + (Math.random() - 0.5) * 20;
             const player = new Agent(0, 0, px, py, 'RIFLEMAN', this);
             player.isPlayer = true;
-            player.rank = 1; // Captain (only member)
+            player.rank = 1;
             this.playerAgent = player;
             this.agents.push(player);
 
@@ -252,7 +247,6 @@ export class World {
             return;
         }
 
-        // --- AI VS AI MODE (original) ---
         const team1 = [];
         const squad1 = new Squad(0, 0);
         this.squads.push(squad1);
@@ -291,7 +285,6 @@ export class World {
         const squadComposition = ['MEDIC', 'GUNNER', 'MARKSMAN', 'BREACHER', 'RIFLEMAN', 'RIFLEMAN'];
 
         if (this.gameMode === 'HUMAN') {
-            // --- HUMAN MODE: 1 player vs 6 AI ---
             const pos = this.findSpawnPoint(50, 50, 200, this.height - 50);
             if (pos) {
                 const player = new Agent(0, 0, pos.x, pos.y, 'RIFLEMAN', this);
@@ -317,7 +310,6 @@ export class World {
             return;
         }
 
-        // --- AI VS AI MODE ---
         const team1 = [];
         const squad1 = new Squad(0, 0);
         this.squads.push(squad1);
@@ -429,8 +421,6 @@ export class World {
                      if (!e.isCover && e.team !== p.team) {
                          const dist = Utils.distance(p.pos, e.pos);
                          if (dist < Config.PHYSICS.SUPPRESSION_RADIUS) {
-                             // --- LOS CHECK FOR SUPPRESSION ---
-                             // Only suppress if the bullet isn't behind a wall relative to the agent
                              if (this.hasClearShot(p.pos, e.pos, Config.PHYSICS.SUPPRESSION_RADIUS)) {
                                  e.suppress(Config.PHYSICS.SUPPRESSION_STRESS * (dt/100), this, p.startPos);
                              }
@@ -458,8 +448,6 @@ export class World {
             }
         }
 
-        // --- RADIO NET PROCESSING ---
-        // Information takes time to be verified and re-transmitted
         const now = Date.now();
         const radioDelay = Config.SENSORY.RADIO.DELAY;
         
@@ -469,11 +457,9 @@ export class World {
             if (pending.length > 0) {
                 pending.forEach(report => {
                     report.broadcasted = true;
-                    // Distribute to all agents on this team (Heatmap update)
                     this.agents.forEach(agent => {
                         if (agent.team === team && !agent.state.isDead) {
                             if (report.type === 'HEAT') {
-                                // Add fuzzy 'suspected' intel to agent's mental map
                                 agent.memory.updateHeat(report.x, report.y, this, report.intensity, true);
                                 agent.memory.recordDangerZone({
                                     x: report.x,
@@ -485,17 +471,15 @@ export class World {
                                     reportedByTeam: team
                                 });
                             } else if (report.type === 'DISTRESS') {
-                                // Share distress signals (MEDIC/NEED_COVER) across the team
                                 agent.memory.updateDistressSignal(report.sourceId, report.distressType, {x: report.x, y: report.y}, report.timestamp);
                                 if (report.distressType === 'MAN_DOWN') {
-                                    agent.memory.updateHazard(report.x, report.y, this, 60); // Squad avoids the death zone
+                                    agent.memory.updateHazard(report.x, report.y, this, 60);
                                 }
                             }
                         }
                     });
                 });
             }
-            // Cleanup old broadcasted reports (keep for 5s)
             this.radioNet[team] = this.radioNet[team].filter(r => (now - r.timestamp) < 5000);
         });
     }
@@ -620,7 +604,6 @@ export class World {
             if (idx > -1) {
                 this.covers.splice(idx, 1);
                 this.events.emit('coverDestroyed', cover);
-                // Re-rasterize all survivors so overlapping geometry remains solid.
                 this.rebuildCollisionGrid();
             }
         }
@@ -875,7 +858,6 @@ export class World {
         return this.hasClearShot(p1, p2, maxDist);
     }
 
-    // Compatibility for extensions: line-of-sight always means visual perception.
     hasLineOfSight(p1, p2, maxDist = Infinity) {
         return this.hasVisualLine(p1, p2, maxDist);
     }

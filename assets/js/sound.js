@@ -1,5 +1,3 @@
-// The site has one sound, a click, and it's always exactly the same. It's made here from noise,
-// nothing is recorded, and nothing runs until a reader turns sound on in settings.
 (() => {
     let enabled = false;
     try {
@@ -12,7 +10,6 @@
         const Audio = window.AudioContext || window.webkitAudioContext;
         if (!audio && Audio) {
             audio = new Audio({ latencyHint: 'interactive' });
-            // Seeded, so that it's the same noise every time
             let seed = 1;
             noise = audio.createBuffer(1, audio.sampleRate / 10, audio.sampleRate);
             noise.getChannelData(0).forEach((_, i, data) => {
@@ -27,7 +24,6 @@
         return audio;
     }
 
-    // A scrap of noise through a filter
     function hiss(start, type, freq, length, gain) {
         const when = audio.currentTime + 0.002 + start;
         const source = audio.createBufferSource();
@@ -42,7 +38,6 @@
         source.start(when);
     }
 
-    // A spring letting go, then the plate landing
     function click() {
         if (!enabled || !wake()) return;
         hiss(0, 'highpass', 1800, 0.003, 0.5);
@@ -53,8 +48,7 @@
         if (target.closest?.('a, button, summary, label, select, input, [role="button"]')) click();
     }
 
-    // At the press, as a real thing would, and before a link can take the page away. A finger might
-    // be starting a scroll, though, so that waits to be a tap.
+    // Touch waits for click, since a finger might be starting a scroll
     let pointer;
     addEventListener('pointerdown', event => {
         pointer = event.pointerType;

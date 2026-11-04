@@ -1,9 +1,7 @@
-// What a post needs once it's on the screen (_layouts/post.html)
 (function () {
     const content = document.querySelector('.post-content');
     if (!content) return;
 
-    // Code that runs past its box scrolls, so it can be got to, and scrolled, from the keyboard too
     const blocks = [...content.querySelectorAll('pre')];
     function reachable() {
         blocks.forEach(pre => {
@@ -23,13 +21,7 @@
         new ResizeObserver(reachable).observe(content);
     }
 
-    // A list whose items each fit on a line reads as one block, its items as close as lines are; one
-    // with an item that runs on is spaced item from item, so where one ends and the next starts is
-    // clear (article.css). Which it is depends on the column's width, so it's looked at again as
-    // that changes. Not the notes at the end, which are laid out as they are.
     const lists = [...content.querySelectorAll('ul, ol')].filter(list => !list.closest('.notes'));
-    // Its lines are counted by where its words' boxes end: within half a line of each other, a
-    // word in code or a raised number is on the same line as the words round it
     function lines(item) {
         const half = parseFloat(getComputedStyle(item).lineHeight) / 2;
         const ends = [];
@@ -54,7 +46,6 @@
     if (lists.length) {
         let width = 0;
         chunk();
-        // Only a new width can change where lines end; a list closing up changes only the height
         new ResizeObserver(([entry]) => {
             if (entry.contentRect.width === width) return;
             width = entry.contentRect.width;
@@ -63,8 +54,6 @@
         document.fonts?.ready.then(chunk);
     }
 
-    // Each block can be copied whole: a payload or a command is meant to be tried, and a line that
-    // runs past the box is hard to select by hand. Said aloud as well as shown.
     const said = document.createElement('span');
     said.className = 'sr-only';
     said.setAttribute('role', 'status');
@@ -90,7 +79,6 @@
                 await navigator.clipboard.writeText(text);
                 show('Copied', 'Copied');
             } catch {
-                // No clipboard to write to here: the code's selected instead, to copy by hand
                 getSelection().selectAllChildren(pre.querySelector('code') || pre);
                 show('Selected', 'Selected, copy it with your keyboard');
             }
@@ -106,8 +94,6 @@
         }
     });
 
-    // A section's "#" copies the address of the section, rather than jumping the heading to the
-    // top. Where there's no clipboard it's a link to the section, as it always was.
     links.forEach(link => {
         let back;
         link.addEventListener('click', async event => {
@@ -138,9 +124,6 @@
         });
     });
 
-    // Where there's room beside the sheet, each note is on a slip of its own, tucked under the
-    // sheet's right edge level with the line it's for. The notes at the end stay as they are:
-    // they're the post's sources, and what a screen reader goes to.
     const sheet = content.closest('.wrapper');
     const holder = sheet?.parentElement;
     const refs = [];
@@ -165,7 +148,6 @@
             slips.append(slip);
             entry.slip = slip;
 
-            // Pointing at either one draws the slip out a little, and marks the number
             const near = on => {
                 slip.classList.toggle('near', on);
                 entry.ref.classList.toggle('near', on);
@@ -174,8 +156,7 @@
                 el.addEventListener('pointerenter', () => near(true));
                 el.addEventListener('pointerleave', () => near(false));
             });
-            // A click on the number needn't go to the end when its note's beside it. The keyboard's
-            // Enter still goes there, to the note a screen reader can read.
+            // detail 0 is the keyboard, which still goes to the real note
             entry.ref.addEventListener('click', event => {
                 if (!holder.classList.contains('slips-on') || event.detail === 0) return;
                 event.preventDefault();
@@ -184,13 +165,10 @@
                 slip.classList.add('called');
             });
         });
-        // Beside the sheet, not in it, so the sheet can lie over them and they're still there to
-        // be pointed at and clicked where they stick out
         holder.append(slips);
 
         const GAP = 8;
         function lay() {
-            // Room for a slip's visible part, and a little of the window beyond it
             const sheetBox = sheet.getBoundingClientRect();
             holder.classList.add('slips-on');
             Object.assign(slips.style, {
@@ -209,9 +187,7 @@
             let below = -Infinity;
             refs.forEach(({ ref, slip }) => {
                 const line = ref.closest('p, li, blockquote, td, dd') || ref;
-                // Baseline to baseline: the slip's first line on the line its number is on, as far
-                // as the slips above it allow. A glyph's box ends a descent (0.25em in Lexend) below
-                // its baseline. The letter before the number is measured, not the raised number.
+                // 0.25em: a glyph's box ends a descent (in Lexend) below its baseline
                 const sup = ref.closest('sup') || ref;
                 const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
                 let text = null;
@@ -235,8 +211,6 @@
         window.addEventListener('load', lay);
     }
 
-    // A moving picture that goes on by itself can be stopped, and doesn't start for anyone who's
-    // asked for less motion
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     content.querySelectorAll('video[autoplay]').forEach(video => {
         video.controls = true;

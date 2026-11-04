@@ -12,7 +12,6 @@ image:
 ---
 
 <style>
-    /* Prints are on paper in the dark too, only less of a lamp on it */
     :root {
         --print-paper: var(--background-color);
     }
@@ -40,7 +39,6 @@ image:
         grid-auto-rows: 10px;
         grid-auto-flow: dense;
         gap: var(--gallery-gap);
-        /* Some paper under the last prints, so the gallery ends rather than stops */
         padding: var(--gallery-gap) max(var(--gallery-gap), env(safe-area-inset-right)) 4rem max(var(--gallery-gap), env(safe-area-inset-left));
         width: 100%;
         margin: 0;
@@ -55,7 +53,6 @@ image:
     .gallery-item {
         width: 100%;
         height: 100%;
-        /* Reset native <button> styles */
         display: block;
         margin: 0;
         padding: 0;
@@ -65,7 +62,6 @@ image:
         text-align: inherit;
         -webkit-appearance: none;
         appearance: none;
-        /* Its photo's colour till the photo's here, as a print develops */
         background: var(--tone, var(--code-bg));
         border-radius: 8px;
         overflow: hidden;
@@ -91,7 +87,6 @@ image:
         z-index: 2;
     }
 
-    /* Faded in as it loads, which takes the script: without it, it's just there */
     .js .gallery-item img {
         opacity: 0;
     }
@@ -104,13 +99,8 @@ image:
         grid-column: span 2;
     }
 
-    /* A photo's colours leak into its border. Only those of the edge beside it (border-image),
-       blurred along that edge so no detail's left, and made solid again, as blur thins a strip
-       this narrow (#leak-colours). Weakening with distance from the photo, by more or less
-       depending on the fibres it meets (the mask), and gone softly where it runs out
-       (#leak-edge), so a spread goes as far as it goes, the strongest as far as the edge. A
-       pixel over the photo, as on a tilted print the two edges are each antialiased, and the
-       paper would show between them. */
+    /* Blur thins a strip this narrow, so it's made solid again (#leak-colours). A pixel over the photo:
+       on a tilted print the two edges are each antialiased, and the paper would show between them. */
     .gallery-item {
         --border-width: 7px;
     }
@@ -168,8 +158,6 @@ image:
         display: none;
     }
 
-    /* On the table, they're prints, on the same paper as the sheets and as flat on it. Put down
-       by hand, so not quite square. Phones have no table. */
     @media (min-width: 769px) {
         .gallery-item {
             padding: var(--border-width);
@@ -225,13 +213,11 @@ image:
         }
     }
 
-    /* Locking the page while a photo's open keeps where it is, and its scrollbar's room */
     html {
         scrollbar-gutter: stable;
         transition: background-color 0.3s ease;
     }
 
-    /* The dark's fixed, so it stops short of that room: the room goes as dark by itself */
     html.modal-open {
         overflow: hidden;
         background: color-mix(in srgb, var(--surround-color) 5%, #000);
@@ -243,17 +229,14 @@ image:
         position: fixed;
         inset: 0;
         z-index: 2000;
-        /* A click on the dark closes it */
         cursor: zoom-out;
         align-items: center;
         justify-content: center;
-        /* Swipes are the page's; pinching still zooms in */
         touch-action: pinch-zoom;
         -webkit-user-select: none;
         user-select: none;
     }
 
-    /* The dark, apart from the photo, so it fades while the photo flies */
     .modal::before {
         content: "";
         position: fixed;
@@ -271,9 +254,6 @@ image:
         transition: none;
     }
 
-    /* The photo in a print's paper border. Sized from the photo's own proportions, so
-       the thumbnail can stand in, enlarged, while the photo loads; no bigger than the
-       photo, nor than the window allows, and the window's height as it is right now */
     .modal-screen {
         --room: calc(100vw - 2 * max(20px, 4vw) - 2 * var(--border-width));
         position: relative;
@@ -288,12 +268,10 @@ image:
         transform-origin: 0 0;
     }
 
-    /* Its own photo's, the print's */
     .modal-screen .leak {
         inset: calc(-1 * var(--border-width));
     }
 
-    /* Over the thumbnail, once it's all here */
     .modal-screen img {
         display: block;
         width: 100%;
@@ -326,7 +304,6 @@ image:
         color: var(--accent-color);
     }
 
-    /* They come and go with the dark, not over the page */
     .modal:not(.visible) .modal-button {
         opacity: 0;
     }
@@ -352,8 +329,6 @@ image:
         right: max(0px, 2vw - 20px);
     }
 
-    /* On a touchscreen, a swipe or a tap on either side of the photo: the arrows are
-       there for whoever can't, but not over the photo */
     @media (hover: none) {
         .prev-button:not(:focus-visible),
         .next-button:not(:focus-visible) {
@@ -399,7 +374,6 @@ A little over, as the window's scrollbar's in its vw.
         <button type="button" class="gallery-item" data-stem="{{ stem }}" style="--photo: url('{{ thumb }}-400.avif'); --leak: {{ leak_x }}px {{ leak_y }}px{% if tone %}; --tone: {{ tone }}{% endif %}"
             data-full="{{ site.baseurl }}{{ image.path }}"
             aria-label="View photo: {{ photo_description | escape }}">
-            {% comment %} AVIF only: a browser without it gets the original instead, the viewer's, and its spread on the paper too {% endcomment %}
             <img src="{{ thumb }}-400.avif"
                 srcset="{{ widths }}"
                 sizes="{% if image.is_wide %}{{ wide_sizes }}{% else %}{{ sizes }}{% endif %}"
@@ -440,10 +414,8 @@ A little over, as the window's scrollbar's in its vw.
     let index = -1;
     let inerted = [];
     let preloads = [];
-    // Zoomed in: how far, from where the photo was, and where it's moved to
     let zoom = null;
 
-    // Make everything outside the dialog inert while it is open
     function setBackgroundInert(on) {
         if (on) {
             inerted = [];
@@ -481,7 +453,6 @@ A little over, as the window's scrollbar's in its vw.
 
     const named = i => '#p' + items[i].dataset.stem;
 
-    // Shows the i-th photo: its thumbnail, already here, stands in until it's loaded
     function show(i) {
         items[index]?.classList.remove('viewed');
         index = i;
@@ -497,7 +468,6 @@ A little over, as the window's scrollbar's in its vw.
         frame.style.setProperty('--ar', w / +thumb.getAttribute('height'));
         frame.style.backgroundImage = `url("${thumb.currentSrc || thumb.src}")`;
         frame.style.setProperty('--photo', item.style.getPropertyValue('--photo'));
-        // The print's spread, enlarged: its fibres and where they fall, as a share of the print
         const [x, y] = item.style.getPropertyValue('--leak').split(' ').map(parseFloat);
         const fibres = 60 * parseFloat(getComputedStyle(item).getPropertyValue('--border-width'));
         const inFrame = (across, down) => `${across / item.offsetWidth * 100}cqw ${down / item.offsetHeight * 100}cqh`;
@@ -515,7 +485,6 @@ A little over, as the window's scrollbar's in its vw.
         photo = img;
 
         said.textContent = `${thumb.alt} (${i + 1} of ${items.length})`;
-        // And the ones either side, so stepping to them is instant
         preloads = [1, -1].map(d => {
             const next = new Image();
             next.src = items[(i + d + items.length) % items.length].dataset.full;
@@ -523,15 +492,12 @@ A little over, as the window's scrollbar's in its vw.
         });
     }
 
-    // From a print to where the photo is, its frame over the print: for flying between them
     function from(print) {
         const to = frame.getBoundingClientRect();
         return `translate(${print.x - to.left}px, ${print.y - to.top}px) rotate(${print.tilt}deg) ` +
             `translate(${-print.w / 2}px, ${-print.h / 2}px) scale(${print.w / to.width}, ${print.h / to.height})`;
     }
 
-    // Where its print lies, by its middle, as its box is wider tilted: when it's in sight to
-    // fly from or back to
     function printAt(i) {
         const item = items[i];
         const box = item.getBoundingClientRect();
@@ -549,7 +515,6 @@ A little over, as the window's scrollbar's in its vw.
         frame.getAnimations().forEach(a => a.cancel());
     }
 
-    // From where it was to wherever it's now been put
     function glide(was) {
         if (!still.matches) {
             frame.animate([{ transform: was || 'none' }, { transform: frame.style.transform || 'none' }],
@@ -557,8 +522,6 @@ A little over, as the window's scrollbar's in its vw.
         }
     }
 
-    // Zoomed in, it's moved with the finger, but no further than its edges, and where
-    // it's narrower or shorter than the window, it's in the middle that way
     function place() {
         const { rect, s } = zoom;
         const fit = (t, start, size, room) => size * s <= room
@@ -569,7 +532,6 @@ A little over, as the window's scrollbar's in its vw.
         frame.style.transform = `translate(${zoom.x}px, ${zoom.y}px) scale(${s})`;
     }
 
-    // In on where it was tapped, to the photo's own size, or twice, or four times at most
     function zoomAt(x, y) {
         stopMotion();
         const rect = frame.getBoundingClientRect();
@@ -593,7 +555,6 @@ A little over, as the window's scrollbar's in its vw.
         glide(was);
     }
 
-    // Turned, the photo's somewhere else
     let wide = innerWidth;
     addEventListener('resize', () => {
         if (innerWidth === wide) return;
@@ -614,7 +575,6 @@ A little over, as the window's scrollbar's in its vw.
         document.documentElement.classList.add('modal-open');
         setBackgroundInert(true);
 
-        // Out of its print, or where it's out of sight, just closer
         const print = printAt(i);
         if (!still.matches) {
             frame.animate(print
@@ -632,7 +592,6 @@ A little over, as the window's scrollbar's in its vw.
         modal.classList.remove('visible');
         setBackgroundInert(false);
         document.documentElement.classList.remove('modal-open');
-        // Back to the one it was on, which may not be the one it opened on
         const item = items[index];
         item.scrollIntoView({ block: 'nearest', behavior: 'instant' });
         item.focus({ preventScroll: true });
@@ -657,8 +616,6 @@ A little over, as the window's scrollbar's in its vw.
             { duration: 300, easing: EASE, fill: 'forwards' }).onfinish = end;
     }
 
-    // An open photo is a step in the history, so Back closes it rather than the gallery,
-    // and the address names whichever photo it's on
     function openPhoto(i, quiet) {
         history.pushState({ photo: true }, '', named(i));
         openModal(i, quiet);
@@ -697,9 +654,6 @@ A little over, as the window's scrollbar's in its vw.
     prevBtn.addEventListener('click', () => step(-1));
     nextBtn.addEventListener('click', () => step(1));
 
-    // The dark around it closes it; either side of the photo steps that way. On a
-    // touchscreen, tapped twice, it zooms in there, so a tap on it waits a moment for a
-    // second; zoomed in, a tap's nothing, and two zoom it back out
     let touching = false;
     let tapped = null;
     modal.addEventListener('pointerdown', (e) => { touching = e.pointerType !== 'mouse'; });
@@ -728,14 +682,11 @@ A little over, as the window's scrollbar's in its vw.
         }
     });
 
-    // The pointer says which: back or on, by the half of the photo it's over
     frame.addEventListener('pointermove', (e) => {
         const rect = frame.getBoundingClientRect();
         frame.style.cursor = e.clientX < rect.left + rect.width / 2 ? 'w-resize' : 'e-resize';
     });
 
-    // On a touchscreen the photo follows the finger: across for the next or the last,
-    // down to put it away, and zoomed in, anywhere, to look around it
     {
         let drag = null;
         let swiped = false;
@@ -752,7 +703,6 @@ A little over, as the window's scrollbar's in its vw.
         modal.addEventListener('pointerdown', (e) => {
             if (e.pointerType === 'mouse') return;
             fingers.add(e.pointerId);
-            // A second finger is a pinch, and zoomed in, a finger looks around
             if (fingers.size > 1 || (visualViewport && visualViewport.scale > 1.01) ||
                 e.target.closest('button') || !isOpen()) {
                 if (drag) {
@@ -805,7 +755,6 @@ A little over, as the window's scrollbar's in its vw.
         };
         modal.addEventListener('pointerup', lift);
         modal.addEventListener('pointercancel', lift);
-        // A swipe isn't a tap
         modal.addEventListener('click', (e) => {
             if (swiped) { e.stopImmediatePropagation(); swiped = false; }
         }, true);
@@ -819,7 +768,6 @@ A little over, as the window's scrollbar's in its vw.
             e.preventDefault();
             step(e.key === 'ArrowLeft' ? -1 : 1);
         } else if (e.key === 'Tab') {
-            // Round the dialog's own controls
             e.preventDefault();
             const at = controls.indexOf(document.activeElement);
             const next = at < 0 ? (e.shiftKey ? controls.length - 1 : 0) : at + (e.shiftKey ? -1 : 1);
@@ -827,8 +775,6 @@ A little over, as the window's scrollbar's in its vw.
         }
     });
 
-    // From the homepage's camera, or a photo's own address: open on it, from where it is.
-    // Reloaded on one, the gallery's already the step behind it
     {
         const i = linked();
         if (i >= 0) {

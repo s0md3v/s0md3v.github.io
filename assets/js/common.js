@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-        // Addresses that aren't links
         document.querySelectorAll('[data-email]').forEach(el => {
             el.textContent = el.textContent.replace('[at]', '@');
         });
@@ -112,10 +111,6 @@ document.addEventListener('DOMContentLoaded', function () {
         panels.forEach(entry => setPanel(entry, false));
     });
 
-    // It leaves as you read on and comes back as you turn back, once either is clearly meant, so a
-    // nudge of the wheel or a thumb leaves it where it is: above the page, and on a phone below it,
-    // where it would otherwise take a line in every screenful. At the end of the page it's back,
-    // for wherever you go next.
     const header = document.getElementById('site-header');
     const TURN = 8;
     let lastScroll = Math.max(0, window.scrollY);
@@ -144,14 +139,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (header.contains(event.target)) header.classList.remove('hidden');
         });
 
-        // A mouse at the top of the screen is reaching for it
         document.addEventListener('mousemove', event => {
             if (event.clientY <= 6) header.classList.remove('hidden');
         }, { passive: true });
     }
 
-    // The marks have no words of their own, so the title names the one you're on, in its colour,
-    // and goes back to where you are when you leave it
     const title = document.querySelector('.nav-title');
     if (header && title) {
         const here = title.textContent;
@@ -212,8 +204,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // A handwritten note sits beside its title. If it would run off the list or touch other words
-    // there, it takes the nearest free spot above or below the title instead
     const postList = document.querySelector('.post-list');
     const notes = postList ? postList.querySelectorAll('.post-list-note') : [];
     if (notes.length) {
@@ -253,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.fonts.ready.then(placeNotes);
     }
 
-    // For whoever opens the console, in his words, in the page's own ink
     const main = document.querySelector('main');
     const ink = main && getComputedStyle(main).getPropertyValue('--c').trim();
     console.log('%cis this really the best thing you can be doing right now? clock is ticking.',

@@ -21,7 +21,6 @@
         }
         canvas { display: block; width: 100vw; height: 100vh; }
 
-        /* UI Panel */
         #ui {
             position: absolute; top: 20px; left: 20px;
             background: var(--bg-glass); backdrop-filter: blur(24px) saturate(180%);
@@ -35,7 +34,6 @@
         }
         #ui.hide { opacity: 0; transform: translateX(-30px) scale(0.98); visibility: hidden; pointer-events: none; }
 
-        /* Header */
         .ui-header {
             padding: 28px 24px 16px;
             display: flex; justify-content: space-between; align-items: center;
@@ -48,7 +46,6 @@
         }
         .random-icon-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); transform: rotate(15deg); }
 
-        /* Tabs */
         .tab-headers {
             display: flex; padding: 0 20px; gap: 4px;
             border-bottom: 1px solid var(--border-glass);
@@ -63,7 +60,6 @@
         .tab-btn.active { color: #fff; border-bottom-color: #fff; }
         .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.8); }
 
-        /* Content Area */
         .tab-content {
             padding: 24px; max-height: calc(100vh - 220px); overflow-y: auto;
             scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
@@ -74,7 +70,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .tab-pane.active { display: block; }
 
-        /* Controls */
         .control-section { margin-bottom: 20px; }
         .label-row {
             display: flex; justify-content: space-between; align-items: center;
@@ -113,7 +108,6 @@
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
 
-        /* Playback Bar */
         .playback-bar {
             display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px;
             margin-top: 8px;
@@ -126,7 +120,6 @@
         .playback-bar button:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
         .play-btn { background: rgba(255,255,255,0.12) !important; }
 
-        /* Palette Picker */
         #palette-picker {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
             margin-top: 12px;
@@ -148,7 +141,6 @@
         .color-input-wrapper:hover { transform: scale(1.05); }
         .color-input-wrapper input { width: 150%; height: 150%; margin: -25%; cursor: pointer; border: none; }
 
-        /* Export */
         .export-btn {
             width: 100%; padding: 16px; background: #fff; color: #000;
             border: none; border-radius: 16px; font-weight: 600; cursor: pointer;
@@ -166,7 +158,6 @@
         }
         .hint b { color: rgba(255,255,255,0.8); }
 
-        /* Responsive */
         @media (max-width: 600px) {
             :root { --panel-width: calc(100vw - 40px); }
             #ui { left: 20px; right: 20px; top: auto; bottom: 20px; max-height: 80vh; }
@@ -195,7 +186,6 @@
         </div>
 
         <div class="tab-content">
-            <!-- SCENE TAB -->
             <div class="tab-pane active" id="tab-scene">
                 <div class="control-section">
                     <div class="label-row">Preset</div>
@@ -248,7 +238,6 @@
                 </div>
             </div>
 
-            <!-- EFFECTS TAB -->
             <div class="tab-pane" id="tab-fx">
                 <div class="control-section">
                     <div class="label-row">Warp Style</div>
@@ -289,7 +278,6 @@
                 </div>
             </div>
 
-            <!-- COLORS TAB -->
             <div class="tab-pane" id="tab-colors">
                 <div class="control-section">
                     <div class="label-row">Mood / Category</div>
@@ -321,7 +309,6 @@
                 </div>
             </div>
 
-            <!-- EXPORT TAB -->
             <div class="tab-pane" id="tab-export">
                 <div class="control-section">
                     <div class="label-row">Target Resolution</div>

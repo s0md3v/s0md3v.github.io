@@ -76,7 +76,6 @@ for src in sources:
         im = ImageOps.exif_transpose(im)
         if im.mode not in ('RGB', 'RGBA'):
             im = im.convert('RGB')
-        # Its average colour, as it'd be blurred all over
         r, g, b = im.convert('RGB').reduce(8).resize((1, 1), Image.BOX).getpixel((0, 0))
         tones[filename] = f'#{r:02x}{g:02x}{b:02x}'
         for w, dst in todo:
@@ -94,7 +93,6 @@ for src in sources:
             made += 1
             print(f'{dst}: {out.width}x{out.height}, {os.path.getsize(dst)} B')
 
-# Only the photos there are, in their order
 names = {os.path.basename(s) for s in sources}
 tones = dict(sorted(((k, v) for k, v in tones.items() if k in names),
                     key=lambda kv: (len(kv[0]), kv[0])))

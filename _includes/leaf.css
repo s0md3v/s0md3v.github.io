@@ -1,10 +1,3 @@
-/* ---- A paper's first page, printed: on the table (_includes/homepage.css) and on Papers ----
-   What's printed on it is in _includes/leaves/. Its sizes are all shares of the sheet's width,
-   so it's the same page however big it's put down. */
-
-/* Two sheets of the business card's stock, a little brighter: the page, in front, and
-   one under it, a little turned, showing past it. Each is one card, stood on end and
-   grown till it covers the sheet. */
 .leaves {
   position: relative;
   display: block;
@@ -33,7 +26,6 @@
   rotate: 91.2deg;
 }
 
-/* Set as a journal would: US letter, Times, 0.75in margins, two columns */
 .leaf {
   position: absolute;
   z-index: 1;
@@ -44,7 +36,6 @@
   overflow: hidden;
   container-type: inline-size;
   background: #f2ebe1;
-  /* On the sheet under it */
   box-shadow: 0 0 0.25cqi rgb(60 45 30 / 0.18);
 }
 
@@ -82,11 +73,6 @@
   margin: 0 auto;
 }
 
-/* A pass of a yellow highlighter over each line of the title: drawn, not ruled, as the
-   pen's strike is. It starts and stops past the words, and drifts across them. The ink's
-   multiplied, so the print shows through it and it's darker where the passes overlap.
-   Laid over what's under it, it needs no night of its own: the room's light dims it too.
-   It's there once the paper's .marked. */
 .leaf-marker {
   position: absolute;
   left: -0.3em;
@@ -99,12 +85,10 @@
   visibility: hidden;
 }
 
-/* Where the felt laid down more ink */
 .leaf-marker path + path {
   fill: rgb(242 190 0 / 0.3);
 }
 
-/* At an even pace, so the longer line takes longer, with a moment to bring the pen back */
 .marked .leaf-marker {
   visibility: visible;
   animation: leaf-mark 0.34s cubic-bezier(0.3, 0.2, 0.5, 1) 0.12s backwards;
@@ -115,7 +99,6 @@
   animation-delay: 0.6s;
 }
 
-/* Its leading edge slanted, like the pen's chisel tip */
 @keyframes leaf-mark {
   from { clip-path: polygon(-12% -30%, -4% -30%, -10% 130%, -12% 130%); }
   to { clip-path: polygon(-12% -30%, 112% -30%, 106% 130%, -12% 130%); }
@@ -132,7 +115,6 @@
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 133' preserveAspectRatio='none'%3E%3Cpath fill='%23ffee50' d='M9 15C42 8 92 14 142 11C192 8 248 14 291 8L296 17C293 42 299 88 294 121C250 128 198 121 150 125C100 129 52 122 7 128L3 117C7 90 1 42 6 22Z'/%3E%3C/svg%3E") 0 0 / 0 100% no-repeat;
 }
 
-/* Drawn across from the left, as the title is */
 .leaf-word.marked {
   background-size: 100% 100%;
   animation: leaf-word-mark 0.22s cubic-bezier(0.3, 0.2, 0.5, 1) backwards;
@@ -184,7 +166,6 @@
   text-indent: 0;
 }
 
-/* A numbered list, set in from the column's edge, its lines after the first under its words */
 .leaf-cols > .leaf-item {
   padding-left: 2.2em;
   text-indent: -1.1em;

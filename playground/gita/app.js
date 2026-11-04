@@ -7,7 +7,6 @@ const SITE_FONTS = {
 const SITE_THEMES = ['light', 'dark'];
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII'];
 
-// Concise reading aids. Sargeant's fuller, verse-specific vocabulary remains visible on each original page.
 const READING_WORDS = {
   dharma: 'Duty, law, righteousness, virtue, or honor.',
   yoga: 'A discipline or path of practice; the book uses the word in several related ways.',

@@ -1,6 +1,3 @@
-/* Scoped styles for the biohacking tool */
-/* Font loading moved to HTML for performance */
-
 :root {
     --bg-color: var(--background-color, #ffffff);
     --text-main: var(--foreground-color, #1a1a1a);
@@ -27,11 +24,9 @@ body {
     width: 100%;
 }
 
-/* Typography */
 h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; color: var(--text-main); }
 p { margin: 0; line-height: 1.6; color: var(--text-muted); }
 
-/* --- LANDING --- */
 #landing-view { justify-content: center; align-items: flex-start; }
 #landing-view .content-wrapper { max-width: 800px; margin: 0 auto; padding: 2rem; }
 
@@ -43,7 +38,6 @@ h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 3rem; letter-spacing: -
 
 
 
-/* --- ASSESSMENT --- */
 .view { display: none; width: 100%; height: 100%; opacity: 0; transition: opacity 0.3s ease; }
 .view.active { display: flex; opacity: 1; }
 
@@ -62,13 +56,11 @@ h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 3rem; letter-spacing: -
 #question-text { font-size: 2.25rem; line-height: var(--question-line-height); margin-bottom: 0.5rem; }
 .subtext { font-size: 1.1rem; opacity: 0.8; }
 
-/* Inputs */
 .input-area { width: 100%; }
 
 .range-value-display { font-size: 4rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
 input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; background: transparent; }
 
-/* Webkit (Chrome/Safari) */
 input[type=range]::-webkit-slider-thumb { 
     -webkit-appearance: none; height: 32px; width: 32px; border-radius: 50%; 
     background: var(--bg-color); border: 4px solid var(--accent); cursor: pointer; margin-top: -12px; 
@@ -78,7 +70,6 @@ input[type=range]::-webkit-slider-runnable-track {
     width: 100%; height: 8px; background: var(--border); border-radius: 4px; border: none;
 }
 
-/* Firefox */
 input[type=range]::-moz-range-thumb {
     height: 24px; width: 24px; border-radius: 50%; 
     background: var(--bg-color); border: 4px solid var(--accent); cursor: pointer;
@@ -112,9 +103,7 @@ input[type=range]::-moz-range-progress {
 .number-input:focus { outline: none; border-color: var(--accent); }
 .number-unit-label { font-size: 1.5rem; color: var(--text-muted); }
 
-/* Navigation Buttons */
 .nav-side {
-    /* Center each button on the first line, including when the question wraps. */
     padding-top: calc(var(--question-top-padding) + (var(--question-line-height) - var(--nav-button-size)) / 2);
 }
 .side-nav-btn { 
@@ -140,7 +129,6 @@ input[type=range]::-moz-range-progress {
 .progress-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: transparent; }
 .progress-bar { height: 100%; background: var(--accent); width: 0; transition: width 0.3s; }
 
-/* --- RESULTS --- */
 #results-view { padding-bottom: 4rem; overflow-y: auto; }
 .results-wrapper { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
 .results-header { margin-bottom: 2rem; }
@@ -148,8 +136,6 @@ input[type=range]::-moz-range-progress {
 .results-wrapper .action-area { display: flex; justify-content: center; margin-top: 2rem; }
 #restart-btn { font-family: inherit; font-size: 1.25rem; padding: 1rem 2.5rem; }
 
-/* Result Cards */
-/* Result Cards */
 .result-card { 
     background: var(--bg-color); border: 1px solid var(--border); border-radius: 16px; 
     padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
@@ -166,7 +152,6 @@ input[type=range]::-moz-range-progress {
     color: var(--accent);
 }
 
-/* Consistent Section Spacing */
 .card-body > div { margin-bottom: 2.5rem; }
 .card-body > div:last-child { margin-bottom: 0; }
 
@@ -187,7 +172,6 @@ input[type=range]::-moz-range-progress {
 .risk-section p { font-size: 1.05rem; max-width: 65ch; color: var(--text-main); margin: 0; }
 .risk-section h5 { color: var(--critical); margin-bottom: 0.5rem; }
 
-/* Protocol List */
 .protocol-list { list-style: disc; padding: 0 0 0 1.25rem; margin: 0; }
 .protocol-step { 
     padding-left: 0.25rem; margin-bottom: 1rem;
@@ -197,10 +181,8 @@ input[type=range]::-moz-range-progress {
 
 .protocol-step::marker { color: var(--accent); }
 
-/* Timeline */
 .timeline-section { 
     background: var(--card-bg); padding: 2rem; border-radius: 12px; 
-    /* Remove top margin as the generic > div handles spacing */
     margin-top: 0; 
 }
 .timeline-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
@@ -209,7 +191,6 @@ input[type=range]::-moz-range-progress {
 .time-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; letter-spacing: 0.05em;}
 .timeline-item p { font-size: 0.95rem; line-height: 1.5; color: var(--text-muted); }
 
-/* Sources */
 .sources-section {
     --sources-icon-size: 18px;
     --sources-icon-gap: 0.5rem;
@@ -271,7 +252,6 @@ input[type=range]::-moz-range-progress {
 .source-list a:hover { color: var(--accent); text-decoration-color: var(--accent); }
 
 
-/* Mobile */
 .navigation-controls-mobile { display: none; margin-top: 2rem; justify-content: space-between; width: 100%; }
 
 @media (max-width: 800px) {
@@ -284,7 +264,6 @@ input[type=range]::-moz-range-progress {
     .assessment-stage { height: auto; padding: 2rem 1rem; display: block; }
 }
 
-/* Disclaimer */
 .disclaimer { 
     margin-top: 2rem; 
     font-size: 0.85rem; 

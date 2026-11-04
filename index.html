@@ -30,7 +30,6 @@ image:
           </span>
           <span class="intro-motto"><span>Has brain</span> <span>Has <del>taste<svg class="strike" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15C35 11 75 10 117 6L111 11C75 14 40 16 2 19L8 22C45 19 85 17 119 13L113 18C80 21 45 23 4 25L10 11C50 9 88 9 118 17" /></svg></del></span></span>
         </span>
-        <!-- Its back -->
         <span class="intro-text intro-back">
           <span class="intro-lines">
             <span class="intro-title" data-email>hello[at]somdev.in</span>
@@ -55,25 +54,14 @@ image:
           sizes="(max-width: 700px) 38vw, (max-aspect-ratio: 4/5) 38vw, min(14vw, 26.4vh)" width="400" height="481" alt="">
         <span class="ink polaroid-caption">{{ n.about.label | escape }}</span>
       </span>
-      <!-- Its picture, still developing -->
       <span class="polaroid-film" aria-hidden="true"><i></i><i></i><i></i></span></span>
     </a>
 
-    <!-- A Raspberry Pi Zero with a screen, showing how the projects are doing, as of the
-         last time _data/stats.json was updated -->
     <div class="obj grounded self-lit" id="projects">
-      <!-- At night, the light that the screen's edges and the activity light throw on the table,
-           under the board -->
       <span class="pi-spill" aria-hidden="true"></span>
       <span class="lift"><span class="item">
-        <!-- In hundredths of the Pi's width, 1.16 to the millimetre. A micro-USB cable in its
-             data port, so the laptop off the table both powers it and talks to it, the Pi
-             being a USB gadget: the plug's metal, the moulding round it, the strain relief
-             with its grooves, and the cable, lying in a loose sweep as it was left, off the
-             bottom of the table. -->
+        <!-- In hundredths of the Pi's width, 1.16 to the millimetre -->
         <svg class="cable" viewBox="-150 -20 400 500" aria-hidden="true">
-          <!-- What moves when it's pulled out. The plug's metal is all there, 6.8 mm of it in
-               the socket, under the board, with the two holes its latches catch through. -->
           <g class="usb-pull">
             <g class="usb-run">
               <path class="cable-edge" d="M50.9 70.9C50.9 100 44 122 52 146S96 186 118 226S146 330 150 480" />
@@ -91,26 +79,17 @@ image:
             crossorigin="anonymous">
           <span class="pi-glow"></span>
           <span class="pi-screen" aria-hidden="true">
-            <!-- Where its shell is, which is what it's the way to -->
-            <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}<!-- Streaming to the
-              phone, the receiver's at work: someone on the air, it shows -->
+            <span class="pi-title"><span>~/</span>{{ n.projects.label | escape }}
               <svg class="pi-air" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7" /><path class="far" d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg></span>
             <span class="pi-page pi-shown"><b><svg viewBox="0 0 16 16"><path d="M8 .9l2.2 4.6 5 .6-3.7 3.4 1 5L8 12l-4.5 2.5 1-5L.8 6.1l5-.6z" /></svg><span>{{ site.data.stats.github_stars | default: 0 | divided_by: 1000 }},{{ site.data.stats.github_stars | modulo: 1000 | prepend: "00" | slice: -3, 3 }}</span></b><small>stars on github</small></span>
             <span class="pi-page"><b><svg viewBox="0 0 16 16"><path d="M6.5 1h3v6.5h3.2L8 12.6 3.3 7.5h3.2zM2 13.6h12V15H2z" /></svg><span>{{ site.data.stats.monthly_downloads }}</span></b><small>downloads a month</small></span>
-            <!-- Hovered, a shell, in which someone at the laptop types ls, and what's in it:
-                 written by the script -->
             <span class="pi-shell" data-ls="{{ site.data.projects | map: 'title' | sort_natural | join: ' ' }}"></span>
-            <!-- The console, as it boots, written by the script -->
             <span class="pi-boot" hidden></span>
           </span>
-          <!-- The activity light, by the power socket, and its light on the board -->
           <span class="pi-act"></span>
           <span class="pi-act-glow"></span>
         </span>
-        <!-- The cable's plug, above the board, as it's about as high, so not in its shadow -->
         <svg class="cable usb-plug" viewBox="-150 -20 400 500" aria-hidden="true">
-          <!-- Rounded across, so it falls off to each side, more so the side away from the
-               sun, on the right -->
           <linearGradient id="usb-round">
             <stop offset="0" stop-color="#c3c7cd" /><stop offset="0.14" stop-color="#eceef1" />
             <stop offset="0.42" stop-color="#f8f9fa" /><stop offset="0.8" stop-color="#e3e6e9" />
@@ -124,15 +103,11 @@ image:
           </g>
         </svg>
         <a class="cover" href="{{ n.projects.url | relative_url }}" aria-label="{{ n.projects.label | escape }}"></a>
-        <!-- Pulling the plug, or anywhere on the cable, turns it off; pushing it back boots
-             it. A secret, so it looks like nothing's there, but it's there for keyboards. -->
         <button class="pi-plug" type="button" aria-label="Unplug the Raspberry Pi"></button>
       </span></span>
     </div>
 
     <a class="obj grounded" id="blog" href="{{ n.blog.url | relative_url }}">
-      <!-- A pile of its pages, loose, kept in it, under its cover: hovered, they slide out
-           a little, each its own way -->
       <span class="loose" aria-hidden="true"><span>
         <span class="sheet"></span><span class="sheet"></span><span class="sheet"></span><span class="sheet"></span><span class="sheet"></span>
       </span></span>
@@ -150,7 +125,6 @@ image:
             <stop offset="0" stop-color="#6f747b" /><stop offset="0.35" stop-color="#f3f5f7" />
             <stop offset="0.6" stop-color="#b9bec4" /><stop offset="1" stop-color="#5d6268" />
           </linearGradient>
-          <!-- Brushed aluminium, matte, so it's soft across; and the strain relief, frosted -->
           <linearGradient id="plug-brushed" x1="0" x2="1">
             <stop offset="0" stop-color="#8e9399" /><stop offset="0.28" stop-color="#d5d8db" />
             <stop offset="0.45" stop-color="#e9ebed" /><stop offset="0.72" stop-color="#c3c7cb" />
@@ -164,10 +138,6 @@ image:
             <stop offset="0" stop-color="#7a5a24" /><stop offset="0.35" stop-color="#f4dd9c" />
             <stop offset="0.6" stop-color="#c9a256" /><stop offset="1" stop-color="#6e5020" />
           </linearGradient>
-          <!-- The earphones' cable, off the bottom of the table. Out of the phone, its plug
-               lies where it was left, by the phone's corner, the cable slack (data-loose);
-               picking up the earbuds drags it a little further along. In between, it's held
-               up over the jack, straight, its pin clear of it (data-lift). -->
           <g class="cable-run run-down" data-tug="M28 -27C28 -40 6 -46 -18 -42C-42 -37 -55 -30 -56 -8S-57 30 -50 60S-40 130 -38 200"
             data-lift="M28 -48C28 -64 2 -68 -22 -60C-44 -53 -58 -36 -58 -8S-60 30 -52 60S-42 130 -40 200"
             data-loose="M-19.84 -33.41C-32.06 -37.86 -44 -42 -52 -34C-57 -29 -58 -20 -58 -8S-60 30 -52 60S-42 130 -40 200"
@@ -182,10 +152,6 @@ image:
             <path class="cable-core" d="M28 -27C28 -38 40 -46 64 -46S112 -38 160 -45" />
             <path class="cable-shine" d="M28 -27C28 -38 40 -46 64 -46S112 -38 160 -45" transform="translate(-0.5 -0.6)" />
           </g>
-          <!-- A 3.5 mm plug, in the jack on the phone's top edge, at 28 0.5: its gold-plated
-               pin, 14 mm of it, is under the phone till it's pulled out. Sleeve, ring and
-               tip, with black insulating bands between them; a brushed aluminium barrel, 7 mm
-               across; and a frosted strain relief, where the cable leaves it. -->
           <g class="jack">
             <path class="pin" d="M25.65 0.5H30.35V15.3H25.65ZM26.05 16.1H29.95V17.6Q29.95 19.6 28 19.9Q26.05 19.6 26.05 17.6Z" />
             <path class="pin-band" d="M25.65 10.9H30.35V11.7H25.65ZM25.65 15.3H30.35V16.1H25.65Z" />
@@ -199,7 +165,6 @@ image:
           <span class="phone-screen">
             <span class="status-bar" aria-hidden="true">
               <span class="phone-time"></span>
-              <!-- Plugged in, the phone says so -->
               <svg class="headset" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.6 7.2V5.4a3.4 3.4 0 0 1 6.8 0v1.8" fill="none" stroke="currentColor" stroke-width="0.9" /><rect x="1" y="5.6" width="2" height="3.4" rx="0.6" /><rect x="7" y="5.6" width="2" height="3.4" rx="0.6" /></svg>
               <svg viewBox="0 0 40 10" aria-hidden="true"><path d="M1 9h1.6V7H1zM4 9h1.6V5.5H4zM7 9h1.6V4H7zM10 9h1.6V2.5H10z" /><path d="M15.5 3.4a6 6 0 0 1 8 0l-1 1.1a4.5 4.5 0 0 0-6 0zM17.4 5.5a3.2 3.2 0 0 1 4.2 0L19.5 8z" /><rect x="28" y="2.2" width="10" height="5.6" rx="1.3" fill="none" stroke="currentColor" stroke-width="0.9" /><rect x="29.4" y="3.6" width="5.8" height="2.8" rx="0.4" /><path d="M38.6 4h0.9v2h-0.9z" /></svg>
             </span>
@@ -209,15 +174,12 @@ image:
               <a class="app app-instagram" href="https://www.instagram.com/s0md3v" target="_blank" rel="noopener"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" /></svg></span><span class="app-name">Instagram</span></a>
               <a class="app app-linkedin" href="https://www.linkedin.com/in/s0md3v" target="_blank" rel="noopener"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg></span><span class="app-name">LinkedIn</span></a>
               <a class="app app-mail" href="mailto:hello[at]somdev.in"><span class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></svg></span><span class="app-name">Gmail</span></a>
-              <!-- The app that plays the scanner's stream from the Pi: its widget, two by two,
-                   with a level that moves while someone's on the air, and whether it's playing -->
               <span class="radio-widget" aria-hidden="true">
                 <span class="radio-name"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg>Airband</span>
                 <span class="radio-level"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
                 <span class="radio-text"><b class="radio-status">Paused</b><small>pi-zero.local</small></span>
               </span>
             </span>
-            <!-- When the scanner's app can't reach the Pi, a heads-up notification -->
             <span class="radio-note" aria-hidden="true">
               <small><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" /><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8" /></svg>Airband · now</small>
               <b>Can't reach pi-zero.local</b>
@@ -228,7 +190,6 @@ image:
           sizes="(max-width: 700px) 44vw, (max-aspect-ratio: 4/5) 44vw, min(12.8vw, 24vh)" width="600" height="1260" alt="">
           <span class="phone-glow"></span>
         </span>
-        <!-- Over the earphones' plug, wherever it is: pushed into the jack, or pulled out -->
         <button class="phone-plug" type="button" aria-label="Plug the earphones into the phone to listen to the scanner"></button>
       </span></span>
     </div>
@@ -246,27 +207,20 @@ image:
         <img class="base" src="{{ t }}simone.avif" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.avif 360w"
           sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt=""
           crossorigin="anonymous">
-        <!-- A halo, in invisible glow ink, partly on the table. Hovered, at night, it turns
-             gold, and sparkles. -->
         <span class="glow-ink" data-glow="halo" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
-        <!-- Glitter in its laminate, which glints, hovered, by day: drawn by the script -->
         <canvas class="glitter" aria-hidden="true"></canvas>
       </span></span>
       <span class="tag t4"><span>{{ n.philosophy.label | escape }}</span></span>
     </a>
 
     <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.avif" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }},"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-200.avif" | relative_url }}","{{ p.filename | remove: ".webp" }}",{{ site.data.photo_descriptions[p.filename] | default: "A photograph." | jsonify | escape }}]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
-      <!-- The camera's link is .cover; this makes the label clickable too -->
       <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
       <span class="lift"><span class="item">
         <img class="base rimmed" src="{{ t }}digicam.avif" srcset="{{ t }}digicam-320.avif 320w, {{ t }}digicam.avif 660w"
           sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
-        <!-- At night, the screen's light, on the buttons beside it -->
         <span class="cam-spill"><span></span></span>
-        <!-- The indicator lamp beside the viewfinder, which blinks green as the camera reads its card -->
         <span class="cam-lamp"></span>
-        <!-- What's on the screen, the script draws: the photo, the index, the menu, what the camera says -->
         <span class="cam-screen" aria-hidden="true">
           <img class="cam-photo" alt="" fetchpriority="low">
           <span class="cam-index"></span>
@@ -274,11 +228,8 @@ image:
           <span class="cam-panel"></span>
           <span class="cam-guide"></span>
         </span>
-        <!-- Which one it's on, for whoever can't see the screen -->
         <span class="visually-hidden" aria-live="polite"></span>
         <a class="cover" href="{{ n.gallery.url | relative_url }}" aria-label="{{ n.gallery.label | escape }}"></a>
-        <!-- Its buttons, where they are in the photo. Only the arrows, which go through the
-             photos, are for everyone; the rest are toys, for the pointer only. -->
         <button class="cam-btn" data-key="left" type="button" aria-label="Previous photo"></button>
         <button class="cam-btn" data-key="right" type="button" aria-label="Next photo"></button>
         <button class="cam-btn" data-key="up" type="button" tabindex="-1" aria-hidden="true"></button>
@@ -302,14 +253,11 @@ image:
       <img class="dish-sheen" src="{{ t }}petridish-sheen.webp" data-night="{{ t }}petridish-sheen-night.webp 720w"
         srcset="{{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
     </a>
-    <!-- What's in it, which climbs out over everything else, and gives off its own light, so
-         it's over .light; and where it's been (see petri.js) -->
     <canvas class="fizz" aria-hidden="true"></canvas>
     <div class="fizz-prints" aria-hidden="true"></div>
     <a class="obj" id="uses" href="{{ n.taste.url | relative_url }}">
       <span class="under"><span class="tag t1"><span>{{ n.taste.label | escape }}</span></span></span>
       <span class="lift"><span class="item">
-        <!-- In pixels of the earbuds' photo. The script re-lays it; this is the fallback. -->
         <svg class="cable" viewBox="137 600 1774 2300" aria-hidden="true">
           <g class="ear-left">
             <path class="ear-hook-edge" stroke-dasharray="2308 100000" d="M425 922C416 920 386 912 368 906C349 899 330 892 312 883C294 874 277 863 262 851C246 838 232 824 219 809C206 794 194 778 184 760C174 743 165 725 159 706C152 687 147 668 144 648C141 628 140 608 141 588C141 568 144 548 149 529C153 509 159 490 167 472C175 453 185 436 196 419C207 403 220 387 235 373C249 359 264 346 281 335C297 324 315 314 333 306C351 298 371 292 390 288C410 283 430 281 450 280C469 279 490 280 509 283C529 287 549 291 567 298C586 305 605 313 622 323C639 333 655 345 671 358C686 371 699 386 712 401C725 417 736 434 746 451C756 468 765 486 773 504C781 523 787 542 793 561C799 580 804 599 809 619C814 638 817 658 821 678C824 697 827 717 830 737C833 757 836 776 838 796C841 816 843 836 845 856C847 876 849 896 850 916C852 936 853 956 854 976C855 996 856 1015 857 1035C857 1055 858 1075 858 1095C858 1115 858 1135 857 1155C857 1175 857 1195 856 1215C855 1235 854 1255 853 1275C851 1295 850 1315 848 1335C847 1355 844 1380 843 1395C841 1410 841 1407 839 1425C837 1443 834 1478 830 1504C825 1530 819 1556 814 1583C808 1609 803 1635 797 1661C791 1687 785 1713 778 1739C772 1765 766 1790 760 1816C753 1842 747 1868 741 1894C735 1920 729 1946 725 1972C720 1999 715 2025 711 2051C708 2078 705 2104 703 2131C701 2158 700 2184 699 2211C699 2237 698 2264 699 2291C701 2317 704 2344 709 2370C713 2396 719 2422 724 2448C729 2475 734 2501 739 2527C743 2553 747 2580 751 2606C754 2633 758 2659 761 2685C763 2712 766 2739 768 2765C770 2792 772 2818 774 2845C776 2872 778 2907 779 2925C780 2942 780 2946 780 2950" />
@@ -342,7 +290,6 @@ image:
           <span class="bud bud-left"><img src="{{ t }}earbuds.avif" srcset="{{ t }}earbuds-190.avif 190w, {{ t }}earbuds-400.avif 400w, {{ t }}earbuds.avif 720w"
             data-night="{{ t }}earbuds-night-190.avif 190w, {{ t }}earbuds-night-400.avif 400w, {{ t }}earbuds-night.avif 720w"
             sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
-            <!-- Which is which, written on the faceplate in glow ink -->
             <span class="glow-ink" aria-hidden="true">L</span></span>
           <span class="bud bud-right"><img src="{{ t }}earbuds.avif" srcset="{{ t }}earbuds-190.avif 190w, {{ t }}earbuds-400.avif 400w, {{ t }}earbuds.avif 720w"
             data-night="{{ t }}earbuds-night-190.avif 190w, {{ t }}earbuds-night-400.avif 400w, {{ t }}earbuds-night.avif 720w"
@@ -366,16 +313,12 @@ image:
     <div class="light" aria-hidden="true"></div>
     <div class="dusk" aria-hidden="true"></div>
     <div class="glint" aria-hidden="true"></div>
-    <!-- The labels' writing, glowing at night; the script lays it over each label -->
     <div class="glow" aria-hidden="true"></div>
-    <!-- Glowing writing that's more than ink: the sticker's halo, which, hovered, is light -->
     <div class="glow aura" aria-hidden="true"></div>
-    <!-- For objects above .light; the script sets the matrices -->
     <svg class="filters" aria-hidden="true">
       <filter id="room-light-gallery" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
-      <!-- The room's light and the camera screen's, together, on the buttons beside it -->
       <filter id="spill-gallery" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
       </filter>
@@ -411,18 +354,14 @@ image:
       const camera = document.getElementById('gallery');
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const pick = n => Math.floor(Math.random() * n);
-      // How far a thing's turned, in degrees: on what it's on, and all told, on the table
       const rotation = el => parseFloat(getComputedStyle(el).rotate) || 0;
       function totalTurn(el) {
         let turn = 0;
         for (let at = el; at !== table; at = at.parentElement) turn += rotation(at);
         return turn;
       }
-      // Where the middle of a box is, in the table's own box
       const midpoint = (rect, box) => [rect.left + rect.width / 2 - box.left, rect.top + rect.height / 2 - box.top];
 
-      // The ink spread round the card's type: copies of it, without the pen's strike, that
-      // the stylesheet spreads, in an unbroken rim and further along the paper's fibres
       document.querySelectorAll('#intro .intro-text').forEach(side => {
         const printed = side.cloneNode(true);
         printed.querySelectorAll('svg').forEach(svg => svg.remove());
@@ -430,10 +369,6 @@ image:
         document.querySelector('.intro-rim').append(printed.cloneNode(true));
       });
 
-      // The card turns over when it's clicked on bare stock. The words are text, to select
-      // and copy, so a click on them does nothing, and nor does ending a drag or clearing
-      // what was selected. Its blend modes stay inside it, so it's turned whole, flat as it
-      // comes up, and which side's printed changes when it's edge on.
       const intro = document.getElementById('intro');
       const stock = intro.querySelector('.item');
       const turner = intro.querySelector('.intro-turn');
@@ -442,7 +377,6 @@ image:
         selecting = !getSelection().isCollapsed;
         touch = e.pointerType !== 'mouse';
       });
-      // On a touchscreen, selecting is a long press, so a tap on the words turns it too
       stock.addEventListener('click', async e => {
         if (turning || e.target.closest('a') || (!touch && e.target.closest('.intro-lines > span, .intro-motto > span'))) return;
         if (e.detail && (selecting || !getSelection().isCollapsed)) return;
@@ -477,10 +411,6 @@ image:
         if (el !== toggle) el.style.setProperty('--j', (Math.random() * 3 - 1.5).toFixed(2) + 'deg');
       });
 
-      // The camera, in playback, as a PowerShot of its time does it. Picked up (hovered), it
-      // goes to the index, nine at a time, and its buttons do what they do on the camera.
-      // ▶ would put it in shooting mode, but it's lying on its back, so the lens comes out
-      // into the table.
       (() => {
         const photos = JSON.parse(camera.dataset.photos);
         const screen = camera.querySelector('.cam-screen');
@@ -494,7 +424,6 @@ image:
         const cover = camera.querySelector('.cover');
         const said = camera.querySelector('[aria-live]');
         const gallery = cover.href;
-        // Playback zoom, in the camera's steps
         const ZOOMS = [1, 2, 3, 4, 6, 8, 10];
         // The screen's width, in its heights: 346 by 260 of the photo's pixels
         const WIDE = 346 / 260;
@@ -503,7 +432,6 @@ image:
         let full = -1, page = -1, row = 0, choice = 1, held = false, rested = true, browsed = false, mapped = true;
         let slides = 0, keyed = false;
 
-        // The glow is the screen's average colour, and the detailed display has a histogram
         const sampler = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
         const tones = [], spreads = [];
         function sample(img, i) {
@@ -530,10 +458,8 @@ image:
             if (known.length) rgb = [0, 1, 2].map(c => 0.75 * known.reduce((sum, t) => sum + t[c], 0) / known.length);
           }
           if (!rgb) return;
-          // What the screen gives off is the picture and, under it, the backlight
           rgb = rgb.map((c, i) => 0.85 * c + BACKLIGHT[i]);
           camera.style.setProperty('--glow', rgb.map(Math.round).join(' '));
-          // The screen's light, added to the room's
           const room = roomLight.getAttribute('values').split(' ').map(Number);
           [0, 6, 12].forEach((at, c) => room[at] += SPILL * rgb[c] / 255);
           spillLight.setAttribute('values', room.join(' '));
@@ -541,13 +467,11 @@ image:
         const roomLight = document.querySelector('#room-light-gallery feColorMatrix');
         const spillLight = document.querySelector('#spill-gallery feColorMatrix');
         const SPILL = 0.6, BACKLIGHT = [30, 34, 44];
-        // When the room's light changes, so does what it adds to
         new MutationObserver(tint).observe(roomLight, { attributes: true });
         const base = camera.querySelector('.base');
         const lit = () => camera.querySelector('.cam-spill').style.setProperty('--photo', `url("${base.currentSrc}")`);
         base.complete ? lit() : base.addEventListener('load', lit);
 
-        // The lamp blinks for as long as it's reading
         let reading = 0;
         function load(img, src) {
           if (img.getAttribute('src') === src) return;
@@ -569,7 +493,6 @@ image:
           if (mode === 'play' && disp === 2) show();
         });
 
-        // Where the photo is, zoomed in: in screen heights, and kept inside the screen
         function place() {
           const [, , w, h] = photos[shown], z = ZOOMS[zoom];
           const fit = Math.min(WIDE / (w / h), 1) * z, size = [fit * w / h, fit];
@@ -607,7 +530,6 @@ image:
             const first = shown - shown % 9;
             if (first !== page) {
               page = first;
-              // Small as they are, the smallest thumbnails
               index.replaceChildren(...photos.slice(first, first + 9).map(([, , , , small], k) => {
                 const img = new Image();
                 img.alt = '';
@@ -623,7 +545,6 @@ image:
 
           info.replaceChildren();
           if (mode === 'play' && zoom) {
-            // Where in the photo the screen is, unless DISP's hidden it
             if (mapped) {
               const [[x, w], [y, h]] = place(), [, , pw, ph] = photos[shown];
               const map = B('cam-where', B('cam-view'));
@@ -691,7 +612,6 @@ image:
         function press(key) {
           const was = shown;
           if (mode === 'off') {
-            // ▶ turns it on, in playback
             if (key === 'play') {
               mode = 'play';
               zoom = 0;
@@ -706,7 +626,6 @@ image:
             return show();
           }
           if (key === 'play') {
-            // Shooting mode: the lens comes out, against the table
             mode = 'error';
             zoom = 0;
             camera.dataset.mode = 'error';
@@ -733,7 +652,6 @@ image:
               mode = 'menu';
               row = 0;
             } else if (key === 'disp') {
-              // Zoomed in, it shows or hides where in the photo the screen is
               if (zoom) mapped = !mapped;
               else disp = (disp + 1) % 3;
             }
@@ -748,7 +666,6 @@ image:
               shown = (shown + step[0] + 3 * step[1] + photos.length) % photos.length;
               browsed = true;
             } else if (key === 'set' || key === 'tele') mode = 'play';
-            // Not what the camera does, but what's expected: this one, in detail
             else if (key === 'disp') {
               mode = 'play';
               disp = 2;
@@ -760,7 +677,6 @@ image:
             if (key === 'up' || key === 'down') row = (row + step[1] + MENU.length) % MENU.length;
             else if (key === 'menu') mode = 'play';
             else if (key === 'set' && row === 0) {
-              // Through all of them once, from this one, and back: it doesn't repeat, as set
               mode = 'slides';
               show();
               return slide(++slides, photos.length - 1);
@@ -774,12 +690,9 @@ image:
             }
           }
           show();
-          // Gone to another, it says which, as the gallery does
           if (shown !== was) said.textContent = `${photos[shown][6]} (${shown + 1} of ${photos.length})`;
         }
 
-        // What the button the pointer's on would do, now, in a strip along the foot of the
-        // screen, as the camera's own guides are
         let hovered = null;
         const LABELS = { left: '◀', right: '▶', up: '▲', down: '▼', set: 'SET', menu: 'MENU', disp: 'DISP', wide: 'W', tele: 'T' };
         function does(key) {
@@ -806,9 +719,6 @@ image:
 
         const buttons = Array.from(camera.querySelectorAll('.cam-btn'));
         buttons.forEach(button => button.addEventListener('click', () => press(button.dataset.key)));
-        // For the pointer, a button reaches a little past its edge, to the nearest of them:
-        // a near miss presses it, and anything further opens the gallery. The link takes
-        // every click, and doesn't go where one's for a button.
         const REACH = 1.5;
         function nearest(e) {
           if (e.target !== cover) return null;
@@ -837,11 +747,9 @@ image:
         });
         cover.addEventListener('pointerdown', e => { if (e.button === 0) nearest(e)?.classList.add('pressed'); });
         cover.addEventListener('pointerup', release);
-        // With the camera focused, the arrows are its arrows
         cover.addEventListener('keydown', e => {
           keyed = e.key === 'Enter';
           const key = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }[e.key];
-          // Up and down only where they go somewhere: not to Erase?, which needs FUNC/SET
           if (!key || (key === 'up' || key === 'down') && mode !== 'index' && !(mode === 'play' && zoom)) return;
           e.preventDefault();
           const button = camera.querySelector(`[data-key="${key}"]`);
@@ -850,7 +758,6 @@ image:
           press(key);
         });
 
-        // Picked up, it goes to the index; put down a while, it opens the one picked
         function pickUp() {
           held = true;
           if (rested && mode === 'play' && !zoom) {
@@ -875,7 +782,6 @@ image:
         item.addEventListener('pointerleave', putDown);
         cover.addEventListener('focus', pickUp);
         cover.addEventListener('blur', putDown);
-        // Over the index, the pointer picks
         item.addEventListener('pointermove', e => {
           if (mode !== 'index') return;
           const cell = document.elementsFromPoint(e.clientX, e.clientY).find(el => el.parentElement === index);
@@ -884,8 +790,6 @@ image:
             show();
           }
         });
-        // Clicked on the screen, or after going through them, it opens that photo in the
-        // gallery; anywhere else, the gallery
         cover.addEventListener('click', e => {
           const button = !keyed && nearest(e);
           if (button) {
@@ -900,12 +804,7 @@ image:
         show();
       })();
 
-      // A plug, in the hand. Pulled, it grips, giving a little, till it comes free all at
-      // once; out, it follows the hand, and near enough the socket, it's pushed home. A
-      // click without a drag, and a keyboard, do either in one go. way() is the way it
-      // comes out, on the screen; out of the socket, reach(dx, dy) is how far out the
-      // hand's moved it, from 0, in, to 1, where it lies. hold(t) shows it there, and
-      // put(inside) puts it in or out, from wherever it is.
+      // reach(dx, dy) is how far out the hand's moved it: 0 in, 1 where it lies. hold(t) shows it there; put(inside) puts it in or out.
       function plug(button, { plugged, way, reach, hold, put }) {
         const GRIP = 24, GIVE = 3;
         let drag = null, dragged = false;
@@ -930,7 +829,6 @@ image:
             drag.moved = true;
             document.documentElement.classList.add('grabbing');
           }
-          // How far it's been pulled out, along the way it comes
           const out = dx * drag.ux + dy * drag.uy;
           if (drag.in) {
             if (out < GRIP) return hold(Math.max(0, out) / GRIP * GIVE / drag.length);
@@ -942,7 +840,6 @@ image:
         });
         const up = e => {
           if (!drag || e.pointerId !== drag.id) return;
-          // Let go, it's back where it was: in, or down
           if (drag.moved) end(drag.in);
           else drag = null;
         };
@@ -954,19 +851,14 @@ image:
         });
       }
 
-      // The Pi's screen shows the stars and the downloads a month, in turn
       const pi = document.getElementById('projects');
       const pages = Array.from(pi.querySelectorAll('.pi-page'));
       let page = pages[0];
-      // Each time it's plugged in, a new count: whatever was left to do from an earlier
-      // time, it doesn't
       let power = 0;
       function later(fn, ms) {
         const at = power;
         setTimeout(() => { if (at === power) fn(); }, ms);
       }
-      // The activity light flickers as the Pi reads or writes its card: in a few short,
-      // uneven blinks
       function flicker() {
         for (let i = 0, at = 0; i < 2 + pick(4); i++) {
           later(() => pi.classList.add('act'), at);
@@ -974,11 +866,9 @@ image:
           at += 30 + pick(140);
         }
       }
-      // Now and then, as a system does, writing its logs
       (function idle() {
         setTimeout(() => { if (!still && !pi.matches('.off, .booting')) flicker(); idle(); }, 2000 + pick(5000));
       })();
-      // A page is drawn over the last from the top down, as quickly as the Pi can send it
       function draw(next) {
         const last = page;
         page = next;
@@ -992,9 +882,6 @@ image:
         if (!pi.matches('.off, .booting, .shell')) draw(pages[(pages.indexOf(page) + 1) % pages.length]);
       }, 6000);
 
-      // Pulling its plug turns it off; pushing it back in, it boots. Raspberry Pi OS Lite,
-      // which isn't quiet about it: the kernel's log, and systemd's, on the console. The
-      // screen's driver loads only once the system's up, so by then there's a screenful.
       const piPlug = pi.querySelector('.pi-plug');
       const log = pi.querySelector('.pi-boot');
       const kernel = (time, text) => `[${time.toFixed(6).padStart(12)}] ${text}`;
@@ -1041,7 +928,6 @@ image:
           row.append('[', ok, `] ${done} `, bold, name);
         }
         log.append(row);
-        // By whole rows, as a console scrolls
         const style = getComputedStyle(log);
         const tall = parseFloat(style.lineHeight);
         const fits = Math.floor((log.clientHeight - 2 * parseFloat(style.paddingTop)) / tall);
@@ -1052,7 +938,6 @@ image:
         power++;
         typing++;
         typed = null;
-        // What it had read off its card, it's forgotten
         cached = false;
         pi.classList.remove('act', 'booting', 'shell');
         pi.classList.add('out', 'off');
@@ -1061,22 +946,18 @@ image:
       function plugIn() {
         power++;
         pi.classList.remove('out');
-        // It comes on as it goes home, at the end of the push
         later(() => {
           pi.classList.remove('off');
           if (still) return;
           pi.classList.add('booting');
           log.replaceChildren();
           log.style.removeProperty('--rows');
-          // Reading its firmware, then the kernel, then the system, off its card
           for (let t = 0; t < 2600; t += 80 + pick(160)) later(flicker, t);
-          // The screen's driver: the console, then whatever more there is
           later(() => {
             EARLY.forEach(print);
             log.hidden = false;
             let t = 0;
             LATE.forEach(line => later(() => print(line), t += 50 + pick(170)));
-            // The stats, drawn over the console, from the top down, as the pages are
             later(() => {
               pages.forEach(el => {
                 el.getAnimations().forEach(a => a.cancel());
@@ -1116,13 +997,8 @@ image:
         },
       });
 
-      // Hovered, it's a shell in ~/projects, and someone at the laptop, logged in over the
-      // cable, types ls: a key at a time, then what's there, all at once. Let go, after a
-      // moment, it's cleared, and the stats are back.
       const shell = pi.querySelector('.pi-shell');
       const names = shell.dataset.ls.split(' ');
-      // Laid out as ls does: in as few rows as fit 25 columns, down each column, each as
-      // wide as its longest name and two spaces
       const listing = (() => {
         for (let rows = 1; ; rows++) {
           const columns = Array.from({ length: Math.ceil(names.length / rows) }, (_, c) => names.slice(c * rows, c * rows + rows));
@@ -1133,8 +1009,6 @@ image:
           }
         }
       })();
-      // Whether ls, and what's in ~/projects, have been read off the card since it booted:
-      // once they have, they're kept in memory, so running it again doesn't touch the card
       let typing = 0, typed = null, cached = false;
       function prompt(text, cursor) {
         const row = document.createElement('span');
@@ -1154,14 +1028,11 @@ image:
           return row;
         }), prompt('', true)]);
       }
-      // Each key a little after the last, then Enter
       function type(at) {
         if (at !== typing) return;
         if (typed === 'ls') {
           typed = true;
           if (cached) return listed();
-          // The first time, it reads them, a few small reads close together: one flash of
-          // the activity light, and only then the listing
           cached = true;
           later(() => pi.classList.add('act'), 0);
           later(() => pi.classList.remove('act'), 45);
@@ -1203,18 +1074,10 @@ image:
       cover.addEventListener('blur', leave);
       pi.querySelector('.usb-run').addEventListener('click', pull);
 
-      // The sticker's laminate has glitter in it: flakes, each tilted a little its own way,
-      // so each glints only when it's at just the angle to turn the window's light up to
-      // the eye. The eye's about over the pointer, so moving over it, different ones do;
-      // held still, a hand's tremor is enough for a few to twinkle. Not at night: away
-      // from the lamp, it's too dark for any to.
       const sticker = document.getElementById('philosophy');
       const vinyl = sticker.querySelector('.item');
       const glitter = sticker.querySelector('.glitter');
       const pen = glitter.getContext('2d');
-      // The Pi's light and the glitter are masked by the outline of the image they're over:
-      // the same file the image took for this screen, so it's fetched once, and again
-      // should the screen take another
       for (const [img, masked] of [[pi.querySelector('.pi-board > .base'), pi.querySelector('.pi-act-glow')],
         [sticker.querySelector('.base'), glitter]]) {
         const fit = () => { masked.style.maskImage = `url("${img.currentSrc}")`; };
@@ -1222,14 +1085,10 @@ image:
         if (img.complete && img.currentSrc) fit();
       }
       const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
-      // Where, as a share of its width and height; how it's tilted, as the slope of its
-      // face; and whether it's holographic, as some are, which glint a colour that changes
-      // with the angle, rather than silver
       const flakes = Array.from({ length: 900 }, () => ({
         x: Math.random(), y: Math.random(), tx: 0.3 * gauss(), ty: 0.3 * gauss(),
         holo: Math.random() < 0.3, hue: Math.random() * 360,
       }));
-      // A glint: a sharp point, soft round it. White, or one of twelve colours.
       const sprites = [null, ...Array.from({ length: 12 }, (_, i) => i * 30)].map(hue => {
         const sprite = document.createElement('canvas');
         sprite.width = sprite.height = 32;
@@ -1249,14 +1108,12 @@ image:
         pen.clearRect(0, 0, w, h);
         pen.globalCompositeOperation = 'lighter';
         const { L, spread, size } = source;
-        // About two and a half of its widths away, and never quite still
         const shake = still ? [0, 0] : [0.004 * Math.sin(time / 310) + 0.003 * Math.sin(time / 97),
           0.004 * Math.cos(time / 270) + 0.003 * Math.sin(time / 113)];
         const [ex, ey, ez] = [eye[0] + shake[0], eye[1] + shake[1], 2.5];
         flakes.forEach(f => {
           const [fx, fy] = [f.x, f.y * h / w];
           const length = Math.hypot(ex - fx, ey - fy, ez);
-          // Halfway between the light and the eye, as a slope
           const [hx, hy, hz] = [L[0] + (ex - fx) / length, L[1] + (ey - fy) / length, L[2] + ez / length];
           const [dx, dy] = [f.tx - hx / hz, f.ty - hy / hz];
           const shine = Math.exp(-(dx * dx + dy * dy) / spread ** 2);
@@ -1275,8 +1132,6 @@ image:
         const w = vinyl.offsetWidth;
         eye = [0.5 + (x * Math.cos(turn) - y * Math.sin(turn)) / w,
           vinyl.offsetHeight / w / 2 + (x * Math.sin(turn) + y * Math.cos(turn)) / w];
-        // Held still, it's only drawn as the eye moves: once shimmer() has found the light,
-        // and not at night, for the same reason it won't
         if (still && source && !document.documentElement.classList.contains('dark-mode')) requestAnimationFrame(glints);
       }
       function shimmer(e) {
@@ -1285,8 +1140,6 @@ image:
         const dpr = devicePixelRatio || 1;
         glitter.width = Math.round(glitter.offsetWidth * dpr);
         glitter.height = Math.round(glitter.offsetHeight * dpr);
-        // Which way the window is, and how high, as the wires are told. It's broad, so
-        // each flake catches it over a fair range of angles, softly.
         const [lx, ly] = ['--lx', '--ly'].map(key => parseFloat(glitter.style.getPropertyValue(key)) || 0);
         const flat = parseFloat(glitter.style.getPropertyValue('--shade'));
         source = { L: [lx * flat, ly * flat, Math.sqrt(1 - flat * flat)], spread: 0.08, size: 1.5 * dpr };
@@ -1295,7 +1148,6 @@ image:
         requestAnimationFrame(glints);
       }
       sticker.addEventListener('pointerenter', shimmer);
-      // Its halo's sparkles, at a few places round it, each twinkling in its own time
       const ring = sticker.querySelector('.glow-ink path');
       const around = ring.getTotalLength();
       const sparkles = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -1325,11 +1177,7 @@ image:
         setTimeout(tick, 60000 - now % 60000);
       })();
 
-      // Redraws the phone's cable as a braid, for each of the ways it lies: all that
-      // shows of it, from _raw/braidflat.py, so each point of it can follow the cable's curves.
-      // A strand's outline, and the whole's along one side, each point how far along and how
-      // far across. Each strand's half a repeat on from the last, and its mirror image; so
-      // are the two sides.
+      // The braid's points are from _raw/braidflat.py
       const BRAID = {
         half: 4.48,
         strand: [[0.01,-1.62],[1.46,-1.91],[2.96,-2.07],[4.45,-2.1],[5.85,-2.01],[8.32,-1.57],[12.62,-0.31],[10.59,0.15],[8.88,0.3],[6.14,-0.35],[4.89,-0.48],[3.73,-0.5]],
@@ -1381,7 +1229,6 @@ image:
       // Safari draws a path only from its d attribute, and won't move it from the
       // stylesheet, so there the script moves the cables as the stylesheet would
       const STYLED_D = CSS.supports('d', 'path("M0 0")');
-      // The stylesheet's cubic-bezier(), as a function of how far along it is
       const bezier = (x1, y1, x2, y2) => x => {
         if (x <= 0 || x >= 1) return x <= 0 ? 0 : 1;
         const at = (t, a, b) => 3 * a * t * (1 - t) ** 2 + 3 * b * t * t * (1 - t) + t ** 3;
@@ -1394,14 +1241,9 @@ image:
         return at((low + high) / 2, y1, y2);
       };
       const EASE_IN_OUT = bezier(0.42, 0, 0.58, 1);
-      // Each run's braid, plugged in, held up over the jack, and out, for the plug on its
-      // way: its outline, its strands, and the line down its middle
       const strands = [];
       phone.querySelectorAll('.cable-run').forEach(run => {
         const middle = run.querySelector('.cable-core').getAttribute('d');
-        // From the plug, whichever way the cable goes, so the same points of it can be moved
-        // between them; the shorter its way, the more of it is off the table, running on
-        // straight past its end. Before the first point it runs back into the plug.
         function braid(d, halves) {
           const { at, length } = walk(d);
           const [start, next, before, end] = [at(0), at(1), at(length - 1), at(length)];
@@ -1410,7 +1252,6 @@ image:
             const [ahead, way] = s < 0 ? [s, [next.x - start.x, next.y - start.y]] : [Math.max(s - length, 0), [end.x - before.x, end.y - before.y]];
             return { x: p.x + ahead * way[0], y: p.y + ahead * way[1] };
           };
-          // A point of a strand, half k of it along, mirrored every other
           const place = (k, [along, across]) => {
             const s = along + k * BRAID.half;
             const p = on(s), q = on(s - 0.5), r = on(s + 0.5);
@@ -1419,7 +1260,6 @@ image:
             return `${(p.x + (r.y - q.y) / apart * off).toFixed(2)} ${(p.y - (r.x - q.x) / apart * off).toFixed(2)}`;
           };
           const each = [...Array(halves).keys()].map(k => k - 2);
-          // A side's a whole repeat, two of those, and the other's half a repeat on
           const repeats = each.filter(k => k % 2 === 0);
           const down = repeats.flatMap(k => BRAID.side.map(point => place(k, point)));
           const back = repeats.flatMap(k => BRAID.side.map(point => place(k + 1, point))).reverse();
@@ -1454,24 +1294,12 @@ image:
         run.classList.add('braided');
       });
 
-      // A scanner: an SDR dongle on the laptop, off the table, which the Pi listens through
-      // over their USB link, streaming what it hears to the phone, where it's heard with the
-      // earphones in. Static, and now and then, someone on the air: while they're talking
-      // the static's held down, as a receiver does under a signal, and when they let go
-      // it's back. While it's streaming, the Pi's screen shows the receiver at work, and the
-      // phone's widget, what's playing. With the Pi unplugged, the voice is gone at once,
-      // the phone says it can't reach it, and there's only static till it's back.
-      // A page can only make sound once there's been a click or a key, so the earphones'
-      // plug wakes it, and nothing's fetched till then.
       const radio = (() => {
-        // How loud the static is, and held down
         const STATIC = 0.3, UNDER = 0.15;
         const base = phone.dataset.radio, count = +phone.dataset.calls;
         const status = phone.querySelector('.radio-status');
         let audio = null, out, hiss, playing = null, bag = [], last = 0, next = 0, noting = 0;
         let on = false, streaming = false, marks = [];
-        // Each time it starts or stops streaming, a new count, so a call that was on its way
-        // isn't heard after
         let turn = 0;
         const fetched = {};
         const load = name => fetched[name] ||= fetch(base + name)
@@ -1479,7 +1307,6 @@ image:
         function wake() {
           if (!window.AudioContext) return;
           if (!audio) {
-            // Earphones in, the phone plays out loud, whatever its silent switch
             if (navigator.audioSession) navigator.audioSession.type = 'playback';
             audio = new AudioContext();
             out = audio.createGain();
@@ -1526,9 +1353,6 @@ image:
           }
           return spans.filter(([from, to]) => to - from >= 0.15);
         }
-        // Someone on the air, as the Pi and the phone show it. The receiver records each
-        // call to the card, as it's set to, so the Pi's activity light flickers as it
-        // writes, for as long as they're talking.
         let recording = 0;
         function air(is) {
           pi.classList.toggle('keyed', is);
@@ -1539,8 +1363,6 @@ image:
             recording = setTimeout(write, 300 + pick(500));
           })();
         }
-        // The calls, shuffled, each heard once before any's heard again, and never twice
-        // running
         function nextCall() {
           if (!bag.length) {
             bag = Array.from({ length: count }, (_, i) => i + 1);
@@ -1552,7 +1374,6 @@ image:
           }
           return last = bag.shift();
         }
-        // The next call, a few seconds after the last: fetched meanwhile
         function wait(ms, mine = turn) {
           const call = load(`call-${nextCall()}.mp3`);
           next = setTimeout(() => call.then(buffer => play(buffer, mine)).catch(() => wait(ms, mine)), ms);
@@ -1577,7 +1398,6 @@ image:
             if (mine === turn) wait(3000 + Math.random() * 12000);
           };
         }
-        // Whatever's being said, cut off, and the static as it is between calls
         function hush() {
           clearTimeout(next);
           marks.forEach(clearTimeout);
@@ -1593,15 +1413,12 @@ image:
           }
           playing = null;
         }
-        // The app says it can't reach the Pi: in its widget, and for a few seconds, as a
-        // heads-up notification
         function notify() {
           status.textContent = 'No signal';
           phone.classList.add('noted');
           clearTimeout(noting);
           noting = setTimeout(() => phone.classList.remove('noted'), 5000);
         }
-        // From the earphones and the Pi, whether it's streaming, and what the phone says
         function tune() {
           const now = on && !pi.matches('.off, .booting');
           if (now === streaming) return;
@@ -1625,11 +1442,9 @@ image:
             if (on || !audio) return;
             on = true;
             audio.resume().catch(() => {});
-            // Eased in, so a tap in a quiet room isn't loud at once
             out.gain.cancelScheduledValues(audio.currentTime);
             out.gain.setTargetAtTime(1, audio.currentTime, 0.25);
             tune();
-            // The Pi's off: the phone can't reach it
             if (!streaming) notify();
           },
           off() {
@@ -1640,7 +1455,6 @@ image:
             status.textContent = 'Paused';
             out.gain.cancelScheduledValues(audio.currentTime);
             out.gain.setTargetAtTime(0, audio.currentTime, 0.005);
-            // And, out of earshot, it rests
             setTimeout(() => { if (!on) audio.suspend(); }, 100);
           },
         };
@@ -1648,23 +1462,15 @@ image:
 
       const earphones = document.getElementById('uses');
 
-      // The earphones: out of the phone, where they were left, till they're plugged in.
-      // In a hand, the plug's picked up, carried over, held up straight over the jack, and
-      // pushed in, and it's only then that the phone says so. Pulled, it comes straight
-      // out till it's clear, and is put down. All the way, it's t: 0 in, LIFT held up over
-      // the jack, its pin CLEAR of it, and 1 down. Its cable leaves it CORD from its tip.
+      // t: 0 in, LIFT held up over the jack, its pin CLEAR of it, and 1 down. Its cable leaves it CORD from its tip.
       (() => {
         const earPlug = phone.querySelector('.phone-plug');
         const LIFT = 0.4, CLEAR = 21, CORD = 27.5;
         let at = 1, tween = 0, down;
-        // Where it's left, which is the stylesheet's, and depends on the layout
         function readDown() {
           const style = getComputedStyle(phone);
           down = ['dx', 'dy', 'turn'].map(key => parseFloat(style.getPropertyValue(`--loose-${key}`)));
         }
-        // Its tip, from where it is in the jack, and which way it's turned. Between held up
-        // and down, where its cable leaves it goes straight, as the cable's drawn, and it's
-        // turned round that, so they stay together.
         function pose(t) {
           if (t <= LIFT) return { dx: 0, dy: -CLEAR * t / LIFT, turn: 0 };
           const u = (t - LIFT) / (1 - LIFT);
@@ -1674,7 +1480,6 @@ image:
           const leaves = [from[0] + u * (to[0] - from[0]), from[1] + u * (to[1] - from[1])];
           return { dx: leaves[0] - CORD * Math.sin(a) - 28, dy: leaves[1] + CORD * Math.cos(a) - 0.5, turn: u * turn };
         }
-        // A strand u of the way from one of its poses to another
         function draw(strand, from, to, u) {
           let d = '';
           strand.now = from.map((v, k) => v + u * (to[k] - v));
@@ -1724,7 +1529,6 @@ image:
           const [i, u] = t <= LIFT ? [0, t / LIFT] : [1, (t - LIFT) / (1 - LIFT)];
           strands.forEach(strand => draw(strand, strand.ends[i], strand.ends[i + 1], u));
         }
-        // Back to the stylesheet's, which has it where it now is
         function rest() {
           phone.classList.toggle('unplugged', at > 0);
           phone.classList.toggle('connected', at === 0);
@@ -1734,8 +1538,6 @@ image:
           if (STYLED_D) strands.forEach(({ path }) => path.style.removeProperty('d'));
           else settle();
         }
-        // Pulled free, or pushed home, quickly, the push speeding up till it stops dead;
-        // carried, or put down, unhurried
         const EASE = {
           pull: u => 1 - (1 - u) ** 3,
           push: u => u ** 2.4,
@@ -1744,10 +1546,8 @@ image:
         function go(to) {
           cancelAnimationFrame(tween);
           readDown();
-          // Out of the jack, it's not connected, however little
           if (to > 0) phone.classList.remove('connected');
           earPlug.setAttribute('aria-label', to ? 'Plug the earphones into the phone to listen to the scanner' : 'Unplug the earphones from the phone');
-          // By way of held up over the jack, if it's crossed
           const legs = (at - LIFT) * (to - LIFT) < 0 ? [[at, LIFT], [LIFT, to]] : [[at, to]];
           const step = () => {
             if (!legs.length) return rest();
@@ -1766,7 +1566,6 @@ image:
           };
           step();
         }
-        // Where the middle of its barrel is on the screen, t of the way
         function grip(t, m) {
           const { dx, dy, turn } = pose(t), r = turn * Math.PI / 180;
           return new DOMPoint(28 + dx + 9 * Math.sin(r), 0.5 + dy - 9 * Math.cos(r)).matrixTransform(m);
@@ -1775,17 +1574,14 @@ image:
         plug(earPlug, {
           plugged: () => at === 0,
           way() {
-            // It stays where the hand has it
             cancelAnimationFrame(tween);
             readDown();
             const m = phone.querySelector('.cable').getScreenCTM();
             path = Array.from({ length: 61 }, (_, k) => [k / 60, grip(k / 60, m)]);
             from = grip(at, m);
-            // Pulled out, straight, as if all the way were that way
             const [a, b] = [grip(LIFT, m), grip(0, m)];
             return { x: (a.x - b.x) / LIFT, y: (a.y - b.y) / LIFT };
           },
-          // Wherever on its way it's nearest the hand
           reach(dx, dy) {
             let best = 1, nearest = Infinity;
             path.forEach(([t, p]) => {
@@ -1799,7 +1595,6 @@ image:
         });
       })();
 
-      // Shade along the wires' far side, laid and swung with the rest of them (the Pi's too)
       table.querySelectorAll('.ear-left > .cable-core, .ear-right > .cable-core, .usb-run > .cable-core').forEach(core => {
         core.after(...[1, 2, 3].map(n => {
           const band = core.cloneNode();
@@ -1811,7 +1606,6 @@ image:
       const swings = [];
       (function () {
         const X0 = 137, Y0 = 600, WIDTH = 1774, HEIGHT = 2300, BUD_HEIGHT = 605;
-        // Lengths along the sleeve; GENTLE is the radius the hook eases into
         const PLUG = 165, STRAIGHT = 60, EASE = 400, TAIL = 700, GENTLE = 2600;
         const random = (low, high) => low + Math.random() * (high - low);
         const along = ([x, y], degrees, distance) => {
@@ -1824,7 +1618,6 @@ image:
         };
         const lengths = points => points.reduce((run, p, i) =>
           (i && run.push(run[i - 1] + Math.hypot(p[0] - points[i - 1][0], p[1] - points[i - 1][1])), run), [0]);
-        // A Catmull-Rom curve through the points, as cubic Béziers
         function smooth(points) {
           const p = [points[0], ...points, points[points.length - 1]];
           let d = `M${p[1][0].toFixed(0)} ${p[1][1].toFixed(0)}`;
@@ -1851,10 +1644,8 @@ image:
             sense: -1, radius: 310, sweep: 205, over: [1218, 2330], off: [[1210, 2500], [1200, 2700], [1190, 2950]],
           },
         };
-        // The table's bottom edge
         const EDGE = 2576;
 
-        // Walks the sleeve from the socket in 10px steps, keeping a point every 60px
         function hook({ centre, at, angle, socket, facing, sense, radius, sweep }) {
           const [dx, dy] = turn(socket, centre, angle);
           const face = [at[0] + dx, at[1] + dy];
@@ -1873,7 +1664,6 @@ image:
           return { face, heading, leaving, points };
         }
 
-        // Resamples a polyline at even spacing
         function evenly(points, apart) {
           const out = [points[0]];
           let left = apart;
@@ -1892,7 +1682,6 @@ image:
           return out;
         }
 
-        // Retry until the earbuds are apart and both hooks are on the table
         let spots;
         do {
           spots = Object.fromEntries(Object.entries(SIDES).map(([name, side]) => [name, {
@@ -1907,7 +1696,6 @@ image:
           const placed = { ...side, ...spots[name] };
           const { face, heading, leaving, points } = hook(placed);
           const sleeve = lengths(points).at(-1);
-          // From the sleeve, a wandering Hermite curve to the label, then off the table
           const out = points.at(-1), ended = along(out, leaving, 100);
           const loose = [out, along(out, leaving, 50), ended];
           const [over, [next]] = [side.over, side.off];
@@ -1923,7 +1711,6 @@ image:
             loose.push([x + wander(t) * free, y + wander(t + 0.3) * free * 0.5]);
           }
           loose.push(...side.off);
-          // Relax out tight bends, keeping the ends and the label crossing fixed
           const settled = evenly(loose, 40);
           const crossing = settled.reduce((best, [x, y], i) => Math.abs(y - side.over[1]) < Math.abs(settled[best][1] - side.over[1]) ? i : best, 0);
           for (let round = 0; round < 25; round++) {
@@ -1941,7 +1728,6 @@ image:
           bud.style.rotate = `${placed.angle}deg`;
           earphones.querySelector(`.plug-${name}`).setAttribute('transform',
             `translate(${face[0].toFixed(0)} ${face[1].toFixed(0)}) rotate(${heading.toFixed(1)})`);
-          // The wire's edge is hidden along the sleeve
           const paths = earphones.querySelectorAll(`.ear-${name} path`);
           paths.forEach(path => {
             path.setAttribute('d', smooth(points));
@@ -1949,7 +1735,6 @@ image:
             else if (path.hasAttribute('stroke-dasharray')) path.setAttribute('stroke-dasharray', `${sleeve.toFixed(0)} 100000`);
           });
 
-          // Swing on pick up: most mid-way along the free wire, none in the sleeve or past the edge
           const all = lengths(points);
           const free = all[points.findIndex(([x, y], i) => all[i] > sleeve && y >= EDGE)];
           const swung = amount => smooth(points.map(([x, y], i) =>
@@ -1961,7 +1746,6 @@ image:
               const frames = SWAY.map(([offset, amount]) => ({ offset, d: `path("${swung(size * scale * amount)}")`, easing: 'ease-in-out' }));
               return paths.forEach(path => path.animate(frames, { duration: 1400, delay: after + n * 80 }));
             }
-            // In Safari, a frame at a time, the same way
             const start = performance.now() + after + n * 80;
             const frame = time => {
               const u = Math.min(Math.max((time - start) / 1400, 0), 1);
@@ -1975,8 +1759,6 @@ image:
           });
         });
       })();
-      // Picked up, they swing; and a little, a moment later, when their plug's moved, as
-      // it's the same cable, under the table
       let swaying = 0;
       const swing = (scale = 1, after = 0) => {
         if (still || performance.now() < swaying || earphones.querySelector('.ear-left path').getAnimations().length) return;
@@ -1986,10 +1768,8 @@ image:
       earphones.addEventListener('pointerenter', () => swing());
       earphones.addEventListener('focus', () => swing());
 
-      // By day, sunlight through a window off the top left, so shadows are parallel. At night,
-      // a desk lamp, its bulb low over the card, so they spread out from it. Shadow length
-      // and blur scale with --h0, and must stay shorter than the object's thinnest part or
-      // the drop-shadow comes loose from it. A drop-shadow's blur is a standard deviation.
+      // Shadow length and blur scale with --h0, and must stay shorter than the object's thinnest part
+      // or the drop-shadow comes loose from it.
       const PICKED_UP = 1;
 
       function setShadow(el, key, [x, y, blur]) {
@@ -1998,14 +1778,6 @@ image:
         el.style.setProperty(`--${key}b`, blur.toFixed(1) + 'px');
       }
 
-      // Point light at height H, r from under it: (H² / (r² + H²))^1.5, plus ambient. By day,
-      // the window. At night, a desk lamp, shaded, its bulb low over the card, so r is from
-      // under the bulb: its narrow beam falls off more steeply, with a brighter spot from its
-      // reflector in the middle. Its light also comes back off the walls and ceiling, faint,
-      // spread over the whole room and warmer for what it's come off. Only where that runs
-      // out does the fainter light from outside show. The eye takes the lamp, the brightest
-      // light, as nearly white, so paper under it stays white and the outside looks blue.
-      // `beam` is how much of the lamp's beam its shade lets through.
       function litAt(night, height, r, beam = 1) {
         const near = (h, n) => (h * h / (r * r + h * h)) ** n;
         const lights = night ? [
@@ -2015,7 +1787,6 @@ image:
         ] : [
           [0.66 + 0.34 * near(height, 1.5), [255, 251, 244]],
         ];
-        // They add up as light does, in linear values, then gamma 2.2 for the screen
         const linear = c => (c / 255) ** 2.2;
         const value = [0, 1, 2].map(i =>
           lights.reduce((sum, [amount, tint]) => sum + amount * linear(tint[i]), 0) ** (1 / 2.2));
@@ -2027,9 +1798,7 @@ image:
 
       const rgb = c => `rgb(${c.map(Math.round).join(' ')})`;
 
-      // The room's light is drawn coarsely and smoothed as it's scaled up, as it changes
-      // slowly. A gradient can't take the lamp's lopsided pool. A little noise, so it's
-      // never banded.
+      // A gradient can't take the lamp's lopsided pool; a little noise keeps it from banding
       const lightCanvas = document.createElement('canvas');
       const duskCanvas = document.createElement('canvas');
       table.querySelector('.light').append(lightCanvas);
@@ -2048,8 +1817,6 @@ image:
         context.putImageData(image, 0, 0);
       }
 
-      // The eye loses colour gradually as light dims, from `full` down to `least`. It goes
-      // by the light around, not the shade's edge, which it doesn't follow so closely.
       const COLOUR = { full: 0.5, least: 0.1 };
       let painted = '';
       function lighting(night, box, shaped, height, aim) {
@@ -2068,31 +1835,23 @@ image:
         });
       }
 
-      // The labels are written in glow-in-the-dark ink, and some things are drawn on in
-      // ink that's invisible by day. The room's light can only darken what's under it, so
-      // at night a copy of each, which gives off light, is laid over the room's light,
-      // placed and turned as the original is. One on something that is picked up rises
-      // with it.
       const glowing = table.querySelector('.glow');
       const aura = table.querySelector('.aura');
       const glint = table.querySelector('.glint');
       const writing = Array.from(table.querySelectorAll('.ink, .tag > span, .glow-ink'));
       const COPIED = ['fontSize', 'lineHeight', 'letterSpacing', 'textAlign', 'display', 'placeItems',
         'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
-      // Each label was written with its own amount of paint, and its own unevenness
       const paints = writing.map(() => [0.8 + Math.random() * 0.2, Math.random() * 4, Math.random() * 4]);
       let risers = [];
       function glow() {
         const night = document.documentElement.classList.contains('dark-mode');
         const box = table.getBoundingClientRect();
-        // The copy can't cover the writing exactly, so the writing goes
         writing.forEach(el => el.classList.toggle('glowing', night));
         if (!night) {
           aura.replaceChildren();
           return glowing.replaceChildren();
         }
         const copies = writing.map((el, i) => {
-          // A turned box's bounds are centred where it is
           const rect = el.getBoundingClientRect();
           const angle = totalTurn(el);
           const style = getComputedStyle(el);
@@ -2111,7 +1870,6 @@ image:
             opacity: paints[i][0].toFixed(2),
             maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
           });
-          // Not in .glow, which it can't be brighter than: it dims itself to match, by --paint
           if (copy.className === 'halo') {
             copy.style.setProperty('--paint', copy.style.opacity);
             copy.style.removeProperty('opacity');
@@ -2122,13 +1880,9 @@ image:
         glowing.replaceChildren(...copies.map(([, copy]) => copy).filter(copy => copy.className !== 'halo'));
         aura.replaceChildren(...copies.map(([, copy]) => copy).filter(copy => copy.className === 'halo'));
       }
-      // Two things follow the card, wherever it's been lifted or turned to. The glare doesn't
-      // fall on it, as its paper is matte, so that's cut out where it is. And its shadow
-      // doesn't show past its edges towards the light, the left and the top, by day or night.
-      // A drop-shadow's blur spills round every side, and it's only ever moved by whole
-      // pixels, so along the card's crisp, straight edges there it's a dark line. Cut off
-      // along them, in the card's tilt in its shadow's box, half a pixel in, or it still
-      // shows through the soft pixels along them.
+      // A drop-shadow's blur spills round every side, and it's only ever moved by whole pixels,
+      // so along the card's crisp straight edges towards the light it's a dark line. Cut off
+      // along them, half a pixel in, or it still shows through the soft pixels along them.
       function lay() {
         const box = table.getBoundingClientRect();
         const card = intro.getBoundingClientRect();
@@ -2178,16 +1932,10 @@ image:
       ['pointerover', 'pointerout', 'focusin', 'focusout'].forEach(type =>
         table.addEventListener(type, () => requestAnimationFrame(rise)));
 
-      // Things with hard, glossy edges, and how wide a band of edge catches the lamp (in u)
-      // and how much it shines. Paper and cloth don't.
       const RIMS = { projects: [0.3, 1], gallery: [0.3, 0.9], phone: [0.2, 1],
         uses: [0.25, 1], blog: [0.2, 0.4] };
       const rimmed = objects.filter(el => el.id in RIMS);
-      // And the sticker's glitter, which only needs which way the light is
       const cables = Array.from(table.querySelectorAll('svg.cable, .glitter'));
-      // Shiny things have photos for the night too, lit evenly from above and not shining,
-      // as which side the lamp is on is the page's to give. They're fetched when the switch
-      // might be flipped, so they're there when it is.
       const nightly = Array.from(document.querySelectorAll('img[data-night]'));
       nightly.forEach(img => img.dataset.day = img.getAttribute('srcset'));
       ['pointerenter', 'focus'].forEach(type => toggle.addEventListener(type, () =>
@@ -2204,31 +1952,21 @@ image:
           <feBlend in2="SourceGraphic" mode="screen" />
         </filter>`));
 
-      // Where the bulb is from the middle of the card, and how high, in u
       const BULB = [-8, -5, 70];
 
       function light() {
         const night = document.documentElement.classList.contains('dark-mode');
         const u = probe.offsetWidth / 100;
         const box = table.getBoundingClientRect();
-        // At night the bulb is over the card, a little towards the corner the lamp stands
-        // in, and its light, glare and shadows all centre under it. Not right over it, or
-        // the card would cast no shadow, which is all that sets it off the white table.
+        // Not right over the card, or it would cast no shadow, which is all that sets it off the white table.
         const card = intro.getBoundingClientRect();
         const [cardX, cardY] = midpoint(card, box);
         const [bulbX, bulbY, bulbZ] = [cardX + BULB[0] * u, cardY + BULB[1] * u, BULB[2] * u];
         const [aim, height] = night
           ? [[bulbX, bulbY], 1.0 * card.width]
           : [[-15 * u, -20 * u], 1.6 * Math.hypot(box.width, box.height)];
-        // The lamp stands in the top left corner and leans in, so its light lands at a slant:
-        // the pool is short on the lamp's side and drawn out on the far side. It ends where
-        // the shade cuts the beam off, softly, as the bulb isn't a point; past that there's
-        // only what leaks through and what comes back off the room. Sunlight, from far off,
-        // falls in a circle.
         const [short, long, slant] = night ? [0.95, 1.5, Math.atan2(-BULB[1], -BULB[0])] : [1, 1, 0];
         const [cosS, sinS] = [Math.cos(slant), Math.sin(slant)];
-        // How far a point is from the middle of the light, as the light sees it, and how
-        // much of the beam reaches it
         const shaped = (px, py) => {
           const [dx, dy] = [px - aim[0], py - aim[1]];
           const along = dx * cosS + dy * sinS, across = dy * cosS - dx * sinS;
@@ -2245,8 +1983,6 @@ image:
 
         // Measure everything before writing styles, to avoid repeated layouts
         const selfLight = selfLit.map(el => lightAt(...midpoint(el.getBoundingClientRect(), box)));
-        // The phone's cable has the light of where it lies: on a narrow table it leaves by the
-        // side, a long way up the phone and nearer the bulb. Otherwise, as the phone does.
         const cableRun = [...table.querySelectorAll('#phone .run-side')].map(run => run.getBoundingClientRect()).find(run => run.width);
         const cableLight = cableRun ? lightAt(...midpoint(cableRun, box)) : selfLight[selfLit.findIndex(el => el.id === 'phone')];
         const placed = objects.map(measure);
@@ -2263,9 +1999,6 @@ image:
           const srcset = night ? img.dataset.night : img.dataset.day;
           if (img.getAttribute('srcset') !== srcset) img.srcset = srcset;
         });
-        // The bulb's glare, off the laminate's satin finish and anything glossy, seen from
-        // above: right under it, fading fast, and faint, as white has little left to brighten.
-        // Neutral, as it's the light itself reflected, not the colour of what it's off.
         const glare = Array.from({ length: 9 }, (_, i) => {
           const r = i / 8 * 1.2 * height;
           return `rgb(30 29 28 / ${Math.exp(-((r / (0.35 * height)) ** 2)).toFixed(3)}) ${r.toFixed(0)}px`;
@@ -2293,17 +2026,13 @@ image:
             const distance = Math.hypot(cx - bulbX, cy - bulbY) || 1;
             dx = (cx - bulbX) / distance;
             dy = (cy - bulbY) / distance;
-            // Far from a low bulb, shadows grow long, but never so long they come loose
             length = height * u * Math.min(distance / bulbZ, 1);
           }
           return [dx * length, dy * length, 0.5 + length * 0.4];
         }
 
-        // A part's shadow is unrotated by its object's `angle`.
         const shade = (el, angle, { height, cx, cy }) => {
           const cos = Math.cos(-angle), sin = Math.sin(-angle);
-          // Lifted, a thing moves off the table as far by night as by day. Its shadow barely
-          // shifts under a high bulb, but it's as much nearer the eye.
           const [rx, ry] = cast(PICKED_UP, cx, cy);
           const raise = Math.max(Math.hypot(rx, ry), PICKED_UP * u * 0.5) / (Math.hypot(rx, ry) || 1);
           Object.entries({ s: height, h: height + PICKED_UP, c: 0.05 }).forEach(([key, h]) => {
@@ -2320,11 +2049,6 @@ image:
           el.style.setProperty('--rise', `${(-rx * raise * 0.5).toFixed(1)}px ${(-ry * raise * 0.5).toFixed(1)}px`);
         };
 
-        // At night the lamp catches the edges of things that face it. From above, that's a
-        // band along the side towards the bulb: what's left of the object when it's moved a
-        // little away from the bulb. A rounded edge always has a spot that turns the bulb up
-        // to the eye, so how bright it is is just how lit the object is, which the room's
-        // light gives it, or for those above that, its colour here.
         const rim = (el, { cx, cy }) => {
           // On the whole object, or where that'd cut off light blended over it from what it's
           // over (in Chromium, a filter does), on its photo, marked .rimmed, which keeps its
@@ -2348,10 +2072,6 @@ image:
           set(`url(#rim-${el.id})`);
         };
 
-        // A wire is round, so it's lit on the side towards the light, with its shine a
-        // little way over that side, and shaded on the far side, the more so the lower the
-        // light. Its shine is where it turns the light up to the eye: halfway between
-        // straight up and the light. Given in the wire's own, turned, frame.
         cables.forEach((svg, i) => {
           const { cx, cy, turn } = cablesPlaced[i];
           let [lx, ly, elevation] = [-0.53, -0.85, Math.atan(2)];
@@ -2373,12 +2093,7 @@ image:
         toggle.setAttribute('aria-checked', String(night));
       }
 
-      // Each thing is shown once all its pictures are ready: its photos, as they're chosen for
-      // this screen, and the tape and cloth drawn by the stylesheet. One that fails to load is
-      // shown anyway, as it would be.
       const waiting = new Set();
-      // Of an image-set, the one the browser draws: the first as dense as the screen, or the
-      // densest
       function drawn(image) {
         const set = [...image.matchAll(/url\("?(.+?)"?\)\s*([\d.]+)(?:x|dppx)/g)].map(([, url, x]) => [url, +x]);
         if (!set.length) return image.match(/url\("?(.+?)"?\)/)?.[1];
@@ -2415,11 +2130,6 @@ image:
       // The labels' size depends on their font
       document.fonts?.ready.then(light);
 
-      // Whoever comes to the paper goes over its title with a highlighter, once, and it
-      // doesn't come off. Coming back, they get further into it, and mark the next word
-      // that matters, till they've marked them all. On a touch screen there's no coming
-      // to it, and the tap is for the link, so its title's already been gone over when
-      // it's first seen.
       const paper = document.getElementById('papers');
       const words = [...paper.querySelectorAll('.leaf-word')];
       const mark = () => {
@@ -2438,9 +2148,6 @@ image:
       }
 
       if (!still && 'IntersectionObserver' in window) {
-        // The polaroid comes out blank, and develops only once it can be seen: so not till
-        // its photo's here, and not in a tab no one's looking at. If there's no photo, it's
-        // left as it is. Its last layer clearing ends it. (Hovered, it's petri.js's.)
         const polaroid = document.getElementById('about');
         const film = polaroid.querySelector('.polaroid-film i');
         polaroid.classList.add('blank');

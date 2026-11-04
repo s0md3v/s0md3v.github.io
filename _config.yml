@@ -52,7 +52,6 @@ author:
   name: Somdev Sangwan
   twitter: s0md3v
   url: https://somdev.in
-# Social handles
 social:
   twitter: s0md3v
   github: s0md3v
@@ -81,7 +80,6 @@ jekyll-minifier:
 sass:
   style: compressed
 
-# Jekyll skips dotfolders unless they're named here
 include:
   - .well-known
 

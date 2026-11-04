@@ -1,5 +1,3 @@
-/* The feed, opened in a browser instead of a reader: a sheet with what it is and what's in it.
-   CSS can't make an RSS file's links clickable, so it's for reading, not browsing. */
 @namespace atom url(http://www.w3.org/2005/Atom);
 @namespace content url(http://purl.org/rss/1.0/modules/content/);
 @namespace dc url(http://purl.org/dc/elements/1.1/);
@@ -45,7 +43,6 @@ channel {
   box-shadow: 0.5px 0.5px 1px rgb(0 0 0 / 0.12), 2px 3px 7px rgb(0 0 0 / 0.08);
 }
 
-/* What this is, first */
 channel::before {
   content: "A feed. Add this page's address to a feed reader, and new posts show up there.";
   display: block;
@@ -88,7 +85,6 @@ item > link {
   overflow-wrap: anywhere;
 }
 
-/* The rest is for readers */
 channel > link,
 channel > pubDate,
 channel > lastBuildDate,

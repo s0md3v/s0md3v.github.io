@@ -2,10 +2,8 @@ div {
   display: block;
 }
 
-/* Everything in .wrapper is sized in em off --reading-size */
 :root {
   --reading-size: clamp(1rem, calc(0.9rem + 0.3vw), 1.15rem);
-  /* Faint enough to leave the letters alone */
   --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.26 0 0 0 0 0.2 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
@@ -15,30 +13,25 @@ html {
   text-size-adjust: 100%;
 }
 
-/* A highlighter's worth of the page's own ink, and the letters stay as they are */
 ::selection {
   background: color-mix(in srgb, var(--accent-color) 22%, transparent);
 }
 
-/* A line someone shared a link to, marked the same way */
 ::target-text {
   background: color-mix(in srgb, var(--accent-color) 30%, transparent);
   color: inherit;
 }
 
-/* Grain would only lift a sheet this dark off its colour */
 .dark-mode .wrapper {
   background-image: none;
 }
 
-/* White diagrams and screenshots would glare off a dark page */
 @media screen {
   .dark-mode .wrapper :is(img, video) {
     filter: brightness(0.8);
   }
 }
 
-/* What's round the sheet. Phones have no room for it. */
 @media (min-width: 769px) {
   html {
     background: var(--surround-color);
@@ -56,7 +49,6 @@ html {
   background: var(--background-color);
 }
 
-/* Two-column pages: about, projects, now, taste */
 .wrapper.wide {
   max-width: 54em;
 }
@@ -65,12 +57,10 @@ html {
   .wrapper {
     --sheet-margin: 3.5em;
     width: calc(100% - 3rem);
-    /* A sheet, however little's on it */
     aspect-ratio: 1 / 1.3;
     padding-block: 3.5em 4em;
     margin-block: 2rem 0;
     background-image: var(--paper-grain);
-    /* Lit from the top left, as everything on the site is */
     box-shadow:
       0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.2),
       2px 3px 7px rgba(var(--sheet-shadow), 0.14),
@@ -127,7 +117,6 @@ h4,
 h5,
 h6 {
   font-weight: 400;
-  /* Body line-height is far too loose once a heading wraps */
   line-height: 1.25;
 }
 
@@ -143,12 +132,10 @@ h6 {
   border: 0;
 }
 
-/* A space between a note and the words it's written beside: there when they're copied, not seen */
 .copy-gap {
   white-space: pre;
 }
 
-/* What's only drawn, or only a button, isn't copied with the words around it */
 .about-span,
 .copy-code {
   -webkit-user-select: none;
@@ -205,8 +192,6 @@ pre>code {
   padding-left: 0;
 }
 
-/* The reference scale for every inner page (_includes/article.css is a post's own) */
-
 .page-title {
   font-size: 2.1em;
   font-weight: 500;
@@ -216,8 +201,6 @@ pre>code {
   margin-bottom: 0.35em;
 }
 
-/* A page that has no tab of its own is named in the bar where there's room for that, so its own
-   title's needed only on a phone */
 @media (width > 48em) {
   .page-title.phone-only {
     position: absolute;
@@ -232,7 +215,6 @@ pre>code {
   }
 }
 
-/* A page title with nothing under it gets the same gap a post title + meta line would */
 .page-title:not(:has(+ .page-intro)) {
   margin-bottom: 1.4em;
 }
@@ -245,7 +227,6 @@ pre>code {
   margin-bottom: 2.5em;
 }
 
-/* Kept on one line, so a "·" between two links never ends a line or starts one */
 .page-intro .nowrap {
   white-space: nowrap;
 }
@@ -255,7 +236,6 @@ pre>code {
   text-wrap: balance;
 }
 
-/* A step above the text around them, which by day is the same colour */
 :where(.wrapper) :is(h1, h2, h3, h4, strong, b),
 .post-list-title {
   color: var(--heading-color);
@@ -277,7 +257,6 @@ pre>code {
   margin: 2em 0 0.5em;
 }
 
-/* A writing section is written in the ink of its mark. Paper stays black and white */
 @media screen {
   main[data-page] {
     --accent-color: var(--c);
@@ -285,7 +264,6 @@ pre>code {
   }
 }
 
-/* Links in running text: in the text's own colour, underlined in the section's ink */
 .prose a {
   color: inherit;
   text-decoration: underline;
@@ -303,7 +281,6 @@ pre>code {
   }
 }
 
-/* Post lists (blog, essays): a quiet column of years beside the titles */
 /* A note can stick out past the list's edge before common.js has moved it in, and mustn't widen the
    page while it does */
 .post-list {
@@ -334,8 +311,7 @@ pre>code {
   text-wrap: balance;
 }
 
-/* Written beside its title by hand, taking up no room in the list. common.js moves it above or
-   below the title if it would touch any words there */
+/* common.js moves it above or below the title if it would touch any words there */
 .post-list-note {
   position: absolute;
   margin-left: 0.4em;
@@ -368,7 +344,6 @@ pre>code {
   display: block;
 }
 
-/* The essays page, when it has its preface: preface, then contents */
 .essays-preface h2,
 .essays-contents-title {
   margin-top: 0;
@@ -379,7 +354,6 @@ pre>code {
 }
 
 @media (max-width: 600px) {
-  /* Date becomes a small line above the title rather than disappearing */
   .post-list-entry {
     display: flex;
     flex-direction: column;
@@ -389,8 +363,6 @@ pre>code {
     margin-bottom: 1.1em;
   }
 
-  /* Stacked, a note's written under its own title, with room of its own: a little in from it and
-     still at its slant, so it's a note, not a subtitle */
   .post-list-note {
     position: static;
     display: block;
@@ -400,9 +372,6 @@ pre>code {
   }
 }
 
-/* A notch let down from the top of the window, in the page's own colour. Everything in it is quiet
-   but where you are: that one mark has its colour, and the title beside it says it in words. There
-   are no words under the marks, so the title names whichever one you're on before you press it. */
 :root {
   --nav-height: 3.5rem;
   --nav-shoulder: 1rem;
@@ -417,8 +386,6 @@ pre>code {
   --c-playground: #5b7500;
   --c-taste: #8a5a2c;
   --nav-quiet: #736d62;
-  /* What's written by hand anywhere is written with one pen, his: the ballpoint on the homepage's
-     table (homepage.css), whatever section it's in. At night, the same blue, lighter, to be read */
   --pen: rgb(30 45 115);
 }
 
@@ -448,20 +415,16 @@ pre>code {
 [data-page="playground"] { --c: var(--c-playground); }
 [data-page="taste"] { --c: var(--c-taste); }
 
-/* The window's scrollbar is on all the time, so it's the quiet grey tinted with the page's colour:
-   thinning the colour instead would lose the yellow against the desk */
 html[data-page] {
   scrollbar-color: color-mix(in srgb, var(--c) 45%, var(--nav-quiet)) transparent;
 }
 
-/* The bar stays with you the length of the page, so the page can't end at the window */
 body {
   height: auto;
   min-height: 100%;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Going from page to page, the notch stays and only the colour moves */
   @view-transition {
     navigation: auto;
   }
@@ -480,7 +443,6 @@ body {
   }
 }
 
-/* Clear of a phone's notch, held sideways, whichever side it's on */
 .header {
   position: sticky;
   top: 0;
@@ -489,12 +451,10 @@ body {
   width: min(46rem, 100% - 2 * var(--nav-shoulder) - 1rem, 100% - 2 * max(env(safe-area-inset-left), env(safe-area-inset-right)));
   border-radius: 0 0 1.25rem 1.25rem;
   background: var(--background-color);
-  /* A filter, so that the line follows the shoulders too */
   filter: drop-shadow(0 1px 0 var(--border-color)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.06));
   transition: transform 0.2s ease;
 }
 
-/* Where it meets the top of the window it flares out into it, rather than stopping at a corner */
 .header::before,
 .header::after {
   content: "";
@@ -514,7 +474,6 @@ body {
   background: radial-gradient(circle at 100% 100%, transparent calc(var(--nav-shoulder) - 0.5px), var(--background-color) var(--nav-shoulder));
 }
 
-/* Out of the way as you read on, and back as soon as you turn back */
 .header.hidden {
   transform: translateY(calc(-100% - 1rem));
 }
@@ -527,7 +486,6 @@ body {
   padding-inline: 0.5rem;
 }
 
-/* The name of where you are, or of where you're about to go */
 .nav-title {
   flex: 1;
   min-width: 0;
@@ -577,12 +535,10 @@ body {
   height: 1.75rem;
 }
 
-/* The title says what a mark is here. Without room for one, a phone puts the words under the marks */
 .nav-label {
   display: none;
 }
 
-/* The name is the way home wherever there's room for it */
 .nav-home {
   width: auto;
   padding-inline: 0.5rem;
@@ -620,8 +576,6 @@ body {
   color: var(--c);
 }
 
-/* High contrast paints every mark the one colour, and drops the line under a chosen setting, so
-   where you are and what's chosen are outlined instead */
 @media (forced-colors: active) {
   .nav-item[aria-current],
   .settings-options button.active {
@@ -630,7 +584,6 @@ body {
   }
 }
 
-/* It's a switch, so it switches. In the mark's own units: the width of its travel */
 .settings-icon.active .knob {
   translate: 16px 0;
 }
@@ -658,7 +611,6 @@ body {
   line-height: 1.5;
   z-index: 200;
   font-size: 1rem;
-  /* The panel stays in the UI font so changing the reading font can't break it */
   font-family: var(--base-font-family);
 }
 
@@ -704,7 +656,6 @@ body {
   gap: 1.2em;
 }
 
-/* A background rather than a text underline, so it also goes under the sun and moon */
 .settings-options button {
   background: none;
   border: none;
@@ -741,7 +692,6 @@ body {
   position: absolute;
   transform: translateX(-50%) translateY(-150%);
   transition: transform 0.3s;
-  /* Above the header */
   z-index: 101;
 }
 
@@ -751,14 +701,11 @@ body {
   outline: 3px solid var(--accent-color);
 }
 
-/* A heading jumped to isn't left under the bar, which doesn't move for a page too short to scroll */
 html {
   scroll-padding-top: calc(var(--nav-height) + 1rem);
   scrollbar-gutter: stable;
 }
 
-/* On a phone the top of the screen is the camera's, and out of reach of the thumb, so it comes up
-   from the bottom instead, and goes back down as you read */
 @media screen and (max-width: 48em) {
   html {
     scroll-padding-top: 1rem;
@@ -770,7 +717,6 @@ html {
     padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
   }
 
-  /* Its words are clear of a notch or a camera at either side */
   .wrapper {
     padding-left: max(var(--sheet-margin), env(safe-area-inset-left));
     padding-right: max(var(--sheet-margin), env(safe-area-inset-right));
@@ -881,7 +827,6 @@ li {
   font-family: var(--blog-font-family);
 }
 
-/* On paper, it's just the text, in black whichever theme it's printed from */
 @media print {
   @page {
     margin: 2cm;
@@ -921,7 +866,6 @@ li {
     box-shadow: none;
   }
 
-  /* Paper is narrower than the phone layout's limit, and has no bar to clear */
   main.content,
   main.blog-content {
     padding-bottom: 0;

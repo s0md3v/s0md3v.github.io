@@ -1,19 +1,6 @@
 # frozen_string_literal: true
 
-# What a post's markdown can't say for itself, added to its HTML once it's built. Only what's
-# between the start of the post and its end is touched (the header's icons stay as they are).
-#
-# - Pictures get their own width and height, so the text doesn't jump as each one arrives, load
-#   only as they're scrolled to, and, if they're bigger than they can be shown, open full size.
-# - Footnotes are named for what they are, not read out as "1" and an arrow, and the notes are
-#   under a heading, if the post hasn't given them one, so they can be found by it.
-# - Each section can be linked to: its heading has a link to itself, which copies its address
-#   (article.js), from a pointer, a finger or the keyboard. Its "#" is drawn by the stylesheet, so it
-#   isn't copied with the heading, and it's named for what it does.
-# - Code is left as it is by a page translator.
-# - An address shown as itself goes to the next line whole if it fits there (article.css), and
-#   breaks only where it must, after a "/" or before a ".", "?", "&", "=" or "#", as a typesetter
-#   would break it, not after whichever letter reaches the edge.
+# Only what's between the start of the post and its end is touched (the header's icons stay as they are).
 module ArticleHtml
   COLLECTIONS = %w(blog essays).freeze
   START = '<div class="post-content">'
@@ -58,7 +45,6 @@ module ArticleHtml
     out + rest
   end
 
-  # A note's named by the number it's shown with, whatever it's called in the markdown
   def self.footnotes(body)
     shown = {}
     body = body.gsub(%r{<a href="#fn:([^"]+)" class="footnote"([^>]*)>([^<]*)</a>}) do
@@ -97,7 +83,6 @@ module ArticleHtml
   end
 end
 
-# Width and height from the first bytes of a picture, for the kinds the posts use
 module ImageSize
   @cache = {}
 

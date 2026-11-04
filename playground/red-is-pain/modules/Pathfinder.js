@@ -7,7 +7,7 @@ export class Pathfinder {
     }
 
     findPath(startPos, endPos, heatmap = null, preferStealth = false, hazardMap = null) {
-        const step = Config.WORLD.PATHFINDING_GRID_SIZE; // 4px
+        const step = Config.WORLD.PATHFINDING_GRID_SIZE;
         const width = this.world.width;
         const height = this.world.height;
         const cols = Math.ceil(width / step);
@@ -21,9 +21,7 @@ export class Pathfinder {
 
         if (startNodeX < 0 || startNodeX >= cols || startNodeY < 0 || startNodeY >= rows) return [];
         if (endNodeX < 0 || endNodeX >= cols || endNodeY < 0 || endNodeY >= rows) return [];
-        // Ensure destination is actually reachable
         if (this.world.isWallAt(endPos.x, endPos.y)) {
-             // Try to find nearest walkable neighbor
              const walkables = [];
              for(let dy=-1; dy<=1; dy++) {
                  for(let dx=-1; dx<=1; dx++) {
@@ -96,8 +94,6 @@ export class Pathfinder {
                 const wx = nx * step + step/2;
                 const wy = ny * step + step/2;
                 
-                // 1. HARD BLOCK CHECK (Multiple samples for thin walls)
-                // We check the center and the corners of the 4x4 node area
                 const q = step * 0.4;
                 if (this.world.isWallAt(wx, wy) || 
                     this.world.isWallAt(wx - q, wy - q) || 
@@ -105,18 +101,14 @@ export class Pathfinder {
                     this.world.isWallAt(wx - q, wy + q) || 
                     this.world.isWallAt(wx + q, wy + q)) continue;
 
-                // 2. BODY CLEARANCE
-                // Extra buffer to prevent "scraping" against walls
                 if (!this.world.isPositionClear(wx, wy, Config.AGENT.RADIUS + 1.5)) continue;
 
-                // 3. MIDPOINT CHECK (Deep tunneling prevention)
                 const cwx = cx * step + step/2;
                 const cwy = cy * step + step/2;
                 const mx = (cwx + wx) / 2;
                 const my = (cwy + wy) / 2;
                 if (this.world.isWallAt(mx, my)) continue;
 
-                // 4. DIAGONAL SAFETY
                 if (i >= 4) { 
                     const v1x = cwx + (neighborDeltas[i].x * step);
                     const v1y = cwy;
@@ -127,7 +119,6 @@ export class Pathfinder {
 
                 let extraCost = 0;
                 
-                // Proximity Penalty (Stronger)
                 if (!this.world.isPositionClear(wx, wy, Config.AGENT.RADIUS + 12)) {
                     extraCost += 1.5;
                 }
@@ -148,7 +139,6 @@ export class Pathfinder {
                     const hx = Math.floor((wx / width) * hrCols);
                     const hy = Math.floor((wy / height) * hrRows);
                     if (hx >= 0 && hx < hrCols && hy >= 0 && hy < hrRows) {
-                         // Very high penalty for moving through a known hazard/fatal funnel
                          extraCost += hazardMap[hy][hx] * 200; 
                     }
                 }
@@ -192,7 +182,7 @@ export class Pathfinder {
                      if (dist > Config.AGENT.RADIUS * 2) {
                         const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
                         const perp = angle + Math.PI/2;
-                        const r = Config.AGENT.RADIUS + 4; // Thick smoothing raycast
+                        const r = Config.AGENT.RADIUS + 4;
                         const p1L = { x: p1.x + Math.cos(perp)*r, y: p1.y + Math.sin(perp)*r };
                         const p2L = { x: p2.x + Math.cos(perp)*r, y: p2.y + Math.sin(perp)*r };
                         const p1R = { x: p1.x - Math.cos(perp)*r, y: p1.y - Math.sin(perp)*r };

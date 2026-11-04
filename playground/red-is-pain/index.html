@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css?v=field-console-9">
 </head>
 <body>
-    <!-- Start Menu -->
     <section id="start-menu" class="screen-overlay start-screen" role="dialog" aria-modal="true" aria-labelledby="start-title" aria-describedby="start-description">
         <div class="scanline" aria-hidden="true"></div>
         <div class="start-menu-panel">
@@ -23,7 +22,6 @@
         </div>
     </section>
 
-    <!-- Project Information -->
     <div id="info-modal" class="screen-overlay modal-overlay" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-intro" hidden>
         <article class="modal-panel modal-panel--about">
             <header class="modal-header">
@@ -54,7 +52,7 @@
         </article>
     </div>
 
-    <!-- Simulation Workspace. main.js removes inert when a match starts. -->
+    <!-- main.js removes inert when a match starts -->
     <main id="simulation-container" inert>
         <header id="command-bar" aria-label="Match command bar">
             <div class="command-brand" aria-label="Red Is Pain">
@@ -209,7 +207,6 @@
         </aside>
     </main>
 
-    <!-- Pause Menu -->
     <section id="pause-screen" class="screen-overlay state-screen" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden>
         <div class="state-card">
             <h2 id="pause-title">Paused</h2>
@@ -222,7 +219,6 @@
         </div>
     </section>
 
-    <!-- Game Over -->
     <section id="game-over-screen" class="screen-overlay state-screen" role="dialog" aria-modal="true" aria-labelledby="victory-text" aria-describedby="game-over-summary" hidden>
         <div class="scanline" aria-hidden="true"></div>
         <div class="state-card state-card--result">

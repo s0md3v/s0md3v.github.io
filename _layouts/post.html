@@ -2,7 +2,6 @@
 layout: base
 ---
 {% include header.html %}
-{% comment %} Its section, as the header worked it out from where the post is: blog or philosophy {% endcomment %}
 {% assign post_mark = nav_title_id | default: "blog" %}
 {% assign post_essay = false %}
 {% if page.collection == "essays" %}{% assign post_essay = true %}{% endif %}
@@ -74,8 +73,6 @@ layout: base
       {% if post_next.description %}<span class="post-next-description">{{ post_next.description | strip | escape }}</span>{% endif %}
     </a>
     {% else %}
-    {% comment %} With none to read next, the way on is all of them, shown as one would be: under its
-       own name, with what it says of itself {% endcomment %}
     {% assign post_index = site.pages | where: "permalink", post_index_url | first %}
     <p class="post-after-line">
       <span class="post-next-label" id="post-next-label">{{ post_index_label }}</span>

@@ -59,7 +59,6 @@ export class WeaponSystem {
 
         this.cancelReload();
 
-        // 1.5s switch time (modified by handling)
         const newWeapon = this.agent.state.inventory[slot];
         const handling = newWeapon.handling || 0.5;
         const switchTime = 1500 * (1.5 - handling); 
@@ -78,11 +77,9 @@ export class WeaponSystem {
         // Access via getter after update, as a completed switch/reload may change state.
         const weapon = this.agent.state.inventory.weapon;
 
-        // 0. Auto-Switch Logic
         const distToTarget = Utils.distance(this.agent.pos, targetPos);
         const inventory = this.agent.state.inventory;
 
-        // Emergency Switch: Primary empty -> Pistol
         if (inventory.currentEntry === 'primary' && weapon.ammo <= 0 && weapon.carriedAmmo <= 0) {
              const secondary = inventory.secondary;
              if (secondary.ammo > 0 || secondary.carriedAmmo > 0) {
@@ -91,9 +88,8 @@ export class WeaponSystem {
              }
         }
         
-        // Tactical Switch: Sniper/LMG in CQC -> Pistol
         if (inventory.currentEntry === 'primary') {
-            const isUnwieldy = weapon.handling < 0.6; // Sniper/LMG
+            const isUnwieldy = weapon.handling < 0.6;
             const isCQC = distToTarget < 100;
             const hasSecondary = inventory.secondary.ammo > 0;
             
@@ -103,7 +99,6 @@ export class WeaponSystem {
             }
         }
         
-        // Reset Switch: Pistol -> Primary if range opens up
         if (inventory.currentEntry === 'secondary') {
             const primary = inventory.primary;
             const primaryHasAmmo = primary.ammo > 0 || primary.carriedAmmo > 0;
@@ -115,33 +110,23 @@ export class WeaponSystem {
             }
         }
 
-        // 1. Reloading/Arming Logic
         if (this.agent.state.reloadingUntil > now || this.agent.armingUntil > now) return false;
         
-        // NO SHOOTING WHILE SPRINTING
         if (this.agent.movementMode === 'BOUNDING') return false;
         
         if (weapon.ammo <= 0) {
-            if (weapon.carriedAmmo <= 0) return false; // Out of ammo completely
+            if (weapon.carriedAmmo <= 0) return false;
             this.reload(now);
             return false;
         }
 
-        // 2. Fire Rate Check
         if (now - this.agent.state.lastFireTime < weapon.fireRate) return false;
         
-        // 3. Friendly Fire Safety Check
-        
-        // COMBAT REALISM: Negligent Discharge
-        // If stress is high, we might skip the safety check entirely (Tunnel Vision)
-        // High Conscientiousness reduces negligence chance significantly
-        // Low C agents (0.0) have almost guaranteed negligence if stressed
         const negligenceChance = (1.0 - this.agent.traits.conscientiousness);
         const isNegligent = this.agent.state.stress > Config.AGENT.FRIENDLY_FIRE_NEGLIGENCE_THRESHOLD && Math.random() < negligenceChance;
         
         const fireAngle = Utils.angle(this.agent.pos, targetPos);
 
-        // Only perform safety check if NOT negligent
         if (!isNegligent) {
             const cos = Math.cos(fireAngle);
             const sin = Math.sin(fireAngle);
@@ -173,44 +158,33 @@ export class WeaponSystem {
              this.agent.addBark("OUT OF MY WAY!");
         }
 
-        // 4. Firing Arc Check
-        // Allow wider arc for suppression (high inaccuracyMultiplier)
         const targetAngle = Utils.angle(this.agent.pos, targetPos);
         const angleDiff = Math.abs((this.agent.angle - targetAngle + Math.PI) % (Math.PI * 2) - Math.PI);
         const maxArc = inaccuracyMultiplier > 1.5 ? 0.8 : 0.6; 
         
         if (angleDiff > maxArc) return false;
 
-        // 5. Fire!
         weapon.ammo--;
         this.agent.state.lastFireTime = now;
         if (world && world.audio) world.audio.playGunshot();
 
-        // ACCURACY CALCULATION
-        // Base spread from weapon stats
         let spread = weapon.spread || 0.05;
         
-        // Distance Falloff
         const optimalRange = weapon.optimalRange || 200;
-        // Reduced falloff from 0.001 to 0.0006 for tighter spread at 400px
         const effectiveFalloff = 0.0006 * (2.0 - (weapon.handling || 1.0));
         
         if (distToTarget > optimalRange) {
             spread += (distToTarget - optimalRange) * effectiveFalloff;
         }
 
-        // Modifiers
         const stressFactor = (this.agent.state.stress / 100);
-        const stressPenalty = stressFactor * Config.AGENT.STRESS_ACCURACY_MULT; // e.g. +0.3 rads at max stress
-        const skillBonus = (this.agent.traits.accuracyBase) * 0.02; // Minor skill reduction
+        const stressPenalty = stressFactor * Config.AGENT.STRESS_ACCURACY_MULT;
+        const skillBonus = (this.agent.traits.accuracyBase) * 0.02;
         
-        // MOVEMENT PENALTY (Dynamic)
         let movementPenalty = 0;
         if (this.agent.isMoving) {
-            // Reduced base movement penalty from 0.05 to 0.03
             movementPenalty = 0.03; 
             
-            // Strafing/Backwards Penalty: Reduced from 0.25 to 0.12
             const moveAngle = this.agent.motor.smoothedMoveAngle;
             const lookAngle = this.agent.angle;
             const angleDiff = Math.abs(Utils.angleDiff(lookAngle, moveAngle));
@@ -220,7 +194,6 @@ export class WeaponSystem {
 
         let totalInaccuracy = (spread + stressPenalty + movementPenalty - skillBonus) * inaccuracyMultiplier;
         
-        // Clamp minimum spread
         totalInaccuracy = Math.max(0.01, totalInaccuracy);
         
         const shootAngle = this.agent.angle + (Math.random() - 0.5) * totalInaccuracy;
@@ -238,7 +211,7 @@ export class WeaponSystem {
             startX,
             startY,
             shootAngle,
-            1200, // Instant hit scan (was projectileSpeed)
+            1200, // instant hit-scan
             weapon.damage,
             'BULLET',
             startingCovers,

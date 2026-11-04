@@ -9,15 +9,11 @@ export class Amygdala {
     }
 
     update(dt, world) {
-        // Manage Stress, Suppression, and Emotional State
         const now = Date.now();
 
-        // 1. Calculate Stress Baseline
-        // Base stress goal remains low to encourage standing ground
         let stressBaseline = this.agent.traits.neuroticism * 10; 
         stressBaseline += this.agent.memory.traumaLevel;
 
-        // 2. Heatmap Awareness (Uncertainty Stress)
         const mem = this.agent.memory;
         const gx = Math.floor((this.agent.pos.x / world.width) * mem.gridCols);
         const gy = Math.floor((this.agent.pos.y / world.height) * mem.gridRows);
@@ -28,14 +24,11 @@ export class Amygdala {
 
         const visibleEnemies = this.agent.sensory.scan(world).filter(a => a.team !== this.agent.team && this.agent.memory.isSpotted(a.id));
 
-        // 3. Contact Events (Stress Spike)
         if (visibleEnemies.length > 0 && this.lastVisibleCount === 0) {
             const timeSinceReport = now - this.lastContactReportTime;
             
             if (timeSinceReport > 10000) {
                 const spike = visibleEnemies.length * Config.AGENT.STRESS_SPIKE_SIGHT;
-                // Cohesion Resistance handled in Limbic ideally, but we can check nearby allies count here
-                // For now, simpler:
                 this.agent.state.modifyStress(spike);
                 this.agent.addBark("CONTACT!");
                 this.lastContactReportTime = now;
@@ -43,26 +36,19 @@ export class Amygdala {
         }
         this.lastVisibleCount = visibleEnemies.length;
 
-        // 4. Fog of War Tension
         if (localHeat > 4 && visibleEnemies.length === 0) {
-            // NEUROTICISM: Higher N = Faster uncertainty stress
             const neuroticMult = 1.0 + (this.agent.traits.neuroticism * 2.5);
             this.agent.state.modifyStress(Config.AGENT.UNCERTAINTY_STRESS_RATE * dt * neuroticMult);
         }
 
-        // 5. Stress Decay
-        // We need to know if we are cohesive (Limbic job?). 
-        // For now, let's assume standard decay, maybe Limbic applies a bonus later.
         if (this.agent.state.stress > stressBaseline) {
             this.agent.state.stress = Math.max(stressBaseline, this.agent.state.stress - (dt * Config.AGENT.STRESS_DECAY_ISOLATED));
         }
         
-        // 6. Grenade Awareness (Barks only, action is in evaluate)
         this.handleGrenadeReactions(dt, world);
     }
 
     handleGrenadeReactions(dt, world) {
-        // Check for active grenades nearby for barking purposes
         for (const p of world.projectiles) {
             if ((p.type === 'GRENADE' || p.type === 'SMOKE') && p.active) {
                  const dist = Utils.distance(this.agent.pos, p.pos);
@@ -72,7 +58,6 @@ export class Amygdala {
                      const isTeammate = p.team === this.agent.team;
                      
                      if (p.type === 'GRENADE') {
-                         // Variety in barks based on personality
                          const panicShoutProb = (this.agent.traits.neuroticism * 0.6) + (this.agent.traits.extraversion * 0.3);
                          const warningShoutProb = (this.agent.traits.agreeableness * 0.7) + (this.agent.traits.extraversion * 0.2);
 
@@ -100,12 +85,7 @@ export class Amygdala {
         }
     }
 
-    /**
-     * Evaluates immediate survival threats and emotional state.
-     * Returns: { priority: number (0-100), action: ActionObject }
-     */
     evaluate(world) {
-        // BASELINE: The "Run or Freeze" reflex.
         const stress = this.agent.state.stress;
         const suppression = this.agent.state.suppression;
         const health = this.agent.state.hp / this.agent.state.maxHp;
@@ -114,40 +94,29 @@ export class Amygdala {
         let action = { type: 'IDLE', score: 0 };
 
         const balance = this.getForceBalance(world);
-        const isOutnumbered = balance < 0.5; // 2:1 or worse
-        const isHeavilyOutnumbered = balance < 0.34; // 3:1 or worse
+        const isOutnumbered = balance < 0.5;
+        const isHeavilyOutnumbered = balance < 0.34;
 
-        // 1. REFLEXES: Immediate Threat Response (Grenades/Pinned/Wounded)
-        
-        // --- REACT TO GRENADES (Highest Priority: 90+) ---
-        // This was formerly handled directly in Agent.js update loop
-        // Now properly localized here.
         const nearestGrenade = this.scanForGrenades(world);
         if (nearestGrenade) {
             const escapeVector = this.calculateEscapeVector(nearestGrenade, world);
             return {
-                priority: 95, // Override almost everything except maybe mutiny
+                priority: 95,
                 action: { 
                     type: 'MOVE', 
                     target: escapeVector, 
-                    movementMode: 'BOUNDING', // SPRINT!
+                    movementMode: 'BOUNDING',
                     description: 'escaping a grenade'
                 }
             };
         }
 
-        // --- PAIN & PANIC RESPONSE (High Prio: 80+) ---
-        // If taking significant damage rapidly, trigger fight/flight reflex based on personality.
-        // Neuroticism boosts Flight instinct.
         if (health < 0.3 && stress > 60) {
-            // Panic Button
             const anxiety = this.agent.traits.neuroticism * 100;
             if (anxiety > 50 || Math.random() < 0.1 || isHeavilyOutnumbered) {
-                // PANIC RETREAT
-                // Run AWAY from the threat vector blindly
-                const threat = this.agent.brain.cortex.identifyThreat(world); // Ask Cortex "Who is hurting me?"
+                const threat = this.agent.brain.cortex.identifyThreat(world);
                 if (threat) {
-                    const runAngle = Utils.angle(threat.pos, this.agent.pos); // Away
+                    const runAngle = Utils.angle(threat.pos, this.agent.pos);
                     const runDist = 300;
                     return {
                         priority: 90 + (isHeavilyOutnumbered ? 5 : 0),
@@ -165,14 +134,10 @@ export class Amygdala {
             }
         }
 
-        // --- SUPPRESSION FLINCH & OUTNUMBERED STRESS (#4) ---
-        // If pinned or heavily outnumbered, increase survival bid
         if (suppression > 80 || (isOutnumbered && stress > 50)) {
-            // If in cover, stay put. If in open, DIVE.
             const inCover = this.agent.brain.isSafe(world); 
             
             if (inCover) {
-                // Stay down!
                 return {
                     priority: 70 + (isOutnumbered ? 10 : 0),
                     action: { type: 'HOLD', duration: 1000, description: 'staying behind cover' }
@@ -182,8 +147,7 @@ export class Amygdala {
                 const cortex = this.agent.brain.cortex;
                 let target = cortex.findNearestCover(world, 500);
 
-                // If no usable cover is known, at least break contact instead of
-                // winning arbitration with a high-priority IDLE action.
+                // no usable cover: break contact rather than win arbitration with a high-priority IDLE
                 if (!target) {
                     const threat = cortex.identifyThreat(world, true);
                     if (threat?.pos) {
@@ -221,11 +185,9 @@ export class Amygdala {
     }
 
     getForceBalance(world) {
-        // Local allies within 400px
         const allies = world.spatial.query(this.agent.pos.x, this.agent.pos.y, 400)
             .filter(a => !a.isCover && a.team === this.agent.team).length; 
         
-        // Visible enemies
         const enemies = this.agent.sensory.scan(world)
             .filter(a => a.team !== this.agent.team && this.agent.memory.isSpotted(a.id)).length;
         
@@ -243,12 +205,12 @@ export class Amygdala {
                 }
             }
         }
-        return null; // All clear
+        return null;
     }
 
     calculateEscapeVector(hazard, world) {
         const angle = Utils.angle(hazard.pos, this.agent.pos);
-        const dist = 150; // Run 150px away
+        const dist = 150;
         return {
             x: this.agent.pos.x + Math.cos(angle) * dist,
             y: this.agent.pos.y + Math.sin(angle) * dist

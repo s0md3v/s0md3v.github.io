@@ -7,22 +7,18 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = 'assets/tileset'
 OUTPUT_FILE = os.path.join(ROOT_DIR, 'assets/AssetManifest.js')
 
-# Detect base dimensions from a standard terrain tile
-# New structure: assets/tileset/terrain/tile_0024_grass1.png
 BASE_UNIT_SAMPLE = os.path.join(ROOT_DIR, 'assets/tileset/terrain/tile_0024_grass1.png')
 
 if os.path.exists(BASE_UNIT_SAMPLE):
     with Image.open(BASE_UNIT_SAMPLE) as img:
         BASE_W, BASE_H = img.size
 else:
-    # Fallback to 64x64 if sample missing
     BASE_W, BASE_H = 64, 64
 
 print(f"Base unit dimensions: {BASE_W}x{BASE_H}")
 
 manifest = {}
 
-# New categories based on the updated structure
 categories = {
     'Terrain': 'assets/tileset/terrain',
     'Walls': 'assets/tileset/wall',
@@ -38,7 +34,6 @@ for category, rel_path in categories.items():
         continue
     
     files = []
-    # Use os.walk to be more thorough if needed, but categories are flat for now
     for f in sorted(os.listdir(full_path)):
         if f.lower().endswith(('.png', '.jpg', '.jpeg')):
             clean_path = os.path.join(rel_path, f)
@@ -47,8 +42,6 @@ for category, rel_path in categories.items():
             try:
                 with Image.open(abs_path) as img:
                     w, h = img.size
-                    # Infer number of tiles (relative to base 64x64)
-                    # We use round to handle slight variations if any
                     tiles_x = max(1, round(w / BASE_W))
                     tiles_y = max(1, round(h / BASE_H))
                     
@@ -66,8 +59,6 @@ for category, rel_path in categories.items():
     manifest[category] = files
     print(f"Added {len(files)} items to {category}")
 
-# Include global metadata
-# The editor expects this structure
 data = {
     'base_w': BASE_W,
     'base_h': BASE_H,

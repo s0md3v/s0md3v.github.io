@@ -45,36 +45,29 @@ export class TacticalEvaluator {
             const hazard = (gridX >= 0 && gridX < mem.gridCols && gridY >= 0 && gridY < mem.gridRows) 
                             ? mem.hazardMap[gridY][gridX] : 0;
             
-            // Prefer cover in control zones (retreating towards friends)
             let tacticalScore = dist + (heat * 100) - (control * 50) + (hazard * 500);
 
             if (isCircle) {
-                // Bush: Good for hiding, Bad for suppression
                 if (isSuppressed) tacticalScore += 2000;
                 else tacticalScore -= 300;
             } else if (isSuppressed) {
-                // Wall: Good for suppression
                 tacticalScore -= 500;
             }
             
-            // Directional Weight: Prefer cover that is BEHIND us relative to enemy
             const angleToCover = Utils.angle(this.agent.pos, {x: cx, y: cy});
             const angleToEnemy = Utils.angle(this.agent.pos, enemyPos);
             const angleDiff = Math.abs(Utils.angleDiff(angleToEnemy, angleToCover));
             if (angleDiff > Math.PI * 0.5) {
-                 tacticalScore -= 200; // Bonus for retreating
+                 tacticalScore -= 200;
             } else {
-                 tacticalScore += 500; // Penalty for cover towards enemy
+                 tacticalScore += 500;
             }
             
-            // HYSTERESIS: Prefer the cover we are already targeting to prevent flickering
             if (this.decision.lastAction && this.decision.lastAction.target) {
-                // Check if this cover object contains/is near the last target
                 const lastT = this.decision.lastAction.target;
                 const dLast = Utils.distance(lastT, {x: cx, y: cy});
-                // If last target is within 100px of this cover's center, give a massive bonus
                 if (dLast < 100) {
-                     tacticalScore -= 1500; // Sticky factor (Equivalent to 1500px distance or 15 heat levels)
+                     tacticalScore -= 1500;
                 }
             }
 
@@ -85,41 +78,30 @@ export class TacticalEvaluator {
                 const margin = 15;
                 
                 if (isCircle) {
-                    // Bush: Hide inside/behind
                     const angleFromEnemy = Math.atan2(cy - enemyPos.y, cx - enemyPos.x);
                     safeX = cx + Math.cos(angleFromEnemy) * (c.radius * 0.5);
                     safeY = cy + Math.sin(angleFromEnemy) * (c.radius * 0.5);
                 } else if (c.w > c.h) {
-                    // Horizontal Wall
-                    if (enemyPos.y < c.y) safeY = c.y + c.h + buffer; // Enemy above, hide below
-                    else safeY = c.y - buffer; // Enemy below, hide above
+                    if (enemyPos.y < c.y) safeY = c.y + c.h + buffer;
+                    else safeY = c.y - buffer;
                     
-                    // Slide along the wall to be closest to agent, but within wall bounds
                     safeX = Utils.clamp(this.agent.pos.x, c.x + margin, c.x + c.w - margin);
                 } else {
-                    // Vertical Wall
-                    if (enemyPos.x < c.x) safeX = c.x + c.w + buffer; // Enemy left, hide right
-                    else safeX = c.x - buffer; // Enemy right, hide left
+                    if (enemyPos.x < c.x) safeX = c.x + c.w + buffer;
+                    else safeX = c.x - buffer;
                     
                     safeY = Utils.clamp(this.agent.pos.y, c.y + margin, c.y + c.h - margin);
                 }
 
                 if (!this.isSpotBlocked(world, safeX, safeY)) {
-                    // VERIFY COVERAGE: Does this spot actually block LOS to the enemy?
                     const safePos = { x: safeX, y: safeY };
                     
-                    // 1. Flank Check (Geometric)
-                    // If the cover is narrow and we are exposed from the side
-                    // (Handled implicitly by LOS check, but good for scoring)
-                    
-                    // 2. Raycast Check (Crucial)
-                    // Concealment breaks sight; physical cover breaks the line of fire.
                     const isExposed = isCircle
                         ? world.hasVisualLine(safePos, enemyPos)
                         : world.hasClearShot(safePos, enemyPos);
                     
                     if (isExposed) {
-                        tacticalScore += 5000; // Penalize heavily (effectively invalid)
+                        tacticalScore += 5000;
                     }
 
                     if (!this.isPositionTacticallyValid(safePos, enemyPos, world)) {
@@ -133,7 +115,7 @@ export class TacticalEvaluator {
                 }
             }
         }
-        return bestTacticalScore > 4000 ? null : bestCoverPos; // Don't return exposed spots
+        return bestTacticalScore > 4000 ? null : bestCoverPos;
     }
 
     findFlankSpot(world, enemyPos, side = null) {
@@ -143,7 +125,6 @@ export class TacticalEvaluator {
         let bestSpot = null;
         let bestScore = -Infinity;
 
-        // Reference Vector for Side calculation (Squad Center -> Enemy)
         const squadCenter = this.agent.getSquadCenter(world);
         const refVec = { x: enemyPos.x - squadCenter.x, y: enemyPos.y - squadCenter.y };
 
@@ -153,55 +134,37 @@ export class TacticalEvaluator {
                 const tx = this.agent.pos.x + Math.cos(angle) * radius;
                 const ty = this.agent.pos.y + Math.sin(angle) * radius;
 
-                // Robust Collision Check
                 if (this.isSpotBlocked(world, tx, ty)) continue;
 
-                // SIDE CHECK
                 if (side) {
                     const spotVec = { x: tx - squadCenter.x, y: ty - squadCenter.y };
-                    // Cross product (2D)
                     const cross = (refVec.x * spotVec.y) - (refVec.y * spotVec.x);
                     
-                    if (side === 'LEFT' && cross > 0) continue; // Wrong side (Screen coords y-down implies inverted cross usually, let's test)
-                    // Actually in screen coords (y down):
-                    // Cross > 0 is usually Left? No, X cross Y = Z. 
-                    // Let's rely on standard: right hand rule. thumb up.
-                    // If y is down... 
-                    // Let's just assume Cross > 0 is one side, < 0 is other.
-                    // If I want 'LEFT' relative to facing enemy, and I am at origin looking at enemy.
-                    // Left is ...
-                    // Let's use simple logic: 'LEFT' means cross < 0, 'RIGHT' means cross > 0?
-                    // I will strictly enforce: LEFT = cross < 0, RIGHT = cross > 0.
-                    // If it's swapped, they just flank the other way, which is fine as long as they agree.
+                    if (side === 'LEFT' && cross > 0) continue;
                     
-                    // Update: To be consistent with generally accepted "Left flank"
                     if (side === 'LEFT' && cross > 0) continue; 
                     if (side === 'RIGHT' && cross < 0) continue;
                 }
 
                 const distToEnemy = Utils.distance({x: tx, y: ty}, enemyPos);
                 
-                // Score: Closer is generally better for flanking/closing in
-                // But avoid hugging the enemy (melee range)
                 let score = (500 - distToEnemy) + (this.agent.traits.openness * 100);
                 
-                if (distToEnemy < 50) score -= 500; // Too close!
+                if (distToEnemy < 50) score -= 500;
                 
-                // Prioritize spots that provide a new angle of attack (Angle difference)
                 const angleToEnemyOld = Utils.angle(this.agent.pos, enemyPos);
                 const angleToEnemyNew = Utils.angle({x: tx, y: ty}, enemyPos);
                 const angleDiff = Math.abs(Utils.angleDiff(angleToEnemyOld, angleToEnemyNew));
                 
-                score += angleDiff * 100; // Bonus for changing the angle
+                score += angleDiff * 100;
 
-                // Hazard Check
                 const mem = this.agent.memory;
                 const gridX = Math.floor((tx / world.width) * mem.gridCols);
                 const gridY = Math.floor((ty / world.height) * mem.gridRows);
                 const hazard = (gridX >= 0 && gridX < mem.gridCols && gridY >= 0 && gridY < mem.gridRows) 
                                 ? (mem.hazardMap ? mem.hazardMap[gridY][gridX] : 0) : 0;
                 
-                score -= hazard * 50; // Vastly discourage flanking directly into a kill house
+                score -= hazard * 50;
                 
                 if (score > bestScore) {
                     bestScore = score;
@@ -213,7 +176,7 @@ export class TacticalEvaluator {
     }
 
     isSpotBlocked(world, x, y) {
-        const r = Config.AGENT.RADIUS * 2; // Slightly larger than agent radius (10) for safety
+        const r = Config.AGENT.RADIUS * 2;
         if (world.isWallAt(x, y)) return true;
         if (world.isWallAt(x + r, y)) return true;
         if (world.isWallAt(x - r, y)) return true;
@@ -225,10 +188,8 @@ export class TacticalEvaluator {
     scoreRetreat(world) {
         const nearestCover = this.findNearestCover(world);
         if (nearestCover) {
-            // Check if we are already there
             const dist = Utils.distance(this.agent.pos, nearestCover);
             if (dist < 40) {
-                 // We are safe(ish). Hold Ground.
                  const enemy = this.decision.getThreatSource(world, true);
                  if (enemy) {
                      return { type: 'ATTACK', targetId: enemy.id, score: 2.0, movementMode: 'TACTICAL' };
@@ -236,7 +197,6 @@ export class TacticalEvaluator {
                      return { type: 'IDLE', score: 1.0 };
                  }
             }
-            // SMOKE SCREEN NUANCE: If we are retreating in the open and have smoke, throw it!
             const inOpen = !this.agent.brain.isSafe(world);
             const hasSmoke = this.agent.state.inventory.utility.some(u => u.type === 'SmokeGrenade' && u.count > 0);
             
@@ -284,7 +244,6 @@ export class TacticalEvaluator {
             const awayFromOrder = Utils.angle(this.agent.squad.currentOrder.target, this.agent.pos);
             let fallbackTarget = null;
 
-            // Step aside to a nearby clear position, then observe from there.
             // The deterministic offset keeps every decision tick from choosing
             // a different point and creating another oscillation.
             for (const radius of [35, 55, 75]) {
@@ -330,8 +289,6 @@ export class TacticalEvaluator {
         const squadCenter = this.agent.getSquadCenter(world);
         const distToSquad = Utils.distance(this.agent.pos, squadCenter);
         
-        // Don't regroup if we are already "close enough" (Relaxed from 80 to 120)
-        // We want a loose skirmish line, not a ball of death
         if (distToSquad < Config.AGENT.BATTLE_BUDDY_RADIUS * 1.5) return { type: 'NONE', score: 0 };
 
         const mem = this.agent.memory;
@@ -342,64 +299,46 @@ export class TacticalEvaluator {
             destinationHeat = mem.heatmap[gy][gx];
         }
 
-        // Formation Offset: Ring around the center
-        // Use ID to deterministically spread out
         const angle = (this.agent.id % 6) * (Math.PI / 3);
-        const offsetDist = 50; // Slightly larger spread
+        const offsetDist = 50;
         let target = {
             x: squadCenter.x + Math.cos(angle) * offsetDist,
             y: squadCenter.y + Math.sin(angle) * offsetDist
         };
         
-        // Ensure formation point is valid
         target = this.findNearestValidPoint(world, target.x, target.y);
         if (!target) return { type: 'NONE', score: 0 };
 
-        // Factors: Squad proximity, low heat at destination, and morale
-        // Reduced base score from 2.0 to 1.5 so it doesn't override Objective logic
         let score = (1.0 - (destinationHeat / 5)) * 1.5; 
         score += (this.agent.state.morale / 200);
         
-        // If we are very far, score is lower (too detached to rally easily)
         if (distToSquad > 400) score *= 0.5;
 
-        // If we are already being shot at (high stress), we are less likely to regroup and more likely to keep retreating
         if (this.agent.state.stress > 80) score *= 0.4;
         
-        // If the destination is HOT, do NOT regroup there (Suicide prevention)
         if (destinationHeat > 5) score = 0;
 
-        // ARRIVAL CHECK
         if (distToSquad < 60) score = 0; 
 
         return { type: 'MOVE', target: target, score: score, description: 'regrouping with the squad' };
     }
 
     isPositionTacticallyValid(targetPos, enemyPos, world) {
-        // Check 1: Does this position block an ally's shot?
-        // Check 2: Is this position in an ally's line of fire?
-        // Check 3: Does this PATH cross a known line of fire? (New)
-        
-        const dangerRadius = 25; // Increased buffer
+        const dangerRadius = 25;
         let valid = true;
 
         world.agents.forEach(a => {
             if (a.team === this.agent.team && a !== this.agent) {
-                // Line: Ally -> Enemy (Ally's firing lane)
                 const distToFireLine = Utils.distanceToSegment(targetPos, a.pos, enemyPos);
                 if (distToFireLine < dangerRadius) {
                      valid = false;
                 }
                 
-                // Line: TargetPos -> Enemy (My firing lane)
-                // Don't move somewhere where an ally is in front of me
                 const distAllyToMyLine = Utils.distanceToSegment(a.pos, targetPos, enemyPos);
                 if (distAllyToMyLine < dangerRadius) {
                     valid = false;
                 }
                 
-                // Path intersection check (simplified):
-                // If the midpoint of my move is in the line of fire, it's risky
                 const midPoint = {
                     x: (this.agent.pos.x + targetPos.x) / 2,
                     y: (this.agent.pos.y + targetPos.y) / 2
@@ -419,48 +358,38 @@ export class TacticalEvaluator {
         if (!leader || leader.state.isDead || !order?.target) return { type: 'NONE', score: 0 };
         const orderKey = `${order.type}:${Math.round(order.target.x / 16)}:${Math.round(order.target.y / 16)}`;
 
-        // Once a route has failed, keep the stable fallback for this objective
-        // instead of retrying the same bad route every few seconds.
         if (this.orderFallback?.orderKey === orderKey) {
             return this.scoreOrderFallback(world, orderKey);
         }
         this.orderFallback = null;
 
-        // INSUBORDINATION CHECK (REALISM)
         const approvalFactor = this.agent.memory.leaderApproval / 100;
         
-        // Check heat at destination
         const mem = this.agent.memory;
         const gx = Math.floor((order.target.x / world.width) * mem.gridCols);
         const gy = Math.floor((order.target.y / world.height) * mem.gridRows);
         const destinationHeat = (gx >= 0 && gx < mem.gridCols && gy >= 0 && gy < mem.gridRows) 
             ? mem.heatmap[gy][gx] : 0;
             
-        // Suicide Order Check: High heat OR known enemy LOS
         const isSuicidal = destinationHeat > Config.AGENT.SUICIDE_ORDER_THRESHOLD;
         
         if (isSuicidal && leader !== this.agent) {
-             // Low agreeable agents refuse suicidal orders immediately
-             // High agreeable agents might follow but take a massive stress hit
              const refusalChance = (1.0 - this.agent.traits.agreeableness) * (1.0 - approvalFactor);
              
              if (Math.random() < refusalChance) {
                  this.agent.addBark("NO WAY!");
-                 this.agent.memory.modifyLeaderApproval(-5); // Losing faith
-                 return { type: 'IDLE', score: 2.0 }; // Refuse
+                 this.agent.memory.modifyLeaderApproval(-5);
+                 return { type: 'IDLE', score: 2.0 };
              } else {
-                 // Follow but be stressed about it
                  this.agent.state.modifyStress(10);
              }
         }
         
         if (leader !== this.agent && approvalFactor < 0.2) {
             if (Math.random() < 0.1) this.agent.addBark("Whatever...");
-            return { type: 'IDLE', score: 1.0 }; // Passive resistance
+            return { type: 'IDLE', score: 1.0 };
         }
 
-        // Move the entire squad toward the issued objective. Followers retain a
-        // small formation offset while the leader owns the exact destination.
         const angle = (this.agent.id % 6) * (Math.PI * 2 / 6);
         const offsetDist = leader === this.agent ? 0 : 25 + (this.agent.id % 2) * 15;
         let target = {
@@ -468,7 +397,6 @@ export class TacticalEvaluator {
             y: order.target.y + Math.sin(angle) * offsetDist
         };
 
-        // Ensure valid
         target = this.findNearestValidPoint(world, target.x, target.y);
         if (!target) return this.scoreOrderFallback(world, orderKey);
 
@@ -513,7 +441,6 @@ export class TacticalEvaluator {
     }
 
     scoreSmokeTactics(world) {
-        // Find nearest active smoke
         const smokes = world.smokes || [];
         if (smokes.length === 0) return { score: 0 };
 
@@ -530,12 +457,9 @@ export class TacticalEvaluator {
 
         if (!nearestSmoke || minDist > 500) return { score: 0 };
         
-        // SAFETY CHECK: Is the smoke "Hot"? (Taking enemy fire)
-        // If bullets are flying through the smoke, it is NOT a screen, it is a Kill Zone.
         let incomingFire = 0;
         if (world.projectiles) {
             for (const p of world.projectiles) {
-                // Check if projectile is hostile and inside/near smoke
                 if (p.team !== this.agent.team) {
                     const dx = p.pos.x - nearestSmoke.x;
                     const dy = p.pos.y - nearestSmoke.y;
@@ -548,9 +472,6 @@ export class TacticalEvaluator {
         
         const isHotSmoke = incomingFire > 0;
         if (isHotSmoke) {
-             // Abort smoke maneuvers!
-             // Return a 'Wait' or 'Hold' to signify we see the smoke but it's dangerous
-             // Use a moderate score so we don't override self-preservation, but we acknowledge the situation
              if (Math.random() < 0.05) this.agent.addBark("SMOKE IS HOT!");
              return { type: 'IDLE', score: 2.0, description: 'waiting for smoke to clear' };
         }
@@ -564,17 +485,12 @@ export class TacticalEvaluator {
         const distEnemyToSmoke = Utils.distance(enemyPos, nearestSmoke);
         const isSmokeOnEnemy = distEnemyToSmoke < nearestSmoke.radius + 50;
         
-        // TRAITS
         const isAggressive = (this.agent.traits.extraversion + (1 - this.agent.traits.agreeableness)) > 1.2;
         const isCQBWeapon = this.agent.state.inventory.weapon.optimalRange < 150;
         
-        // CASE 1: I AM IN SMOKE (Disoriented / Vulnerable)
         if (inSmoke) {
-            // REALISM: You don't stay in smoke unless you have to. You get out to clear fields of fire.
-            // Move to the nearest edge roughly towards the enemy (if attacking) or away (if retreating)
             const angleToEnemy = Utils.angle(this.agent.pos, enemyPos);
             
-            // If Aggressive/CQB: Push out the FRONT (Risk it for the biscuit)
             if (isAggressive || isCQBWeapon) {
                 const target = {
                     x: nearestSmoke.x + Math.cos(angleToEnemy) * (nearestSmoke.radius + 30),
@@ -583,8 +499,6 @@ export class TacticalEvaluator {
                  return { type: 'MOVE', target: target, score: 3.0, movementMode: 'BOUNDING', description: 'pushing out of the smoke' };
             }
             
-            // Defensive: Back out or Side out
-            // Find nearest edge relative to current position
             const angleFromCenter = Utils.angle(nearestSmoke, this.agent.pos);
             const target = {
                 x: nearestSmoke.x + Math.cos(angleFromCenter) * (nearestSmoke.radius + 40),
@@ -593,64 +507,48 @@ export class TacticalEvaluator {
             return { type: 'MOVE', target: target, score: 4.0, movementMode: 'TACTICAL', description: 'leaving the smoke' };
         }
 
-        // CASE 2: SMOKE IS ON THE ENEMY (Opportunity)
         if (isSmokeOnEnemy) {
-            // CQB/Aggressive: CLOSE DISTANCE while they are blind
             if (isAggressive || isCQBWeapon) {
                 const distToEnemy = Utils.distance(this.agent.pos, enemyPos);
                 if (distToEnemy > 150) {
                      return { type: 'ATTACK', target: enemyPos, score: 3.0, movementMode: 'BOUNDING', description: 'rushing a hidden enemy' };
                 }
             }
-            // Others: Suppress the smoke cloud (Handled by CombatEvaluator blindFire)
         }
 
-        // CASE 3: SMOKE IS A SCREEN (Between us)
-        // Check if smoke actually blocks LOS
         const distToSmoke = Utils.distance(this.agent.pos, nearestSmoke);
         const distToEnemy = Utils.distance(this.agent.pos, enemyPos);
         const isScreening = distToSmoke < distToEnemy && Utils.distanceToSegment(nearestSmoke, this.agent.pos, enemyPos) < nearestSmoke.radius;
 
         if (isScreening) {
-            // REALISM: Use the screen to move to better cover that was previously dangerous
-            // 1. Find cover closer to enemy
-            const betterCover = this.findNearestCover(world, 300); // Look for cover
+            const betterCover = this.findNearestCover(world, 300);
             
             if (betterCover) {
-                // Check if this cover is closer to enemy than we are
                 const myDist = Utils.distance(this.agent.pos, enemyPos);
                 const coverDist = Utils.distance(betterCover, enemyPos);
                 
                 if (coverDist < myDist - 50) {
-                     // SCREENED ADVANCE: We can move because they can't see us
                      return { type: 'MOVE', target: betterCover, score: 2.5, movementMode: 'BOUNDING', description: 'advancing behind smoke' };
                 }
             }
             
-            // Flank around the screen
             const angleToSmoke = Utils.angle(this.agent.pos, nearestSmoke);
             const side = Math.random() > 0.5 ? 1 : -1;
-            const flankAngle = angleToSmoke + (Math.PI / 2.5 * side); // Wide flank
-            const flankDist = distToSmoke + 80; // Go around
+            const flankAngle = angleToSmoke + (Math.PI / 2.5 * side);
+            const flankDist = distToSmoke + 80;
             const target = {
                  x: this.agent.pos.x + Math.cos(flankAngle) * 100,
                  y: this.agent.pos.y + Math.sin(flankAngle) * 100
             };
             
-            // Check if flank target is valid and safe(ish)
              if (world.isPositionClear(target.x, target.y, this.agent.radius)) {
-                 // FLANK the smoke
                  return { type: 'MOVE', target: target, score: 2.5, movementMode: 'TACTICAL', description: 'moving around the enemy behind smoke' };
              }
         } else {
-             // Smoke is nearby but useless? 
-             // Maybe we should USE it?
-             // If we are exposed and smoke is nearby, get BEHIND it relative to enemy
              const distToEnemy = Utils.distance(this.agent.pos, enemyPos);
              const distToSmoke = Utils.distance(this.agent.pos, nearestSmoke);
              
              if (distToSmoke < 150 && distToSmoke < distToEnemy) {
-                 // Move to put smoke between me and enemy
                  const angleEnemyToSmoke = Utils.angle(enemyPos, nearestSmoke);
                  const hideDist = nearestSmoke.radius + 50;
                  const target = {
@@ -667,23 +565,16 @@ export class TacticalEvaluator {
         return { score: 0 };
     }
     findPeekSpot(world, enemyPos) {
-        // 1. Find the cover we are currently using (or closest one)
-        // We use a generous radius to find "the wall I'm hiding behind"
         const coverRadius = 60;
         let nearbyCover = null;
         let minDist = Infinity;
 
-        // Optimization: Search covers and walls efficiently
         const allCoverObjects = [...world.covers, ...world.walls];
         for (const c of allCoverObjects) {
             const cx = c.x + c.w/2;
             const cy = c.y + c.h/2;
             const dist = Utils.distance(this.agent.pos, {x: cx, y: cy});
             
-            // Check if we are actually close to this cover
-            // Distance check needs to account for cover size (large walls)
-            // Distance to center isn't enough for long walls.
-            // Distance to Box:
             const distToBox = Utils.distanceToRect(this.agent.pos, c);
             
             if (distToBox < 40 && distToBox < minDist) {
@@ -694,25 +585,19 @@ export class TacticalEvaluator {
 
         if (!nearbyCover) return null;
 
-        // 2. Generate Candidate Corners
-        // We project points slightly off each corner of the rectangle
-        const margin = 20; // Step out distance
+        const margin = 20;
         const corners = [
-            {x: nearbyCover.x - margin, y: nearbyCover.y - margin}, // Top Left
-            {x: nearbyCover.x + nearbyCover.w + margin, y: nearbyCover.y - margin}, // Top Right
-            {x: nearbyCover.x + nearbyCover.w + margin, y: nearbyCover.y + nearbyCover.h + margin}, // Bottom Right
-            {x: nearbyCover.x - margin, y: nearbyCover.y + nearbyCover.h + margin} // Bottom Left
+            {x: nearbyCover.x - margin, y: nearbyCover.y - margin},
+            {x: nearbyCover.x + nearbyCover.w + margin, y: nearbyCover.y - margin},
+            {x: nearbyCover.x + nearbyCover.w + margin, y: nearbyCover.y + nearbyCover.h + margin},
+            {x: nearbyCover.x - margin, y: nearbyCover.y + nearbyCover.h + margin}
         ];
 
-        // 3. Filter and Sort
-        // Priority: 1. Has LOS to enemy. 2. Closest to me.
         const validSpots = [];
         
         for (const p of corners) {
-            // Must be walkable
             if (!world.isPositionClear(p.x, p.y, this.agent.radius)) continue;
             
-            // Must have LOS to enemy
             if (world.hasVisualLine(p, enemyPos)) {
                 validSpots.push(p);
             }
@@ -720,7 +605,6 @@ export class TacticalEvaluator {
 
         if (validSpots.length === 0) return null;
 
-        // Sort by distance to current agent position + Hazard
         validSpots.sort((a, b) => {
              const m = this.agent.memory;
              const ax = Math.floor((a.x / world.width) * m.gridCols);

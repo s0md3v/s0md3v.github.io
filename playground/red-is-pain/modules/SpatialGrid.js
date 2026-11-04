@@ -5,7 +5,7 @@ export class SpatialGrid {
         this.cellSize = cellSize;
         this.cols = Math.ceil(width / cellSize);
         this.rows = Math.ceil(height / cellSize);
-        this.grid = new Map(); // Key: "x,y", Value: Set<Entity>
+        this.grid = new Map();
     }
 
     clear() {
@@ -19,7 +19,6 @@ export class SpatialGrid {
         return (cy << 16) | cx;
     }
 
-    // Add entity to all cells it touches
     add(entity) {
         if (!isFinite(entity.pos.x) || !isFinite(entity.pos.y)) return;
         const startX = Math.floor((entity.pos.x - (entity.radius || 10)) / this.cellSize);
@@ -40,8 +39,6 @@ export class SpatialGrid {
         }
     }
 
-    // Query entities within radius of x,y
-    // Returning an array for compatibility but we could optimize this further later
     query(x, y, radius) {
         if (!isFinite(x) || !isFinite(y) || !isFinite(radius) || radius < 0) return [];
         const startX = Math.floor((x - radius) / this.cellSize);
@@ -65,7 +62,6 @@ export class SpatialGrid {
         return Array.from(results);
     }
 
-    // Just get nearest neighbors directly
     getNeighbors(entity, radius) {
         return this.query(entity.pos.x, entity.pos.y, radius).filter(e => e !== entity);
     }

@@ -33,9 +33,6 @@ image:
 ---
 
 <style>
-/* No sheet: the window's the surface, as on About, and on it each paper, the first page of it as
-   it's printed, as it lies on the table on the home page, with what it's about beside it. The page
-   is the paper, so it opens it, as the title does. */
 @media screen and (min-width: 769px) {
   html {
     background: var(--background-color) var(--paper-grain);
@@ -65,8 +62,6 @@ image:
   gap: 2em;
 }
 
-/* Side by side once there's room for both at their size, as on About: the page gives way first,
-   so the words keep their measure */
 @media (min-width: 60em) {
   .papers {
     row-gap: 6em;
@@ -81,9 +76,6 @@ image:
     column-gap: clamp(2.5em, 10vw - 3em, 4.5em);
   }
 }
-
-/* ---- The page: put down a little turned, each its own way, and lit from the top left like
-   everything else ---- */
 
 .paper-sheet {
   display: block;
@@ -118,12 +110,9 @@ image:
   }
 }
 
-/* Paper in the dark too, only less of a lamp on it */
 .dark-mode .paper-sheet {
   filter: brightness(0.82) drop-shadow(2px 4px 12px rgba(0, 0, 0, 0.55));
 }
-
-/* ---- What it's about ---- */
 
 .paper-words {
   width: 100%;
@@ -139,8 +128,6 @@ image:
   text-wrap: balance;
 }
 
-/* A title, as in the blog's list: in the heading's colour, and in this page's ink when it's
-   pointed at */
 .paper-words h2 a {
   color: var(--heading-color);
   text-decoration: none;
@@ -163,7 +150,6 @@ image:
   margin-top: 1.1em;
 }
 
-/* As in a post: at the size of the words around it, whatever size the reader reads at */
 .paper-words code {
   font-size: 0.85em;
   padding: 0.1em 0.3em;
@@ -188,9 +174,6 @@ image:
 </div>
 
 <script>
-  // Each paper's been gone over with a highlighter, as the one on the table is: its title as it
-  // comes into sight, once, and, where it can be pointed at, the next word that matters each time
-  // the page itself is, till they've all been marked.
   (() => {
     if (!('IntersectionObserver' in window)) {
       document.querySelectorAll('.paper-sheet').forEach(sheet => sheet.classList.add('marked'));

@@ -5,9 +5,7 @@
         --base-font-family: {% if page.layout_style == 'homepage' %}"Source Serif 4", Georgia, "Times New Roman", serif{% else %}"Lexend", "Lexend Fallback", "Helvetica Neue", Helvetica, Arial, sans-serif{% endif %};
         --blog-font-family: var(--base-font-family);
 
-        /* Reading pages are a sheet: --background-color is the sheet, and --surround-color is
-           what's round it, plain (on the homepage, the colour of its desk).
-           Body text ~14:1, muted text >5:1 (WCAG AA) */
+        /* Body text ~14:1, muted text >5:1 (WCAG AA) */
         color-scheme: light;
         --surround-color: #e4e0d6;
         --sheet-shadow: 28, 34, 44;
@@ -25,9 +23,7 @@
         --link-visited: #0d47a1;
     }
 
-    /* At night what's round the sheet is black, so the sheet's the only thing that glows, and
-       little of it. Each kind of text has its own step, by APCA, as contrast ratios flatter
-       light text on dark: headings Lc 89, body 76, quotes 62, labels 49. */
+    /* Text steps are set by APCA, as contrast ratios flatter light text on dark: headings Lc 89, body 76, quotes 62, labels 49 */
     .dark-mode {
         color-scheme: dark;
         --surround-color: {% if page.layout_style == 'homepage' %}#232323{% else %}#000{% endif %};
@@ -110,13 +106,11 @@
 </style>
 
 <script>
-    // Lets CSS tell a page that has scripts from one that doesn't
     document.documentElement.classList.add('js');
 
     const themes = ["light", "dark"];
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
 
-    // Only a choice is kept. Someone who hasn't made one stays with their system, day and night.
     function getPreferredTheme() {
         let chosen = null;
         try {
@@ -129,12 +123,10 @@
     function applyTheme(theme) {
         document.documentElement.classList.remove("light-mode", "dark-mode");
         document.documentElement.classList.add(`${theme}-mode`);
-        // The browser's own bars take the colour of what's under them
         document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement)
             .getPropertyValue("{% if page.layout_style == 'homepage' %}--surround-color{% else %}--background-color{% endif %}");
     }
 
-    // Choosing what the system already shows is the same as going back to following it
     function chooseTheme(theme) {
         applyTheme(theme);
         try {

@@ -1,5 +1,4 @@
 const assessmentModel = [
-    // --- SLEEP ---
     {
         id: 'sleep_hours',
         category: 'Sleep',
@@ -120,7 +119,6 @@ const assessmentModel = [
         }
     },
 
-    // --- NUTRITION ---
     {
         id: 'processed_food',
         category: 'Nutrition',
@@ -188,7 +186,6 @@ const assessmentModel = [
         }
     },
 
-    // --- MOVEMENT (BRANCHED) ---
     {
         id: 'exercise_habit',
         category: 'Movement',
@@ -289,7 +286,6 @@ const assessmentModel = [
             return null;
         }
     },
-    // --- SOCIAL & MENTAL ---
     {
         id: 'social_connection',
         category: 'Mental',
@@ -359,7 +355,6 @@ const assessmentModel = [
             return null;
         }
     },
-    // --- HYGIENE ---
     {
         id: 'oral_health_status',
         category: 'Hygiene',
@@ -394,7 +389,6 @@ const assessmentModel = [
             return null;
         }
     },
-    // --- NUTRIENT & COGNITION ---
     {
         id: 'sunlight_exposure',
         category: 'Nutrients',
@@ -432,7 +426,6 @@ const assessmentModel = [
     },
 
     
-    // --- OPTIMIZATIONS (NITPICKS) ---
     {
         id: 'cardio_intensity',
         category: 'Movement',
@@ -559,8 +552,6 @@ const bibliography = {
     161: { title: "Neuroplasticity Protocols (Huberman)", url: "https://hubermanlab.com/teach-and-learn-better-with-a-neuroplasticity-super-protocol/" }
 };
 
-// --- APPLICATION LOGIC ---
-
 let currentStep = 0;
 let userAnswers = {};
 let generatedProtocol = [];
@@ -574,7 +565,6 @@ const views = {
 const progressBar = document.getElementById('progress-bar');
 const inputArea = document.getElementById('input-area');
 
-// Buttons
 const nextBtn = document.getElementById('next-btn');
 const backBtn = document.getElementById('back-btn');
 const mobileNextBtn = document.getElementById('mobile-next-btn');
@@ -589,13 +579,12 @@ function init() {
 function setupEventListeners() {
     document.getElementById('start-btn').addEventListener('click', startAssessment);
     
-    // Navigation
     nextBtn.addEventListener('click', nextQuestion);
     backBtn.addEventListener('click', prevQuestion);
     if(mobileNextBtn) mobileNextBtn.addEventListener('click', nextQuestion);
     if(mobileBackBtn) mobileBackBtn.addEventListener('click', prevQuestion);
     
-    document.getElementById('restart-btn').addEventListener('click', () => location.reload()); // Simple reload for now
+    document.getElementById('restart-btn').addEventListener('click', () => location.reload());
 }
 
 function switchView(viewName) {
@@ -619,15 +608,12 @@ function startAssessment() {
 function renderQuestion() {
     const data = assessmentModel[currentStep];
     
-    // Update Header
     document.getElementById('question-text').textContent = data.prompt;
     document.getElementById('question-subtext').textContent = data.subtext || '';
 
-    // Update Progress
     const progress = ((currentStep) / assessmentModel.length) * 100;
     progressBar.style.width = `${progress}%`;
 
-    // Render Input
     inputArea.innerHTML = '';
     const currentVal = userAnswers[data.id] !== undefined ? userAnswers[data.id] : data.defaultValue;
 
@@ -639,7 +625,6 @@ function renderQuestion() {
         renderNumberInput(data, currentVal);
     }
 
-    // Button Logic
     const isFirst = currentStep === 0;
     const isLast = currentStep === assessmentModel.length - 1;
     
@@ -670,13 +655,11 @@ function renderSlider(data, currentVal) {
         userAnswers[data.id] = val;
     });
 
-    // Initial set
     userAnswers[data.id] = parseFloat(input.value);
 
     wrapper.appendChild(display);
     wrapper.appendChild(input);
     
-    // Range labels
     const labels = document.createElement('div');
     labels.className = 'range-labels';
     labels.innerHTML = `<span>${data.min}</span><span>${data.max}</span>`;
@@ -704,7 +687,6 @@ function renderSelect(data, currentVal) {
         wrapper.appendChild(btn);
     });
     
-    // Default assignment if undefined
     if (userAnswers[data.id] === undefined) userAnswers[data.id] = data.defaultValue;
     
     inputArea.appendChild(wrapper);
@@ -725,7 +707,6 @@ function renderNumberInput(data, currentVal) {
        userAnswers[data.id] = parseFloat(e.target.value);
    });
    
-   // Initial
    userAnswers[data.id] = parseFloat(input.value);
 
    const label = document.createElement('span');
@@ -737,17 +718,10 @@ function renderNumberInput(data, currentVal) {
    inputArea.appendChild(wrapper);
 }
 
-// --- BRANCHING LOGIC ---
-
 function hasCriticalIssues(answers) {
-    // Check specific critical failure points
-    // 1. Sleep < 6 hours
     if (answers.sleep_hours !== undefined && answers.sleep_hours < 6) return true;
-    // 2. Processed Food > 50%
     if (answers.processed_food !== undefined && answers.processed_food > 50) return true; 
-    // 3. No Exercise
     if (answers.exercise_habit === 'no') return true;
-    // 4. High Stress
     if (answers.stress_level === 'high' || answers.stress_level === 'extreme') return true;
     
     return false;
@@ -757,7 +731,6 @@ function shouldShowQuestion(index) {
     if (index < 0 || index >= assessmentModel.length) return false;
     const item = assessmentModel[index];
     
-    // Skip nitpicks if we have bigger problems
     if (item.isNitpick && hasCriticalIssues(userAnswers)) {
         return false;
     }
@@ -772,7 +745,6 @@ function shouldShowQuestion(index) {
 function nextQuestion() {
     let nextStep = currentStep + 1;
     
-    // Scan ahead for the next valid question
     while (nextStep < assessmentModel.length && !shouldShowQuestion(nextStep)) {
         nextStep++;
     }
@@ -788,7 +760,6 @@ function nextQuestion() {
 function prevQuestion() {
     let prevStep = currentStep - 1;
     
-    // Scan backwards for the previous valid question
     while (prevStep >= 0 && !shouldShowQuestion(prevStep)) {
         prevStep--;
     }
@@ -808,9 +779,6 @@ function generateProtocol() {
     generatedProtocol = [];
     
     assessmentModel.forEach(item => {
-        // Skip evaluation if logic says we shouldn't have seen it, BUT
-        // some invisible logic might still apply? 
-        // Generally if we skipped asking, we probably shouldn't evaluate.
         if (item.condition && !item.condition(userAnswers)) return;
 
         const val = userAnswers[item.id];
@@ -836,7 +804,6 @@ function renderResults() {
         return;
     }
 
-    // Sort by priority: critical > high > medium
     const priorityOrder = { 'critical': 0, 'high': 1, 'medium': 2 };
     items.sort((a, b) => {
         const pA = priorityOrder[a.priority] !== undefined ? priorityOrder[a.priority] : 3;
@@ -861,7 +828,6 @@ function renderResults() {
             </div>
         `).join('');
 
-        // Capitalize priority for display
         const priorityLabel = item.priority.charAt(0).toUpperCase() + item.priority.slice(1);
 
         const sourcesHtml = item.sources.map(id => {
