@@ -11,6 +11,9 @@
 #   (article.js), from a pointer, a finger or the keyboard. Its "#" is drawn by the stylesheet, so it
 #   isn't copied with the heading, and it's named for what it does.
 # - Code is left as it is by a page translator.
+# - An address shown as itself goes to the next line whole if it fits there (article.css), and
+#   breaks only where it must, after a "/" or before a ".", "?", "&", "=" or "#", as a typesetter
+#   would break it, not after whichever letter reaches the edge.
 module ArticleHtml
   COLLECTIONS = %w(blog essays).freeze
   START = '<div class="post-content">'
@@ -26,6 +29,7 @@ module ArticleHtml
     body = sections(body)
     body = footnotes(body)
     body = code(body)
+    body = addresses(body)
     html[0...from] + body + html[to..]
   end
 
@@ -69,6 +73,15 @@ module ArticleHtml
     body = body.sub('<div class="footnotes" role="doc-endnotes">', '<div class="notes" role="doc-endnotes">')
     body.sub(%r{(</h[1-6]>\s*)?(<div class="notes" role="doc-endnotes">)}) do
       $1 ? $1 + $2 : %(<h2 class="sr-only" id="notes">Notes</h2>\n#{$2})
+    end
+  end
+
+  def self.addresses(body)
+    body.gsub(%r{(<a\b[^>]*>)(https?://[^<\s]+)(</a>)}) do
+      open, text, close = $1, $2, $3
+      scheme, rest = text.split("//", 2)
+      open = open.sub(/\A<a\b/, '<a class="address"') unless open.include?(" class=")
+      open + scheme + "//" + rest.gsub(%r{/(?!\z)}, "/<wbr>").gsub(/(?<=.)([.?&=#])/, "<wbr>\\1") + close
     end
   end
 

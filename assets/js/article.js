@@ -23,6 +23,46 @@
         new ResizeObserver(reachable).observe(content);
     }
 
+    // A list whose items each fit on a line reads as one block, its items as close as lines are; one
+    // with an item that runs on is spaced item from item, so where one ends and the next starts is
+    // clear (article.css). Which it is depends on the column's width, so it's looked at again as
+    // that changes. Not the notes at the end, which are laid out as they are.
+    const lists = [...content.querySelectorAll('ul, ol')].filter(list => !list.closest('.notes'));
+    // Its lines are counted by where its words' boxes end: within half a line of each other, a
+    // word in code or a raised number is on the same line as the words round it
+    function lines(item) {
+        const half = parseFloat(getComputedStyle(item).lineHeight) / 2;
+        const ends = [];
+        const walker = document.createTreeWalker(item, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        while (walker.nextNode()) {
+            const text = walker.currentNode;
+            if (!text.data.trim() || text.parentElement.closest('li') !== item) continue;
+            range.selectNodeContents(text);
+            for (const box of range.getClientRects()) {
+                if (box.width && !ends.some(end => Math.abs(end - box.bottom) < half)) ends.push(box.bottom);
+            }
+        }
+        return ends.length;
+    }
+    function chunk() {
+        lists.forEach(list => {
+            const items = [...list.children].filter(child => child.matches('li'));
+            list.classList.toggle('one-line', items.every(item => lines(item) <= 1));
+        });
+    }
+    if (lists.length) {
+        let width = 0;
+        chunk();
+        // Only a new width can change where lines end; a list closing up changes only the height
+        new ResizeObserver(([entry]) => {
+            if (entry.contentRect.width === width) return;
+            width = entry.contentRect.width;
+            chunk();
+        }).observe(content);
+        document.fonts?.ready.then(chunk);
+    }
+
     // Each block can be copied whole: a payload or a command is meant to be tried, and a line that
     // runs past the box is hard to select by hand. Said aloud as well as shown.
     const said = document.createElement('span');

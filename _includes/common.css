@@ -245,6 +245,11 @@ pre>code {
   margin-bottom: 2.5em;
 }
 
+/* Kept on one line, so a "·" between two links never ends a line or starts one */
+.page-intro .nowrap {
+  white-space: nowrap;
+}
+
 /* :where() keeps these weaker than the post rules below and page-specific components */
 :where(.wrapper) :is(h2, h3, h4) {
   text-wrap: balance;
@@ -352,11 +357,6 @@ pre>code {
   font-weight: 500;
   line-height: 1.3;
   transition: color 0.15s ease;
-}
-
-/* What's been read is a little lighter, still easy to read */
-.post-list-title:visited {
-  color: color-mix(in srgb, var(--heading-color) 70%, var(--background-color));
 }
 
 .post-list-title:hover {

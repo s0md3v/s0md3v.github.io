@@ -11,12 +11,9 @@ layout: base
   <div class="wrapper">
     {% comment %} An <article>, title to notes, so Reader View takes the post and leaves the rest {% endcomment %}
     <article>
-      <h1 class="post-title">{{ page.title | escape }}</h1>
+      <h1 class="post-title">{{ page.title | smartify }}</h1>
       <p class="post-meta">
-        {% if post_essay %}An essay by{% else %}By{% endif %}
-        <span class="nowrap"><a href="{{ '/about' | relative_url }}" rel="author">{{ page.author | default: site.author.name }}</a></span>&nbsp;<span aria-hidden="true">·</span>
-        <span class="nowrap"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time></span>&nbsp;<span aria-hidden="true">·</span>
-        <span class="nowrap">{{ content | reading_minutes }} min read</span>
+        <span class="post-meta-parts"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%-d %B %Y" }}</time>&nbsp;<span aria-hidden="true">·</span> <span class="nowrap">{{ content | reading_minutes }} min read</span></span>
         {% if page.external %}
         <span class="post-meta-line">Also {{ page.external.status }} <a href="{{ page.external.href }}">{{ page.external.title | escape }}</a> on {{ page.external.date | date: "%-d %b %Y" }}</span>
         {% endif %}
@@ -66,18 +63,26 @@ layout: base
   {% endunless %}
   {% endif %}
   <nav class="post-after" aria-label="More {% if post_essay %}essays{% else %}posts{% endif %}">
-    <p class="post-after-line">
-      {% if post_next %}<span class="post-next-label" id="post-next-label">{{ post_next_label }} {% if post_essay %}essay{% else %}post{% endif %}</span>{% endif %}
-      {% if post_essay %}
-      <a class="post-all" href="{{ '/essays/' | relative_url }}">All essays</a>
-      {% else %}
-      <a class="post-all" href="{{ '/blog/' | relative_url }}">All posts</a>
-      {% endif %}
-    </p>
+    {% if post_essay %}{% assign post_index_url = "/essays/" %}{% assign post_index_label = "All essays" %}{% else %}{% assign post_index_url = "/blog/" %}{% assign post_index_label = "All posts" %}{% endif %}
     {% if post_next %}
+    <p class="post-after-line">
+      <span class="post-next-label" id="post-next-label">{{ post_next_label }} {% if post_essay %}essay{% else %}post{% endif %}</span>
+      <a class="post-all" href="{{ post_index_url | relative_url }}">{{ post_index_label }}</a>
+    </p>
     <a class="post-next" href="{{ post_next.url | relative_url }}" aria-describedby="post-next-label">
-      <span class="post-next-title">{{ post_next.title | escape }}</span>
+      <span class="post-next-title">{{ post_next.title | smartify }}</span>
       {% if post_next.description %}<span class="post-next-description">{{ post_next.description | strip | escape }}</span>{% endif %}
+    </a>
+    {% else %}
+    {% comment %} With none to read next, the way on is all of them, shown as one would be: under its
+       own name, with what it says of itself {% endcomment %}
+    {% assign post_index = site.pages | where: "permalink", post_index_url | first %}
+    <p class="post-after-line">
+      <span class="post-next-label" id="post-next-label">{{ post_index_label }}</span>
+    </p>
+    <a class="post-next" href="{{ post_index_url | relative_url }}" aria-describedby="post-next-label">
+      <span class="post-next-title">{{ post_index.title | default: post_index_label | escape }}</span>
+      {% if post_index.description %}<span class="post-next-description">{{ post_index.description | strip | escape }}</span>{% endif %}
     </a>
     {% endif %}
   </nav>

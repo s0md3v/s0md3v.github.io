@@ -256,6 +256,8 @@ image:
     </a>
 
     <div class="obj grounded self-lit" id="gallery" data-photos='[{% for p in site.data.gallery %}["{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-400.avif" | relative_url }}","{{ p.path | relative_url }}",{{ p.width }},{{ p.height }},"{{ "/assets/photos/thumbs/" | append: p.filename | replace: ".webp", "-200.avif" | relative_url }}","{{ p.filename | remove: ".webp" }}",{{ site.data.photo_descriptions[p.filename] | default: "A photograph." | jsonify | escape }}]{% unless forloop.last %},{% endunless %}{% endfor %}]'>
+      <!-- The camera's link is .cover; this makes the label clickable too -->
+      <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
       <span class="lift"><span class="item">
         <img class="base rimmed" src="{{ t }}digicam.avif" srcset="{{ t }}digicam-320.avif 320w, {{ t }}digicam.avif 660w"
           sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
@@ -288,11 +290,10 @@ image:
         <button class="cam-btn" data-key="wide" type="button" tabindex="-1" aria-hidden="true"></button>
         <button class="cam-btn" data-key="tele" type="button" tabindex="-1" aria-hidden="true"></button>
       </span></span>
-      <!-- The camera's link is .cover; this makes the label clickable too -->
-      <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
     </div>
 
     <a class="obj grounded" id="playground" href="{{ n.playground.url | relative_url }}">
+      <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}petridish.webp" srcset="{{ t }}petridish-400.webp 400w, {{ t }}petridish.webp 720w"
           data-night="{{ t }}petridish-night-400.webp 400w, {{ t }}petridish-night.webp 720w"
@@ -300,7 +301,6 @@ image:
       </span></span>
       <img class="dish-sheen" src="{{ t }}petridish-sheen.webp" data-night="{{ t }}petridish-sheen-night.webp 720w"
         srcset="{{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
-      <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
     </a>
     <!-- What's in it, which climbs out over everything else, and gives off its own light, so
          it's over .light; and where it's been (see petri.js) -->

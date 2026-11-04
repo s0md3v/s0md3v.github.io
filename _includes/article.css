@@ -33,7 +33,12 @@
   display: block;
 }
 
-/* The line breaks between its parts, never inside a name, a date or "10 min read" */
+/* When it was written and how long it takes, a line of its own; "10 min read" is never split */
+.post-meta-parts {
+  display: block;
+}
+
+.post-meta time,
 .post-meta .nowrap {
   white-space: nowrap;
 }
@@ -79,6 +84,13 @@
   hyphens: manual;
 }
 
+/* An address shown as itself (article_html.rb) is kept whole on a line of its own if it fits on
+   one, and broken at its slashes only if it doesn't */
+.post-content a.address {
+  display: inline-block;
+  max-width: 100%;
+}
+
 .post-content strong,
 .post-content b {
   font-weight: 600;
@@ -93,21 +105,23 @@
 
 .post-content h2 {
   font-size: 1.4em;
-  font-weight: 600;
+  /* A little heavier than the title's 500, as the smaller size needs to look as heavy: at 600 a
+     section's heading outweighs the post's */
+  font-weight: 550;
   letter-spacing: -0.01em;
   margin: 2em 0 0.5em;
 }
 
 .post-content h3 {
   font-size: 1.2em;
-  font-weight: 600;
+  font-weight: 550;
   letter-spacing: -0.005em;
   margin: 2em 0 0.5em;
 }
 
 .post-content h4 {
   font-size: 1.05em;
-  font-weight: 600;
+  font-weight: 550;
   margin: 1.6em 0 0.4em;
 }
 
@@ -185,8 +199,15 @@
   margin: 0 0 1.2em 1.4em;
 }
 
+/* Apart by more than a line's own gap, so where an item runs to lines of its own, where one ends
+   and the next starts is clear. Where every item fits on a line (article.js), they're kept
+   together, a hair further apart than lines are: one block, of items. */
 .post-content li+li {
-  margin-top: 0.35em;
+  margin-top: 0.5em;
+}
+
+.post-content .one-line > li+li {
+  margin-top: 0.2em;
 }
 
 .post-content li::marker {
@@ -324,8 +345,9 @@
   inset: -0.75rem -0.6rem;
 }
 
-/* Keep superscripts from pushing their line apart */
+/* Keep superscripts from pushing their line apart, and small, as a note's number is */
 .post-content sup {
+  font-size: 0.7em;
   line-height: 0;
 }
 
@@ -464,15 +486,17 @@
   tab-size: 4;
   white-space: pre;
   overflow-x: auto;
-  padding: 0.9em 1.1em;
+  /* The same room round the code's ink on every side: a line's cap height sits lower in it than
+     its baseline does, so less over the first line than under the last */
+  padding: 0.8em 1.1em 0.72em;
   margin-bottom: 1.2em;
   border: 0;
   border-radius: 0.4em;
   background:
     linear-gradient(to right, var(--code-bg) 30%, transparent) left / 2.5em 100% no-repeat local,
     linear-gradient(to left, var(--code-bg) 30%, transparent) right / 2.5em 100% no-repeat local,
-    linear-gradient(to right, var(--more), transparent) left / 0.8em 100% no-repeat scroll,
-    linear-gradient(to left, var(--more), transparent) right / 0.8em 100% no-repeat scroll,
+    linear-gradient(to right, transparent 1px, var(--more) 1px, transparent) left / 0.8em 100% no-repeat scroll,
+    linear-gradient(to left, transparent 1px, var(--more) 1px, transparent) right / 0.8em 100% no-repeat scroll,
     var(--code-bg);
 }
 
@@ -480,7 +504,12 @@
    to be found where there's a pointer, and always there where there isn't */
 .post-content .highlight {
   position: relative;
-  margin-top: 1.6em;
+  /* As much room under it as over, where the tab is */
+  margin: 1.6em 0;
+}
+
+.post-content .highlight > pre {
+  margin-bottom: 0;
 }
 
 .copy-code {
@@ -492,9 +521,9 @@
   font-size: 0.75em;
   line-height: 1.4;
   color: var(--muted-color);
+  /* Of a piece with the block, which has no outline either */
   background: var(--code-bg);
-  border: 1px solid var(--border-color);
-  border-bottom: 0;
+  border: 0;
   border-radius: 0.35em 0.35em 0 0;
   cursor: pointer;
 }
@@ -562,9 +591,10 @@
   mix-blend-mode: multiply;
 }
 
-/* A picture keeps its distance from the paragraph over it, even one written straight under it */
+/* A picture keeps its distance from the text round it, even text written straight against it:
+   as far from it as a code block is, a little further than one paragraph is from the next */
 .post-content :is(a.full-size, p > img) {
-  margin-top: 1.2em;
+  margin-block: 1.6em;
 }
 
 /* One that's bigger than it can be shown opens full size */
@@ -577,7 +607,7 @@
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 0 auto 1.2em;
+  margin: 1.6em auto;
 }
 
 /* ---- Its end: its section's mark, the last thing on the sheet, as a magazine piece ends on one.
@@ -599,6 +629,14 @@
   width: 1.75rem;
   height: 1.75rem;
   margin: auto;
+}
+
+/* As far from the sheet's foot as the title is from its head. On a phone the sheet's top is
+   further from the title than the post's end is from its foot, by this much. */
+@media screen and (max-width: 48em) {
+  .post-fin {
+    padding-bottom: 0.4em;
+  }
 }
 
 /* As wide as the sheet, its words lined up with the sheet's; on what's round it. On a phone,

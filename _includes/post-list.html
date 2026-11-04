@@ -15,7 +15,7 @@
     {% assign post_year = post.date | date: "%Y" %}
     {% if include.dates != false %}<time class="post-list-date" datetime="{{ post.date | date: '%Y-%m-%d' }}">{% if post_year != post_list_year %}{{ post_year }}{% endif %}</time>{% endif %}
     {% assign post_list_year = post_year %}
-    <span class="post-list-main"><a class="post-list-title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>{% if post.note %}<span class="post-list-note"><span class="sr-only copy-gap"> </span>{{ post.note | escape }}</span>{% endif %}</span>
+    <span class="post-list-main"><a class="post-list-title" href="{{ post.url | relative_url }}">{{ post.title | smartify }}</a>{% if post.note %}<span class="post-list-note"><span class="sr-only copy-gap"> </span>{{ post.note | escape }}</span>{% endif %}</span>
   </li>
   {% endfor %}
 </ul>

@@ -60,6 +60,10 @@ image:
 .year {
   padding-left: var(--indent);
 }
+/* In one column it's simply the year's */
+.year-label {
+  display: contents;
+}
 .year + .year {
   margin-top: 3.5em;
 }
@@ -184,8 +188,9 @@ image:
   color: var(--c);
   background: none;
 }
+/* A count's the same size wherever it is, whatever it's beside */
 .major-head .stars {
-  font-size: 0.85em;
+  font-size: 0.81em;
 }
 .major p {
   margin: 0.5em 0 0;
@@ -383,14 +388,26 @@ image:
   .year:not(:has(.year-majors)) + .year:not(:has(.year-majors)) {
     margin-top: 2.5em;
   }
+  .year {
+    position: relative;
+  }
+  /* The stretch of the line the year has, which its label stays in as it's scrolled past. A year
+     can sit beside the one before it (assets/js/timeline.js), so that's to where the next one
+     starts, not to the end of what's in it. */
+  .year-label {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--left);
+    width: var(--rail);
+    pointer-events: none;
+  }
   .year h2 {
     /* Under the bar, when it's there, and on the line, in the rail */
     top: 4.6rem;
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
     width: 1.9em;
-    margin: 0.3em calc(2.75em / 2.1 - 0.95em) 0 0;
+    margin: 0.3em calc(2.75em / 2.1 - 0.95em) 0 auto;
     padding: 0;
     text-align: center;
   }
@@ -447,20 +464,6 @@ image:
     left: var(--line-x);
     translate: -50% 0;
     margin: 0;
-  }
-}
-/* A quiet project takes one line, once that leaves its words room */
-@media (min-width: 1280px) {
-  .minors li {
-    grid-template-columns: 7.7em minmax(0, 1fr) auto;
-    gap: 0 0.7em;
-  }
-  .minors li + li {
-    margin-top: 0.5em;
-  }
-  .minor-about {
-    grid-row: auto;
-    grid-column: auto;
   }
 }
 
@@ -556,7 +559,7 @@ image:
       {% assign minors = site.data.repos | where: 'year', y %}
       {% if majors.size > 0 or minors.size > 0 %}
       <li class="year" data-year="{{ y }}">
-        <h2>{{ y }}</h2>
+        <div class="year-label"><h2>{{ y }}</h2></div>
         {% if majors.size > 0 %}
         <div class="year-majors">
           {% for project in majors %}
@@ -565,10 +568,10 @@ image:
               <h3><a href="{{ project.href }}">{{ project.title }}</a></h3>
               {% include stars.html count=project.stars %}
             </div>
-            <p><strong>{{ project.what }}</strong> {{ project.why }} {{ project.how }}</p>
+            <p><strong>{{ project.what | smartify }}</strong> {{ project.why | smartify }} {{ project.how | smartify }}</p>
             {% if project.post %}
             {% assign post = site.blog | where: 'slug', project.post | first %}
-            <a class="major-post" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            <a class="major-post" href="{{ post.url | relative_url }}">{{ post.title | smartify }}</a>
             {% endif %}
           </article>
           {% endfor %}
@@ -579,7 +582,7 @@ image:
           {% for repo in minors %}
           <li>
             <a class="minor-name" href="{{ repo.href }}">{{ repo.name }}</a>
-            <span class="minor-about">{% if repo.post %}{% assign post = site.blog | where: 'slug', repo.post | first %}<a class="minor-post" href="{{ post.url | relative_url }}">{{ repo.description }}</a>{% else %}{{ repo.description }}{% endif %}</span>
+            <span class="minor-about">{% if repo.post %}{% assign post = site.blog | where: 'slug', repo.post | first %}<a class="minor-post" href="{{ post.url | relative_url }}">{{ repo.description | smartify }}</a>{% else %}{{ repo.description | smartify }}{% endif %}</span>
             {% include stars.html count=repo.stars %}
           </li>
           {% endfor %}
@@ -600,4 +603,5 @@ image:
 </div>
 
 <script src="{{ '/assets/js/fizz.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/timeline.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/pacman.js' | relative_url }}" defer></script>
