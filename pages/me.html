@@ -1300,7 +1300,7 @@ image:
 {%- comment -%} Placeholders show only outside production {%- endcomment -%}
 {%- assign draft = false %}{% if jekyll.environment != "production" %}{% assign draft = true %}{% endif %}
 <div class="taste">
-  <h1 class="page-title phone-only">Somu</h1>
+  <h1 class="sr-only">Somu</h1>
 
   <header class="me-top{% if taste.photo.src or draft %} has-photo{% endif %}">
     <p class="me-hello">{{ taste.hello }}</p>
