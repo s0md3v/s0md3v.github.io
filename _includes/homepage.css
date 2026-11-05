@@ -2411,9 +2411,34 @@ html:not(.dark-mode) .pi-screen {
 .bud-left .glow-ink { left: 71.5%; }
 .bud-right .glow-ink { left: 28%; }
 
+/* Drawn notes either side of the word, inside its writing so the glow at night copies them too */
+.tag-note,
+.glow .tag-note {
+  display: inline-block;
+  width: 0.34em;
+  height: 0.68em;
+  margin: 0 0.13em 0 0.12em;
+  /* Centred on the lowercase letters, not the line */
+  vertical-align: -0.125em;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  /* The handwriting's own line, about 0.08em: 2.3 of the 20 units in 0.68em */
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tag-note-pair,
+.glow .tag-note-pair {
+  width: 0.61em;
+  /* Ink to ink, as far from the word as the first */
+  margin-left: 0.09em;
+}
+
 #uses .tag {
-  /* Off to one side, so the right cable, which crosses at `over` in index.html, misses the word */
-  --tx: 81%; --ty: 75.2%; --tw: 9; --tr: 4deg;
+  /* The word sits between the two cables, the tape under them */
+  --tx: 48%; --ty: 70%; --tw: 9; --tr: 4deg;
 }
 
 #playground {

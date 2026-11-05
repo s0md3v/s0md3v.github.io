@@ -31,7 +31,7 @@ links:
     url: /playground/
     tooltip: random experiments
   me:
-    label: somu
+    label: me
     url: /me/
     tooltip: the rest of me
 
