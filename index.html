@@ -251,12 +251,12 @@ image:
     <a class="obj grounded" id="playground" href="{{ n.playground.url | relative_url }}">
       <span class="tag t2"><span>{{ n.playground.label | escape }}</span></span>
       <span class="lift"><span class="item">
-        <img class="base" src="{{ t }}petridish.webp" srcset="{{ t }}petridish-400.webp 400w, {{ t }}petridish.webp 720w"
-          data-night="{{ t }}petridish-night-400.webp 400w, {{ t }}petridish-night.webp 720w"
-          sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, (max-height: 500px) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
+        <img class="base" src="{{ t }}petridish.webp" srcset="{{ t }}petridish-200.webp 200w, {{ t }}petridish-400.webp 400w, {{ t }}petridish.webp 720w"
+          data-night="{{ t }}petridish-night-200.webp 200w, {{ t }}petridish-night-400.webp 400w, {{ t }}petridish-night.webp 720w"
+          sizes="(max-width: 700px) min(24vw, max(130px, 14.4vw)), (max-aspect-ratio: 4/5) min(24vw, max(130px, 14.4vw)), (max-height: 500px) min(24vw, max(130px, 14.4vw)), min(10.2vw, 19vh)" width="720" height="720" alt="">
       </span></span>
-      <img class="dish-sheen" src="{{ t }}petridish-sheen.webp" data-night="{{ t }}petridish-sheen-night.webp 720w"
-        srcset="{{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, (max-height: 500px) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
+      <img class="dish-sheen" src="{{ t }}petridish-sheen.webp" data-night="{{ t }}petridish-sheen-night-200.webp 200w, {{ t }}petridish-sheen-night-400.webp 400w, {{ t }}petridish-sheen-night.webp 720w"
+        srcset="{{ t }}petridish-sheen-200.webp 200w, {{ t }}petridish-sheen-400.webp 400w, {{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) min(24vw, max(130px, 14.4vw)), (max-aspect-ratio: 4/5) min(24vw, max(130px, 14.4vw)), (max-height: 500px) min(24vw, max(130px, 14.4vw)), min(10.2vw, 19vh)" width="720" height="720" alt="">
     </a>
     <canvas class="fizz" aria-hidden="true"></canvas>
     <div class="fizz-prints" aria-hidden="true"></div>
