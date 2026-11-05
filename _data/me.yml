@@ -126,6 +126,12 @@ sections:
       slug: perfect-days
     - title: Super Deluxe
       slug: super-deluxe
+    - title: "Love, Death & Robots"
+      slug: love-death-and-robots
+    - title: Black Mirror
+      slug: black-mirror
+    - title: The Office
+      slug: the-office
   videos:
     label: videos
     items:
