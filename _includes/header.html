@@ -15,10 +15,6 @@
             {% if page.url == nav_link.url %}{% assign nav_current = "page" %}{% endif %}
             <li><a class="nav-item" data-page="{{ link_id }}" data-name="{{ nav_link.label | escape }}" href="{{ nav_link.url | relative_url }}" aria-label="{{ nav_link.label | escape }}"{% if nav_current %} aria-current="{{ nav_current }}"{% endif %}>{% include marks/{{ link_id }}.svg %}<span class="nav-label">{{ nav_link.label | escape }}</span></a></li>
             {% endfor %}
-            {% if nav.phone_extra contains nav_title_id %}
-            {% assign nav_link = nav.links[nav_title_id] %}
-            <li class="nav-here"><a class="nav-item" data-page="{{ nav_title_id }}" data-name="{{ nav_link.label | escape }}" href="{{ nav_link.url | relative_url }}" aria-label="{{ nav_link.label | escape }}" aria-current="{% if page.url == nav_link.url %}page{% else %}true{% endif %}">{% include marks/{{ nav_title_id }}.svg %}<span class="nav-label">{{ nav_link.label | escape }}</span></a></li>
-            {% endif %}
         </ul>
 
         <div class="settings-wrapper">

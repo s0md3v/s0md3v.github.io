@@ -513,11 +513,6 @@ body {
   margin: 0;
 }
 
-/* On wider screens .nav-title names the section instead */
-.nav-links .nav-here {
-  display: none;
-}
-
 .nav-item {
   display: grid;
   place-items: center;
@@ -758,10 +753,6 @@ html {
 
   .nav-title {
     display: none;
-  }
-
-  .nav-links .nav-here {
-    display: block;
   }
 
   .nav-links li,

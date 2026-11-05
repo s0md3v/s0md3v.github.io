@@ -44,7 +44,3 @@ header:
 homepage_extra:
   - playground
   - me
-
-# Not in the header, but get a tab of their own on phones while you're in them
-phone_extra:
-  - me
