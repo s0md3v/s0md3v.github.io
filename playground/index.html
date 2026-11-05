@@ -19,7 +19,8 @@ handwritten_font: true
 }
 
 .experiments-page {
-  max-width: 60rem;
+  /* Content is min(46rem, 100% - 3rem), the same width as .header */
+  max-width: 49rem;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 5rem;
 }
@@ -32,9 +33,9 @@ handwritten_font: true
 
 .experiment {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  gap: 3rem;
+  gap: 2rem;
   padding: 1.5rem 0;
   color: inherit;
   text-decoration: none;
@@ -43,6 +44,12 @@ handwritten_font: true
 
 .experiment:focus-visible {
   outline: none;
+}
+
+.experiment:focus-visible .words {
+  outline: 2px solid var(--c-ink);
+  outline-offset: 0.6rem;
+  border-radius: 0.5rem;
 }
 
 .experiment:hover {
@@ -65,7 +72,7 @@ handwritten_font: true
 }
 
 .experiment:focus-visible h2 {
-  color: var(--c);
+  color: var(--c-ink);
 }
 
 .experiment:focus-visible p {
@@ -75,11 +82,31 @@ handwritten_font: true
 /* Touch counts as hovering and sticks after the finger lifts, so only hover on real pointers. */
 @media (hover: hover) {
   .experiment:hover h2 {
-    color: var(--c);
+    color: var(--c-ink);
   }
 
   .experiment:hover p {
     color: color-mix(in srgb, var(--midground-color) 35%, var(--foreground-color));
+  }
+}
+
+@media (hover: none) {
+  .experiment:active h2 {
+    color: var(--c-ink);
+  }
+
+  .experiment:active p {
+    color: color-mix(in srgb, var(--midground-color) 35%, var(--foreground-color));
+  }
+}
+
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .thing {
+    transition: scale 0.12s ease-out;
+  }
+
+  .experiment:active .thing {
+    scale: 0.96;
   }
 }
 
@@ -88,6 +115,8 @@ handwritten_font: true
   height: 17rem;
   display: grid;
   place-items: center;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .thing {
@@ -130,9 +159,11 @@ handwritten_font: true
   height: 100%;
 }
 
+/* opacity is a property, not a filter: Firefox breaks on brightness(0) blur() opacity() */
 #gita .shadow {
   translate: 2.2% 2.7%;
-  filter: brightness(0) blur(0.15rem) opacity(0.32);
+  filter: brightness(0) blur(0.15rem);
+  opacity: 0.32;
 }
 
 .dark-mode #gita .wheel {
@@ -140,7 +171,7 @@ handwritten_font: true
 }
 
 .dark-mode #gita .shadow {
-  filter: brightness(0) blur(0.15rem) opacity(0.6);
+  opacity: 0.6;
 }
 
 @media (max-width: 768px) {
@@ -190,7 +221,7 @@ handwritten_font: true
 
   <ol class="experiments">
     <li>
-      <a class="experiment" href="{{ '/playground/health-protocol/' | relative_url }}">
+      <a class="experiment" draggable="false" href="{{ '/playground/health-protocol/' | relative_url }}">
         <span class="stage" aria-hidden="true">
           <span class="thing" id="apple"><canvas></canvas></span>
         </span>
@@ -201,7 +232,7 @@ handwritten_font: true
       </a>
     </li>
     <li>
-      <a class="experiment" href="{{ '/playground/red-is-pain/' | relative_url }}">
+      <a class="experiment" draggable="false" href="{{ '/playground/red-is-pain/' | relative_url }}">
         <span class="stage" aria-hidden="true">
           <span class="thing" id="soldier"><canvas></canvas></span>
         </span>
@@ -212,13 +243,13 @@ handwritten_font: true
       </a>
     </li>
     <li>
-      <a class="experiment" href="{{ '/playground/gita/' | relative_url }}">
+      <a class="experiment" draggable="false" href="{{ '/playground/gita/' | relative_url }}">
         <span class="stage" aria-hidden="true">
           <span class="thing" id="gita">
             <img class="shadow" src="{{ lab }}chakra.avif" srcset="{{ lab }}chakra-240.avif 240w, {{ lab }}chakra.avif 448w"
-              sizes="(max-width: 768px) 8.75rem, 14rem" width="448" height="448" alt="" loading="lazy" decoding="async">
+              sizes="(max-width: 768px) 8.75rem, 14rem" width="448" height="448" alt="" draggable="false" loading="lazy" decoding="async">
             <img class="wheel" src="{{ lab }}chakra.avif" srcset="{{ lab }}chakra-240.avif 240w, {{ lab }}chakra.avif 448w"
-              sizes="(max-width: 768px) 8.75rem, 14rem" width="448" height="448" alt="" loading="lazy" decoding="async">
+              sizes="(max-width: 768px) 8.75rem, 14rem" width="448" height="448" alt="" draggable="false" loading="lazy" decoding="async">
           </span>
         </span>
         <span class="words">
@@ -228,7 +259,7 @@ handwritten_font: true
       </a>
     </li>
     <li>
-      <a class="experiment" href="{{ '/playground/sumi/' | relative_url }}">
+      <a class="experiment" draggable="false" href="{{ '/playground/sumi/' | relative_url }}">
         <span class="stage" aria-hidden="true">
           <span class="thing" id="water"><canvas></canvas></span>
         </span>

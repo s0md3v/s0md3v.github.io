@@ -113,8 +113,9 @@ html:has(.table) {
   opacity: 0.7;
 }
 
+/* --inked: how much the lamp shows the plain ink under the glow, set by the script */
 .table .glowing {
-  color: transparent;
+  color: color-mix(in srgb, var(--ink) calc(var(--inked, 0) * 100%), transparent);
 }
 
 .glow-ink {
@@ -213,14 +214,47 @@ a.obj:not(.grounded):focus-visible {
   translate: var(--rise, 0 0);
 }
 
-.table :focus-visible {
+.table :focus-visible,
+.focus-ring {
   outline: 2px dashed var(--ink);
   outline-offset: 4px;
 }
 
-.dark-mode .table :focus-visible {
+.dark-mode :is(.table :focus-visible, .focus-ring) {
   outline-color: #e6e2da;
   box-shadow: 0 0 0 7px rgb(16 15 15 / 0.75);
+}
+
+/* With the script, a single ring is drawn above the light layers, which would darken an
+   outline, and turned with what it rings */
+.table.ringed :focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.focus-ring {
+  position: absolute;
+  z-index: 46;
+  pointer-events: none;
+}
+
+/* On a phone's lit screen */
+.focus-ring.lit {
+  outline-color: #f4f2f7;
+}
+
+/* Pressed into the desk while held: on touch screens, the only feedback before the next page */
+:is(a.obj, #projects:has(.cover:active), #gallery:has(.cover:active)):active .lift {
+  translate: 0 1px;
+  filter:
+    drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) / var(--round, 1))))
+    drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), var(--cast-alpha)));
+  transition-duration: 60ms;
+}
+
+:is(a.obj, #projects:has(.cover:active), #gallery:has(.cover:active)):active .part {
+  filter: drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), var(--cast-alpha)));
+  transition-duration: 60ms;
 }
 
 .item {
@@ -2602,9 +2636,10 @@ html:not(.dark-mode) .sw-sun {
 .dark-mode .sw-bottom { background: #fff; }
 .dark-mode .sw-bottom i { height: 0; }
 
-@media (max-width: 700px), (max-aspect-ratio: 4/5) {
-  /* An upright tablet gets a phone's desk at most 540px across, centred: past that it's a
-     close-up. Wider than 900px it grows again, so the earphones' cable still leaves the table. */
+@media (max-width: 700px), (max-aspect-ratio: 4/5), (max-height: 500px) {
+  /* An upright tablet, or a phone on its side, gets a phone's desk at most 540px across, centred:
+     past that it's a close-up. Wider than 900px it grows again, so the earphones' cable still
+     leaves the table. */
   .table {
     --u: min(1vw, max(5.4px, 0.6vw));
     --ux: var(--u);
@@ -2640,5 +2675,5 @@ html:not(.dark-mode) .sw-sun {
   #gallery { --x: -20; --y: 304; --w: 36; --tw: 22; }
   #playground { --x: 24; --y: 336; --w: 24; --tw: 27; }
   #uses { --w: 30; left: calc(50% - 20 * var(--u)); top: calc(100% - 14 * var(--u)); }
-  #uses .tag { --tw: 18; }
+  #uses .tag { --tw: 22; }
 }

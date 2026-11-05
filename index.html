@@ -18,10 +18,16 @@ image:
   {% assign t = '/assets/images/table/' | relative_url %}
   <main class="table" aria-label="The desk">
     <h1 class="visually-hidden">Somdev Sangwan (s0md3v) - Security Researcher</h1>
+    <!-- The lamp's light first, so a dark desk is dark from the first paint -->
+    <div class="light" aria-hidden="true"></div>
+    <div class="dusk" aria-hidden="true"></div>
+    <div class="glint" aria-hidden="true"></div>
 
     <!-- Source order is reading and tab order -->
     <section class="obj" id="intro" aria-label="Introduction">
       <span class="lift"><span class="item">
+        <!-- First, so it doesn't come between the card's words and the sum written on the desk below -->
+        <button class="intro-turn" type="button" aria-label="Turn the business card over"></button>
         <span class="intro-text">
           <span class="intro-lines">
             <span class="intro-title">Somdev Sangwan</span>
@@ -41,17 +47,16 @@ image:
         <span class="intro-rim" aria-hidden="true"></span>
         <span class="intro-spread" aria-hidden="true"></span>
         <span class="intro-skip" aria-hidden="true"></span>
-        <button class="intro-turn" type="button" aria-label="Turn the card over"></button>
       </span></span>
       <ins class="pen"><span class="pen-sum"><span></span><span>experience</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span>obsession</span> <span class="plus"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.6C6 8.2 10 7.9 13.8 7.6M8.4 2.6C8.2 6 8 9.8 7.7 13.6" /></svg><span class="visually-hidden">+</span></span><span><span class="retraced">s</span>creentime</span></span></ins>
     </section>
 
     <!-- Small sizes are made by _raw/small.py. `sizes` uses u = min(0.85vw, 1.6vh) above 700px, and on
-         an upright tablet, the phones' layout. -->
+         an upright tablet or a phone on its side, the phones' layout. -->
     <a class="obj grounded" id="about" href="{{ n.about.url | relative_url }}">
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}polaroid.webp" srcset="{{ t }}polaroid-280.webp 280w, {{ t }}polaroid.webp 400w"
-          sizes="(max-width: 700px) 38vw, (max-aspect-ratio: 4/5) 38vw, min(14vw, 26.4vh)" width="400" height="481" alt="">
+          sizes="(max-width: 700px) 38vw, (max-aspect-ratio: 4/5) 38vw, (max-height: 500px) 38vw, min(14vw, 26.4vh)" width="400" height="481" alt="">
         <span class="ink polaroid-caption">{{ n.about.label | escape }}</span>
       </span>
       <span class="polaroid-film" aria-hidden="true"><i></i><i></i><i></i></span></span>
@@ -75,7 +80,7 @@ image:
         <span class="part pi-board">
           <!-- CORS, to share the fetch with the light's mask -->
           <img class="base" src="{{ t }}pi.webp" srcset="{{ t }}pi-340.webp 340w, {{ t }}pi-560.webp 560w, {{ t }}pi.webp 960w"
-            sizes="(max-width: 700px) 46vw, (max-aspect-ratio: 4/5) 46vw, min(14vw, 26.4vh)" width="960" height="419" alt=""
+            sizes="(max-width: 700px) 46vw, (max-aspect-ratio: 4/5) 46vw, (max-height: 500px) 46vw, min(14vw, 26.4vh)" width="960" height="419" alt=""
             crossorigin="anonymous">
           <span class="pi-glow"></span>
           <span class="pi-screen" aria-hidden="true">
@@ -187,7 +192,7 @@ image:
             </span>
           </span>
           <img class="base" src="{{ t }}phone.avif" srcset="{{ t }}phone-320.webp 320w, {{ t }}phone.avif 600w"
-          sizes="(max-width: 700px) 44vw, (max-aspect-ratio: 4/5) 44vw, min(12.8vw, 24vh)" width="600" height="1260" alt="">
+          sizes="(max-width: 700px) 44vw, (max-aspect-ratio: 4/5) 44vw, (max-height: 500px) 44vw, min(12.8vw, 24vh)" width="600" height="1260" alt="">
           <span class="phone-glow"></span>
         </span>
         <button class="phone-plug" type="button" aria-label="Plug the earphones into the phone to listen to the scanner"></button>
@@ -205,7 +210,7 @@ image:
       <span class="lift"><span class="item">
         <!-- CORS, to share the fetch with the glitter's mask -->
         <img class="base" src="{{ t }}simone.avif" srcset="{{ t }}simone-220.webp 220w, {{ t }}simone.avif 360w"
-          sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt=""
+          sizes="(max-width: 700px) 30vw, (max-aspect-ratio: 4/5) 30vw, (max-height: 500px) 30vw, min(10.6vw, 20vh)" width="360" height="319" alt=""
           crossorigin="anonymous">
         <span class="glow-ink" data-glow="halo" aria-hidden="true"><svg viewBox="0 0 360 319" stroke-width="6"><path d="M99 2C101 -12 250 -17 256 -2C261 12 112 20 99 6C96 0 108 -8 124 -10" /></svg></span>
         <canvas class="glitter" aria-hidden="true"></canvas>
@@ -217,7 +222,7 @@ image:
       <a class="tag t2" href="{{ n.gallery.url | relative_url }}" tabindex="-1" aria-hidden="true"><span>{{ n.gallery.label | escape }}</span></a>
       <span class="lift"><span class="item">
         <img class="base rimmed" src="{{ t }}digicam.avif" srcset="{{ t }}digicam-320.avif 320w, {{ t }}digicam.avif 660w"
-          sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
+          sizes="(max-width: 700px) 39vw, (max-aspect-ratio: 4/5) 39vw, (max-height: 500px) 39vw, min(16.5vw, 31vh)" width="660" height="439" alt="">
         <span class="cam-glow"></span>
         <span class="cam-spill"><span></span></span>
         <span class="cam-lamp"></span>
@@ -248,10 +253,10 @@ image:
       <span class="lift"><span class="item">
         <img class="base" src="{{ t }}petridish.webp" srcset="{{ t }}petridish-400.webp 400w, {{ t }}petridish.webp 720w"
           data-night="{{ t }}petridish-night-400.webp 400w, {{ t }}petridish-night.webp 720w"
-          sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
+          sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, (max-height: 500px) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
       </span></span>
       <img class="dish-sheen" src="{{ t }}petridish-sheen.webp" data-night="{{ t }}petridish-sheen-night.webp 720w"
-        srcset="{{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
+        srcset="{{ t }}petridish-sheen.webp 720w" sizes="(max-width: 700px) 36vw, (max-aspect-ratio: 4/5) 36vw, (max-height: 500px) 36vw, min(10.2vw, 19vh)" width="720" height="720" alt="">
     </a>
     <canvas class="fizz" aria-hidden="true"></canvas>
     <div class="fizz-prints" aria-hidden="true"></div>
@@ -289,11 +294,11 @@ image:
         <span class="part earbuds">
           <span class="bud bud-left"><img src="{{ t }}earbuds.avif" srcset="{{ t }}earbuds-190.avif 190w, {{ t }}earbuds-400.avif 400w, {{ t }}earbuds.avif 720w"
             data-night="{{ t }}earbuds-night-190.avif 190w, {{ t }}earbuds-night-400.avif 400w, {{ t }}earbuds-night.avif 720w"
-            sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
+            sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, (max-height: 500px) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <span class="glow-ink" aria-hidden="true">L</span></span>
           <span class="bud bud-right"><img src="{{ t }}earbuds.avif" srcset="{{ t }}earbuds-190.avif 190w, {{ t }}earbuds-400.avif 400w, {{ t }}earbuds.avif 720w"
             data-night="{{ t }}earbuds-night-190.avif 190w, {{ t }}earbuds-night-400.avif 400w, {{ t }}earbuds-night.avif 720w"
-            sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
+            sizes="(max-width: 700px) 23vw, (max-aspect-ratio: 4/5) 23vw, (max-height: 500px) 23vw, min(9.6vw, 18vh)" width="720" height="333" alt="">
             <span class="glow-ink" aria-hidden="true">R</span></span>
         </span>
       </span></span>
@@ -310,11 +315,9 @@ image:
       </span></span>
     </button>
 
-    <div class="light" aria-hidden="true"></div>
-    <div class="dusk" aria-hidden="true"></div>
-    <div class="glint" aria-hidden="true"></div>
     <div class="glow" aria-hidden="true"></div>
     <div class="glow aura" aria-hidden="true"></div>
+    <span class="focus-ring" aria-hidden="true" hidden></span>
     <svg class="filters" aria-hidden="true">
       <filter id="room-light-gallery" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0" />
@@ -383,7 +386,7 @@ image:
         turning = true;
         const flip = () => {
           const back = intro.classList.toggle('flipped');
-          turner.setAttribute('aria-label', back ? 'Turn the card back over' : 'Turn the card over');
+          turner.setAttribute('aria-label', back ? 'Turn the business card back over' : 'Turn the business card over');
         };
         if (still) {
           flip();
@@ -1841,8 +1844,10 @@ image:
       const writing = Array.from(table.querySelectorAll('.ink, .tag > span, .glow-ink'));
       const COPIED = ['fontSize', 'lineHeight', 'letterSpacing', 'textAlign', 'display', 'placeItems',
         'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
-      const paints = writing.map(() => [0.8 + Math.random() * 0.2, Math.random() * 4, Math.random() * 4]);
-      let risers = [];
+      const paints = writing.map(() => [0.9 + Math.random() * 0.1, Math.random() * 4, Math.random() * 4]);
+      let risers = [], lampAt = () => [0, 0, 0];
+      // Glow ink only shows in the dark: where the lamp's bright, writing is plain ink
+      const INKED = [0.3, 0.5];
       function glow() {
         const night = document.documentElement.classList.contains('dark-mode');
         const box = table.getBoundingClientRect();
@@ -1856,6 +1861,10 @@ image:
           const angle = totalTurn(el);
           const style = getComputedStyle(el);
           const [x, y] = midpoint(rect, box);
+          const lit = lampAt(x, y), bright = (0.2126 * lit[0] + 0.7152 * lit[1] + 0.0722 * lit[2]) / 255;
+          const t = el.matches('.glow-ink') ? 0 : Math.min(Math.max((bright - INKED[0]) / (INKED[1] - INKED[0]), 0), 1);
+          const inked = t * t * (3 - 2 * t);
+          el.style.setProperty('--inked', inked.toFixed(2));
           const copy = document.createElement('span');
           copy.innerHTML = el.innerHTML;
           if (el.dataset.glow) copy.className = el.dataset.glow;
@@ -1867,7 +1876,7 @@ image:
             height: `${el.offsetHeight}px`,
             rotate: `${angle}deg`,
             visibility: waiting.has(el.closest('.obj')) ? 'hidden' : '',
-            opacity: paints[i][0].toFixed(2),
+            opacity: (paints[i][0] * (1 - inked)).toFixed(2),
             maskPosition: `${paints[i][1].toFixed(2)}em ${paints[i][2].toFixed(2)}em`,
           });
           if (copy.className === 'halo') {
@@ -2005,6 +2014,7 @@ image:
         });
         table.style.setProperty('--glint', `radial-gradient(circle at ${bulbX}px ${bulbY}px, ${glare.join(', ')})`);
         lay();
+        lampAt = lightAt;
         glow();
 
         const setRoomLight = (name, lit) => {
@@ -2146,6 +2156,73 @@ image:
         }, { threshold: 1 });
         ready.get(paper).then(() => seen.observe(paper.querySelector('.leaf-title > span + span')));
       }
+
+      // Keyboard focus: one ring, above the light layers and turned with what it rings. An
+      // object's link rings the object and its label, and the card's button the card.
+      (() => {
+        const ring = table.querySelector('.focus-ring');
+        const turnOf = el => {
+          let turn = 0;
+          for (let at = el; at !== table; at = at.parentElement) {
+            const { a, b } = new DOMMatrix(getComputedStyle(at).transform);
+            turn += rotation(at) + Math.atan2(b, a) * 180 / Math.PI;
+          }
+          return turn;
+        };
+        const corners = el => {
+          const box = el.getBoundingClientRect(), turn = turnOf(el) * Math.PI / 180;
+          const [cos, sin] = [Math.cos(turn), Math.sin(turn)];
+          const [cx, cy] = [box.left + box.width / 2, box.top + box.height / 2];
+          const [w, h] = [el.offsetWidth / 2, el.offsetHeight / 2];
+          return [[-w, -h], [w, -h], [w, h], [-w, h]].map(([x, y]) => [cx + x * cos - y * sin, cy + x * sin + y * cos]);
+        };
+        const ringed = el => {
+          if (el === turner) return [stock];
+          const obj = el.closest('.obj');
+          if (el === obj && obj.matches('a') || el.matches('.cover')) return [obj.querySelector('.item'), ...obj.querySelectorAll('.tag')];
+          return [el];
+        };
+        function place() {
+          const el = document.activeElement;
+          if (!el || el === table || !table.contains(el) || !el.matches(':focus-visible')) return ring.hidden = true;
+          const shapes = ringed(el), angle = turnOf(shapes[0]), turn = angle * Math.PI / 180;
+          const [cos, sin] = [Math.cos(turn), Math.sin(turn)];
+          // The bounds of every corner, in the first shape's turned frame
+          const points = shapes.flatMap(corners).map(([x, y]) => [x * cos + y * sin, y * cos - x * sin]);
+          const [xs, ys] = [points.map(([x]) => x), points.map(([, y]) => y)];
+          const [left, right, top, bottom] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+          const [mx, my, w, h] = [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top];
+          const box = table.getBoundingClientRect();
+          Object.assign(ring.style, {
+            left: `${(mx * cos - my * sin - box.left - w / 2).toFixed(1)}px`,
+            top: `${(mx * sin + my * cos - box.top - h / 2).toFixed(1)}px`,
+            width: `${w.toFixed(1)}px`,
+            height: `${h.toFixed(1)}px`,
+            rotate: `${angle.toFixed(2)}deg`,
+            borderRadius: shapes.length > 1 ? '' : getComputedStyle(shapes[0]).borderRadius,
+          });
+          ring.classList.toggle('lit', !!el.closest('.phone-screen'));
+          ring.hidden = false;
+        }
+        // Lifts, the card's turn and the jack's moves are transitions: follow them for a while
+        let until = 0, tick = 0;
+        const follow = ms => {
+          until = Math.max(until, performance.now() + ms);
+          if (tick) return;
+          const step = () => {
+            place();
+            tick = performance.now() < until ? requestAnimationFrame(step) : 0;
+          };
+          tick = requestAnimationFrame(step);
+        };
+        ['focusin', 'focusout', 'pointerover', 'pointerout'].forEach(type => table.addEventListener(type, () => follow(400)));
+        ['keydown', 'click'].forEach(type => table.addEventListener(type, () => follow(1200)));
+        window.addEventListener('resize', () => follow(400));
+        table.classList.add('ringed');
+      })();
+
+      // iOS Safari applies :active only when a touchstart listener exists
+      table.addEventListener('touchstart', () => {}, { passive: true });
 
       if (!still && 'IntersectionObserver' in window) {
         const polaroid = document.getElementById('about');

@@ -132,6 +132,8 @@ sections:
       slug: black-mirror
     - title: The Office
       slug: the-office
+    - title: Invincible
+      slug: invincible
   videos:
     label: videos
     items:
@@ -252,9 +254,6 @@ sections:
 - section: Sneakers
   # Arranged like a shop window: the loudest first, the Ghost Smashers in the middle of the top
   # shelf, no two alike in colour or height side by side, and the plain cream Converse to close
-  aside: |-
-    haven't bought a sneaker in 2 years,
-    i would buy a cheaper pokemon one if i could
   items:
     - title: Nike Air Jordan 1 Spider-Verse
       slug: jordan-1-spiderverse

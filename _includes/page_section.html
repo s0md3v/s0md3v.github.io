@@ -10,3 +10,6 @@
 {% if entry_url != "/" %}{% if page.url == entry_url or entry_last == "/" and page_url_prefix == entry_url %}{% assign nav_title = nav_entry[1].label %}{% assign nav_title_id = nav_entry[0] %}{% endif %}{% endif %}
 {% endfor %}
 {% if nav_title_id and nav.header contains nav_title_id %}{% assign nav_section = nav_title_id %}{% endif %}
+{% comment %} Inside a section the bar has no mark for: the title links back to its index {% endcomment %}
+{% assign nav_title_url = nil %}
+{% if nav_title_id and nav_section == nil and page.url != nav.links[nav_title_id].url %}{% assign nav_title_url = nav.links[nav_title_id].url %}{% endif %}

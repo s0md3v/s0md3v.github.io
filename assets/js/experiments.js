@@ -1201,7 +1201,12 @@ void main() {
       for (let n = 0; n < 60 * 4; n++) bleed(1 / 60);
     }
 
-    return { step, draw, resize, follow, settle };
+    function nudge(row) {
+      const words = row.querySelector('.words').getBoundingClientRect();
+      follow({ x: words.left + words.width / 2, y: words.top + words.height / 2 });
+    }
+
+    return { step, draw, resize, follow, settle, nudge };
   });
 
   setUp('apple', thing => {
@@ -1679,7 +1684,11 @@ void main() {
 
     const follow = () => true;
 
-    return { step, draw, resize, follow, settle() {} };
+    function nudge() {
+      vx += R * 3;
+    }
+
+    return { step, draw, resize, follow, settle() {}, nudge };
   });
 
   setUp('water', thing => {
@@ -2593,7 +2602,11 @@ void main() {
 
     thing.canvas.addEventListener('contextrestored', () => draw(true));
 
-    return { step, draw, resize, follow, settle, density: 1 };
+    function nudge() {
+      due = clock;
+    }
+
+    return { step, draw, resize, follow, settle, nudge, density: 1 };
   });
 
   setUp('links', thing => {
@@ -3056,8 +3069,48 @@ void main() {
       return near;
     }
 
-    return { step, draw, resize() {}, follow, settle() { spin = 0; } };
+    function nudge() {
+      spin += 1.5;
+    }
+
+    return { step, draw, resize() {}, follow, settle() { spin = 0; }, nudge };
   });
+
+  for (const row of page.querySelectorAll('.experiment')) {
+    const thing = things.find(t => row.contains(t.el));
+    let nudged = -Infinity;
+    const nudge = () => {
+      const now = performance.now();
+      if (!thing || !thing.nudge || still.matches || now - nudged < 1000) return;
+      nudged = now;
+      thing.nudge(row);
+      wake(thing);
+    };
+    row.addEventListener('focus', () => {
+      if (row.matches(':focus-visible')) nudge();
+    });
+    row.addEventListener('pointerenter', e => {
+      if (e.pointerType === 'mouse' || e.pointerType === 'pen') nudge();
+    });
+
+    // A press that moves (a fling, a text selection) shouldn't open the link
+    let down = null, moved = false;
+    row.addEventListener('pointerdown', e => {
+      down = e.pointerType === 'touch' ? null : { x: e.clientX, y: e.clientY };
+      moved = false;
+    });
+    row.addEventListener('pointermove', e => {
+      if (down && e.buttons && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) moved = true;
+    }, { passive: true });
+    row.addEventListener('click', e => {
+      if (moved && e.detail) e.preventDefault();
+      down = null;
+      moved = false;
+    });
+  }
+
+  // iOS Safari applies :active only when a touchstart listener exists
+  page.addEventListener('touchstart', () => {}, { passive: true });
 
   new MutationObserver(redraw).observe(root, { attributes: true, attributeFilter: ['class'] });
 

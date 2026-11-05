@@ -190,6 +190,10 @@
   color: var(--link-color);
 }
 
+.post-content ol > li::marker {
+  color: var(--accent-color);
+}
+
 .post-content li>p:last-child {
   margin-bottom: 0;
 }
@@ -294,14 +298,14 @@
 }
 
 .blog-content a:focus-visible {
-  outline: 2px solid var(--link-color);
+  outline: 2px solid var(--accent-color);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
 .blog-content :is(a.footnote, a.reversefootnote) {
   position: relative;
-  color: var(--link-color);
+  color: var(--accent-color);
   text-decoration: none;
 }
 
@@ -395,7 +399,7 @@
 .slip-number {
   margin-right: 0.45em;
   font-weight: 600;
-  color: var(--link-color);
+  color: var(--accent-color);
 }
 
 .slip.near {
@@ -493,12 +497,12 @@
 }
 
 .copy-code:focus-visible {
-  outline: 2px solid var(--link-color);
+  outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
 
 .post-content pre:focus-visible {
-  outline: 2px solid var(--link-color);
+  outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
 
@@ -518,7 +522,7 @@
 }
 
 .post-content .highlight :is(.k, .kc, .kd, .kn, .kp, .kr, .kt, .ow, .nt) {
-  color: var(--link-color);
+  color: var(--accent-color);
 }
 
 .post-content .highlight :is(.s, .sa, .sb, .sc, .dl, .sd, .s1, .s2, .se, .sh, .si, .sx, .sr, .ss, .m, .mb, .mf, .mh, .mi, .il, .mo, .na) {

@@ -4,7 +4,22 @@ document.addEventListener('DOMContentLoaded', function () {
         buttons.forEach(btn => {
             const active = btn === activeButton;
             btn.classList.toggle('active', active);
-            btn.setAttribute('aria-pressed', String(active));
+            btn.setAttribute('aria-checked', String(active));
+            btn.tabIndex = active || !activeButton ? 0 : -1;
+        });
+    }
+
+    // Radio group keys: arrows move to and pick the neighbouring option
+    function setupRadioKeys(buttons) {
+        buttons.forEach((button, i) => {
+            button.addEventListener('keydown', event => {
+                const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+                if (!step) return;
+                event.preventDefault();
+                const next = buttons[(i + step + buttons.length) % buttons.length];
+                next.focus();
+                next.click();
+            });
         });
     }
 
@@ -30,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const showTheme = () => setActiveOption(themeButtons, document.querySelector(`.theme-options button[data-theme="${getPreferredTheme()}"]`));
         showTheme();
         systemDark.addEventListener('change', showTheme);
+        setupRadioKeys(themeButtons);
 
         themeButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -47,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!soundButtons.length || !window.siteSound) return;
         const show = () => setActiveOption(soundButtons, document.querySelector(`.sound-options button[data-sound="${siteSound.enabled ? 'on' : 'off'}"]`));
         show();
+        setupRadioKeys(soundButtons);
 
         soundButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -147,24 +164,37 @@ document.addEventListener('DOMContentLoaded', function () {
     const title = document.querySelector('.nav-title');
     if (header && title) {
         const here = title.textContent;
+        let restoring;
+        // Shows a hovered mark's name in its colour
         const preview = item => {
+            clearTimeout(restoring);
+            if (title.classList.contains('previewing') && title.textContent === item.dataset.name) return;
             title.textContent = item.dataset.name;
+            title.classList.add('previewing');
             title.style.setProperty('--c', getComputedStyle(item).getPropertyValue('--c'));
         };
         const restore = () => {
+            clearTimeout(restoring);
             title.textContent = here;
+            title.classList.remove('previewing');
             title.style.removeProperty('--c');
         };
-        const named = event => event.target.closest?.('.nav-item:not([aria-current])');
+        const named = target => target?.closest?.('.nav-item:not([aria-current])');
 
         header.addEventListener('pointerover', event => {
-            if (event.pointerType === 'mouse' && named(event)) preview(named(event));
+            if (event.pointerType !== 'mouse') return;
+            if (named(event.target)) preview(named(event.target));
+            // The title can be a link to its own section, so it never shows another name under the pointer
+            else if (title.contains(event.target)) restore();
         });
         header.addEventListener('pointerout', event => {
-            if (named(event)) restore();
+            if (!named(event.target) || named(event.relatedTarget)) return;
+            // Crossing the gap between two marks shouldn't flash the page's own name
+            clearTimeout(restoring);
+            restoring = setTimeout(restore, 120);
         });
         header.addEventListener('focusin', event => {
-            if (named(event)?.matches(':focus-visible')) preview(named(event));
+            if (named(event.target)?.matches(':focus-visible')) preview(named(event.target));
         });
         header.addEventListener('focusout', restore);
     }

@@ -33,7 +33,7 @@ image:
   --rule: color-mix(in srgb, var(--muted-color) 22%, transparent);
   max-width: 72em;
   margin: 0 auto;
-  padding: 2.5em var(--gutter) 6em;
+  padding: 2.5em var(--gutter) 9em;
   padding-left: max(var(--gutter), env(safe-area-inset-left));
   padding-right: max(var(--gutter), env(safe-area-inset-right));
   font-size: var(--reading-size);
@@ -44,10 +44,10 @@ image:
 /* The top: hello, and his life beside the photo */
 .me-top.has-photo {
   display: grid;
-  grid-template-columns: minmax(0, 34em) minmax(0, 21em);
+  grid-template-columns: minmax(26em, 34em) minmax(0, min(21em, (100svh - 8em) * 0.8));
   grid-template-rows: auto 1fr;
   justify-content: space-between;
-  column-gap: 4em;
+  column-gap: clamp(2.5em, 4vw, 4em);
   align-items: start;
 }
 
@@ -102,7 +102,7 @@ image:
   display: grid;
   grid-template-columns: 4.75em minmax(0, 1fr);
   column-gap: 1.25em;
-  margin: 0 0 1.25em;
+  margin: 0 0 2em;
 }
 
 .life-year {
@@ -132,6 +132,10 @@ image:
   color: var(--muted-color);
 }
 
+.life-text p {
+  margin-bottom: 0.75em;
+}
+
 .life-text p:last-child {
   margin-bottom: 0;
 }
@@ -148,6 +152,8 @@ image:
 
   .me-top .me-photo {
     max-width: none;
+    margin-inline: 0.4em;
+    rotate: 0.8deg;
   }
 
   .life-end,
@@ -156,20 +162,34 @@ image:
   }
 }
 
+/* A print: a paper border and the shelves' shadow, set down a little crooked */
 .me-photo {
   position: sticky;
   top: 6em;
-  margin: 0.4em 0 0;
+  margin: 1.05em 0 0;
+  padding: 0.6em;
+  background: #fcfaf4;
+  rotate: 1.2deg;
+  filter:
+    drop-shadow(0.5px 0.5px 1px rgba(var(--sheet-shadow), 0.22))
+    drop-shadow(2px 3px 6px rgba(var(--sheet-shadow), 0.14))
+    drop-shadow(6px 11px 24px rgba(var(--sheet-shadow), 0.09));
+}
+
+.dark-mode .me-photo {
+  background: #2e2b27;
+  filter: brightness(0.9) drop-shadow(2px 4px 12px rgba(0, 0, 0, 0.55));
 }
 
 .me-photo img {
   display: block;
+  /* the valley's colours, until it arrives */
+  background: linear-gradient(#8b9bb2, #66694f 55%, #554e22);
   width: 100%;
   height: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  border-radius: 0.35em;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 14px 32px -14px rgb(0 0 0 / 0.35);
+  border-radius: 1px;
 }
 
 .me-photo figcaption {
@@ -195,7 +215,7 @@ image:
   text-wrap: balance;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 940px) {
   .me-top.has-photo {
     display: block;
   }
@@ -211,38 +231,58 @@ image:
   margin-top: 1.5em;
 }
 
-.taste-closing {
+/* The end: back in the story's voice, signed off with his address at the greeting's weight */
+.shelf.taste-closing {
   max-width: 34em;
-  font-size: 1.12em;
-  color: var(--heading-color);
+  margin-top: 9em;
+  font-size: 1.06em;
+  line-height: 1.6;
+  color: var(--foreground-color);
+}
+
+.taste-closing .shelf-head {
+  margin-bottom: 0.8em;
 }
 
 .taste-closing .shelf-title {
-  font-size: 1.52em;
+  font-size: 1.15em;
+  font-weight: 500;
+  color: var(--muted-color);
 }
 
 .taste-closing p {
   margin: 0 0 0.85em;
 }
 
-.me-mail {
-  margin: 2.5em 0 0;
-  font-weight: 500;
+.taste-closing .me-mail {
+  margin: 2em 0 0;
+  font-size: 1.75em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
 }
 
 .me-mail a {
   color: var(--heading-color);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--link-color) 55%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+.me-mail a:hover {
+  background: none;
+  color: var(--accent-color);
 }
 
 .me-reply {
   display: inline-block;
   margin-left: 0.4em;
   font-family: "Reenie Beanie", cursive;
-  font-size: 1.4em;
+  font-size: 1.05em;
   font-weight: 400;
   line-height: 1;
   color: var(--pen);
-  rotate: -2deg;
+  rotate: -3deg;
 }
 
 .taste-updated {
@@ -256,8 +296,9 @@ image:
   scroll-margin-top: 5em;
 }
 
+/* The turn from him to his things */
 .me-top + .shelf {
-  margin-top: 6em;
+  margin-top: 9em;
 }
 
 .page-title + .shelf {
@@ -274,14 +315,23 @@ image:
 
 .shelf-title {
   margin: 0;
-  font-size: 1.7em;
+  font-size: 1.35em;
   font-weight: 600;
   line-height: 1.2;
   color: var(--heading-color);
 }
 
+.shelf-head {
+  position: relative;
+}
+
 .shelf-link {
-  margin-left: 0.3em;
+  position: absolute;
+  top: 0;
+  right: 100%;
+  padding-right: 0.3em;
+  font-size: 1.35em;
+  line-height: 1.2;
   color: var(--muted-color);
   font-weight: 400;
   text-decoration: none;
@@ -289,11 +339,16 @@ image:
   transition: opacity 0.15s ease;
 }
 
+.taste-closing .shelf-link {
+  font-size: 1.15em;
+}
+
 .shelf-link::before {
   content: "#";
 }
 
-.shelf-title:hover .shelf-link {
+.shelf-head:hover .shelf-link,
+.shelf-link:focus-visible {
   opacity: 1;
 }
 
@@ -303,7 +358,7 @@ image:
 
 @media (hover: none) {
   .shelf-link {
-    display: none;
+    opacity: 0.35;
   }
 }
 
@@ -311,6 +366,10 @@ image:
   display: none;
   font-size: 0.9em;
   color: var(--muted-color);
+}
+
+.handwritten-font-hidden :is(.thing-note, .thing-mark, .shelf-aside, .life-ish, .me-reply, .sign-card) {
+  opacity: 0;
 }
 
 /* Its lines are <br>s, as he'd break them */
@@ -356,8 +415,51 @@ image:
 }
 
 .thing a {
+  display: block;
   color: inherit;
   text-decoration: none;
+}
+
+.thing a .thing-picture {
+  transition: translate 0.18s ease;
+}
+
+.thing a:hover .thing-picture,
+.thing a:focus-visible .thing-picture {
+  translate: 0 -4px;
+}
+
+.thing a:active .thing-picture {
+  translate: 0 -1px;
+  transition-duration: 0.05s;
+}
+
+.thing a:focus-visible {
+  outline: 2px solid var(--foreground-color);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* and say so where nothing can be hovered */
+@media (hover: none) {
+  .thing a > .thing-picture::before {
+    content: "↗";
+    content: "↗" / "";
+    position: absolute;
+    z-index: 3;
+    right: 0.4em;
+    bottom: 0.4em;
+    display: grid;
+    place-items: center;
+    width: 1.6em;
+    height: 1.6em;
+    border-radius: 50%;
+    background: var(--background-color);
+    box-shadow: 0 1px 3px rgba(var(--sheet-shadow), 0.3);
+    font-size: 0.8em;
+    line-height: 1;
+    color: var(--heading-color);
+  }
 }
 
 .thing a:hover {
@@ -388,6 +490,10 @@ image:
 
 .lines .has-note-above > .thing-note {
   bottom: calc(100% - 0.35em);
+}
+
+.things.roomy {
+  row-gap: 4.5em;
 }
 
 .has-note-above > .thing-note.from-right {
@@ -483,6 +589,17 @@ image:
   text-decoration: line-through 2px var(--pen);
 }
 
+.poster img,
+.book img,
+.case img,
+.screen img {
+  background: color-mix(in srgb, var(--muted-color) 14%, var(--background-color));
+}
+
+.dark-mode :is(.poster, .book, .screen) img {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
 .poster img {
   aspect-ratio: 2 / 3;
   object-fit: cover;
@@ -519,11 +636,28 @@ image:
 
 .shelf-extra summary::after {
   content: "→";
+  content: "→" / "";
   transition: rotate 0.15s ease;
 }
 
 .shelf-extra[open] summary::after {
   rotate: 90deg;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  .shelf-extra {
+    interpolate-size: allow-keywords;
+  }
+
+  .shelf-extra::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 0.25s ease, content-visibility 0.25s allow-discrete;
+  }
+
+  .shelf-extra[open]::details-content {
+    block-size: auto;
+  }
 }
 
 .shelf-extra .things,
@@ -680,8 +814,23 @@ image:
 
 .shelf-sneakers .things {
   --w: 9.25em;
-  grid-template-columns: repeat(auto-fill, minmax(max(var(--w), 100% / 6), 1fr));
+  grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr));
   column-gap: 0;
+}
+
+@media (max-width: 1030px) {
+  .shelf-sneakers .things { --cols: 4; }
+}
+
+@media (max-width: 670px) {
+  .shelf-sneakers .things { --cols: 3; }
+}
+
+/* six cases stay one row rather than leaving one alone */
+@media (min-width: 791px) and (max-width: 970px) {
+  .shelf-play .things {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
 }
 
 .shelf-sneakers .thing {
@@ -796,6 +945,7 @@ image:
 
 .shelf-sneakers .thing-name {
   margin-top: 1.2em;
+  text-align: center;
   font-size: 0.82em;
   font-weight: 400;
 }
@@ -1228,18 +1378,18 @@ image:
   .shelf-watch .things { --rw: 40vw; }
   .shelf-read .things,
   .shelf-play .things { --rw: 34vw; }
-  .shelf-read .things { column-gap: 4.25em; }
-  .shelf-read .thing-note { font-size: min(1.35em, 5.5vw); }
+  .shelf-read .things { column-gap: min(4.25em, 19vw); }
+  .shelf-read .thing-note { font-size: max(1.1em, min(1.35em, 5.5vw)); }
   .shelf-listen .things { --rw: 46vw; }
   .shelf-watch .screens { --rw: 70vw; }
-  .shelf-sneakers .things { --rw: 48vw; gap: 0; }
+  .shelf-sneakers .things { --rw: 43vw; gap: 0; }
 
   .read-layout {
     row-gap: 2.5em;
   }
 
   .lines .has-note-above {
-    display: grid;
+    display: var(--side-by-side, grid);
     grid-template-columns: auto 1fr;
     align-items: center;
     column-gap: 0.75em;
@@ -1252,12 +1402,47 @@ image:
     position: static;
     grid-area: 1 / 2 / 3 / 3;
     margin: 0;
-    font-size: min(1.35em, 5.5vw);
+    font-size: max(1.1em, min(1.35em, 5.5vw));
   }
 
   .things:has(> .has-note-above) {
-    margin-top: -3.5em;
+    margin-top: -1.75em;
     padding-top: 4.25em;
+  }
+
+  .things:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .shelf-head {
+    position: static;
+  }
+
+  .shelf-link {
+    position: static;
+    order: 2;
+    padding: 0;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  .shelf-count { order: 1; }
+  .shelf-aside { order: 3; }
+
+  .shelf-extra summary {
+    padding: 0.6em 1em;
+  }
+
+  .shelf.taste-closing {
+    margin-top: 6em;
+  }
+
+  .me-top + .shelf {
+    margin-top: 6em;
+  }
+
+  .taste-closing .me-mail {
+    font-size: clamp(1.3em, 6.2vw, 1.75em);
   }
 
   .shelf-use .things {
@@ -1277,22 +1462,46 @@ image:
   }
 
   .sher blockquote {
-    font-size: min(1.25em, 3.7vw);
+    font-size: max(0.75em, min(1.25em, 4vw));
+  }
+
+  .sher-meaning,
+  .sher-by {
+    font-size: 0.8em;
   }
 }
 
 @media (max-width: 600px) {
   .shelf-aside {
     flex-basis: 100%;
-    margin-left: 0.15em;
-    font-size: min(1.35em, 5.2vw);
+    margin: 0.15em 0 0 0.15em;
+    font-size: max(1.1em, min(1.35em, 5.2vw));
+    white-space: normal;
+  }
+}
+
+@media (max-width: 23.5em) {
+  .lines .has-note-above {
+    --side-by-side: block;
+  }
+
+  .lines .has-note-above > .thing-note {
+    display: block;
+    margin: 0 0 0.25em 0.2em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .record-disc,
-  .shelf-extra summary::after {
+  .shelf-extra summary::after,
+  .thing a .thing-picture,
+  .shelf-extra::details-content {
     transition: none;
+  }
+
+  .thing a:hover .thing-picture,
+  .thing a:focus-visible .thing-picture {
+    translate: none;
   }
 }
 </style>
@@ -1308,7 +1517,7 @@ image:
     {%- if taste.photo.src %}
     <figure class="me-photo">
       {%- assign photo = '/assets/images/me/' | append: taste.photo.src %}
-      <img src="{{ photo | append: '-540.webp' | relative_url }}" srcset="{{ photo | append: '-540.webp' | relative_url }} 540w, {{ photo | append: '-1080.webp' | relative_url }} 1080w" sizes="(max-width: 860px) 20em, 21em" width="1080" height="1350" alt="{{ taste.photo.alt | escape }}" fetchpriority="high">
+      <img src="{{ photo | append: '-540.webp' | relative_url }}" srcset="{{ photo | append: '-540.webp' | relative_url }} 540w, {{ photo | append: '-1080.webp' | relative_url }} 1080w" sizes="(max-width: 940px) 20em, 21em" width="1080" height="1350" alt="{{ taste.photo.alt | escape }}" fetchpriority="high">
       {%- if taste.photo.note %}
       <figcaption class="thing-note">{{ taste.photo.note | newline_to_br | strip_newlines }}</figcaption>
       {%- endif %}
@@ -1332,7 +1541,7 @@ image:
   {% assign kind = shelf.section | slugify %}
   <section class="shelf shelf-{{ kind }}" id="{{ kind }}" aria-labelledby="shelf-{{ kind }}">
     <div class="shelf-head">
-      <h2 class="shelf-title" id="shelf-{{ kind }}">{{ shelf.section }}<a class="shelf-link" href="#{{ kind }}" aria-hidden="true" tabindex="-1"></a></h2>
+      <h2 class="shelf-title" id="shelf-{{ kind }}">{{ shelf.section }}</h2><a class="shelf-link" href="#{{ kind }}" aria-label="Link to {{ shelf.section }}"></a>
       {%- if shelf.items.first.slug %}
       <span class="shelf-count" aria-hidden="true">{{ shelf.items | size }}</span>
       {%- endif %}
@@ -1465,7 +1674,7 @@ image:
   {% if taste.now %}
   <section class="shelf taste-closing" id="now" aria-labelledby="shelf-now">
     <div class="shelf-head">
-      <h2 class="shelf-title" id="shelf-now">Now<a class="shelf-link" href="#now" aria-hidden="true" tabindex="-1"></a></h2>
+      <h2 class="shelf-title" id="shelf-now">Now</h2><a class="shelf-link" href="#now" aria-label="Link to Now"></a>
     </div>
     {{ taste.now.text | markdownify }}
     <p class="taste-updated">As of {{ taste.now.updated | date: "%B %Y" }}</p>
@@ -1489,13 +1698,33 @@ image:
 
 <script>
   (function () {
-    const notes = document.querySelectorAll('.has-note-above > .thing-note');
-    const fit = () => notes.forEach(note => {
-      const shelf = note.closest('.things, .lines');
-      note.classList.remove('from-right');
-      if (!shelf || getComputedStyle(shelf).overflowX !== 'visible') return;
-      if (note.getBoundingClientRect().right > shelf.getBoundingClientRect().right) note.classList.add('from-right');
-    });
+    const notes = [...document.querySelectorAll('.has-note-above > .thing-note')];
+    const hit = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    const fit = () => {
+      notes.forEach(note => {
+        note.classList.remove('from-right');
+        note.style.translate = '';
+        note.closest('.things')?.classList.remove('roomy');
+      });
+      notes.forEach(note => {
+        const shelf = note.closest('.things, .lines');
+        if (!shelf || getComputedStyle(shelf).overflowX !== 'visible') return;
+        if (note.getBoundingClientRect().right > shelf.getBoundingClientRect().right) note.classList.add('from-right');
+        // a noted thing that starts a later row needs room above it for the note
+        const item = note.parentElement;
+        if (shelf.classList.contains('things') && item.getBoundingClientRect().top > shelf.firstElementChild.getBoundingClientRect().bottom) shelf.classList.add('roomy');
+      });
+      notes.filter(note => note.classList.contains('from-right')).forEach(note => {
+        const shelf = note.closest('.things, .lines');
+        const r = note.getBoundingClientRect();
+        const lift = Math.max(0, ...[...shelf.querySelectorAll('.thing-note, .thing-mark')]
+          .filter(other => !note.parentElement.contains(other))
+          .map(other => other.getBoundingClientRect())
+          .filter(other => hit(r, other))
+          .map(other => r.bottom - other.top + 4));
+        if (lift) note.style.translate = `0 ${-lift}px`;
+      });
+    };
     fit();
     new ResizeObserver(fit).observe(document.querySelector('.taste'));
     document.fonts?.ready.then(fit);
@@ -1505,14 +1734,13 @@ image:
     const rows = document.querySelectorAll('.things');
     const reach = () => rows.forEach(row => {
       const scrolls = row.scrollWidth > row.clientWidth + 1;
-      const name = row.closest('section')?.querySelector('h2')?.textContent.trim();
+      const extra = row.closest('details')?.querySelector('summary');
+      const name = (extra || row.closest('section')?.querySelector('h2'))?.textContent.trim();
       if (scrolls) {
         row.tabIndex = 0;
-        row.setAttribute('role', 'region');
-        row.setAttribute('aria-label', `${name}, scrolls sideways`);
+        row.setAttribute('aria-label', name);
       } else {
         row.removeAttribute('tabindex');
-        row.removeAttribute('role');
         row.removeAttribute('aria-label');
       }
     });

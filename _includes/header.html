@@ -5,7 +5,7 @@
 <header id="site-header" class="header">
     <nav class="nav-container" aria-label="Main">
         <a class="nav-item nav-home" data-page="home" data-name="{{ nav.links.home.label | escape }}" href="{{ nav.links.home.url | relative_url }}" aria-label="somdev sangwan, {{ nav.links.home.label | escape }}">{% include marks/home.svg %}<span class="nav-name">somdev sangwan</span><span class="nav-label">{{ nav.links.home.label | escape }}</span></a>
-        <span class="nav-title" data-page="{{ nav_title_id }}" aria-hidden="true">{{ nav_title | escape }}</span>
+        {% if nav_title_url %}<a class="nav-title" data-page="{{ nav_title_id }}" href="{{ nav_title_url | relative_url }}">{{ nav_title | escape }}</a>{% else %}<span class="nav-title" data-page="{{ nav_title_id }}" aria-hidden="true">{{ nav_title | escape }}</span>{% endif %}
 
         <ul class="nav-links" id="site-navigation">
             {% for link_id in nav.header %}
@@ -22,29 +22,16 @@
             <div class="settings-dropdown" id="settings-menu">
                 <div class="settings-section">
                     <div class="settings-subtitle" id="settings-theme-label">theme</div>
-                    <div class="settings-options theme-options" role="group" aria-labelledby="settings-theme-label">
-                        <button data-theme="light" aria-label="Light Mode" aria-pressed="false">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14.5 14.5c-1.2 2.5-4.5 3.2-6.5 1.5s-2.8-4.8-1.2-6.8 4.2-2.5 6.2-1.2 2.5 4.5 1.5 6.5z" />
-                                <path d="M12 2.5c0.2 1.5-0.5 2.5-0.2 4M11.5 18c0.2 1.8 0.5 3 0.8 4.5M4 4.5l2.2 2.8M17.5 17.5l3 3.5M2 12.5c1.5-0.2 3 0.5 4.5 0.2M18.5 11c1.8 0.5 3.2-0.2 4.8-0.5M4.5 19.5l2.8-2.2M19.5 4.5l-2.8 3" />
-                            </svg>
-                        </button>
-                        <button data-theme="dark" aria-label="Dark Mode" aria-pressed="false">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <g transform="translate(4 0)">
-                                    <g transform="rotate(-20 12 12)">
-                                        <path transform="translate(24 0) scale(-1 1)" d="M12 3.5a8.5 8.5 0 0 1 0 17c2.2-2.2 3.3-5.3 3.3-8.5S14.2 5.7 12 3.5Z" />
-                                    </g>
-                                </g>
-                            </svg>
-                        </button>
+                    <div class="settings-options theme-options" role="radiogroup" aria-labelledby="settings-theme-label">
+                        <button data-theme="light" role="radio" aria-checked="false">light</button>
+                        <button data-theme="dark" role="radio" aria-checked="false">dark</button>
                     </div>
                 </div>
                 <div class="settings-section">
                     <div class="settings-subtitle" id="settings-sound-label">sound</div>
-                    <div class="settings-options sound-options" role="group" aria-labelledby="settings-sound-label">
-                        <button data-sound="off" aria-pressed="false">off</button>
-                        <button data-sound="on" aria-pressed="false">on</button>
+                    <div class="settings-options sound-options" role="radiogroup" aria-labelledby="settings-sound-label">
+                        <button data-sound="off" role="radio" aria-checked="false">off</button>
+                        <button data-sound="on" role="radio" aria-checked="false">on</button>
                     </div>
                 </div>
             </div>

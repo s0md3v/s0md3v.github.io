@@ -3,6 +3,7 @@ layout: default
 title: Gallery
 permalink: /gallery
 description: Photographs by Somdev Sangwan.
+ink: gallery
 # Its preview when shared: its thing on the desk (scripts/make_share_cards.py)
 image:
   path: /assets/share/gallery.jpg
@@ -300,8 +301,9 @@ image:
         transition: color 0.2s ease, opacity 0.2s ease;
     }
 
+    /* On the viewer's black, where the plain colour reads */
     .modal-button:hover {
-        color: var(--accent-color);
+        color: var(--c);
     }
 
     .modal:not(.visible) .modal-button {

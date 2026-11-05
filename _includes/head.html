@@ -4,7 +4,9 @@
   {% comment %} Edge to edge past a notch, except the desk, whose sides Safari fills with the table's colour {% endcomment %}
   <meta name="viewport" content="width=device-width, initial-scale=1{% unless page.layout_style == 'homepage' %}, viewport-fit=cover{% endunless %}">
   <meta name="theme-color" content="#f6f3ea">
-  <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="{{ '/favicon.svg' | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ '/apple-touch-icon.png' | relative_url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | xml_escape }}" href="{{ '/feed.xml' | absolute_url }}">
 
   {% seo %}
