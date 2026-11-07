@@ -173,8 +173,7 @@ body.reader-mode .reader-main { padding: 0; }
 .column-titles { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(24px, 4vw, 48px); }
 .column-titles span { color: var(--accent); font: 550 13px/1.4 var(--sans); letter-spacing: 0; }
 .column-titles span + span { color: var(--warm); }
-.verse-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 20px; padding: 38px 0; scroll-margin-top: 28px; }
-.verse-row + .verse-row { margin-top: 22px; }
+.verse-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 20px; padding: 24px 0; scroll-margin-top: 28px; }
 .verse-row:focus { outline: 0; }
 .verse-row:focus-visible { outline: 2px solid var(--warm); outline-offset: 6px; }
 .verse-meta { width: 36px; display: flex; flex-direction: column; align-items: center; }
@@ -265,8 +264,7 @@ body.study-open .study-rail { transform: translateX(0); }
   .chapter-section + .chapter-section { margin-top: 90px; }
   .chapter-heading { padding-bottom: 10px; }
   .chapter-heading h2 { font-size: 36px; }
-  .verse-row { display: block; padding: 22px 0; }
-  .verse-row + .verse-row { margin-top: 20px; }
+  .verse-row { display: block; padding: 16px 0; }
   .verse-meta { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
   .verse-number { place-items: center start; }
   .verse-tools { flex-direction: row; gap: 3px; margin: 0; }

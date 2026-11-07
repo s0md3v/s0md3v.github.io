@@ -243,20 +243,6 @@ a.obj:not(.grounded):focus-visible {
   outline-color: #f4f2f7;
 }
 
-/* Pressed into the desk while held: on touch screens, the only feedback before the next page */
-:is(a.obj, #projects:has(.cover:active), #gallery:has(.cover:active)):active .lift {
-  translate: 0 1px;
-  filter:
-    drop-shadow(var(--cx, 0) var(--cy, 1px) calc(var(--cb, 1px) * var(--round, 1)) rgba(var(--shadow), calc(var(--contact-alpha) / var(--round, 1))))
-    drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), var(--cast-alpha)));
-  transition-duration: 60ms;
-}
-
-:is(a.obj, #projects:has(.cover:active), #gallery:has(.cover:active)):active .part {
-  filter: drop-shadow(var(--cx, 0) var(--cy, 1px) var(--cb, 1px) rgba(var(--shadow), var(--cast-alpha)));
-  transition-duration: 60ms;
-}
-
 .item {
   display: block;
   position: relative;
