@@ -512,7 +512,8 @@ image:
           el.append(...kids);
           return el;
         };
-        const svg = (box, d) => `<svg viewBox="${box}"><path d="${d}"/></svg>`;
+        // An explicit </path>: minified, a self-closing "/></svg> reads to Google like a link
+        const svg = (box, d) => `<svg viewBox="${box}"><path d="${d}"></path></svg>`;
         const KEY = svg('0 0 16 16', 'M5 2.5a3.5 3.5 0 1 1-1 6.85V14h2v-1.5h1.5V11H9V9.35A3.5 3.5 0 0 1 5 2.5zm0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z');
 
         function show() {

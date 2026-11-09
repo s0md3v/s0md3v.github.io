@@ -365,13 +365,16 @@ function renderStudy() {
   syncStudyA11y();
 }
 
+const TITLE = "Winthrop Sargeant's Bhagavad Gita";
+
 function updateLocation(announce = true) {
   if (state.view === 'reader') {
     const verse = currentVerse();
-    document.title = `${verseLabel(verse)} · The Bhagavad Gītā`;
+    // Without a verse in the address (as crawlers see it), keep the book's own title
+    document.title = location.hash ? `${verseLabel(verse)} · ${TITLE}` : TITLE;
     if (announce) document.getElementById('verse-announcer').textContent = `Book ${ROMAN[verse.chapter - 1]}, ${verse.verse === 0 ? 'opening' : `verse ${verse.verse}`}`;
   } else {
-    document.title = 'The Bhagavad Gītā · Winthrop Sargeant';
+    document.title = TITLE;
     document.getElementById('verse-announcer').textContent = '';
   }
 }
